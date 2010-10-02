@@ -129,7 +129,7 @@ module Pacer
         # could use PropertyPipe but that would mean supporting objects that I don't think
         # would have much purpose.
         map do |element|
-          element[prop_or_subset]
+          element.get_property(prop_or_subset.to_s)
         end
       when Fixnum
         self.class.new(RangeFilterPipe.new(prop_or_subset, prop_or_subset), self)
