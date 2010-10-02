@@ -13,6 +13,17 @@ module Pacer
     end
   end
 
+  class SingleElementPipe < AbstractPipe
+    def initialize(element)
+      @element = element
+    end
+
+    def processNextStart()
+      element, @element = @element, nil
+      element
+    end
+  end
+
   class Path
     include Enumerable
 
@@ -31,7 +42,10 @@ module Pacer
 
     def initialize(pipe, back = nil)
       @back = back
-      @pipe = pipe
+      if pipe.is_a? Pipe
+        @pipe = pipe
+      else
+      end
     end
 
     def back
@@ -93,31 +107,42 @@ module Pacer
   end
 
   class GraphPath < Path
-    def vertexes(*args, &block)
+    def vertexes(*filters, &block)
       pipe = GraphElementPipe.new(GraphElementPipe.ElementType.VERTEX);
-      VertexPath.new(filter_pipe(pipe, args, block), self)
+      VertexPath.new(filter_pipe(pipe, filters, block), self)
     end
 
-    def edges(*args, &block)
+    def edges(*filters, &block)
       pipe = GraphElementPipe.new(GraphElementPipe.ElementType.EDGE);
-      EdgePath.new(filter_pipe(pipe, args, block), self)
+      EdgePath.new(filter_pipe(pipe, filters, block), self)
     end
   end
 
   class EdgePath < Path
-    def out_v(*args, &block)
+    def out_v(*filters, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.OUT_VERTEX)
-      VertexPath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      VertexPath.new(filter_pipe(pipe, filters, block), self)
     end
 
-    def in_v(*args, &block)
+    def in_v(*filters, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.IN_VERTEX)
-      VertexPath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      VertexPath.new(filter_pipe(pipe, filters, block), self)
     end
 
-    def both_v(*args, &block)
+    def both_v(*filters, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.BOTH_VERTICES)
-      VertexPath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      VertexPath.new(filter_pipe(pipe, filters, block), self)
+    end
+
+    def virtices(*filters)
+      raise "Can't call virtices for EdgePath."
+    end
+
+    def edges(*filters, &block)
+      EdgePath.new(filter_pipe(@pipe, filters, block), back)
     end
 
     protected
@@ -138,19 +163,30 @@ module Pacer
   end
 
   class VertexPath < Path
-    def out_e(*args, &block)
+    def out_e(*filters, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.OUT_EDGES)
-      EdgePath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      EdgePath.new(filter_pipe(pipe, filters, block), self)
     end
 
-    def in_e(*args, &block)
+    def in_e(*filters, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.IN_EDGES)
-      EdgePath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      EdgePath.new(filter_pipe(pipe, filters, block), self)
     end
 
-    def both_e(*args, &block)
+    def both_e(*filters, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.BOTH_EDGES)
-      EdgePath.new(filter_pipe(pipe, args, block), self)
+      pipe.set_start = @pipe
+      EdgePath.new(filter_pipe(pipe, filters, block), self)
+    end
+
+    def virtices(*filters, &block)
+      VertexPath.new(filter_pipe(@pipe, filters, block), back)
+    end
+
+    def edges(*filters, &block)
+      raise "Can't call edges for VertexPath."
     end
   end
 end
