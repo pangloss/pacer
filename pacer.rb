@@ -187,7 +187,7 @@ module Pacer
     end
 
     def root?
-      @back.nil?
+      !@source.nil?
     end
 
     def each
@@ -236,11 +236,15 @@ module Pacer
 
     protected
 
+    def back=(back)
+      @back = back
+    end
+
     def source
-      if @back
-        @back.iterator
-      else
+      if @source
         iterator_from_source(@source)
+      else
+        @back.iterator
       end
     end
 
@@ -269,7 +273,7 @@ module Pacer
 
     def inspect_strings
       ins = []
-      ins += @back.inspect_strings if @back
+      ins += @back.inspect_strings unless root?
 
       if pipe_class
         ps = pipe_class.name 
