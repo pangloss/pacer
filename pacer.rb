@@ -88,7 +88,7 @@ module Pacer
         path = VertexFilterPath.new(s, @back)
         return s if yield path
       end
-      raise NoSuchElementException
+      raise NoSuchElementException.new
     end
   end
 
@@ -108,7 +108,7 @@ module Pacer
     def processNextStart()
       @enumerable.next
     rescue
-      raise NoSuchElementException
+      raise NoSuchElementException.new
     end
   end
 
@@ -128,7 +128,7 @@ module Pacer
           return edge;
         end
       end
-      raise NoSuchElementException
+      raise NoSuchElementException.new
     end
   end
 
@@ -154,7 +154,7 @@ module Pacer
     end
 
     include Enumerable
-    attr_accessor :pipe_class
+    attr_accessor :pipe_class, :info
 
     # For debugging
     attr_reader :filters, :block, :pipe_args, :source
@@ -226,29 +226,41 @@ module Pacer
       end
     end
 
+    def ids
+      map { |e| e.id }
+    end
+
     def inspect
-      #"#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
       "#<#{inspect_strings.join(' -> ')}>"
     end
 
     protected
 
+    def source
+      if @back
+        @back.iterator
+      else
+        iterator_from_source(@source)
+      end
+    end
+
+    def iterator_from_source(source)
+      if source.is_a? Proc
+        iterator_from_source(source.call)
+      elsif source.is_a? Iterator
+        source
+      elsif source
+        pipe = EnumerablePipe.new
+        pipe.set_enumerable source
+        pipe
+      end
+    end
+
     def iterator
       pipe = nil
-      source = nil
-      if @back
-        source = @back.iterator
-      elsif @source.is_a? Iterator
-        source = @source
-      elsif @source.is_a? Proc
-        source = @source.call
-      elsif @source
-        source = EnumerablePipe.new
-        source.set_enumerable @source
-      end
       if pipe_class
         pipe = pipe_class.new(*@pipe_args)
-        pipe.set_starts source if source
+        pipe.set_starts source
       else
         pipe = source
       end
@@ -274,6 +286,7 @@ module Pacer
       bs = '&block' if @block
 
       s = "#{self.class.name.split('::').last}"
+      s = "#{s} #{ @info }" if @info
       if ps or fs or bs
         s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
       end
@@ -317,6 +330,10 @@ module Pacer
       path.graph = @graph
       path
     end
+
+    def result
+      self
+    end
   end
 
   class EdgePath < Path
@@ -349,6 +366,16 @@ module Pacer
 
     def labels
       map { |e| e.get_label }
+    end
+
+    def result(name = nil)
+      edge_ids = ids
+      g = graph
+      r = EdgePath.new(proc { edge_ids.map { |id| graph.get_edge id } })
+      r.graph = g
+      r.pipe_class = nil
+      r.info = "#{ name }:#{edge_ids.count}"
+      r
     end
 
     def to_h
@@ -401,6 +428,16 @@ module Pacer
 
     def edges(*filters, &block)
       raise "Can't call edges for VertexPath."
+    end
+
+    def result(name = nil)
+      v_ids = ids
+      g = graph
+      r = VertexPath.new(proc { v_ids.map { |id| graph.get_vertex id } })
+      r.info = "#{ name }:#{v_ids.count}"
+      r.graph = g
+      r.pipe_class = nil
+      r
     end
 
     def to(label, to_vertices)
