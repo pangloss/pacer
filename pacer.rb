@@ -16,6 +16,7 @@ module Pacer
 
   import com.tinkerpop.blueprints.pgm.Graph;
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+  import java.util.Iterator
 
   def self.neo4j(path)
     graph = Neo4jGraph.new(path)
@@ -145,13 +146,15 @@ module Pacer
       source = nil
       if @back
         source = @back.iterator
+      elsif @source.is_a? Iterator
+        source = @source
       elsif @source
         source = EnumerablePipe.new
         source.set_enumerable @source
       end
       if pipe_class
         pipe = pipe_class.new(*@pipe_args)
-        pipe.set_start source if source
+        pipe.set_starts source if source
       else
         pipe = source
       end
@@ -169,13 +172,13 @@ module Pacer
       pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
         hash.inject(p) do |p2, (key, value)|
           new_pipe = PropertyFilterPipe.new(key.to_s, value.to_s, ComparisonFilterPipe::Filter::EQUAL)
-          new_pipe.set_start p2
+          new_pipe.set_starts p2
           new_pipe
         end
       end
       if block
         new_pipe = BlockFilterPipe.new(block)
-        new_pipe.set_start pipe
+        new_pipe.set_starts pipe
         pipe = new_pipe
       end
       pipe
@@ -239,7 +242,7 @@ module Pacer
       else
         new_pipe = labels.inject(pipe) do |label|
           p = LabelFilterPipe.new(label.to_s, ComparisonFilterPipe::Filter::EQUAL)
-          p.set_start pipe
+          p.set_starts pipe
           p
         end
         super(new_pipe, filters - labels, block)
