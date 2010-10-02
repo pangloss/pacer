@@ -251,7 +251,7 @@ module Pacer
     end
 
     def inspect
-      "#<#{self.class.name}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
+      "#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
     end
 
     protected
