@@ -9,6 +9,7 @@ module Pacer
   import com.tinkerpop.pipes.filter.ComparisonFilterPipe
   import com.tinkerpop.pipes.pgm.PropertyFilterPipe
   import com.tinkerpop.pipes.pgm.LabelFilterPipe
+  import com.tinkerpop.pipes.filter.OrFilterPipe
   import com.tinkerpop.pipes.pgm.GraphElementPipe
   import com.tinkerpop.pipes.pgm.VertexEdgePipe
   import com.tinkerpop.pipes.pgm.EdgeVertexPipe
@@ -41,7 +42,7 @@ module Pacer
         path = VertexFilterPath.new(s, @back)
         return s if yield path
       end
-      raise NoSuchElementException.new "BlockVertexFilterPipe has run out of elements."
+      raise NoSuchElementException
     end
   end
 
@@ -61,7 +62,27 @@ module Pacer
     def processNextStart()
       @enumerable.next
     rescue
-      raise NoSuchElementException.new "EnumerablePipe has run out of elements."
+      raise NoSuchElementException
+    end
+  end
+
+
+  class LabelsFilterPipe < AbstractPipe
+    def set_labels(labels)
+      @labels = labels.map { |label| label.to_s.to_java }
+    end
+
+    def set_starts(starts)
+      @starts = starts
+    end
+
+    def processNextStart()
+      while edge = @starts.next
+        if @labels.include? edge.get_label
+          return edge;
+        end
+      end
+      raise NoSuchElementException
     end
   end
 
@@ -177,7 +198,7 @@ module Pacer
       return pipe if args_array.empty? and block.nil?
       pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
         hash.inject(p) do |p2, (key, value)|
-          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_java, ComparisonFilterPipe::Filter::EQUAL)
+          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_java, ComparisonFilterPipe::Filter::NOT_EQUAL)
           new_pipe.set_starts p2
           new_pipe
         end
@@ -237,6 +258,10 @@ module Pacer
       path
     end
 
+    def labels
+      map { |e| e.get_label }
+    end
+
     protected
 
     # The filters and block this processes are the ones that are passed to the
@@ -246,12 +271,10 @@ module Pacer
       if labels.empty?
         super
       else
-        new_pipe = labels.inject(pipe) do |label|
-          p = LabelFilterPipe.new(label.to_s, ComparisonFilterPipe::Filter::EQUAL)
-          p.set_starts pipe
-          p
-        end
-        super(new_pipe, filters - labels, block)
+        label_pipe = LabelsFilterPipe.new
+        label_pipe.set_labels labels
+        label_pipe.set_starts pipe
+        super(label_pipe, filters - labels, block)
       end
     end
   end
