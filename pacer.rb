@@ -234,6 +234,8 @@ module Pacer
         source = @back.iterator
       elsif @source.is_a? Iterator
         source = @source
+      elsif @source.is_a? Proc
+        source = @source.call
       elsif @source
         source = EnumerablePipe.new
         source.set_enumerable @source
@@ -277,14 +279,16 @@ module Pacer
     end
 
     def vertices(*filters, &block)
-      path = VertexPath.new(@graph.get_vertices, filters, block)
+      path = VertexPath.new(proc { @graph.get_vertices }, filters, block)
       path.pipe_class = nil
+      path.graph = @graph
       path
     end
 
     def edges(*filters, &block)
-      path = EdgePath.new(@graph.get_edges, filters, block)
+      path = EdgePath.new(proc { @graph.get_edges }, filters, block)
       path.pipe_class = nil
+      path.graph = @graph
       path
     end
   end
