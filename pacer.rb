@@ -221,8 +221,8 @@ module Pacer
       VertexPath.new(self, filters, block, EdgeVertexPipe::Step::BOTH_VERTICES)
     end
 
-    def virtices(*filters)
-      raise "Can't call virtices for EdgePath."
+    def vertices(*filters)
+      raise "Can't call vertices for EdgePath."
     end
 
     def edges(*filters, &block)
@@ -268,7 +268,7 @@ module Pacer
       EdgePath.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
     end
 
-    def virtices(*filters, &block)
+    def vertices(*filters, &block)
       path = VertexPath.new(@back, filters, block)
       path.pipe_class = nil
       path
