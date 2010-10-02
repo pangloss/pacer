@@ -78,6 +78,12 @@ module Pacer
 
       def path(name)
       end
+
+      def pipe_filter(back, pipe_class, *args)
+        f = new(back, [], nil, *args)
+        f.pipe_class = pipe_class
+        f
+      end
     end
 
     include Enumerable
@@ -116,11 +122,11 @@ module Pacer
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
-      self.class.new(RandomFilterPipe.new(bias), self)
+      self.class.pipe_filter(self, RandomFilterPipe, bias)
     end
 
     def uniq
-      self.class.new(DuplicateFilterPipe.new, self)
+      self.class.pipe_filter(self, DuplicateFilterPipe)
     end
 
     def [](prop_or_subset)
@@ -171,7 +177,7 @@ module Pacer
       return pipe if args_array.empty? and block.nil?
       pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
         hash.inject(p) do |p2, (key, value)|
-          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_s, ComparisonFilterPipe::Filter::EQUAL)
+          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_java, ComparisonFilterPipe::Filter::EQUAL)
           new_pipe.set_starts p2
           new_pipe
         end
@@ -226,7 +232,7 @@ module Pacer
     end
 
     def edges(*filters, &block)
-      path = EdgePath.new(@back, filters, block)
+      path = EdgePath.new(self, filters, block)
       path.pipe_class = nil
       path
     end
@@ -269,7 +275,7 @@ module Pacer
     end
 
     def vertices(*filters, &block)
-      path = VertexPath.new(@back, filters, block)
+      path = VertexPath.new(self, filters, block)
       path.pipe_class = nil
       path
     end
