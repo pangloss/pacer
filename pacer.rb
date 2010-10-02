@@ -183,18 +183,18 @@ module Pacer
 
   class GraphPath < Path
     def initialize(graph)
-      super
+      @graph = graph
     end
 
-    def vertexes(*filters, &block)
-      path = VertexPath.new(nil, filters, block, GraphElementPipe::ElementType::VERTEX)
-      path.pipe_class = GraphElementPipe
+    def vertices(*filters, &block)
+      path = VertexPath.new(@graph.get_vertices, filters, block)
+      path.pipe_class = nil
       path
     end
 
     def edges(*filters, &block)
-      path = EdgePath.new(nil, filters, block, GraphElementPipe::ElementType::EDGE)
-      path.pipe_class = GraphElementPipe
+      path = EdgePath.new(@graph.get_edges, filters, block)
+      path.pipe_class = nil
       path
     end
   end
