@@ -19,6 +19,53 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
   import java.util.Iterator
 
+
+  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
+  import com.tinkerpop.blueprints.pgm.Vertex
+  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  import com.tinkerpop.blueprints.pgm.Edge
+
+  class Neo4jVertex
+    def from_graph?(graph)
+      graph.raw_graph == raw_vertex.graph_database
+    end
+
+    def inspect
+      "#<V[#{name}] #{ properties.inspect }>"
+    end
+
+    def properties
+      property_keys.inject({}) { |h, k| h[k] = get_property(k); h }
+    end
+
+    def name
+      id
+    end
+  end
+
+  module Vertex
+    def [](key)
+      get_property(key)
+    end
+  end
+
+  class Neo4jEdge
+    def inspect
+      "#<E[#{id}]:#{ out_vertex.name }-#{ get_label }-#{ in_vertex.name }>"
+    end
+
+    def properties
+      property_keys.inject({}) { |h, k| h[k] = get_property(k); h }
+    end
+  end
+
+  module Edge
+    def [](key)
+      get_property(key)
+    end
+  end
+
+
   def self.neo4j(path)
     graph = Neo4jGraph.new(path)
     at_exit do
