@@ -18,7 +18,15 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
 
   def self.neo4j(path)
-    Neo4jGraph.new(path)
+    graph = Neo4jGraph.new(path)
+    at_exit do
+      begin
+        graph.shutdown
+      rescue Exception, StandardError => e
+        pp e
+      end
+    end
+    graph
   end
 
   class BlockVertexFilterPipe < AbstractPipe
