@@ -13,6 +13,7 @@ module Pacer
     end
   end
 
+
   class EnumerablePipe < AbstractPipe
     def initialize(enumerable)
       case enumerable
@@ -29,6 +30,7 @@ module Pacer
       @enumerable.next rescue nil
     end
   end
+
 
   class Path
     class << self
@@ -67,7 +69,12 @@ module Pacer
     end
 
     def each
-      @pipe.to_enum(:each)
+      iter = iterator
+      while item = iter.next
+        yield item
+      end
+    rescue NoSuchElementException
+      self
     end
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
