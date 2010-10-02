@@ -160,14 +160,12 @@ module Pacer
     end
   end
 
-  class Path
-    class << self
+  module Path
+    module PathClassMethods
       def vertex_path(name)
-
       end
 
       def edge_path(name)
-
       end
 
       def path(name)
@@ -180,13 +178,12 @@ module Pacer
       end
     end
 
-    include Enumerable
-    attr_accessor :pipe_class, :info
+    def self.included(target)
+      target.send :include, Enumerable
+      target.extend PathClassMethods
+    end
 
-    # For debugging
-    attr_reader :filters, :block, :pipe_args, :source
-
-    def initialize(back = nil, filters = nil, block = nil, *pipe_args)
+    def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
       if back.is_a? Path
         @back = back
       else
@@ -197,8 +194,24 @@ module Pacer
       @pipe_args = pipe_args
     end
 
+    def filters
+      @filters ||= []
+    end
+
+    def block
+      @block
+    end
+
     def back
       @back
+    end
+
+    def info
+      @info
+    end
+
+    def info=(str)
+      @info = str
     end
 
     def graph=(graph)
@@ -207,6 +220,10 @@ module Pacer
 
     def graph
       @graph ||= @back.graph
+    end
+
+    def pipe_class=(klass)
+      @pipe_class = klass
     end
 
     def from_graph?(g)
@@ -289,31 +306,31 @@ module Pacer
 
     def iterator
       pipe = nil
-      if pipe_class
-        pipe = pipe_class.new(*@pipe_args)
+      if @pipe_class
+        pipe = @pipe_class.new(*@pipe_args)
         pipe.set_starts source
       else
         pipe = source
       end
-      filter_pipe(pipe, filters, block)
+      filter_pipe(pipe, filters, @block)
     end
 
     def inspect_strings
       ins = []
       ins += @back.inspect_strings unless root?
 
-      if pipe_class
-        ps = pipe_class.name 
+      if @pipe_class
+        ps = @pipe_class.name
         pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
         if ps =~ /FilterPipe$/
           ps = ps.split('::').last.sub(/FilterPipe/, '')
           pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
           ps = "#{ps}(#{pipeargs})"
         else
-          ps = pipe_args
+          ps = @pipe_args
         end
       end
-      fs = "#{@filters.inspect}" if @filters and @filters.any?
+      fs = "#{filters.inspect}" if filters.any?
       bs = '&block' if @block
 
       s = "#{self.class.name.split('::').last}"
@@ -344,35 +361,41 @@ module Pacer
     end
   end
 
-  class GraphPath < Path
-    def initialize(graph)
-      @filters = []
-      @graph = graph
-    end
-
-    def vertices(*filters, &block)
-      path = VertexPath.new(proc { @graph.get_vertices }, filters, block)
+  module GraphPath
+    def v(*filters, &block)
+      path = VertexPath.new(proc { self.get_vertices }, filters, block)
       path.pipe_class = nil
-      path.graph = @graph
+      path.graph = self
       path
     end
 
-    def edges(*filters, &block)
-      path = EdgePath.new(proc { @graph.get_edges }, filters, block)
+    def e(*filters, &block)
+      path = EdgePath.new(proc { self.get_edges }, filters, block)
       path.pipe_class = nil
-      path.graph = @graph
+      path.graph = self
       path
     end
 
     def result
       self
     end
+
+    def root?
+      true
+    end
   end
 
-  class EdgePath < Path
+  class Neo4jGraph
+    include Path
+    include GraphPath
+  end
+
+  class EdgePath
+    include Path
+
     def initialize(*args)
       @pipe_class = VertexEdgePipe
-      super
+      initialize_path(*args)
     end
 
     def out_v(*filters, &block)
@@ -387,11 +410,11 @@ module Pacer
       VertexPath.new(self, filters, block, EdgeVertexPipe::Step::BOTH_VERTICES)
     end
 
-    def vertices(*filters)
+    def v(*filters)
       raise "Can't call vertices for EdgePath."
     end
 
-    def edges(*filters, &block)
+    def e(*filters, &block)
       path = EdgePath.new(self, filters, block)
       path.pipe_class = nil
       path
@@ -435,10 +458,12 @@ module Pacer
     end
   end
 
-  class VertexPath < Path
+  class VertexPath
+    include Path
+
     def initialize(*args)
       @pipe_class = EdgeVertexPipe
-      super
+      initialize_path(*args)
     end
 
     def out_e(*filters, &block)
@@ -453,13 +478,13 @@ module Pacer
       EdgePath.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
     end
 
-    def vertices(*filters, &block)
+    def v(*filters, &block)
       path = VertexPath.new(self, filters, block)
       path.pipe_class = nil
       path
     end
 
-    def edges(*filters, &block)
+    def e(*filters, &block)
       raise "Can't call edges for VertexPath."
     end
 
