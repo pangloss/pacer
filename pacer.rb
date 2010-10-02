@@ -146,7 +146,8 @@ module Pacer
       if @back
         source = @back.iterator
       elsif @source
-        source = EnumerablePipe.new(@source)
+        source = EnumerablePipe.new
+        source.set_enumerable @source
       end
       if pipe_class
         pipe = pipe_class.new(*@pipe_args)
@@ -158,7 +159,7 @@ module Pacer
     end
 
     def inspect
-      "#<#{self.class.name} #{@filters.inspect}#{ @block ? ' &block' : ''} #{ @back.inspect }>"
+      "#<#{self.class.name}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
     end
 
     protected
