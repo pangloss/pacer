@@ -1,4 +1,18 @@
 module Pacer
+  class BlockVertexFilterPipe < AbstractPipe
+    def initialize(back, block)
+      @back = back
+      @block = block
+    end
+
+    def processNextStart()
+      while s = starts.next
+        path = VertexFilterPath.new(s, back)
+        return s if yield path
+      end
+    end
+  end
+
   class Path
     include Enumerable
 
@@ -44,6 +58,11 @@ module Pacer
     def [](prop_or_subset)
       case prop_or_subset
       when String, Symbol
+        # could use PropertyPipe but that would mean supporting objects that I don't think
+        # would have much purpose.
+        map do |element|
+          element[prop_or_subset]
+        end
       when Fixnum
         self.class.new(RangeFilterPipe.new(prop_or_subset, prop_or_subset), self)
       when Range
@@ -56,11 +75,20 @@ module Pacer
     protected
 
     def filter_pipe(pipe, args_array, block)
-      if args_array.empty? and block.nil?
-        pipe
-      else
-
+      return pipe if args_array.empty? and block.nil?
+      pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
+        hash.inject(p) do |p2, (key, value)|
+          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_s, ComparisonFilterPipe::Filter::EQUAL)
+          new_pipe.set_start p2
+          new_pipe
+        end
       end
+      if block
+        new_pipe = BlockFilterPipe.new(block)
+        new_pipe.set_start pipe
+        pipe = new_pipe
+      end
+      pipe
     end
   end
 
