@@ -226,6 +226,13 @@ module Pacer
       end
     end
 
+    def inspect
+      #"#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
+      "#<#{inspect_strings.join(' -> ')}>"
+    end
+
+    protected
+
     def iterator
       pipe = nil
       source = nil
@@ -247,13 +254,6 @@ module Pacer
       end
       filter_pipe(pipe, filters, block)
     end
-
-    def inspect
-      #"#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
-      "#<#{inspect_strings.join(' -> ')}>"
-    end
-
-    protected
 
     def inspect_strings
       ins = []
