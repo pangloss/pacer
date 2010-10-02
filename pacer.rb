@@ -9,8 +9,6 @@ module Pacer
   import com.tinkerpop.pipes.filter.RangeFilterPipe
   import com.tinkerpop.pipes.filter.ComparisonFilterPipe
   import com.tinkerpop.pipes.pgm.PropertyFilterPipe
-  import com.tinkerpop.pipes.pgm.LabelFilterPipe
-  import com.tinkerpop.pipes.filter.OrFilterPipe
   import com.tinkerpop.pipes.pgm.GraphElementPipe
   import com.tinkerpop.pipes.pgm.VertexEdgePipe
   import com.tinkerpop.pipes.pgm.EdgeVertexPipe
@@ -251,10 +249,37 @@ module Pacer
     end
 
     def inspect
-      "#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
+      #"#<#{self.class.name.split('::').last}(#{@filters.inspect}#{ @block ? ', &block' : ''})#{ @back ? ' ' + @back.inspect : ''}>"
+      "#<#{inspect_strings.join(' -> ')}>"
     end
 
     protected
+
+    def inspect_strings
+      ins = []
+      ins += @back.inspect_strings if @back
+
+      if pipe_class
+        ps = pipe_class.name 
+        pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
+        if ps =~ /FilterPipe$/
+          ps = ps.split('::').last.sub(/FilterPipe/, '')
+          pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
+          ps = "#{ps}(#{pipeargs})"
+        else
+          ps = pipe_args
+        end
+      end
+      fs = "#{@filters.inspect}" unless @filters.empty?
+      bs = '&block' if @block
+
+      s = "#{self.class.name.split('::').last}"
+      if ps or fs or bs
+        s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
+      end
+      ins << s
+      ins
+    end
 
     def filter_pipe(pipe, args_array, block)
       return pipe if args_array.empty? and block.nil?
