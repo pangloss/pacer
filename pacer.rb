@@ -49,6 +49,9 @@ module Pacer
     include Enumerable
     attr_accessor :pipe_class
 
+    # For debugging
+    attr_reader :filters, :block, :pipe_args, :source
+
     def initialize(back = nil, filters = [], block = nil, *pipe_args)
       if back.is_a? Path
         @back = back
@@ -119,6 +122,10 @@ module Pacer
         pipe = source
       end
       filter_pipe(pipe, filters, block)
+    end
+
+    def inspect
+      "#<#{self.class.name} #{@filters.inspect}#{ @block ? ' &block' : ''} #{ @back.inspect }>"
     end
 
     protected
