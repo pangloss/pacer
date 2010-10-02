@@ -31,7 +31,7 @@ module Pacer
 
     def initialize(pipe, back = nil)
       @back = back
-      @current = current
+      @pipe = pipe
     end
 
     def back
@@ -95,34 +95,29 @@ module Pacer
   class GraphPath < Path
     def vertexes(*args, &block)
       pipe = GraphElementPipe.new(GraphElementPipe.ElementType.VERTEX);
-      @pipe = GraphPath.new(filter_pipe(pipe, args, block), self)
-      self
+      VertexPath.new(filter_pipe(pipe, args, block), self)
     end
 
     def edges(*args, &block)
       pipe = GraphElementPipe.new(GraphElementPipe.ElementType.EDGE);
-      @pipe = GraphPath.new(filter_pipe(pipe, args, block), self)
-      self
+      EdgePath.new(filter_pipe(pipe, args, block), self)
     end
   end
 
   class EdgePath < Path
     def out_v(*args, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.OUT_VERTEX)
-      @pipe = VertexPath.new(filter_pipe(pipe, args, block), self)
-      self
+      VertexPath.new(filter_pipe(pipe, args, block), self)
     end
 
     def in_v(*args, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.IN_VERTEX)
-      @pipe = VertexPath.new(filter_pipe(pipe, args, block), self)
-      self
+      VertexPath.new(filter_pipe(pipe, args, block), self)
     end
 
     def both_v(*args, &block)
       pipe = VertexEdgePipe.new(VertexEdgePipe.Step.BOTH_VERTICES)
-      @pipe = VertexPath.new(filter_pipe(pipe, args, block), self)
-      self
+      VertexPath.new(filter_pipe(pipe, args, block), self)
     end
 
     protected
@@ -145,20 +140,17 @@ module Pacer
   class VertexPath < Path
     def out_e(*args, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.OUT_EDGES)
-      @pipe = EdgePath.new(filter_pipe(pipe, args, block), self)
-      self
+      EdgePath.new(filter_pipe(pipe, args, block), self)
     end
 
     def in_e(*args, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.IN_EDGES)
-      @pipe = EdgePath.new(filter_pipe(pipe, args, block), self)
-      self
+      EdgePath.new(filter_pipe(pipe, args, block), self)
     end
 
     def both_e(*args, &block)
       pipe = EdgeVertexPipe.new(EdgeVertexPipe.Step.BOTH_EDGES)
-      @pipe = EdgePath.new(filter_pipe(pipe, args, block), self)
-      self
+      EdgePath.new(filter_pipe(pipe, args, block), self)
     end
   end
 end
