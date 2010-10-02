@@ -175,6 +175,18 @@ module Pacer
       @back
     end
 
+    def graph=(graph)
+      @graph = graph
+    end
+
+    def graph
+      @graph ||= @back.graph
+    end
+
+    def from_graph?(g)
+      graph == g
+    end
+
     def root?
       @back.nil?
     end
@@ -352,6 +364,23 @@ module Pacer
 
     def edges(*filters, &block)
       raise "Can't call edges for VertexPath."
+    end
+
+    def to(label, to_vertices)
+      case to_vertices
+      when Path
+        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
+      when Enumerable, Iterator
+        raise "Must be from same graph" unless to_vertices.first.from_graph?(graph)
+      else
+        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
+        to_vertices = [to_vertices]
+      end
+      map do |from_v|
+        to_vertices.map do |to_v|
+          graph.add_edge(nil, from_v, to_v, label) rescue nil
+        end
+      end
     end
   end
 end
