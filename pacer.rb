@@ -1,4 +1,26 @@
+require 'java'
+require 'vendor/pipes-0.1-SNAPSHOT-standalone.jar'
+
 module Pacer
+  import com.tinkerpop.pipes.AbstractPipe
+  import com.tinkerpop.pipes.filter.RandomFilterPipe
+  import com.tinkerpop.pipes.filter.DuplicateFilterPipe
+  import com.tinkerpop.pipes.filter.RangeFilterPipe
+  import com.tinkerpop.pipes.filter.ComparisonFilterPipe
+  import com.tinkerpop.pipes.pgm.PropertyFilterPipe
+  import com.tinkerpop.pipes.pgm.LabelFilterPipe
+  import com.tinkerpop.pipes.pgm.GraphElementPipe
+  import com.tinkerpop.pipes.pgm.VertexEdgePipe
+  import com.tinkerpop.pipes.pgm.EdgeVertexPipe
+  import java.util.NoSuchElementException
+
+  import com.tinkerpop.blueprints.pgm.Graph;
+  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+
+  def self.neo4j(path)
+    Neo4jGraph.new(path)
+  end
+
   class BlockVertexFilterPipe < AbstractPipe
     def initialize(back, block)
       @back = back
@@ -10,12 +32,13 @@ module Pacer
         path = VertexFilterPath.new(s, @back)
         return s if yield path
       end
+      raise NoSuchElementException.new "BlockVertexFilterPipe has run out of elements."
     end
   end
 
 
   class EnumerablePipe < AbstractPipe
-    def initialize(enumerable)
+    def set_enumerable(enumerable)
       case enumerable
       when Enumerable::Enumerator
         @enumerable = enumerable
@@ -27,7 +50,9 @@ module Pacer
     end
 
     def processNextStart()
-      @enumerable.next rescue nil
+      @enumerable.next
+    rescue
+      raise NoSuchElementException.new "EnumerablePipe has run out of elements."
     end
   end
 
@@ -149,6 +174,10 @@ module Pacer
   end
 
   class GraphPath < Path
+    def initialize(graph)
+      super
+    end
+
     def vertexes(*filters, &block)
       path = VertexPath.new(nil, filters, block, GraphElementPipe::ElementType::VERTEX)
       path.pipe_class = GraphElementPipe
