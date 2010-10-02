@@ -7,20 +7,26 @@ module Pacer
 
     def processNextStart()
       while s = starts.next
-        path = VertexFilterPath.new(s, back)
+        path = VertexFilterPath.new(s, @back)
         return s if yield path
       end
     end
   end
 
-  class SingleElementPipe < AbstractPipe
-    def initialize(element)
-      @element = element
+  class EnumerablePipe < AbstractPipe
+    def initialize(enumerable)
+      case enumerable
+      when Enumerable::Enumerator
+        @enumerable = enumerable
+      when Enumerable
+        @enumerable = enumerable.to_enum
+      else
+        @enumerable = [enumerable].to_enum
+      end
     end
 
     def processNextStart()
-      element, @element = @element, nil
-      element
+      @enumerable.next rescue nil
     end
   end
 
@@ -45,7 +51,7 @@ module Pacer
       if back.is_a? Path
         @back = back
       else
-        @elements = back
+        @source = back
       end
       @filters = filters
       @block = block
@@ -94,10 +100,11 @@ module Pacer
     def iterator
       pipe = nil
       source = nil
-      if back
-        source = back.iterator
-      elsif @elements
-        source = 
+      if @back
+        source = @back.iterator
+      elsif @source
+        source = EnumerablePipe.new(@source)
+      end
       if pipe_class
         pipe = pipe_class.new(*@pipe_args)
         pipe.set_start source if source
@@ -159,7 +166,7 @@ module Pacer
     end
 
     def edges(*filters, &block)
-      path = EdgePath.new(back, filters, block)
+      path = EdgePath.new(@back, filters, block)
       path.pipe_class = nil
       path
     end
@@ -197,7 +204,7 @@ module Pacer
     end
 
     def virtices(*filters, &block)
-      path = VertexPath.new(back, filters, block)
+      path = VertexPath.new(@back, filters, block)
       path.pipe_class = nil
       path
     end
