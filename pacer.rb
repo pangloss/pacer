@@ -147,7 +147,7 @@ module Pacer
       end
 
       def pipe_filter(back, pipe_class, *args)
-        f = new(back, [], nil, *args)
+        f = new(back, nil, nil, *args)
         f.pipe_class = pipe_class
         f
       end
@@ -159,13 +159,13 @@ module Pacer
     # For debugging
     attr_reader :filters, :block, :pipe_args, :source
 
-    def initialize(back = nil, filters = [], block = nil, *pipe_args)
+    def initialize(back = nil, filters = nil, block = nil, *pipe_args)
       if back.is_a? Path
         @back = back
       else
         @source = back
       end
-      @filters = filters
+      @filters = filters || []
       @block = block
       @pipe_args = pipe_args
     end
@@ -282,7 +282,7 @@ module Pacer
           ps = pipe_args
         end
       end
-      fs = "#{@filters.inspect}" unless @filters.empty?
+      fs = "#{@filters.inspect}" if @filters and @filters.any?
       bs = '&block' if @block
 
       s = "#{self.class.name.split('::').last}"
@@ -295,17 +295,18 @@ module Pacer
     end
 
     def filter_pipe(pipe, args_array, block)
-      return pipe if args_array.empty? and block.nil?
-      pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
-        hash.inject(p) do |p2, (key, value)|
-          new_pipe = PropertyFilterPipe.new(key.to_s, value.to_java, ComparisonFilterPipe::Filter::NOT_EQUAL)
-          new_pipe.set_starts p2
-          new_pipe
+      if args_array and args_array.any?
+        pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
+          hash.inject(p) do |p2, (key, value)|
+            new_pipe = PropertyFilterPipe.new(key.to_s, value.to_java, ComparisonFilterPipe::Filter::NOT_EQUAL)
+            new_pipe.set_starts p2
+            new_pipe
+          end
         end
       end
       if block
-        new_pipe = BlockFilterPipe.new(block)
-        new_pipe.set_starts pipe
+        new_pipe = BlockFilterPipe.new
+        new_pipe.configure(pipe, self, block)
         pipe = new_pipe
       end
       pipe
@@ -314,6 +315,7 @@ module Pacer
 
   class GraphPath < Path
     def initialize(graph)
+      @filters = []
       @graph = graph
     end
 
