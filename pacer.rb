@@ -1,5 +1,6 @@
 require 'java'
 require 'vendor/pipes-0.1-SNAPSHOT-standalone.jar'
+require 'pp'
 
 module Pacer
   import com.tinkerpop.pipes.AbstractPipe
@@ -323,6 +324,13 @@ module Pacer
 
     def labels
       map { |e| e.get_label }
+    end
+
+    def to_h
+      inject(Hash.new { |h,k| h[k]=[] }) do |h, edge|
+        h[edge.out_vertex] << edge.in_vertex
+        h
+      end
     end
 
     protected
