@@ -77,16 +77,24 @@ module Pacer
     graph
   end
 
-  class BlockVertexFilterPipe < AbstractPipe
-    def initialize(back, block)
+  class BlockFilterPipe < AbstractPipe
+    def configure(starts, back, block)
+      @starts = starts
       @back = back
       @block = block
+      @count = 0
     end
 
     def processNextStart()
-      while s = starts.next
-        path = VertexFilterPath.new(s, @back)
-        return s if yield path
+      while s = @starts.next
+        path = @back.class.new(s)
+        path.send(:back=, @back)
+        path.pipe_class = nil
+        @count += 1
+        path.info = "temp #{ @count }"
+        path.extend SinglePath
+        ok = @block.call path
+        return s if ok
       end
       raise NoSuchElementException.new
     end
@@ -132,6 +140,25 @@ module Pacer
     end
   end
 
+  module SinglePath
+    def [](name)
+      map do |element|
+        element.get_property(name.to_s)
+      end.first
+    end
+
+    def label
+      labels.first
+    end
+
+    def id
+      ids.first
+    end
+
+    def current
+      to_a.first
+    end
+  end
 
   class Path
     class << self
