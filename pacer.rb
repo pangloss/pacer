@@ -35,7 +35,45 @@ module Pacer
     graph
   end
 
+  class PipePathWrapper
+    def initialize(pipe)
+      @pipe = pipe
+    end
+
+    def starts
+      if @pipe.respond_to? :starts
+        @pipe.starts
+      else
+        starts = AbstractPipe.java_class.declared_field :starts
+        starts.accessible = true
+        starts.value Java.ruby_to_java(@pipe)
+      end
+    end
+
+    def path
+      if s = starts
+        if s.respond_to? :path
+          s.path + [@value]
+        else
+          [@value]
+        end
+      else
+        [@value]
+      end
+    end
+
+    def next
+      @value = super
+    end
+  end
+
+  class AbstractPipe
+    include PipePathModule
+  end
+
   class BlockFilterPipe < AbstractPipe
+    attr_accessor :starts
+
     def configure(starts, back, block)
       @starts = starts
       @back = back
@@ -80,6 +118,8 @@ module Pacer
 
 
   class LabelsFilterPipe < AbstractPipe
+    attr_accessor :starts
+
     def set_labels(labels)
       @labels = labels.map { |label| label.to_s.to_java }
     end
@@ -189,7 +229,7 @@ module Pacer
     end
 
     def root?
-      !@source.nil?
+      !@source.nil? or @back.nil?
     end
 
     def each
@@ -230,6 +270,10 @@ module Pacer
 
     def ids
       map { |e| e.id }
+    end
+
+    def paths
+
     end
 
     def inspect
