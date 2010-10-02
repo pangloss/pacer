@@ -201,16 +201,21 @@ module Pacer
   end
 
   class EdgePath < Path
+    def initialize(*args)
+      @pipe_class = VertexEdgePipe
+      super
+    end
+
     def out_v(*filters, &block)
-      VertexPath.new(self, filters, block, VertexEdgePipe.Step.OUT_VERTEX)
+      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::OUT_VERTEX)
     end
 
     def in_v(*filters, &block)
-      VertexPath.new(self, filters, block, VertexEdgePipe.Step.IN_VERTEX)
+      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::IN_VERTEX)
     end
 
     def both_v(*filters, &block)
-      VertexPath.new(self, filters, block, VertexEdgePipe.Step.BOTH_VERTEX)
+      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::BOTH_VERTICES)
     end
 
     def virtices(*filters)
@@ -243,16 +248,21 @@ module Pacer
   end
 
   class VertexPath < Path
+    def initialize(*args)
+      @pipe_class = EdgeVertexPipe
+      super
+    end
+
     def out_e(*filters, &block)
-      EdgePath.new(self, filters, block, EdgeVertexPipe.Step.OUT_EDGES)
+      EdgePath.new(self, filters, block, VertexEdgePipe::Step::OUT_EDGES)
     end
 
     def in_e(*filters, &block)
-      EdgePath.new(self, filters, block, EdgeVertexPipe.Step.IN_EDGES)
+      EdgePath.new(self, filters, block, VertexEdgePipe::Step::IN_EDGES)
     end
 
     def both_e(*filters, &block)
-      EdgePath.new(self, filters, block, EdgeVertexPipe.Step.BOTH_EDGES)
+      EdgePath.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
     end
 
     def virtices(*filters, &block)
