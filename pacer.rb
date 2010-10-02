@@ -218,11 +218,11 @@ module Pacer
           element.get_property(prop_or_subset.to_s)
         end
       when Fixnum
-        self.class.new(RangeFilterPipe.new(prop_or_subset, prop_or_subset), self)
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
       when Range
         end_index = prop_or_subset.end
-        end_index -= 1 if prop_or_subset.exclude_end?
-        self.class.new(RangeFilterPipe.new(prop_or_subset.begin, end_index), self)
+        end_index += 1 unless prop_or_subset.exclude_end?
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
       when Array
       end
     end
