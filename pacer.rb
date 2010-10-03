@@ -249,6 +249,12 @@ module Pacer
       "#<#{inspect_strings.join(' -> ')}>"
     end
 
+    def ==(other)
+      other.class == self.class and
+        other.back == @back and
+        other.instance_variable_get('@source') == @source
+    end
+
     protected
 
     def back=(back)
