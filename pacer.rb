@@ -78,7 +78,7 @@ module Pacer
         path.pipe_class = nil
         @count += 1
         path.info = "temp #{ @count }"
-        path.extend SinglePath
+        path.extend SingleRoute
         ok = @block.call path
         return s if ok
       end
@@ -128,7 +128,7 @@ module Pacer
     end
   end
 
-  module SinglePath
+  module SingleRoute
     def [](name)
       map do |element|
         element.get_property(name.to_s)
@@ -148,8 +148,8 @@ module Pacer
     end
   end
 
-  module Path
-    module PathClassMethods
+  module Route
+    module RouteClassMethods
       def vertex_path(name)
       end
 
@@ -168,11 +168,11 @@ module Pacer
 
     def self.included(target)
       target.send :include, Enumerable
-      target.extend PathClassMethods
+      target.extend RouteClassMethods
     end
 
     def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
-      if back.is_a? Path
+      if back.is_a? Route
         @back = back
       else
         @source = back
@@ -314,7 +314,7 @@ module Pacer
       fs = "#{filters.inspect}" if filters.any?
       bs = '&block' if @block
 
-      s = "#{self.class.name.split('::').last}"
+      s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
       s = "#{s} #{ @info }" if @info
       if ps or fs or bs
         s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
@@ -342,9 +342,9 @@ module Pacer
     end
   end
 
-  module PathOperations
+  module RouteOperations
     def paths
-      PathsPath.new(self)
+      PathsRoute.new(self)
     end
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
@@ -383,8 +383,8 @@ module Pacer
     end
   end
 
-  class PathsPath
-    include Path
+  class PathsRoute
+    include Route
 
     def initialize(back)
       @back = back
@@ -401,16 +401,16 @@ module Pacer
     end
   end
 
-  module GraphPath
+  module GraphRoute
     def v(*filters, &block)
-      path = VertexPath.new(proc { self.get_vertices }, filters, block)
+      path = VerticesRoute.new(proc { self.get_vertices }, filters, block)
       path.pipe_class = nil
       path.graph = self
       path
     end
 
     def e(*filters, &block)
-      path = EdgePath.new(proc { self.get_edges }, filters, block)
+      path = EdgesRoute.new(proc { self.get_edges }, filters, block)
       path.pipe_class = nil
       path.graph = self
       path
@@ -431,9 +431,9 @@ module Pacer
 
 
   class Neo4jGraph
-    include Path
-    include PathOperations
-    include GraphPath
+    include Route
+    include RouteOperations
+    include GraphRoute
 
     def vertex(id)
       if v = get_vertex(id)
@@ -471,25 +471,25 @@ module Pacer
   end
 
 
-  module EdgePathModule
+  module EdgesRouteModule
     def out_v(*filters, &block)
-      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::OUT_VERTEX)
+      VerticesRoute.new(self, filters, block, EdgeVertexPipe::Step::OUT_VERTEX)
     end
 
     def in_v(*filters, &block)
-      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::IN_VERTEX)
+      VerticesRoute.new(self, filters, block, EdgeVertexPipe::Step::IN_VERTEX)
     end
 
     def both_v(*filters, &block)
-      VertexPath.new(self, filters, block, EdgeVertexPipe::Step::BOTH_VERTICES)
+      VerticesRoute.new(self, filters, block, EdgeVertexPipe::Step::BOTH_VERTICES)
     end
 
     def v(*filters)
-      raise "Can't call vertices for EdgePath."
+      raise "Can't call vertices for EdgesRoute."
     end
 
     def e(*filters, &block)
-      path = EdgePath.new(self, filters, block)
+      path = EdgesRoute.new(self, filters, block)
       path.pipe_class = nil
       path
     end
@@ -502,7 +502,7 @@ module Pacer
       edge_ids = ids
       if edge_ids.count > 1
         g = graph
-        r = EdgePath.new(proc { graph.load_edges(edge_ids) })
+        r = EdgesRoute.new(proc { graph.load_edges(edge_ids) })
         r.graph = g
         r.pipe_class = nil
         r.info = "#{ name }:#{edge_ids.count}"
@@ -536,34 +536,34 @@ module Pacer
     end
   end
 
-  module VertexPathModule
+  module VerticesRouteModule
     def out_e(*filters, &block)
-      EdgePath.new(self, filters, block, VertexEdgePipe::Step::OUT_EDGES)
+      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::OUT_EDGES)
     end
 
     def in_e(*filters, &block)
-      EdgePath.new(self, filters, block, VertexEdgePipe::Step::IN_EDGES)
+      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::IN_EDGES)
     end
 
     def both_e(*filters, &block)
-      EdgePath.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
+      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
     end
 
     def v(*filters, &block)
-      path = VertexPath.new(self, filters, block)
+      path = VerticesRoute.new(self, filters, block)
       path.pipe_class = nil
       path
     end
 
     def e(*filters, &block)
-      raise "Can't call edges for VertexPath."
+      raise "Can't call edges for VerticesRoute."
     end
 
     def result(name = nil)
       v_ids = ids
       if v_ids.count > 1
         g = graph
-        r = VertexPath.new(proc { graph.load_vertices(v_ids) })
+        r = VerticesRoute.new(proc { graph.load_vertices(v_ids) })
         r.info = "#{ name }:#{v_ids.count}"
         r.graph = g
         r.pipe_class = nil
@@ -575,7 +575,7 @@ module Pacer
 
     def to(label, to_vertices)
       case to_vertices
-      when Path
+      when Route
         raise "Must be from same graph" unless to_vertices.from_graph?(graph)
       when Enumerable, Iterator
         raise "Must be from same graph" unless to_vertices.first.from_graph?(graph)
@@ -591,10 +591,10 @@ module Pacer
     end
   end
 
-  class EdgePath
-    include Path
-    include PathOperations
-    include EdgePathModule
+  class EdgesRoute
+    include Route
+    include RouteOperations
+    include EdgesRouteModule
 
     def initialize(*args)
       @pipe_class = VertexEdgePipe
@@ -603,10 +603,10 @@ module Pacer
   end
 
 
-  class VertexPath
-    include Path
-    include PathOperations
-    include VertexPathModule
+  class VerticesRoute
+    include Route
+    include RouteOperations
+    include VerticesRouteModule
 
     def initialize(*args)
       @pipe_class = EdgeVertexPipe
@@ -675,13 +675,13 @@ module Pacer
   end
 
   class Neo4jVertex
-    include VertexPathModule
+    include VerticesRouteModule
     include ElementMixin
     include VertexMixin
   end
 
   class Neo4jEdge
-    include EdgePathModule
+    include EdgesRouteModule
     include ElementMixin
     include EdgeMixin
   end
