@@ -45,7 +45,12 @@ module Pacer
 
     def path
       if @previous
-        @previous.path + [@value]
+        prev_path = @previous.path
+        if prev_path.last == @value
+          prev_path
+        else
+          prev_path + [@value]
+        end
       else
         [@value]
       end
