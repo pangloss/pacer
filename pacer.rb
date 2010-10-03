@@ -235,41 +235,6 @@ module Pacer
       self
     end
 
-    def paths
-      PathsPath.new(self)
-    end
-
-    # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
-    def random(bias = 0.5)
-      self.class.pipe_filter(self, RandomFilterPipe, bias)
-    end
-
-    def uniq
-      self.class.pipe_filter(self, DuplicateFilterPipe)
-    end
-
-    def [](prop_or_subset)
-      case prop_or_subset
-      when String, Symbol
-        # could use PropertyPipe but that would mean supporting objects that I don't think
-        # would have much purpose.
-        map do |element|
-          element.get_property(prop_or_subset.to_s)
-        end
-      when Fixnum
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
-      when Range
-        end_index = prop_or_subset.end
-        end_index += 1 unless prop_or_subset.exclude_end?
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
-      when Array
-      end
-    end
-
-    def ids
-      map { |e| e.id }
-    end
-
     def inspect
       "#<#{inspect_strings.join(' -> ')}>"
     end
@@ -363,6 +328,43 @@ module Pacer
     end
   end
 
+  module PathOperations
+    def paths
+      PathsPath.new(self)
+    end
+
+    # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
+    def random(bias = 0.5)
+      self.class.pipe_filter(self, RandomFilterPipe, bias)
+    end
+
+    def uniq
+      self.class.pipe_filter(self, DuplicateFilterPipe)
+    end
+
+    def [](prop_or_subset)
+      case prop_or_subset
+      when String, Symbol
+        # could use PropertyPipe but that would mean supporting objects that I don't think
+        # would have much purpose.
+        map do |element|
+          element.get_property(prop_or_subset.to_s)
+        end
+      when Fixnum
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+      when Range
+        end_index = prop_or_subset.end
+        end_index += 1 unless prop_or_subset.exclude_end?
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
+      when Array
+      end
+    end
+
+    def ids
+      map { |e| e.id }
+    end
+  end
+
   class PathsPath
     include Path
 
@@ -408,6 +410,7 @@ module Pacer
 
   class Neo4jGraph
     include Path
+    include PathOperations
     include GraphPath
 
     def vertex(id)
@@ -546,6 +549,7 @@ module Pacer
 
   class EdgePath
     include Path
+    include PathOperations
     include EdgePathModule
 
     def initialize(*args)
@@ -557,6 +561,7 @@ module Pacer
 
   class VertexPath
     include Path
+    include PathOperations
     include VertexPathModule
 
     def initialize(*args)
