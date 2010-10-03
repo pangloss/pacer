@@ -633,13 +633,13 @@ module Pacer
 
   class Neo4jVertex
     include VertexPathModule
-    include VertexMixin
     include ElementMixin
+    include VertexMixin
   end
 
   class Neo4jEdge
     include EdgePathModule
-    include EdgeMixin
     include ElementMixin
+    include EdgeMixin
   end
 end
