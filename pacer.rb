@@ -252,7 +252,11 @@ module Pacer
 
     def source(path_iterator = false)
       if @source
-        iterator_from_source(@source)
+        if path_iterator
+          PathIteratorWrapper.new(iterator_from_source(@source))
+        else
+          iterator_from_source(@source)
+        end
       else
         @back.iterator(path_iterator)
       end
