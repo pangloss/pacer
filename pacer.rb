@@ -436,15 +436,30 @@ module Pacer
     include GraphPath
 
     def vertex(id)
-      v = get_vertex(id)
-      v.graph = self
-      v
+      if v = get_vertex(id)
+        v.graph = self
+        v
+      end
     end
 
     def edge(id)
-      e = get_edge(id)
-      e.graph = self
-      e
+      if e = get_edge(id)
+        e.graph = self
+        e
+      end
+    end
+
+    def load_vertices(ids)
+      ids.map do |id|
+        vertex id rescue nil
+      end.compact
+    end
+
+    def load_edges(ids)
+      ids.map do |id|
+        edge id rescue nil
+      end.compact
+    end
     end
   end
 
@@ -480,7 +495,7 @@ module Pacer
       edge_ids = ids
       if edge_ids.count > 1
         g = graph
-        r = EdgePath.new(proc { edge_ids.map { |id| graph.edge id } })
+        r = EdgePath.new(proc { graph.load_edges(edge_ids) })
         r.graph = g
         r.pipe_class = nil
         r.info = "#{ name }:#{edge_ids.count}"
@@ -541,7 +556,7 @@ module Pacer
       v_ids = ids
       if v_ids.count > 1
         g = graph
-        r = VertexPath.new(proc { v_ids.map { |id| graph.vertex id } })
+        r = VertexPath.new(proc { graph.load_vertices(v_ids) })
         r.info = "#{ name }:#{v_ids.count}"
         r.graph = g
         r.pipe_class = nil
