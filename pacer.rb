@@ -35,40 +35,25 @@ module Pacer
     graph
   end
 
-  class PipePathWrapper
-    def initialize(pipe)
-      @pipe = pipe
-    end
+  class PathIteratorWrapper
+    attr_reader :pipe, :previous, :value
 
-    def starts
-      if @pipe.respond_to? :starts
-        @pipe.starts
-      else
-        starts = AbstractPipe.java_class.declared_field :starts
-        starts.accessible = true
-        starts.value Java.ruby_to_java(@pipe)
-      end
+    def initialize(pipe, previous = nil)
+      @pipe = pipe
+      @previous = previous if previous.class == self.class
     end
 
     def path
-      if s = starts
-        if s.respond_to? :path
-          s.path + [@value]
-        else
-          [@value]
-        end
+      if @previous
+        @previous.path + [@value]
       else
         [@value]
       end
     end
 
     def next
-      @value = super
+      @value = @pipe.next
     end
-  end
-
-  class AbstractPipe
-    include PipePathModule
   end
 
   class BlockFilterPipe < AbstractPipe
@@ -241,6 +226,15 @@ module Pacer
       self
     end
 
+    def paths
+      iter = iterator(true)
+      while item = iter.next
+        yield iter.path
+      end
+    rescue NoSuchElementException
+      self
+    end
+
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
       self.class.pipe_filter(self, RandomFilterPipe, bias)
@@ -272,10 +266,6 @@ module Pacer
       map { |e| e.id }
     end
 
-    def paths
-
-    end
-
     def inspect
       "#<#{inspect_strings.join(' -> ')}>"
     end
@@ -286,35 +276,41 @@ module Pacer
       @back = back
     end
 
-    def source
+    def source(path_iterator = false)
       if @source
         iterator_from_source(@source)
       else
-        @back.iterator
+        @back.iterator(path_iterator)
       end
     end
 
-    def iterator_from_source(source)
-      if source.is_a? Proc
-        iterator_from_source(source.call)
-      elsif source.is_a? Iterator
-        source
-      elsif source
+    def iterator_from_source(src)
+      if src.is_a? Proc
+        iterator_from_source(src.call)
+      elsif src.is_a? Iterator
+        src
+      elsif src
         pipe = EnumerablePipe.new
-        pipe.set_enumerable source
+        pipe.set_enumerable src
         pipe
       end
     end
 
-    def iterator
+    def iterator(path_iterator = false)
       pipe = nil
+      prev_path_iterator = nil
       if @pipe_class
+        prev_path_iterator = prev_pipe = source(path_iterator)
         pipe = @pipe_class.new(*@pipe_args)
-        pipe.set_starts source
+        pipe.set_starts prev_pipe
       else
-        pipe = source
+        prev_path_iterator = pipe = source(path_iterator)
       end
-      filter_pipe(pipe, filters, @block)
+      pipe = filter_pipe(pipe, filters, @block)
+      if path_iterator
+        pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
+      end
+      pipe
     end
 
     def inspect_strings
