@@ -460,6 +460,13 @@ module Pacer
         edge id rescue nil
       end.compact
     end
+
+    def vertex_name
+      @vnp
+    end
+
+    def vertex_name=(name_proc)
+      @vnp = name_proc
     end
   end
 
@@ -610,7 +617,11 @@ module Pacer
 
   module VertexMixin
     def inspect
-      "#<V[#{name}] #{ properties.inspect }>"
+      "#<#{ ["V[#{id}]", name].compact.join(' ') }>"
+    end
+
+    def name
+      graph.vertex_name.call self if graph and graph.vertex_name
     end
 
     def delete!
@@ -620,7 +631,7 @@ module Pacer
 
   module EdgeMixin
     def inspect
-      "#<E[#{id}]:#{ out_vertex.name }-#{ get_label }-#{ in_vertex.name }>"
+      "#<E[#{id}]:#{ out_vertex.id }-#{ get_label }-#{ in_vertex.id }>"
     end
 
     def delete!
