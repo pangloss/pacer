@@ -224,7 +224,9 @@ module Pacer
 
     def each
       iter = iterator
+      g = graph
       while item = iter.next
+        item.graph = g
         yield item
       end
     rescue NoSuchElementException
@@ -233,8 +235,11 @@ module Pacer
 
     def each_path
       iter = iterator(true)
+      g = graph
       while item = iter.next
-        yield iter.path
+        path = iter.path
+        path.each { |item| item.graph = g }
+        yield path
       end
     rescue NoSuchElementException
       self
