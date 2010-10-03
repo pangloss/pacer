@@ -35,7 +35,35 @@ module Pacer
     graph
   end
 
+  class PathIteratorWrapper
+    attr_reader :pipe, :previous, :value
+
+    def initialize(pipe, previous = nil)
+      @pipe = pipe
+      @previous = previous if previous.class == self.class
+    end
+
+    def path
+      if @previous
+        prev_path = @previous.path
+        if prev_path.last == @value
+          prev_path
+        else
+          prev_path + [@value]
+        end
+      else
+        [@value]
+      end
+    end
+
+    def next
+      @value = @pipe.next
+    end
+  end
+
   class BlockFilterPipe < AbstractPipe
+    attr_accessor :starts
+
     def configure(starts, back, block)
       @starts = starts
       @back = back
@@ -80,6 +108,8 @@ module Pacer
 
 
   class LabelsFilterPipe < AbstractPipe
+    attr_accessor :starts
+
     def set_labels(labels)
       @labels = labels.map { |label| label.to_s.to_java }
     end
@@ -189,7 +219,7 @@ module Pacer
     end
 
     def root?
-      !@source.nil?
+      !@source.nil? or @back.nil?
     end
 
     def each
@@ -201,35 +231,13 @@ module Pacer
       self
     end
 
-    # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
-    def random(bias = 0.5)
-      self.class.pipe_filter(self, RandomFilterPipe, bias)
-    end
-
-    def uniq
-      self.class.pipe_filter(self, DuplicateFilterPipe)
-    end
-
-    def [](prop_or_subset)
-      case prop_or_subset
-      when String, Symbol
-        # could use PropertyPipe but that would mean supporting objects that I don't think
-        # would have much purpose.
-        map do |element|
-          element.get_property(prop_or_subset.to_s)
-        end
-      when Fixnum
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
-      when Range
-        end_index = prop_or_subset.end
-        end_index += 1 unless prop_or_subset.exclude_end?
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
-      when Array
+    def each_path
+      iter = iterator(true)
+      while item = iter.next
+        yield iter.path
       end
-    end
-
-    def ids
-      map { |e| e.id }
+    rescue NoSuchElementException
+      self
     end
 
     def inspect
@@ -242,35 +250,45 @@ module Pacer
       @back = back
     end
 
-    def source
+    def source(path_iterator = false)
       if @source
-        iterator_from_source(@source)
+        if path_iterator
+          PathIteratorWrapper.new(iterator_from_source(@source))
+        else
+          iterator_from_source(@source)
+        end
       else
-        @back.iterator
+        @back.iterator(path_iterator)
       end
     end
 
-    def iterator_from_source(source)
-      if source.is_a? Proc
-        iterator_from_source(source.call)
-      elsif source.is_a? Iterator
-        source
-      elsif source
+    def iterator_from_source(src)
+      if src.is_a? Proc
+        iterator_from_source(src.call)
+      elsif src.is_a? Iterator
+        src
+      elsif src
         pipe = EnumerablePipe.new
-        pipe.set_enumerable source
+        pipe.set_enumerable src
         pipe
       end
     end
 
-    def iterator
+    def iterator(path_iterator = false)
       pipe = nil
+      prev_path_iterator = nil
       if @pipe_class
+        prev_path_iterator = prev_pipe = source(path_iterator)
         pipe = @pipe_class.new(*@pipe_args)
-        pipe.set_starts source
+        pipe.set_starts prev_pipe
       else
-        pipe = source
+        prev_path_iterator = pipe = source(path_iterator)
       end
-      filter_pipe(pipe, filters, @block)
+      pipe = filter_pipe(pipe, filters, @block)
+      if path_iterator
+        pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
+      end
+      pipe
     end
 
     def inspect_strings
@@ -319,6 +337,61 @@ module Pacer
     end
   end
 
+  module PathOperations
+    def paths
+      PathsPath.new(self)
+    end
+
+    # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
+    def random(bias = 0.5)
+      self.class.pipe_filter(self, RandomFilterPipe, bias)
+    end
+
+    def uniq
+      self.class.pipe_filter(self, DuplicateFilterPipe)
+    end
+
+    def [](prop_or_subset)
+      case prop_or_subset
+      when String, Symbol
+        # could use PropertyPipe but that would mean supporting objects that I don't think
+        # would have much purpose.
+        map do |element|
+          element.get_property(prop_or_subset.to_s)
+        end
+      when Fixnum
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+      when Range
+        end_index = prop_or_subset.end
+        end_index += 1 unless prop_or_subset.exclude_end?
+        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
+      when Array
+      end
+    end
+
+    def ids
+      map { |e| e.id }
+    end
+  end
+
+  class PathsPath
+    include Path
+
+    def initialize(back)
+      @back = back
+    end
+
+    alias each each_path
+
+    def root?
+      false
+    end
+
+    def transpose
+      to_a.transpose
+    end
+  end
+
   module GraphPath
     def v(*filters, &block)
       path = VertexPath.new(proc { self.get_vertices }, filters, block)
@@ -350,6 +423,7 @@ module Pacer
 
   class Neo4jGraph
     include Path
+    include PathOperations
     include GraphPath
 
     def vertex(id)
@@ -488,6 +562,7 @@ module Pacer
 
   class EdgePath
     include Path
+    include PathOperations
     include EdgePathModule
 
     def initialize(*args)
@@ -499,6 +574,7 @@ module Pacer
 
   class VertexPath
     include Path
+    include PathOperations
     include VertexPathModule
 
     def initialize(*args)
@@ -557,13 +633,13 @@ module Pacer
 
   class Neo4jVertex
     include VertexPathModule
-    include VertexMixin
     include ElementMixin
+    include VertexMixin
   end
 
   class Neo4jEdge
     include EdgePathModule
-    include EdgeMixin
     include ElementMixin
+    include EdgeMixin
   end
 end
