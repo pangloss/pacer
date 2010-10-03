@@ -376,6 +376,10 @@ module Pacer
       path
     end
 
+    def [](id)
+      get_vertex id
+    end
+
     def result
       self
     end
