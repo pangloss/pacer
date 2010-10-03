@@ -20,49 +20,7 @@ module Pacer
 
 
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
-  import com.tinkerpop.blueprints.pgm.Vertex
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
-  import com.tinkerpop.blueprints.pgm.Edge
-
-  class Neo4jVertex
-    def from_graph?(graph)
-      graph.raw_graph == raw_vertex.graph_database
-    end
-
-    def inspect
-      "#<V[#{name}] #{ properties.inspect }>"
-    end
-
-    def properties
-      property_keys.inject({}) { |h, k| h[k] = get_property(k); h }
-    end
-
-    def name
-      id
-    end
-  end
-
-  module Vertex
-    def [](key)
-      get_property(key)
-    end
-  end
-
-  class Neo4jEdge
-    def inspect
-      "#<E[#{id}]:#{ out_vertex.name }-#{ get_label }-#{ in_vertex.name }>"
-    end
-
-    def properties
-      property_keys.inject({}) { |h, k| h[k] = get_property(k); h }
-    end
-  end
-
-  module Edge
-    def [](key)
-      get_property(key)
-    end
-  end
 
 
   def self.neo4j(path)
@@ -219,7 +177,7 @@ module Pacer
     end
 
     def graph
-      @graph ||= @back.graph
+      @graph ||= (@back || @source).graph
     end
 
     def pipe_class=(klass)
@@ -377,7 +335,7 @@ module Pacer
     end
 
     def [](id)
-      get_vertex id
+      vertex id
     end
 
     def result
@@ -389,19 +347,26 @@ module Pacer
     end
   end
 
+
   class Neo4jGraph
     include Path
     include GraphPath
-  end
 
-  class EdgePath
-    include Path
-
-    def initialize(*args)
-      @pipe_class = VertexEdgePipe
-      initialize_path(*args)
+    def vertex(id)
+      v = get_vertex(id)
+      v.graph = self
+      v
     end
 
+    def edge(id)
+      e = get_edge(id)
+      e.graph = self
+      e
+    end
+  end
+
+
+  module EdgePathModule
     def out_v(*filters, &block)
       VertexPath.new(self, filters, block, EdgeVertexPipe::Step::OUT_VERTEX)
     end
@@ -430,12 +395,16 @@ module Pacer
 
     def result(name = nil)
       edge_ids = ids
-      g = graph
-      r = EdgePath.new(proc { edge_ids.map { |id| graph.get_edge id } })
-      r.graph = g
-      r.pipe_class = nil
-      r.info = "#{ name }:#{edge_ids.count}"
-      r
+      if edge_ids.count > 1
+        g = graph
+        r = EdgePath.new(proc { edge_ids.map { |id| graph.edge id } })
+        r.graph = g
+        r.pipe_class = nil
+        r.info = "#{ name }:#{edge_ids.count}"
+        r
+      else
+        graph.edge ids.first
+      end
     end
 
     def to_h
@@ -462,14 +431,7 @@ module Pacer
     end
   end
 
-  class VertexPath
-    include Path
-
-    def initialize(*args)
-      @pipe_class = EdgeVertexPipe
-      initialize_path(*args)
-    end
-
+  module VertexPathModule
     def out_e(*filters, &block)
       EdgePath.new(self, filters, block, VertexEdgePipe::Step::OUT_EDGES)
     end
@@ -494,12 +456,16 @@ module Pacer
 
     def result(name = nil)
       v_ids = ids
-      g = graph
-      r = VertexPath.new(proc { v_ids.map { |id| graph.get_vertex id } })
-      r.info = "#{ name }:#{v_ids.count}"
-      r.graph = g
-      r.pipe_class = nil
-      r
+      if v_ids.count > 1
+        g = graph
+        r = VertexPath.new(proc { v_ids.map { |id| graph.vertex id } })
+        r.info = "#{ name }:#{v_ids.count}"
+        r.graph = g
+        r.pipe_class = nil
+        r
+      else
+        graph.vertex v_ids.first
+      end
     end
 
     def to(label, to_vertices)
@@ -518,5 +484,86 @@ module Pacer
         end
       end
     end
+  end
+
+  class EdgePath
+    include Path
+    include EdgePathModule
+
+    def initialize(*args)
+      @pipe_class = VertexEdgePipe
+      initialize_path(*args)
+    end
+  end
+
+
+  class VertexPath
+    include Path
+    include VertexPathModule
+
+    def initialize(*args)
+      @pipe_class = EdgeVertexPipe
+      initialize_path(*args)
+    end
+  end
+
+
+  module VertexMixin
+    def inspect
+      "#<V[#{name}] #{ properties.inspect }>"
+    end
+  end
+
+  module EdgeMixin
+    def inspect
+      "#<E[#{id}]:#{ out_vertex.name }-#{ get_label }-#{ in_vertex.name }>"
+    end
+  end
+
+  module ElementMixin
+    def graph=(graph)
+      @graph = graph
+    end
+
+    def graph
+      @graph
+    end
+
+    def [](key)
+      get_property(key.to_s)
+    end
+
+    def result(name = nil)
+      self
+    end
+
+    def from_graph?(graph)
+      if @graph
+        @graph == graph
+      elsif graph.raw_graph == raw_vertex.graph_database
+        @graph = graph
+        true
+      end
+    end
+
+    def properties
+      property_keys.inject({}) { |h, k| h[k] = get_property(k); h }
+    end
+
+    def name
+      id
+    end
+  end
+
+  class Neo4jVertex
+    include VertexPathModule
+    include VertexMixin
+    include ElementMixin
+  end
+
+  class Neo4jEdge
+    include EdgePathModule
+    include EdgeMixin
+    include ElementMixin
   end
 end
