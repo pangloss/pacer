@@ -372,6 +372,10 @@ module Pacer
     def ids
       map { |e| e.id }
     end
+
+    def delete!
+      map { |e| e.delete! }
+    end
   end
 
   class PathsPath
@@ -588,11 +592,19 @@ module Pacer
     def inspect
       "#<V[#{name}] #{ properties.inspect }>"
     end
+
+    def delete!
+      graph.remove_vertex self
+    end
   end
 
   module EdgeMixin
     def inspect
       "#<E[#{id}]:#{ out_vertex.name }-#{ get_label }-#{ in_vertex.name }>"
+    end
+
+    def delete!
+      graph.remove_edge self
     end
   end
 
