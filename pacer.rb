@@ -209,14 +209,6 @@ module Pacer
       @pipe_class = klass
     end
 
-    def path_iterator=(bool)
-      @path_iterator = bool
-    end
-
-    def path_iterator
-      @path_iterator
-    end
-
     def from_graph?(g)
       graph == g
     end
@@ -226,13 +218,9 @@ module Pacer
     end
 
     def each
-      if path_iterator
-        each_path { |path| yield path }
-      else
-        iter = iterator
-        while item = iter.next
-          yield item
-        end
+      iter = iterator
+      while item = iter.next
+        yield item
       end
     rescue NoSuchElementException
       self
@@ -247,11 +235,8 @@ module Pacer
       self
     end
 
-    def paths(*filters, &block)
-      path = self.class.new(self, filters, block)
-      path.pipe_class = nil
-      path.path_iterator = true
-      path
+    def paths
+      PathsPath.new(self)
     end
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
@@ -375,6 +360,20 @@ module Pacer
         pipe = new_pipe
       end
       pipe
+    end
+  end
+
+  class PathsPath
+    include Path
+
+    def initialize(back)
+      @back = back
+    end
+
+    alias each each_path
+
+    def root?
+      false
     end
   end
 
