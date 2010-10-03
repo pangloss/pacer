@@ -382,6 +382,10 @@ module Pacer
     def root?
       false
     end
+
+    def transpose
+      to_a.transpose
+    end
   end
 
   module GraphPath
