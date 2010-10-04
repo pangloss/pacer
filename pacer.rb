@@ -312,7 +312,8 @@ module Pacer
           template = (template_part * row.count).join(', ') if row.count < cols
           puts template % row
         end
-        results.length.to_s
+        puts "Total: #{ results.length.to_s }"
+        "#<#{inspect_strings.join(' -> ')}>"
       end
     end
 
