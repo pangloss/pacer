@@ -239,6 +239,11 @@ module Pacer
       !@source.nil? or @back.nil?
     end
 
+    def route
+      @inspect_route = true
+      self
+    end
+
     def vars
       if @back
         @back.vars
@@ -289,7 +294,26 @@ module Pacer
     end
 
     def inspect
-      "#<#{inspect_strings.join(' -> ')}>"
+      if inspect_route
+        "#<#{inspect_strings.join(' -> ')}>"
+      else
+        count = 0
+        results = map do |v|
+          count += 1
+          return route.inspect if count > 1000
+          v.inspect
+        end
+        lens = results.map { |r| r.length }
+        max = lens.max
+        cols = (graph.columns ||= 120) / max
+        template_part = ["%-#{max}s"]
+        template = (template_part * cols).join(', ')
+        results.each_slice(cols) do |row|
+          template = (template_part * row.count).join(', ') if row.count < cols
+          puts template % row
+        end
+        results.length.to_s
+      end
     end
 
     def ==(other)
@@ -345,6 +369,10 @@ module Pacer
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
       end
       pipe
+    end
+
+    def inspect_route
+      @inspect_route
     end
 
     def inspect_strings
@@ -557,6 +585,8 @@ module Pacer
     include RouteOperations
     include GraphRoute
 
+    attr_accessor :vertex_name, :columns
+
     def vertex(id)
       if v = get_vertex(id)
         v.graph = self
@@ -583,12 +613,10 @@ module Pacer
       end.compact
     end
 
-    def vertex_name
-      @vnp
-    end
+    protected
 
-    def vertex_name=(name_proc)
-      @vnp = name_proc
+    def inspect_route
+      true
     end
   end
 
