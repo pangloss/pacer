@@ -387,9 +387,10 @@ module Pacer
         idx += 1
         branch_end.iterator(is_path_iterator)
       end
-      pipe = RobinMergePipe.new(pipes)
+      pipe = RobinMergePipe.new
+      pipe.set_starts(pipes)
       if is_path_iterator
-        pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
+        pipe = PathIteratorWrapper.new(pipe, pipe)
       end
       pipe
     end
@@ -525,7 +526,7 @@ module Pacer
       elsif edges_route?
         branch_start = EdgesIdentityRoute.new(self)
       end
-      @branches << [branch_start, yield(branch_start)]
+      @branches << [branch_start, yield(branch_start.route).route]
       self
     end
 
@@ -875,8 +876,9 @@ module Pacer
       raise "#new_identity_pipe must be called before #iterator" unless pipe
       pipe = yield pipe if block_given?
       if is_path_iterator
-        pipe = PathIteratorWrapper.new(pipe, )
+        pipe = PathIteratorWrapper.new(pipe, pipe)
       end
+      pipe
     end
   end
 
