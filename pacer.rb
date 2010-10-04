@@ -175,8 +175,8 @@ module Pacer
       def path(name)
       end
 
-      def pipe_filter(back, pipe_class, *args)
-        f = new(back, nil, nil, *args)
+      def pipe_filter(back, pipe_class, *args, &block)
+        f = new(back, nil, block, *args)
         f.pipe_class = pipe_class
         f
       end
@@ -243,6 +243,24 @@ module Pacer
         @back.vars
       else
         @vars
+      end
+    end
+
+    def except(path)
+      if path.is_a? Symbol
+        route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
+      else
+        path = [path] unless path.is_a? Enumerable
+        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::EQUAL)
+      end
+    end
+
+    def only(path)
+      if path.is_a? Symbol
+        route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
+      else
+        path = [path] unless path.is_a? Enumerable
+        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::NOT_EQUAL)
       end
     end
 
@@ -450,7 +468,7 @@ module Pacer
     def route_class
       route = self
       route = route.back until route.has_routable_class?
-      route.route_class
+      route.class
     end
   end
 
@@ -501,22 +519,6 @@ module Pacer
     def has_routable_class?
       false
     end
-  end
-
-
-  class VertexVariableRoute
-    include Route
-    include RouteOperations
-    include VerticesRouteModule
-    include VariableRouteModule
-  end
-
-
-  class EdgeVariableRoute
-    include Route
-    include RouteOperations
-    include EdgesRouteModule
-    include VariableRouteModule
   end
 
 
@@ -732,6 +734,22 @@ module Pacer
       initialize_path(*args)
     end
   end
+
+  class VertexVariableRoute
+    include Route
+    include RouteOperations
+    include VerticesRouteModule
+    include VariableRouteModule
+  end
+
+
+  class EdgeVariableRoute
+    include Route
+    include RouteOperations
+    include EdgesRouteModule
+    include VariableRouteModule
+  end
+
 
 
   module VertexMixin
