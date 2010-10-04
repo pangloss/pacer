@@ -306,10 +306,10 @@ module Pacer
         end
         if count > 0
           lens = results.map { |r| r.length }
-          max = lens.max
+          max = lens.max + 1
           cols = graph.columns / max
           template_part = ["%-#{max}s"]
-          template = (template_part * cols).join(', ')
+          template = (template_part * cols).join(' ')
           results.each_slice(cols) do |row|
             template = (template_part * row.count).join(', ') if row.count < cols
             puts template % row
@@ -535,6 +535,7 @@ module Pacer
     def initialize(back, variable_name)
       @back = back
       @variable_name = variable_name
+      @info = variable_name.inspect
     end
 
     def root?
