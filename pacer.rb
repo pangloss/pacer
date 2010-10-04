@@ -388,8 +388,10 @@ module Pacer
         pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
         if ps =~ /FilterPipe$/
           ps = ps.split('::').last.sub(/FilterPipe/, '')
-          pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
-          ps = "#{ps}(#{pipeargs})"
+          if @pipe_args.any?
+            pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
+            ps = "#{ps}(#{pipeargs})"
+          end
         else
           ps = @pipe_args
         end
@@ -397,13 +399,18 @@ module Pacer
       fs = "#{filters.inspect}" if filters.any?
       bs = '&block' if @block
 
-      s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
-      s = "#{s} #{ @info }" if @info
+      s = inspect_class_name
       if ps or fs or bs
         s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
       end
       ins << s
       ins
+    end
+
+    def inspect_class_name
+      s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
+      s = "#{s} #{ @info }" if @info
+      s
     end
 
     def filter_pipe(pipe, args_array, block)
@@ -535,7 +542,6 @@ module Pacer
     def initialize(back, variable_name)
       @back = back
       @variable_name = variable_name
-      @info = variable_name.inspect
     end
 
     def root?
@@ -552,6 +558,10 @@ module Pacer
 
     def has_routable_class?
       false
+    end
+
+    def inspect_class_name
+      @variable_name.inspect
     end
   end
 
