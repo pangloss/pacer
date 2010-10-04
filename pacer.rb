@@ -492,14 +492,22 @@ module Pacer
     end
 
     def as(name)
-      if self.is_a? VerticesRouteModule
+      if vertices_route?
         VertexVariableRoute.new(self, name)
-      elsif self.is_a? EdgesRouteModule
+      elsif edges_route?
         EdgeVariableRoute.new(self, name)
       end
     end
 
     protected
+
+    def vertices_route?
+      self.is_a? VerticesRouteModule
+    end
+
+    def edges_route?
+      self.is_a? EdgesRouteModule
+    end
 
     def has_routable_class?
       true
