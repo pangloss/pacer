@@ -303,16 +303,18 @@ module Pacer
           return route.inspect if count > 1000
           v.inspect
         end
-        lens = results.map { |r| r.length }
-        max = lens.max
-        cols = (graph.columns ||= 120) / max
-        template_part = ["%-#{max}s"]
-        template = (template_part * cols).join(', ')
-        results.each_slice(cols) do |row|
-          template = (template_part * row.count).join(', ') if row.count < cols
-          puts template % row
+        if count > 0
+          lens = results.map { |r| r.length }
+          max = lens.max
+          cols = graph.columns / max
+          template_part = ["%-#{max}s"]
+          template = (template_part * cols).join(', ')
+          results.each_slice(cols) do |row|
+            template = (template_part * row.count).join(', ') if row.count < cols
+            puts template % row
+          end
         end
-        puts "Total: #{ results.length.to_s }"
+        puts "Total: #{ count }"
         "#<#{inspect_strings.join(' -> ')}>"
       end
     end
