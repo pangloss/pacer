@@ -156,7 +156,11 @@ module Pacer
     end
 
     def current
-      to_a.first
+      first
+    end
+
+    def ==(element)
+      current == element or super
     end
   end
 
