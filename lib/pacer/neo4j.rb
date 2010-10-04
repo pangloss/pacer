@@ -4,7 +4,7 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
 
   def self.neo4j(path)
-    graph = Neo4jGraph.new(path)
+    graph = Neo4jGraph.new(File.expand_path(path))
     at_exit do
       begin
         graph.shutdown
