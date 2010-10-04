@@ -271,7 +271,7 @@ module Pacer
     end
 
     def each
-      iter = iterator
+      iter = iterator(false)
       g = graph
       while item = iter.next
         item.graph = g
@@ -332,15 +332,15 @@ module Pacer
       @back = back
     end
 
-    def source(path_iterator = false)
+    def source(is_path_iterator = false)
       if @source
-        if path_iterator
+        if is_path_iterator
           PathIteratorWrapper.new(iterator_from_source(@source))
         else
           iterator_from_source(@source)
         end
       else
-        @back.send(:iterator, path_iterator)
+        @back.send(:iterator, is_path_iterator)
       end
     end
 
@@ -356,20 +356,20 @@ module Pacer
       end
     end
 
-    def iterator(path_iterator = false)
+    def iterator(is_path_iterator)
       @vars = {}
       pipe = nil
       prev_path_iterator = nil
       if @pipe_class
-        prev_path_iterator = prev_pipe = source(path_iterator)
+        prev_path_iterator = prev_pipe = source(is_path_iterator)
         pipe = @pipe_class.new(*@pipe_args)
         pipe.set_starts prev_pipe
       else
-        prev_path_iterator = pipe = source(path_iterator)
+        prev_path_iterator = pipe = source(is_path_iterator)
       end
       pipe = filter_pipe(pipe, filters, @block)
       pipe = yield pipe if block_given?
-      if path_iterator
+      if is_path_iterator
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
       end
       pipe
