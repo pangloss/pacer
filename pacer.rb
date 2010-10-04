@@ -77,6 +77,51 @@ module Pacer
     end
   end
 
+  # couldn't seem to use the constructor when inheriting from AbstractPipe...
+  class AbstractPacerPipe
+    include Iterator
+
+    def set_starts(starts)
+      @starts = starts
+    end
+
+    def next
+      if @next
+        n = @next
+        @next = nil
+        n
+      else
+        processNextStart
+      end
+    end
+
+    def hasNext()
+      @next ||= processNextStart
+      !!next
+    end
+
+    def iterator
+      self
+    end
+
+    def processNextStart()
+      raise NoSuchElementException.new
+    end
+  end
+
+  class TypeFilterPipe < AbstractPacerPipe
+    def initialize(type)
+      @type = type
+    end
+
+    def processNextStart()
+      while s = @starts.next
+        return s if s.is_a? @type
+      end
+      raise NoSuchElementException.new
+    end
+  end
+
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
@@ -335,7 +380,7 @@ module Pacer
       @back = back
     end
 
-    def source(is_path_iterator = false)
+    def source(is_path_iterator)
       if @source
         if is_path_iterator
           PathIteratorWrapper.new(iterator_from_source(@source))
@@ -374,23 +419,6 @@ module Pacer
       pipe = yield pipe if block_given?
       if is_path_iterator
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
-      end
-      add_branches_to_pipe(pipe, is_path_iterator) if @branches
-      pipe
-    end
-
-    def add_branches_to_pipe(pipe, is_path_iterator)
-      split_pipe = CopySplitPipe.new @branches.count
-      idx = 0
-      pipes = @branches.map do |branch_start, branch_end|
-        branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
-        idx += 1
-        branch_end.iterator(is_path_iterator)
-      end
-      pipe = RobinMergePipe.new
-      pipe.set_starts(pipes)
-      if is_path_iterator
-        pipe = PathIteratorWrapper.new(pipe, pipe)
       end
       pipe
     end
@@ -519,15 +547,8 @@ module Pacer
       end
     end
 
-    def branch
-      @branches ||= []
-      if vertices_route?
-        branch_start = VerticesIdentityRoute.new(self)
-      elsif edges_route?
-        branch_start = EdgesIdentityRoute.new(self)
-      end
-      @branches << [branch_start, yield(branch_start.route).route]
-      self
+    def branch(&block)
+      BranchedRoute.new(self, vertices_route?, block)
     end
 
     protected
@@ -574,6 +595,89 @@ module Pacer
     def has_routable_class?
       false
     end
+  end
+
+  class BranchedRoute
+    include Route
+
+    def initialize(back, is_vertex, block)
+      @back = back
+      @branches = []
+      @is_vertex = is_vertex
+      branch &block
+    end
+
+    def branch(&block)
+      if @is_vertex
+        branch_start = VerticesIdentityRoute.new(self)
+      else
+        branch_start = EdgesIdentityRoute.new(self)
+      end
+      @branches << [branch_start, yield(branch_start.route).route]
+      self
+    end
+
+    def root?
+      false
+    end
+
+    def v
+      VerticesRoute.pipe_filter(self, TypeFilterPipe, VertexMixin)
+    end
+
+    def e
+      EdgesRoute.pipe_filter(self, TypeFilterPipe, EdgeMixin)
+    end
+
+    def out_e(*args, &block)
+      v.out_e(*args, &block)
+    end
+
+    def in_e(*args, &block)
+      v.in_e(*args, &block)
+    end
+
+    def both_e(*args, &block)
+      v.both_e(*args, &block)
+    end
+
+    def out_v(*args, &block)
+      e.out_v(*args, &block)
+    end
+
+    def in_v(*args, &block)
+      e.in_v(*args, &block)
+    end
+
+    def both_v(*args, &block)
+      e.both_v(*args, &block)
+    end
+
+    protected
+
+    def iterator(is_path_iterator)
+      pipe = source(is_path_iterator)
+      add_branches_to_pipe(pipe, is_path_iterator)
+    end
+
+    def add_branches_to_pipe(pipe, is_path_iterator)
+      pp @branches
+      split_pipe = CopySplitPipe.new @branches.count
+      split_pipe.set_starts pipe
+      idx = 0
+      pipes = @branches.map do |branch_start, branch_end|
+        branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
+        idx += 1
+        branch_end.iterator(is_path_iterator)
+      end
+      pipe = RobinMergePipe.new
+      pipe.set_starts(pipes)
+      if is_path_iterator
+        pipe = PathIteratorWrapper.new(pipe, pipe)
+      end
+      pipe
+    end
+
   end
 
 
