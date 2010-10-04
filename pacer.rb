@@ -84,6 +84,11 @@ module Pacer
       @type = type
     end
 
+    def set_starts(starts)
+      @starts = starts
+      super
+    end
+
     def processNextStart()
       while s = @starts.next
         return s if s.is_a? @type
@@ -516,7 +521,12 @@ module Pacer
     end
 
     def branch(&block)
-      BranchedRoute.new(self, vertices_route?, block)
+      br = BranchedRoute.new(self, vertices_route?, block)
+      if br.branch_count == 0
+        self
+      else
+        br
+      end
     end
 
     protected
@@ -579,12 +589,17 @@ module Pacer
 
     def branch(&block)
       if @is_vertex
-        branch_start = VerticesIdentityRoute.new(self)
+        branch_start = VerticesIdentityRoute.new(self).route
       else
-        branch_start = EdgesIdentityRoute.new(self)
+        branch_start = EdgesIdentityRoute.new(self).route
       end
-      @branches << [branch_start, yield(branch_start.route).route]
+      branch = yield(branch_start)
+      @branches << [branch_start, branch.route] if branch and branch != branch_start
       self
+    end
+
+    def branch_count
+      @branches.count
     end
 
     def root?
@@ -660,6 +675,9 @@ module Pacer
       pipe
     end
 
+    def inspect_class_name
+      "#{super} { #{ @branches.map { |s, e| e.inspect }.join(' | ') } }"
+    end
   end
 
 
@@ -966,6 +984,7 @@ module Pacer
       end
       pipe
     end
+
   end
 
 
@@ -974,6 +993,10 @@ module Pacer
     include RouteOperations
     include VerticesRouteModule
     include IdentityRouteModule
+
+    def inspect_class_name
+      "V"
+    end
   end
 
 
@@ -982,6 +1005,10 @@ module Pacer
     include RouteOperations
     include EdgesRouteModule
     include IdentityRouteModule
+
+    def inspect_class_name
+      "E"
+    end
   end
 
 
