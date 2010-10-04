@@ -4,6 +4,7 @@ require 'pp'
 
 module Pacer
   import com.tinkerpop.pipes.AbstractPipe
+  import com.tinkerpop.pipes.IdentityPipe
   import com.tinkerpop.pipes.filter.RandomFilterPipe
   import com.tinkerpop.pipes.filter.DuplicateFilterPipe
   import com.tinkerpop.pipes.filter.RangeFilterPipe
@@ -13,6 +14,8 @@ module Pacer
   import com.tinkerpop.pipes.pgm.GraphElementPipe
   import com.tinkerpop.pipes.pgm.VertexEdgePipe
   import com.tinkerpop.pipes.pgm.EdgeVertexPipe
+  import com.tinkerpop.pipes.split.CopySplitPipe
+  import com.tinkerpop.pipes.merge.RobinMergePipe
   import java.util.NoSuchElementException
 
   import com.tinkerpop.blueprints.pgm.Graph;
@@ -372,6 +375,22 @@ module Pacer
       if is_path_iterator
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
       end
+      add_branches_to_pipe(pipe, is_path_iterator) if @branches
+      pipe
+    end
+
+    def add_branches_to_pipe(pipe, is_path_iterator)
+      split_pipe = CopySplitPipe.new @branches.count
+      idx = 0
+      pipes = @branches.map do |branch_start, branch_end|
+        branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
+        idx += 1
+        branch_end.iterator(is_path_iterator)
+      end
+      pipe = RobinMergePipe.new(pipes)
+      if is_path_iterator
+        pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
+      end
       pipe
     end
 
@@ -497,6 +516,17 @@ module Pacer
       elsif edges_route?
         EdgeVariableRoute.new(self, name)
       end
+    end
+
+    def branch
+      @branches ||= []
+      if vertices_route?
+        branch_start = VerticesIdentityRoute.new(self)
+      elsif edges_route?
+        branch_start = EdgesIdentityRoute.new(self)
+      end
+      @branches << [branch_start, yield(branch_start)]
+      self
     end
 
     protected
@@ -824,6 +854,47 @@ module Pacer
     include VariableRouteModule
   end
 
+
+  module IdentityRouteModule
+    def initialize(back)
+      @back = back
+    end
+
+    def root?
+      true
+    end
+
+    def new_identity_pipe
+      @pipe = IdentityPipe.new
+    end
+
+    protected
+
+    def iterator(is_path_iterator)
+      pipe = @pipe
+      raise "#new_identity_pipe must be called before #iterator" unless pipe
+      pipe = yield pipe if block_given?
+      if is_path_iterator
+        pipe = PathIteratorWrapper.new(pipe, )
+      end
+    end
+  end
+
+
+  class VerticesIdentityRoute
+    include Route
+    include RouteOperations
+    include VerticesRouteModule
+    include IdentityRouteModule
+  end
+
+
+  class EdgesIdentityRoute
+    include Route
+    include RouteOperations
+    include EdgesRouteModule
+    include IdentityRouteModule
+  end
 
 
   module VertexMixin
