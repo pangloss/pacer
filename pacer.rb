@@ -575,37 +575,7 @@ module Pacer
     end
   end
 
-  class BranchedRoute
-    include Route
-
-    def initialize(back, is_vertex, block)
-      @back = back
-      @branches = []
-      @is_vertex = is_vertex
-      @split_pipe = CopySplitPipe
-      @merge_pipe = RobinMergePipe
-      branch &block
-    end
-
-    def branch(&block)
-      if @is_vertex
-        branch_start = VerticesIdentityRoute.new(self).route
-      else
-        branch_start = EdgesIdentityRoute.new(self).route
-      end
-      branch = yield(branch_start)
-      @branches << [branch_start, branch.route] if branch and branch != branch_start
-      self
-    end
-
-    def branch_count
-      @branches.count
-    end
-
-    def root?
-      false
-    end
-
+  module MixedElementsMixin
     def v
       VerticesRoute.pipe_filter(self, TypeFilterPipe, VertexMixin)
     end
@@ -636,6 +606,68 @@ module Pacer
 
     def both_v(*args, &block)
       e.both_v(*args, &block)
+    end
+
+    def labels
+      e.map { |e| e.get_label }
+    end
+
+    def result(name = nil)
+      ids = map do |element|
+        if element.is_a? Vertex
+          [:load_vertex, element.id]
+        else
+          [:load_edge, element.id]
+        end
+      end
+      if ids.count > 1
+        g = graph
+        loader = proc do
+          ids.map { |method, id| graph.send(method, id) }
+        end
+        r = MixedElementsRoute.new(loader)
+        r.graph = g
+        r.pipe_class = nil
+        r.info = "#{ name }:#{ids.count}"
+        r
+      else
+        method, id = ids.first
+        graph.send method, id
+      end
+    end
+
+  end
+
+  class BranchedRoute
+    include Route
+    include MixedElementsMixin
+
+    def initialize(back, is_vertex, block)
+      @back = back
+      @branches = []
+      @is_vertex = is_vertex
+      @split_pipe = CopySplitPipe
+      @merge_pipe = RobinMergePipe
+      branch &block
+    end
+
+    def branch(&block)
+      if @is_vertex
+        branch_start = VerticesIdentityRoute.new(self).route
+      else
+        branch_start = EdgesIdentityRoute.new(self).route
+      end
+      branch = yield(branch_start)
+      @branches << [branch_start, branch.route] if branch and branch != branch_start
+      self
+    end
+
+    def branch_count
+      @branches.count
+    end
+
+    def root?
+      false
     end
 
     def exhaustive
@@ -680,6 +712,12 @@ module Pacer
     end
   end
 
+  class MixedElementsRoute
+    include Route
+    include RouteOperations
+    include MixedElementsMixin
+
+  end
 
   module VariableRouteModule
     def initialize(back, variable_name)
