@@ -8,6 +8,7 @@ module Pacer
   import com.tinkerpop.pipes.filter.DuplicateFilterPipe
   import com.tinkerpop.pipes.filter.RangeFilterPipe
   import com.tinkerpop.pipes.filter.ComparisonFilterPipe
+  import com.tinkerpop.pipes.filter.CollectionFilterPipe
   import com.tinkerpop.pipes.pgm.PropertyFilterPipe
   import com.tinkerpop.pipes.pgm.GraphElementPipe
   import com.tinkerpop.pipes.pgm.VertexEdgePipe
@@ -251,7 +252,7 @@ module Pacer
         route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
       else
         path = [path] unless path.is_a? Enumerable
-        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::EQUAL)
+        route_class.pipe_filter(self, CollectionFilterPipe, path.to_a, ComparisonFilterPipe::Filter::EQUAL)
       end
     end
 
@@ -260,7 +261,7 @@ module Pacer
         route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
       else
         path = [path] unless path.is_a? Enumerable
-        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::NOT_EQUAL)
+        route_class.pipe_filter(self, CollectionFilterPipe, path.to_a, ComparisonFilterPipe::Filter::NOT_EQUAL)
       end
     end
 
