@@ -4,6 +4,7 @@ require 'pp'
 
 module Pacer
   import com.tinkerpop.pipes.AbstractPipe
+  import com.tinkerpop.pipes.IdentityPipe
   import com.tinkerpop.pipes.filter.RandomFilterPipe
   import com.tinkerpop.pipes.filter.DuplicateFilterPipe
   import com.tinkerpop.pipes.filter.RangeFilterPipe
@@ -13,6 +14,9 @@ module Pacer
   import com.tinkerpop.pipes.pgm.GraphElementPipe
   import com.tinkerpop.pipes.pgm.VertexEdgePipe
   import com.tinkerpop.pipes.pgm.EdgeVertexPipe
+  import com.tinkerpop.pipes.split.CopySplitPipe
+  import com.tinkerpop.pipes.merge.RobinMergePipe
+  import com.tinkerpop.pipes.merge.ExhaustiveMergePipe
   import java.util.NoSuchElementException
 
   import com.tinkerpop.blueprints.pgm.Graph;
@@ -36,6 +40,7 @@ module Pacer
     graph
   end
 
+  # TODO: move this functionality right into AbstractPipe
   class PathIteratorWrapper
     attr_reader :pipe, :previous, :value
 
@@ -74,10 +79,30 @@ module Pacer
     end
   end
 
+  class TypeFilterPipe < AbstractPipe
+    def initialize(type)
+      super()
+      @type = type
+    end
+
+    def set_starts(starts)
+      @starts = starts
+      super
+    end
+
+    def processNextStart()
+      while s = @starts.next
+        return s if s.is_a? @type
+      end
+      raise NoSuchElementException.new
+    end
+  end
+
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
-    def configure(starts, back, block)
+    def initialize(starts, back, block)
+      super()
       @starts = starts
       @back = back
       @block = block
@@ -101,7 +126,8 @@ module Pacer
 
 
   class EnumerablePipe < AbstractPipe
-    def set_enumerable(enumerable)
+    def initialize(enumerable)
+      super()
       case enumerable
       when Enumerable::Enumerator
         @enumerable = enumerable
@@ -271,7 +297,7 @@ module Pacer
     end
 
     def each
-      iter = iterator
+      iter = iterator(false)
       g = graph
       while item = iter.next
         item.graph = g
@@ -332,15 +358,15 @@ module Pacer
       @back = back
     end
 
-    def source(path_iterator = false)
+    def source(is_path_iterator)
       if @source
-        if path_iterator
+        if is_path_iterator
           PathIteratorWrapper.new(iterator_from_source(@source))
         else
           iterator_from_source(@source)
         end
       else
-        @back.send(:iterator, path_iterator)
+        @back.send(:iterator, is_path_iterator)
       end
     end
 
@@ -350,26 +376,24 @@ module Pacer
       elsif src.is_a? Iterator
         src
       elsif src
-        pipe = EnumerablePipe.new
-        pipe.set_enumerable src
-        pipe
+        EnumerablePipe.new src
       end
     end
 
-    def iterator(path_iterator = false)
+    def iterator(is_path_iterator)
       @vars = {}
       pipe = nil
       prev_path_iterator = nil
       if @pipe_class
-        prev_path_iterator = prev_pipe = source(path_iterator)
+        prev_path_iterator = prev_pipe = source(is_path_iterator)
         pipe = @pipe_class.new(*@pipe_args)
         pipe.set_starts prev_pipe
       else
-        prev_path_iterator = pipe = source(path_iterator)
+        prev_path_iterator = pipe = source(is_path_iterator)
       end
       pipe = filter_pipe(pipe, filters, @block)
       pipe = yield pipe if block_given?
-      if path_iterator
+      if is_path_iterator
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
       end
       pipe
@@ -424,9 +448,7 @@ module Pacer
         end
       end
       if block
-        new_pipe = BlockFilterPipe.new
-        new_pipe.configure(pipe, self, block)
-        pipe = new_pipe
+        pipe = BlockFilterPipe.new(pipe, self, block)
       end
       pipe
     end
@@ -492,11 +514,32 @@ module Pacer
     end
 
     def as(name)
-      if self.is_a? VerticesRouteModule
+      if vertices_route?
         VertexVariableRoute.new(self, name)
-      elsif self.is_a? EdgesRouteModule
+      elsif edges_route?
         EdgeVariableRoute.new(self, name)
       end
+    end
+
+    def branch(&block)
+      br = BranchedRoute.new(self, block)
+      if br.branch_count == 0
+        self
+      else
+        br
+      end
+    end
+
+    def mixed_route?
+      self.is_a? MixedRouteModule
+    end
+
+    def vertices_route?
+      self.is_a? VerticesRouteModule
+    end
+
+    def edges_route?
+      self.is_a? EdgesRouteModule
     end
 
     protected
@@ -537,6 +580,181 @@ module Pacer
     end
   end
 
+  module MixedRouteModule
+    def v
+      VerticesRoute.pipe_filter(self, TypeFilterPipe, VertexMixin)
+    end
+
+    def e
+      EdgesRoute.pipe_filter(self, TypeFilterPipe, EdgeMixin)
+    end
+
+    def out_e(*args, &block)
+      v.out_e(*args, &block)
+    end
+
+    def in_e(*args, &block)
+      v.in_e(*args, &block)
+    end
+
+    def both_e(*args, &block)
+      v.both_e(*args, &block)
+    end
+
+    def out_v(*args, &block)
+      e.out_v(*args, &block)
+    end
+
+    def in_v(*args, &block)
+      e.in_v(*args, &block)
+    end
+
+    def both_v(*args, &block)
+      e.both_v(*args, &block)
+    end
+
+    def labels
+      e.map { |e| e.get_label }
+    end
+
+    def result(name = nil)
+      ids = map do |element|
+        if element.is_a? Vertex
+          [:load_vertex, element.id]
+        else
+          [:load_edge, element.id]
+        end
+      end
+      if ids.count > 1
+        g = graph
+        loader = proc do
+          ids.map { |method, id| graph.send(method, id) }
+        end
+        r = MixedElementsRoute.new(loader)
+        r.graph = g
+        r.pipe_class = nil
+        r.info = "#{ name }:#{ids.count}"
+        r
+      else
+        method, id = ids.first
+        graph.send method, id
+      end
+    end
+  end
+
+  class BranchedRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+
+    def initialize(back, block)
+      @back = back
+      @branches = []
+      @split_pipe = CopySplitPipe
+      @merge_pipe = RobinMergePipe
+      branch &block
+    end
+
+    def branch(&block)
+      if @back.vertices_route?
+        branch_start = VerticesIdentityRoute.new(self).route
+      elsif @back.edges_route?
+        branch_start = EdgesIdentityRoute.new(self).route
+      elsif
+        branch_start = MixedIdentityRoute.new(self).route
+      end
+      branch = yield(branch_start)
+      @branches << [branch_start, branch.route] if branch and branch != branch_start
+      self
+    end
+
+    def branch_count
+      @branches.count
+    end
+
+    def root?
+      false
+    end
+
+    def merge
+      MixedElementsRoute.new(self)
+    end
+
+    def exhaustive
+      merge_pipe(ExhaustiveMergePipe)
+    end
+
+    def merge_pipe(pipe_class)
+      @merge_pipe = pipe_class
+      self
+    end
+
+    def split_pipe(pipe_class)
+      @split_pipe = pipe_class
+      self
+    end
+
+    protected
+
+    def iterator(is_path_iterator)
+      pipe = source(is_path_iterator)
+      add_branches_to_pipe(pipe, is_path_iterator)
+    end
+
+    def add_branches_to_pipe(pipe, is_path_iterator)
+      split_pipe = @split_pipe.new @branches.count
+      split_pipe.set_starts pipe
+      idx = 0
+      pipes = @branches.map do |branch_start, branch_end|
+        branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
+        idx += 1
+        branch_end.iterator(is_path_iterator)
+      end
+      pipe = @merge_pipe.new
+      pipe.set_starts(pipes)
+      if is_path_iterator
+        pipe = PathIteratorWrapper.new(pipe, pipe)
+      end
+      pipe
+    end
+
+    def inspect_class_name
+      "#{super} { #{ @branches.map { |s, e| e.inspect }.join(' | ') } }"
+    end
+
+    def route_class
+      MixedElementsRoute
+    end
+  end
+
+  class MixedElementsRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+
+    def initialize(*args)
+      @pipe_class = nil
+      initialize_path(*args)
+    end
+  end
+
+  class InvalidRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+
+    def initialize(back)
+      @back = back
+    end
+
+    def v
+      InvalidRoute.pipe_filter(self)
+    end
+
+    def e
+      InvalidRoute.pipe_filter(self)
+    end
+  end
 
   module VariableRouteModule
     def initialize(back, variable_name)
@@ -656,7 +874,6 @@ module Pacer
       end
     end
   end
-
 
   module EdgesRouteModule
     def out_v(*filters, &block)
@@ -816,6 +1033,69 @@ module Pacer
     include VariableRouteModule
   end
 
+
+  module IdentityRouteModule
+    def initialize(back)
+      @back = back
+    end
+
+    def root?
+      true
+    end
+
+    def new_identity_pipe
+      @pipe = IdentityPipe.new
+    end
+
+    protected
+
+    def iterator(is_path_iterator)
+      pipe = @pipe
+      raise "#new_identity_pipe must be called before #iterator" unless pipe
+      pipe = yield pipe if block_given?
+      if is_path_iterator
+        pipe = PathIteratorWrapper.new(pipe, pipe)
+      end
+      pipe
+    end
+
+  end
+
+
+  class VerticesIdentityRoute
+    include Route
+    include RouteOperations
+    include VerticesRouteModule
+    include IdentityRouteModule
+
+    def inspect_class_name
+      "V"
+    end
+  end
+
+
+  class EdgesIdentityRoute
+    include Route
+    include RouteOperations
+    include EdgesRouteModule
+    include IdentityRouteModule
+
+    def inspect_class_name
+      "E"
+    end
+  end
+
+
+  class MixedIdentityRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+    include IdentityRouteModule
+
+    def inspect_class_name
+      "V+E"
+    end
+  end
 
 
   module VertexMixin
