@@ -61,6 +61,18 @@ module Pacer
     end
   end
 
+  class VariableStoreIteratorWrapper
+    def initialize(pipe, vars, variable_name)
+      @pipe = pipe
+      @vars = vars
+      @variable_name = variable_name
+    end
+
+    def next
+      @vars[@variable_name] = @pipe.next
+    end
+  end
+
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
@@ -144,7 +156,11 @@ module Pacer
     end
 
     def current
-      to_a.first
+      first
+    end
+
+    def ==(element)
+      current == element or super
     end
   end
 
@@ -159,8 +175,8 @@ module Pacer
       def path(name)
       end
 
-      def pipe_filter(back, pipe_class, *args)
-        f = new(back, nil, nil, *args)
+      def pipe_filter(back, pipe_class, *args, &block)
+        f = new(back, nil, block, *args)
         f.pipe_class = pipe_class
         f
       end
@@ -222,6 +238,32 @@ module Pacer
       !@source.nil? or @back.nil?
     end
 
+    def vars
+      if @back
+        @back.vars
+      else
+        @vars
+      end
+    end
+
+    def except(path)
+      if path.is_a? Symbol
+        route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
+      else
+        path = [path] unless path.is_a? Enumerable
+        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::EQUAL)
+      end
+    end
+
+    def only(path)
+      if path.is_a? Symbol
+        route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
+      else
+        path = [path] unless path.is_a? Enumerable
+        route_class.pipe_filter(self, CollectionFilterPipe, path, ComparisonFilterPipe::Filter::NOT_EQUAL)
+      end
+    end
+
     def each
       iter = iterator
       g = graph
@@ -269,7 +311,7 @@ module Pacer
           iterator_from_source(@source)
         end
       else
-        @back.iterator(path_iterator)
+        @back.send(:iterator, path_iterator)
       end
     end
 
@@ -286,6 +328,7 @@ module Pacer
     end
 
     def iterator(path_iterator = false)
+      @vars = {}
       pipe = nil
       prev_path_iterator = nil
       if @pipe_class
@@ -296,6 +339,7 @@ module Pacer
         prev_path_iterator = pipe = source(path_iterator)
       end
       pipe = filter_pipe(pipe, filters, @block)
+      pipe = yield pipe if block_given?
       if path_iterator
         pipe = PathIteratorWrapper.new(pipe, prev_path_iterator)
       end
@@ -355,11 +399,11 @@ module Pacer
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
-      self.class.pipe_filter(self, RandomFilterPipe, bias)
+      route_class.pipe_filter(self, RandomFilterPipe, bias)
     end
 
     def uniq
-      self.class.pipe_filter(self, DuplicateFilterPipe)
+      route_class.pipe_filter(self, DuplicateFilterPipe)
     end
 
     def [](prop_or_subset)
@@ -371,11 +415,11 @@ module Pacer
           element.get_property(prop_or_subset.to_s)
         end
       when Fixnum
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+        route_class.pipe_filter(self, RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
       when Range
         end_index = prop_or_subset.end
         end_index += 1 unless prop_or_subset.exclude_end?
-        self.class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
+        route_class.pipe_filter(self, RangeFilterPipe, prop_or_subset.begin, end_index)
       when Array
       end
     end
@@ -384,10 +428,50 @@ module Pacer
       map { |e| e.id }
     end
 
+    def group_count(*props)
+      result = Hash.new(0)
+      props = props.map { |p| p.to_s }
+      if props.empty? and block_given?
+        each { |e| result[yield(e)] += 1 }
+      elsif block_given?
+        each do |e|
+          key = props.map { |p| e.get_property(p) }
+          key << yield(e)
+          result[key] += 1
+        end
+      elsif props.any?
+        each do |e|
+          result[props.map { |p| e.get_property(p) }] += 1
+        end
+      end
+      result
+    end
+
     def delete!
       map { |e| e.delete! }
     end
+
+    def as(name)
+      if self.is_a? VerticesRouteModule
+        VertexVariableRoute.new(self, name)
+      elsif self.is_a? EdgesRouteModule
+        EdgeVariableRoute.new(self, name)
+      end
+    end
+
+    protected
+
+    def has_routable_class?
+      true
+    end
+
+    def route_class
+      route = self
+      route = route.back until route.has_routable_class?
+      route.class
+    end
   end
+
 
   class PathsRoute
     include Route
@@ -405,7 +489,38 @@ module Pacer
     def transpose
       to_a.transpose
     end
+
+    protected
+
+    def has_routable_class?
+      false
+    end
   end
+
+
+  module VariableRouteModule
+    def initialize(back, variable_name)
+      @back = back
+      @variable_name = variable_name
+    end
+
+    def root?
+      false
+    end
+
+    protected
+
+    def iterator(*args)
+      super do |pipe|
+        VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
+      end
+    end
+
+    def has_routable_class?
+      false
+    end
+  end
+
 
   module GraphRoute
     def v(*filters, &block)
@@ -619,6 +734,22 @@ module Pacer
       initialize_path(*args)
     end
   end
+
+  class VertexVariableRoute
+    include Route
+    include RouteOperations
+    include VerticesRouteModule
+    include VariableRouteModule
+  end
+
+
+  class EdgeVariableRoute
+    include Route
+    include RouteOperations
+    include EdgesRouteModule
+    include VariableRouteModule
+  end
+
 
 
   module VertexMixin
