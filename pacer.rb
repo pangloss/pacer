@@ -239,6 +239,11 @@ module Pacer
       !@source.nil? or @back.nil?
     end
 
+    def route
+      @inspect_route = true
+      self
+    end
+
     def vars
       if @back
         @back.vars
@@ -288,8 +293,31 @@ module Pacer
       self
     end
 
-    def inspect
-      "#<#{inspect_strings.join(' -> ')}>"
+    def inspect(limit = nil)
+      if inspect_route
+        "#<#{inspect_strings.join(' -> ')}>"
+      else
+        count = 0
+        limit ||= graph.inspect_limit
+        results = map do |v|
+          count += 1
+          return route.inspect if count > limit
+          v.inspect
+        end
+        if count > 0
+          lens = results.map { |r| r.length }
+          max = lens.max + 1
+          cols = graph.columns / max
+          template_part = ["%-#{max}s"]
+          template = (template_part * cols).join(' ')
+          results.each_slice(cols) do |row|
+            template = (template_part * row.count).join(', ') if row.count < cols
+            puts template % row
+          end
+        end
+        puts "Total: #{ count }"
+        "#<#{inspect_strings.join(' -> ')}>"
+      end
     end
 
     def ==(other)
@@ -347,6 +375,10 @@ module Pacer
       pipe
     end
 
+    def inspect_route
+      @inspect_route
+    end
+
     def inspect_strings
       ins = []
       ins += @back.inspect_strings unless root?
@@ -356,8 +388,10 @@ module Pacer
         pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
         if ps =~ /FilterPipe$/
           ps = ps.split('::').last.sub(/FilterPipe/, '')
-          pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
-          ps = "#{ps}(#{pipeargs})"
+          if @pipe_args.any?
+            pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
+            ps = "#{ps}(#{pipeargs})"
+          end
         else
           ps = @pipe_args
         end
@@ -365,13 +399,18 @@ module Pacer
       fs = "#{filters.inspect}" if filters.any?
       bs = '&block' if @block
 
-      s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
-      s = "#{s} #{ @info }" if @info
+      s = inspect_class_name
       if ps or fs or bs
         s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
       end
       ins << s
       ins
+    end
+
+    def inspect_class_name
+      s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
+      s = "#{s} #{ @info }" if @info
+      s
     end
 
     def filter_pipe(pipe, args_array, block)
@@ -520,6 +559,10 @@ module Pacer
     def has_routable_class?
       false
     end
+
+    def inspect_class_name
+      @variable_name.inspect
+    end
   end
 
 
@@ -549,6 +592,48 @@ module Pacer
     def root?
       true
     end
+
+    def vertex_name
+      @vertex_name
+    end
+
+    def vertex_name=(a_proc)
+      @vertex_name = a_proc
+    end
+
+    def columns
+      @columns || 120
+    end
+
+    def columns=(n)
+      @columns = n
+    end
+
+    def inspect_limit
+      @inspect_limit || 500
+    end
+
+    def inspect_limit=(n)
+      @inspect_limit = n
+    end
+
+    def load_vertices(ids)
+      ids.map do |id|
+        vertex id rescue nil
+      end.compact
+    end
+
+    def load_edges(ids)
+      ids.map do |id|
+        edge id rescue nil
+      end.compact
+    end
+
+    protected
+
+    def inspect_route
+      true
+    end
   end
 
 
@@ -569,26 +654,6 @@ module Pacer
         e.graph = self
         e
       end
-    end
-
-    def load_vertices(ids)
-      ids.map do |id|
-        vertex id rescue nil
-      end.compact
-    end
-
-    def load_edges(ids)
-      ids.map do |id|
-        edge id rescue nil
-      end.compact
-    end
-
-    def vertex_name
-      @vnp
-    end
-
-    def vertex_name=(name_proc)
-      @vnp = name_proc
     end
   end
 
