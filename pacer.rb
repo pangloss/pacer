@@ -521,7 +521,7 @@ module Pacer
     end
 
     def branch(&block)
-      br = BranchedRoute.new(self, vertices_route?, block)
+      br = BranchedRoute.new(self, block)
       if br.branch_count == 0
         self
       else
@@ -529,7 +529,9 @@ module Pacer
       end
     end
 
-    protected
+    def mixed_route?
+      self.is_a? MixedRouteModule
+    end
 
     def vertices_route?
       self.is_a? VerticesRouteModule
@@ -538,6 +540,8 @@ module Pacer
     def edges_route?
       self.is_a? EdgesRouteModule
     end
+
+    protected
 
     def has_routable_class?
       true
@@ -575,7 +579,7 @@ module Pacer
     end
   end
 
-  module MixedElementsMixin
+  module MixedRouteModule
     def v
       VerticesRoute.pipe_filter(self, TypeFilterPipe, VertexMixin)
     end
@@ -635,27 +639,28 @@ module Pacer
         graph.send method, id
       end
     end
-
   end
 
   class BranchedRoute
     include Route
-    include MixedElementsMixin
+    include RouteOperations
+    include MixedRouteModule
 
-    def initialize(back, is_vertex, block)
+    def initialize(back, block)
       @back = back
       @branches = []
-      @is_vertex = is_vertex
       @split_pipe = CopySplitPipe
       @merge_pipe = RobinMergePipe
       branch &block
     end
 
     def branch(&block)
-      if @is_vertex
+      if @back.vertices_route?
         branch_start = VerticesIdentityRoute.new(self).route
-      else
+      elsif @back.edges_route?
         branch_start = EdgesIdentityRoute.new(self).route
+      elsif
+        branch_start = MixedIdentityRoute.new(self).route
       end
       branch = yield(branch_start)
       @branches << [branch_start, branch.route] if branch and branch != branch_start
@@ -670,6 +675,10 @@ module Pacer
       false
     end
 
+    def merge
+      MixedElementsRoute.new(self)
+    end
+
     def exhaustive
       merge_pipe(ExhaustiveMergePipe)
     end
@@ -681,6 +690,7 @@ module Pacer
 
     def split_pipe(pipe_class)
       @split_pipe = pipe_class
+      self
     end
 
     protected
@@ -710,13 +720,39 @@ module Pacer
     def inspect_class_name
       "#{super} { #{ @branches.map { |s, e| e.inspect }.join(' | ') } }"
     end
+
+    def route_class
+      MixedElementsRoute
+    end
   end
 
   class MixedElementsRoute
     include Route
     include RouteOperations
-    include MixedElementsMixin
+    include MixedRouteModule
 
+    def initialize(*args)
+      @pipe_class = nil
+      initialize_path(*args)
+    end
+  end
+
+  class InvalidRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+
+    def initialize(back)
+      @back = back
+    end
+
+    def v
+      InvalidRoute.pipe_filter(self)
+    end
+
+    def e
+      InvalidRoute.pipe_filter(self)
+    end
   end
 
   module VariableRouteModule
@@ -837,7 +873,6 @@ module Pacer
       end
     end
   end
-
 
   module EdgesRouteModule
     def out_v(*filters, &block)
@@ -1046,6 +1081,18 @@ module Pacer
 
     def inspect_class_name
       "E"
+    end
+  end
+
+
+  class MixedIdentityRoute
+    include Route
+    include RouteOperations
+    include MixedRouteModule
+    include IdentityRouteModule
+
+    def inspect_class_name
+      "V+E"
     end
   end
 
