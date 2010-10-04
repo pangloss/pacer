@@ -16,6 +16,7 @@ module Pacer
   import com.tinkerpop.pipes.pgm.EdgeVertexPipe
   import com.tinkerpop.pipes.split.CopySplitPipe
   import com.tinkerpop.pipes.merge.RobinMergePipe
+  import com.tinkerpop.pipes.merge.ExhaustiveMergePipe
   import java.util.NoSuchElementException
 
   import com.tinkerpop.blueprints.pgm.Graph;
@@ -571,6 +572,8 @@ module Pacer
       @back = back
       @branches = []
       @is_vertex = is_vertex
+      @split_pipe = CopySplitPipe
+      @merge_pipe = RobinMergePipe
       branch &block
     end
 
@@ -620,6 +623,19 @@ module Pacer
       e.both_v(*args, &block)
     end
 
+    def exhaustive
+      merge_pipe(ExhaustiveMergePipe)
+    end
+
+    def merge_pipe(pipe_class)
+      @merge_pipe = pipe_class
+      self
+    end
+
+    def split_pipe(pipe_class)
+      @split_pipe = pipe_class
+    end
+
     protected
 
     def iterator(is_path_iterator)
@@ -628,8 +644,7 @@ module Pacer
     end
 
     def add_branches_to_pipe(pipe, is_path_iterator)
-      pp @branches
-      split_pipe = CopySplitPipe.new @branches.count
+      split_pipe = @split_pipe.new @branches.count
       split_pipe.set_starts pipe
       idx = 0
       pipes = @branches.map do |branch_start, branch_end|
@@ -637,7 +652,7 @@ module Pacer
         idx += 1
         branch_end.iterator(is_path_iterator)
       end
-      pipe = RobinMergePipe.new
+      pipe = @merge_pipe.new
       pipe.set_starts(pipes)
       if is_path_iterator
         pipe = PathIteratorWrapper.new(pipe, pipe)
