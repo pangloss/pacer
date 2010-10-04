@@ -293,14 +293,15 @@ module Pacer
       self
     end
 
-    def inspect
+    def inspect(limit = nil)
       if inspect_route
         "#<#{inspect_strings.join(' -> ')}>"
       else
         count = 0
+        limit ||= graph.inspect_limit
         results = map do |v|
           count += 1
-          return route.inspect if count > 1000
+          return route.inspect if count > limit
           v.inspect
         end
         if count > 0
@@ -580,28 +581,29 @@ module Pacer
     def root?
       true
     end
-  end
 
-
-  class Neo4jGraph
-    include Route
-    include RouteOperations
-    include GraphRoute
-
-    attr_accessor :vertex_name, :columns
-
-    def vertex(id)
-      if v = get_vertex(id)
-        v.graph = self
-        v
-      end
+    def vertex_name
+      @vertex_name
     end
 
-    def edge(id)
-      if e = get_edge(id)
-        e.graph = self
-        e
-      end
+    def vertex_name=(a_proc)
+      @vertex_name = a_proc
+    end
+
+    def columns
+      @columns || 120
+    end
+
+    def columns=(n)
+      @columns = n
+    end
+
+    def inspect_limit
+      @inspect_limit || 500
+    end
+
+    def inspect_limit=(n)
+      @inspect_limit = n
     end
 
     def load_vertices(ids)
@@ -620,6 +622,27 @@ module Pacer
 
     def inspect_route
       true
+    end
+  end
+
+
+  class Neo4jGraph
+    include Route
+    include RouteOperations
+    include GraphRoute
+
+    def vertex(id)
+      if v = get_vertex(id)
+        v.graph = self
+        v
+      end
+    end
+
+    def edge(id)
+      if e = get_edge(id)
+        e.graph = self
+        e
+      end
     end
   end
 
