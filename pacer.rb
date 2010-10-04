@@ -77,40 +77,9 @@ module Pacer
     end
   end
 
-  # couldn't seem to use the constructor when inheriting from AbstractPipe...
-  class AbstractPacerPipe
-    include Iterator
-
-    def set_starts(starts)
-      @starts = starts
-    end
-
-    def next
-      if @next
-        n = @next
-        @next = nil
-        n
-      else
-        processNextStart
-      end
-    end
-
-    def hasNext()
-      @next ||= processNextStart
-      !!next
-    end
-
-    def iterator
-      self
-    end
-
-    def processNextStart()
-      raise NoSuchElementException.new
-    end
-  end
-
-  class TypeFilterPipe < AbstractPacerPipe
+  class TypeFilterPipe < AbstractPipe
     def initialize(type)
+      super()
       @type = type
     end
 
@@ -125,7 +94,8 @@ module Pacer
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
-    def configure(starts, back, block)
+    def initialize(starts, back, block)
+      super()
       @starts = starts
       @back = back
       @block = block
@@ -149,7 +119,8 @@ module Pacer
 
 
   class EnumerablePipe < AbstractPipe
-    def set_enumerable(enumerable)
+    def initialize(enumerable)
+      super()
       case enumerable
       when Enumerable::Enumerator
         @enumerable = enumerable
@@ -398,9 +369,7 @@ module Pacer
       elsif src.is_a? Iterator
         src
       elsif src
-        pipe = EnumerablePipe.new
-        pipe.set_enumerable src
-        pipe
+        EnumerablePipe.new src
       end
     end
 
@@ -472,9 +441,7 @@ module Pacer
         end
       end
       if block
-        new_pipe = BlockFilterPipe.new
-        new_pipe.configure(pipe, self, block)
-        pipe = new_pipe
+        pipe = BlockFilterPipe.new(pipe, self, block)
       end
       pipe
     end
