@@ -13,7 +13,7 @@ module Pacer
   require 'pacer/neo4j'
 
   def self.reload!
-    Dir[File.join(PATH, '**/*.rb')].each { |file| load file }
+    Dir[File.join(PATH, 'lib/**/*.rb')].each { |file| load file }
   end
 end
 
