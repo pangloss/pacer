@@ -63,6 +63,8 @@ module Pacer::Route
         VertexVariableRoute.new(self, name)
       elsif edges_route?
         EdgeVariableRoute.new(self, name)
+      elsif mixed_route?
+        MixedVariableRoute.new(self, name)
       end
     end
 
