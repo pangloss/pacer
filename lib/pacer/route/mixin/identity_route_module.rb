@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Route
   module IdentityRouteModule
     def initialize(back)
       @back = back
@@ -9,7 +9,7 @@ module Pacer
     end
 
     def new_identity_pipe
-      @pipe = IdentityPipe.new
+      @pipe = Pacer::Pipe::IdentityPipe.new
     end
 
     protected
@@ -19,7 +19,7 @@ module Pacer
       raise "#new_identity_pipe must be called before #iterator" unless pipe
       pipe = yield pipe if block_given?
       if is_path_iterator
-        pipe = PathIteratorWrapper.new(pipe, pipe)
+        pipe = Pacer::Pipe::PathIteratorWrapper.new(pipe, pipe)
       end
       pipe
     end

@@ -1,15 +1,15 @@
-module Pacer
+module Pacer::Route
   module VerticesRouteModule
     def out_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::OUT_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::OUT_EDGES)
     end
 
     def in_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::IN_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::IN_EDGES)
     end
 
     def both_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, VertexEdgePipe::Step::BOTH_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::BOTH_EDGES)
     end
 
     def v(*filters, &block)
@@ -38,7 +38,7 @@ module Pacer
 
     def to(label, to_vertices)
       case to_vertices
-      when Route
+      when Base
         raise "Must be from same graph" unless to_vertices.from_graph?(graph)
       when Enumerable, Iterator
         raise "Must be from same graph" unless to_vertices.first.from_graph?(graph)

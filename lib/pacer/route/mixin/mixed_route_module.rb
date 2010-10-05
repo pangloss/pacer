@@ -1,11 +1,11 @@
-module Pacer
+module Pacer::Route
   module MixedRouteModule
     def v
-      VerticesRoute.pipe_filter(self, TypeFilterPipe, VertexMixin)
+      VerticesRoute.pipe_filter(self, Pacer::Pipe::TypeFilterPipe, Pacer::VertexMixin)
     end
 
     def e
-      EdgesRoute.pipe_filter(self, TypeFilterPipe, EdgeMixin)
+      EdgesRoute.pipe_filter(self, Pacer::Pipe::TypeFilterPipe, Pacer::EdgeMixin)
     end
 
     def out_e(*args, &block)
@@ -38,7 +38,7 @@ module Pacer
 
     def result(name = nil)
       ids = map do |element|
-        if element.is_a? Vertex
+        if element.is_a? Pacer::Vertex
           [:load_vertex, element.id]
         else
           [:load_edge, element.id]

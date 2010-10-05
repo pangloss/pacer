@@ -17,9 +17,9 @@ module Pacer
 
 
   class Neo4jGraph
-    include Route
-    include RouteOperations
-    include GraphRoute
+    include Route::Base
+    include Route::RouteOperations
+    include Route::GraphRoute
 
     def vertex(id)
       if v = get_vertex(id)
@@ -38,14 +38,14 @@ module Pacer
 
 
   class Neo4jVertex
-    include VerticesRouteModule
+    include Route::VerticesRouteModule
     include ElementMixin
     include VertexMixin
   end
 
 
   class Neo4jEdge
-    include EdgesRouteModule
+    include Route::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
   end

@@ -1,6 +1,6 @@
-module Pacer
+module Pacer::Route
   class PathsRoute
-    include Route
+    include Base
 
     def initialize(back)
       @back = back

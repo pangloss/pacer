@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Pipe
   class TypeFilterPipe < AbstractPipe
     def initialize(type)
       super()
@@ -14,7 +14,7 @@ module Pacer
       while s = @starts.next
         return s if s.is_a? @type
       end
-      raise NoSuchElementException.new
+      raise Pacer::NoSuchElementException.new
     end
   end
 end

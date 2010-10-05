@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Pipe
   class EnumerablePipe < AbstractPipe
     def initialize(enumerable)
       super()
@@ -15,7 +15,7 @@ module Pacer
     def processNextStart()
       @enumerable.next
     rescue
-      raise NoSuchElementException.new
+      raise Pacer::NoSuchElementException.new
     end
   end
 end

@@ -1,6 +1,6 @@
-module Pacer
+module Pacer::Route
   class MixedIdentityRoute
-    include Route
+    include Base
     include RouteOperations
     include MixedRouteModule
     include IdentityRouteModule

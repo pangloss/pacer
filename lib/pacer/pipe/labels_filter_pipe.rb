@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Pipe
   class LabelsFilterPipe < AbstractPipe
     attr_accessor :starts
 
@@ -16,7 +16,7 @@ module Pacer
           return edge;
         end
       end
-      raise NoSuchElementException.new
+      raise Pacer::NoSuchElementException.new
     end
   end
 end

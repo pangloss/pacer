@@ -1,14 +1,14 @@
-module Pacer
+module Pacer::Route
   class BranchedRoute
-    include Route
+    include Base
     include RouteOperations
     include MixedRouteModule
 
     def initialize(back, block)
       @back = back
       @branches = []
-      @split_pipe = CopySplitPipe
-      @merge_pipe = RobinMergePipe
+      @split_pipe = Pacer::Pipe::CopySplitPipe
+      @merge_pipe = Pacer::Pipe::RobinMergePipe
       branch &block
     end
 
@@ -38,7 +38,7 @@ module Pacer
     end
 
     def exhaustive
-      merge_pipe(ExhaustiveMergePipe)
+      merge_pipe(Pacer::Pipe::ExhaustiveMergePipe)
     end
 
     def merge_pipe(pipe_class)
@@ -70,7 +70,7 @@ module Pacer
       pipe = @merge_pipe.new
       pipe.set_starts(pipes)
       if is_path_iterator
-        pipe = PathIteratorWrapper.new(pipe, pipe)
+        pipe = Pacer::Pipe::PathIteratorWrapper.new(pipe, pipe)
       end
       pipe
     end

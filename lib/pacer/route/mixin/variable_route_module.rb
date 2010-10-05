@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Route
   module VariableRouteModule
     def initialize(back, variable_name)
       @back = back
@@ -13,7 +13,7 @@ module Pacer
 
     def iterator(*args)
       super do |pipe|
-        VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
+        Pacer::Pipe::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
       end
     end
 

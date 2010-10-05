@@ -1,6 +1,6 @@
-module Pacer
+module Pacer::Route
   class EdgesIdentityRoute
-    include Route
+    include Base
     include RouteOperations
     include EdgesRouteModule
     include IdentityRouteModule

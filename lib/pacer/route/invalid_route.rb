@@ -1,6 +1,6 @@
-module Pacer
+module Pacer::Route
   class InvalidRoute
-    include Route
+    include Base
     include RouteOperations
     include MixedRouteModule
 

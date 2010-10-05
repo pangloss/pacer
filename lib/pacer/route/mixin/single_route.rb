@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Route
   module SingleRoute
     def [](name)
       map do |element|

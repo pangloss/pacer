@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Pipe
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
@@ -17,11 +17,11 @@ module Pacer
         path.pipe_class = nil
         @count += 1
         path.info = "temp #{ @count }"
-        path.extend SingleRoute
+        path.extend Pacer::Route::SingleRoute
         ok = @block.call path
         return s if ok
       end
-      raise NoSuchElementException.new
+      raise Pacer::NoSuchElementException.new
     end
   end
 end
