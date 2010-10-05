@@ -1,5 +1,5 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph;
+  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
 

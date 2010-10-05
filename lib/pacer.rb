@@ -8,8 +8,8 @@ module Pacer
   require File.join(PATH, 'vendor/pipes-0.1-SNAPSHOT-standalone.jar')
 
   require 'pacer/graph'
-  require 'pacer/pipe'
-  require 'pacer/route'
+  require 'pacer/pipes'
+  require 'pacer/routes'
   require 'pacer/neo4j'
 
   def self.reload!
