@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   class MixedElementsRoute
     include Base
     include RouteOperations

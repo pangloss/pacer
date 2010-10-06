@@ -1,5 +1,5 @@
 module Pacer
-  module Route
+  module Routes
     module Base
       module RouteClassMethods
         def vertex_path(name)
@@ -92,7 +92,7 @@ module Pacer
           route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipe::CollectionFilterPipe, path.to_a, Pacer::Pipe::ComparisonFilterPipe::Filter::EQUAL)
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
         end
       end
 
@@ -101,7 +101,7 @@ module Pacer
           route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipe::CollectionFilterPipe, path.to_a, Pacer::Pipe::ComparisonFilterPipe::Filter::NOT_EQUAL)
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
         end
       end
 
@@ -170,7 +170,7 @@ module Pacer
       def source(is_path_iterator)
         if @source
           if is_path_iterator
-            Pacer::Pipe::PathIteratorWrapper.new(iterator_from_source(@source))
+            Pacer::Pipes::PathIteratorWrapper.new(iterator_from_source(@source))
           else
             iterator_from_source(@source)
           end
@@ -185,7 +185,7 @@ module Pacer
         elsif src.is_a? Iterator
           src
         elsif src
-          Pacer::Pipe::EnumerablePipe.new src
+          Pacer::Pipes::EnumerablePipe.new src
         end
       end
 
@@ -203,7 +203,7 @@ module Pacer
         pipe = filter_pipe(pipe, filters, @block)
         pipe = yield pipe if block_given?
         if is_path_iterator
-          pipe = Pacer::Pipe::PathIteratorWrapper.new(pipe, prev_path_iterator)
+          pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, prev_path_iterator)
         end
         pipe
       end
@@ -250,14 +250,14 @@ module Pacer
         if args_array and args_array.any?
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
             hash.inject(p) do |p2, (key, value)|
-              new_pipe = Pacer::Pipe::PropertyFilterPipe.new(key.to_s, value.to_java, Pacer::Pipe::ComparisonFilterPipe::Filter::NOT_EQUAL)
+              new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, value.to_java, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
               new_pipe.set_starts p2
               new_pipe
             end
           end
         end
         if block
-          pipe = Pacer::Pipe::BlockFilterPipe.new(pipe, self, block)
+          pipe = Pacer::Pipes::BlockFilterPipe.new(pipe, self, block)
         end
         pipe
       end

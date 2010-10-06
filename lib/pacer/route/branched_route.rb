@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   class BranchedRoute
     include Base
     include RouteOperations
@@ -7,8 +7,8 @@ module Pacer::Route
     def initialize(back, block)
       @back = back
       @branches = []
-      @split_pipe = Pacer::Pipe::CopySplitPipe
-      @merge_pipe = Pacer::Pipe::RobinMergePipe
+      @split_pipe = Pacer::Pipes::CopySplitPipe
+      @merge_pipe = Pacer::Pipes::RobinMergePipe
       branch &block
     end
 
@@ -38,7 +38,7 @@ module Pacer::Route
     end
 
     def exhaustive
-      merge_pipe(Pacer::Pipe::ExhaustiveMergePipe)
+      merge_pipe(Pacer::Pipes::ExhaustiveMergePipe)
     end
 
     def merge_pipe(pipe_class)
@@ -70,7 +70,7 @@ module Pacer::Route
       pipe = @merge_pipe.new
       pipe.set_starts(pipes)
       if is_path_iterator
-        pipe = Pacer::Pipe::PathIteratorWrapper.new(pipe, pipe)
+        pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, pipe)
       end
       pipe
     end

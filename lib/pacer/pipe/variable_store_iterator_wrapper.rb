@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   class VariableStoreIteratorWrapper
     def initialize(pipe, vars, variable_name)
       @pipe = pipe

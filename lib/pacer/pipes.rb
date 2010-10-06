@@ -2,7 +2,7 @@ module Pacer
   import java.util.Iterator
   import java.util.NoSuchElementException
 
-  module Pipe
+  module Pipes
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.IdentityPipe
 

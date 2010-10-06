@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   module RouteOperations
     def paths
       PathsRoute.new(self)
@@ -6,11 +6,11 @@ module Pacer::Route
 
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
-      route_class.pipe_filter(self, Pacer::Pipe::RandomFilterPipe, bias)
+      route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
     end
 
     def uniq
-      route_class.pipe_filter(self, Pacer::Pipe::DuplicateFilterPipe)
+      route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
     end
 
     def [](prop_or_subset)
@@ -22,11 +22,11 @@ module Pacer::Route
           element.get_property(prop_or_subset.to_s)
         end
       when Fixnum
-        route_class.pipe_filter(self, Pacer::Pipe::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+        route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
       when Range
         end_index = prop_or_subset.end
         end_index += 1 unless prop_or_subset.exclude_end?
-        route_class.pipe_filter(self, Pacer::Pipe::RangeFilterPipe, prop_or_subset.begin, end_index)
+        route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset.begin, end_index)
       when Array
       end
     end
@@ -50,6 +50,15 @@ module Pacer::Route
         each do |e|
           result[props.map { |p| e.get_property(p) }] += 1
         end
+      end
+      result
+    end
+
+    def group_map(into = [], operation = :<<)
+      result = Hash.new { |h,k| h[k] = into.clone }
+      each do |e|
+        k, v = yield e
+        result[k] = result[k].send(operation, v)
       end
       result
     end

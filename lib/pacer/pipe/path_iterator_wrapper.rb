@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   # TODO: move this functionality right into AbstractPipe
   class PathIteratorWrapper
     attr_reader :pipe, :previous, :value

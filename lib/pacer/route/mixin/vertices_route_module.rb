@@ -1,15 +1,15 @@
-module Pacer::Route
+module Pacer::Routes
   module VerticesRouteModule
     def out_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::OUT_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES)
     end
 
     def in_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::IN_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES)
     end
 
     def both_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipe::VertexEdgePipe::Step::BOTH_EDGES)
+      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES)
     end
 
     def v(*filters, &block)

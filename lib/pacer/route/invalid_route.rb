@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   class InvalidRoute
     include Base
     include RouteOperations

@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   class EnumerablePipe < AbstractPipe
     def initialize(enumerable)
       super()

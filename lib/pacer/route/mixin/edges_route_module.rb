@@ -1,15 +1,15 @@
-module Pacer::Route
+module Pacer::Routes
   module EdgesRouteModule
     def out_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipe::EdgeVertexPipe::Step::OUT_VERTEX)
+      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX)
     end
 
     def in_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipe::EdgeVertexPipe::Step::IN_VERTEX)
+      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX)
     end
 
     def both_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipe::EdgeVertexPipe::Step::BOTH_VERTICES)
+      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES)
     end
 
     def v(*filters)
@@ -56,7 +56,7 @@ module Pacer::Route
       if labels.empty?
         super
       else
-        label_pipe = Pacer::Pipe::LabelsFilterPipe.new
+        label_pipe = Pacer::Pipes::LabelsFilterPipe.new
         label_pipe.set_labels labels
         label_pipe.set_starts pipe
         super(label_pipe, filters - labels, block)

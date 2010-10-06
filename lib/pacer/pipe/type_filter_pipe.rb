@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   class TypeFilterPipe < AbstractPipe
     def initialize(type)
       super()

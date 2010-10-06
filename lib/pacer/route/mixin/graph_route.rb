@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   module GraphRoute
     def v(*filters, &block)
       path = VerticesRoute.new(proc { self.get_vertices }, filters, block)

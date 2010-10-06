@@ -1,11 +1,11 @@
-module Pacer::Route
+module Pacer::Routes
   module MixedRouteModule
     def v
-      VerticesRoute.pipe_filter(self, Pacer::Pipe::TypeFilterPipe, Pacer::VertexMixin)
+      VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
     end
 
     def e
-      EdgesRoute.pipe_filter(self, Pacer::Pipe::TypeFilterPipe, Pacer::EdgeMixin)
+      EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
     end
 
     def out_e(*args, &block)

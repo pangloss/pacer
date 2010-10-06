@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   class LabelsFilterPipe < AbstractPipe
     attr_accessor :starts
 

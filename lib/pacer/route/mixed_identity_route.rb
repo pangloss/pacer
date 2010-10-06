@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   class MixedIdentityRoute
     include Base
     include RouteOperations

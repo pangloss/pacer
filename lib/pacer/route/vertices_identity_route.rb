@@ -1,4 +1,4 @@
-module Pacer::Route
+module Pacer::Routes
   class VerticesIdentityRoute
     include Base
     include RouteOperations

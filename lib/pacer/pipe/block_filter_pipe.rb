@@ -1,4 +1,4 @@
-module Pacer::Pipe
+module Pacer::Pipes
   class BlockFilterPipe < AbstractPipe
     attr_accessor :starts
 
@@ -17,7 +17,7 @@ module Pacer::Pipe
         path.pipe_class = nil
         @count += 1
         path.info = "temp #{ @count }"
-        path.extend Pacer::Route::SingleRoute
+        path.extend Pacer::Routes::SingleRoute
         ok = @block.call path
         return s if ok
       end
