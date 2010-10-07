@@ -43,10 +43,30 @@ module Pacer
     def delete!
       graph.remove_edge self
     end
+
+    def out_v(*args)
+      if args.any?
+        super
+      else
+        out_vertex
+      end
+    end
+
+    def in_v(*args)
+      if args.any?
+        super
+      else
+        in_vertex
+      end
+    end
   end
 
 
   module ElementMixin
+    def self.included(target)
+      target.send :include, Enumerable unless target.is_a? Enumerable
+    end
+
     def graph=(graph)
       @graph = graph
     end
