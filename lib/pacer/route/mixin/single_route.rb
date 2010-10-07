@@ -1,25 +1,11 @@
 module Pacer::Routes
   module SingleRoute
-    def [](name)
-      map do |element|
-        element.get_property(name.to_s)
-      end.first
+    def back=(back)
+      @back = back
     end
 
-    def label
-      labels.first
-    end
-
-    def id
-      ids.first
-    end
-
-    def current
-      first
-    end
-
-    def ==(element)
-      current == element or super
+    def back
+      @back
     end
   end
 end

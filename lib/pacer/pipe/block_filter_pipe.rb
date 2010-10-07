@@ -7,17 +7,12 @@ module Pacer::Pipes
       @starts = starts
       @back = back
       @block = block
-      @count = 0
     end
 
     def processNextStart()
       while s = @starts.next
-        path = @back.class.new(s)
-        path.send(:back=, @back)
-        path.pipe_class = nil
-        @count += 1
-        path.info = "temp #{ @count }"
-        path.extend Pacer::Routes::SingleRoute
+        s.extend Pacer::Routes::SingleRoute
+        s.back = @back
         ok = @block.call path
         return s if ok
       end
