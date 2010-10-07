@@ -7,6 +7,7 @@ module Pacer
           v = result.add_vertex nil
           v[:type] = type
           v[:count] = count
+          v.graph = result
           hash[type] = v
           hash
         end
@@ -14,16 +15,16 @@ module Pacer
           begin
             edges = graph.v(:type => type_node[:type]).out_e
             edge_types = edges.group_count do |e|
-              [e.label,
-                e.out_vertex[:type]]
+              [e.label, e.in_vertex[:type]]
             end
             edge_types.each do |(label, type), count|
               puts "edges #{ type_node[:type] } #{ label } #{ type }: #{ count }"
               type_node.to(label,
-                           result.v(:type => type),
+                           types[type],
                            :count => count)
             end
-          rescue
+          rescue => e
+            puts e.message
           end
         end
         result
