@@ -101,6 +101,24 @@ module Pacer::Routes
       self.is_a? EdgesRouteModule
     end
 
+    def repeat(range)
+      if range.is_a? Fixnum
+        range.to_enum(:times).inject(self) do |route_end, count|
+          yield route_end
+        end
+      else
+        br = BranchedRoute.new(self)
+        range.each do |count|
+          br.branch do |branch_root|
+            count.to_enum(:times).inject(branch_root) do |route_end, count|
+              yield route_end
+            end
+          end
+        end
+        br
+      end
+    end
+
     protected
 
     def has_routable_class?
