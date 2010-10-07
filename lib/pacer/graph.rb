@@ -79,6 +79,10 @@ module Pacer
       get_property(key.to_s)
     end
 
+    def []=(key, value)
+      set_property(key.to_s, value)
+    end
+
     def result(name = nil)
       self
     end
