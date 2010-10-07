@@ -46,6 +46,11 @@ module Pacer::Routes
           key << yield(e)
           result[key] += 1
         end
+      elsif props.count == 1
+        prop = props.first
+        each do |e|
+          result[e.get_property(prop)] += 1
+        end
       elsif props.any?
         each do |e|
           result[props.map { |p| e.get_property(p) }] += 1
