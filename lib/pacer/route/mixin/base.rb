@@ -89,7 +89,7 @@ module Pacer
 
       def except(path)
         if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
+          route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
           route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
@@ -98,7 +98,7 @@ module Pacer
 
       def only(path)
         if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
+          route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
           route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)

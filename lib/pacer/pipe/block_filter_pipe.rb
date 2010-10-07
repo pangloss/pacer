@@ -13,7 +13,7 @@ module Pacer::Pipes
       while s = @starts.next
         s.extend Pacer::Routes::SingleRoute
         s.back = @back
-        ok = @block.call path
+        ok = @block.call s
         return s if ok
       end
       raise Pacer::NoSuchElementException.new

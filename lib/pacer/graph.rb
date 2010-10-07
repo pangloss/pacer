@@ -15,7 +15,7 @@ module Pacer
 
     def export(path)
       path = File.expand_path path
-      stream = new java.io.FileOutputStream.new path
+      stream = java.io.FileOutputStream.new path
       com.tinkerpop.blueprints.pgm.parser.GraphMLWriter.outputGraph self, stream
     end
   end

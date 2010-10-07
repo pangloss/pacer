@@ -7,5 +7,9 @@ module Pacer::Routes
     def back
       @back
     end
+
+    def vars
+      @back.vars
+    end
   end
 end
