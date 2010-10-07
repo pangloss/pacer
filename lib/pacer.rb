@@ -11,6 +11,7 @@ module Pacer
   require 'pacer/pipes'
   require 'pacer/routes'
   require 'pacer/neo4j'
+  require 'pacer/tg'
 
   def self.reload!
     Dir[File.join(PATH, 'lib/**/*.rb')].each { |file| load file }
