@@ -103,5 +103,9 @@ module Pacer
     def name
       id
     end
+
+    def each
+      yield self
+    end
   end
 end
