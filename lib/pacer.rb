@@ -2,8 +2,8 @@ require 'java'
 require 'pp'
 
 module Pacer
-  unless defined? VERSION
-    VERSION = '0.1.0' 
+  unless defined? Pacer::VERSION
+    VERSION = '0.1.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
   end
