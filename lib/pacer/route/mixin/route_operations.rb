@@ -4,6 +4,10 @@ module Pacer::Routes
       PathsRoute.new(self)
     end
 
+    def subgraph
+      paths.subgraph
+    end
+
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
       route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
