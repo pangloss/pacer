@@ -5,6 +5,8 @@ module Pacer::Routes
     include VerticesRouteModule
     include IdentityRouteModule
 
+    protected
+
     def inspect_class_name
       "V"
     end

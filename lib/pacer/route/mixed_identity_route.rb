@@ -5,6 +5,8 @@ module Pacer::Routes
     include MixedRouteModule
     include IdentityRouteModule
 
+    protected
+
     def inspect_class_name
       "V+E"
     end

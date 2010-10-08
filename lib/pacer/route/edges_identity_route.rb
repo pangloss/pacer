@@ -5,6 +5,8 @@ module Pacer::Routes
     include EdgesRouteModule
     include IdentityRouteModule
 
+    protected
+
     def inspect_class_name
       "E"
     end
