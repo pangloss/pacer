@@ -82,7 +82,7 @@ module Pacer
               end
             end
             graph.e.each do |e|
-              xml.edge :id => e.id, :source => e.out_v.id, :target => e.in_v.id do
+              xml.edge :id => e.id, :source => e.out_v.id, :target => e.in_v.id, :label => e.label do
                 xml.data :key => 'y.edgegraphics' do
                   xml['y'].PolyLineEdge do
                     xml['y'].LineStyle 'color' => edge_color.call(e), 'type' => 'line', 'width' => '1.0'
