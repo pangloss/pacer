@@ -1,3 +1,4 @@
 *.graph
 *.db
 vendor/pipes*.jar
+*.graphml
