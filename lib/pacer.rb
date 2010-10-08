@@ -19,12 +19,24 @@ module Pacer
   require 'pacer/neo4j'
   require 'pacer/tg'
 
-  # Reload all Ruby files in the Pacer library. Useful for debugging in the
-  # console. Does not do any of the fancy stuff that Rails reloading does.
-  # Certain types of changes will still require restarting the session.
-  def self.reload!
-    Dir[File.join(PATH, 'lib/**/*.rb')].each { |file| load file }
-    true
+  class << self
+    # Reload all Ruby files in the Pacer library. Useful for debugging in the
+    # console. Does not do any of the fancy stuff that Rails reloading does.
+    # Certain types of changes will still require restarting the session.
+    def reload!
+      Dir[File.join(PATH, 'lib/**/*.rb')].each { |file| load file }
+      true
+    end
+
+    # Set to true to prevent inspecting any route from printing
+    # the matching elements to the screen.
+    def hide_route_elements=(bool)
+      @hide_route_elements = bool
+    end
+
+    def hide_route_elements
+      @hide_route_elements
+    end
   end
 end
 

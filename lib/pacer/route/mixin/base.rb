@@ -76,7 +76,7 @@ module Pacer
       # Prevents the route from being evaluated when it is inspected. Useful
       # for computationally expensive routes.
       def route
-        @inspect_route = true
+        @hide_elements = true
         self
       end
 
@@ -160,7 +160,7 @@ module Pacer
       # Graph#columns.  If this output behaviour is undesired, it may be turned
       # off by calling #route on the current route.
       def inspect(limit = nil)
-        if inspect_route
+        if Pacer.hide_route_elements or hide_elements
           "#<#{inspect_strings.join(' -> ')}>"
         else
           count = 0
@@ -274,9 +274,9 @@ module Pacer
       end
 
       # Boolean whether the route alone should be returned by inspect. If
-      # false, the route data will also be displayed.
-      def inspect_route
-        @inspect_route
+      # false, the the elements that the route matches will also be displayed.
+      def hide_elements
+        @hide_elements
       end
 
       # Returns an array of strings representing each route object in the
