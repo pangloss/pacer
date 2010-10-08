@@ -89,7 +89,7 @@ module Pacer
 
       def except(path)
         if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v.current != v.vars[path] }
+          route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
           route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
@@ -98,7 +98,7 @@ module Pacer
 
       def only(path)
         if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v.current == v.vars[path] }
+          route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
           route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
@@ -143,6 +143,7 @@ module Pacer
             lens = results.map { |r| r.length }
             max = lens.max
             cols = (graph.columns / (max + 1).to_f).floor
+            cols = 1 if cols < 1
             template_part = ["%-#{max}s"]
             template = (template_part * cols).join(' ')
             results.each_slice(cols) do |row|

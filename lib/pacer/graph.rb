@@ -1,6 +1,24 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.Graph;
+  import com.tinkerpop.blueprints.pgm.Graph
 
+  module Graph
+    def import(path)
+      path = File.expand_path path
+      begin
+        stream = java.net.URL.new(path).open_stream
+      rescue java.net.MalformedURLException
+        stream = java.io.FileInputStream.new path
+      end
+      com.tinkerpop.blueprints.pgm.parser.GraphMLReader.input_graph self, stream
+      true
+    end
+
+    def export(path)
+      path = File.expand_path path
+      stream = java.io.FileOutputStream.new path
+      com.tinkerpop.blueprints.pgm.parser.GraphMLWriter.outputGraph self, stream
+    end
+  end
 
   module VertexMixin
     def inspect
@@ -25,10 +43,30 @@ module Pacer
     def delete!
       graph.remove_edge self
     end
+
+    def out_v(*args)
+      if args.any?
+        super
+      else
+        out_vertex
+      end
+    end
+
+    def in_v(*args)
+      if args.any?
+        super
+      else
+        in_vertex
+      end
+    end
   end
 
 
   module ElementMixin
+    def self.included(target)
+      target.send :include, Enumerable unless target.is_a? Enumerable
+    end
+
     def graph=(graph)
       @graph = graph
     end
@@ -39,6 +77,10 @@ module Pacer
 
     def [](key)
       get_property(key.to_s)
+    end
+
+    def []=(key, value)
+      set_property(key.to_s, value)
     end
 
     def result(name = nil)
@@ -60,6 +102,10 @@ module Pacer
 
     def name
       id
+    end
+
+    def each
+      yield self
     end
   end
 end

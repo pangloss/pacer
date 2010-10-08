@@ -4,12 +4,12 @@ module Pacer::Routes
     include RouteOperations
     include MixedRouteModule
 
-    def initialize(back, block)
+    def initialize(back, block = nil)
       @back = back
       @branches = []
       @split_pipe = Pacer::Pipes::CopySplitPipe
       @merge_pipe = Pacer::Pipes::RobinMergePipe
-      branch &block
+      branch &block if block
     end
 
     def branch(&block)

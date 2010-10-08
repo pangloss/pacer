@@ -5,6 +5,8 @@ module Pacer::Pipes
       case enumerable
       when Enumerable::Enumerator
         @enumerable = enumerable
+      when Pacer::ElementMixin
+        @enumerable = [enumerable].to_enum
       when Enumerable
         @enumerable = enumerable.to_enum
       else

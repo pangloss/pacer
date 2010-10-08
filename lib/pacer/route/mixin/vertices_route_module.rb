@@ -36,7 +36,7 @@ module Pacer::Routes
       end
     end
 
-    def to(label, to_vertices)
+    def to(label, to_vertices, props = {})
       case to_vertices
       when Base
         raise "Must be from same graph" unless to_vertices.from_graph?(graph)
@@ -48,7 +48,14 @@ module Pacer::Routes
       end
       map do |from_v|
         to_vertices.map do |to_v|
-          graph.add_edge(nil, from_v, to_v, label) rescue nil
+          begin
+            e = graph.add_edge(nil, from_v, to_v, label)
+            props.each do |name, value|
+              e.set_property name.to_s, value
+            end
+          rescue => e
+            puts e.message
+          end
         end
       end
     end

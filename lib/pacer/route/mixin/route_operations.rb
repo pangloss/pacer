@@ -4,6 +4,10 @@ module Pacer::Routes
       PathsRoute.new(self)
     end
 
+    def subgraph
+      paths.subgraph
+    end
+
     # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
     def random(bias = 0.5)
       route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
@@ -45,6 +49,11 @@ module Pacer::Routes
           key = props.map { |p| e.get_property(p) }
           key << yield(e)
           result[key] += 1
+        end
+      elsif props.count == 1
+        prop = props.first
+        each do |e|
+          result[e.get_property(prop)] += 1
         end
       elsif props.any?
         each do |e|
@@ -94,6 +103,24 @@ module Pacer::Routes
 
     def edges_route?
       self.is_a? EdgesRouteModule
+    end
+
+    def repeat(range)
+      if range.is_a? Fixnum
+        range.to_enum(:times).inject(self) do |route_end, count|
+          yield route_end
+        end
+      else
+        br = BranchedRoute.new(self)
+        range.each do |count|
+          br.branch do |branch_root|
+            count.to_enum(:times).inject(branch_root) do |route_end, count|
+              yield route_end
+            end
+          end
+        end
+        br
+      end
     end
 
     protected

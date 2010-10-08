@@ -3,16 +3,29 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
   import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
 
-  def self.neo4j(path)
-    graph = Neo4jGraph.new(File.expand_path(path))
-    at_exit do
-      begin
-        graph.shutdown
-      rescue Exception, StandardError => e
-        pp e
+  class << self
+    def neo4j(path)
+      path = File.expand_path(path)
+      return neo_graphs[path] if neo_graphs[path]
+      graph = Neo4jGraph.new(path)
+      neo_graphs[path] = graph
+      register_neo_shutdown(path)
+      graph
+    end
+
+    def neo_graphs
+      @neo_graphs ||= {}
+    end
+
+    def register_neo_shutdown(path)
+      at_exit do
+        begin
+          neo_graphs[path].shutdown if neo_graphs[path]
+        rescue Exception, StandardError => e
+          pp e
+        end
       end
     end
-    graph
   end
 
 
