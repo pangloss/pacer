@@ -23,7 +23,16 @@ module Pacer::Routes
     end
 
     def labels
-      map { |e| e.get_label }
+      if block_given?
+        each do |e|
+          yield e.get_label
+        end
+      else
+        enum = to_enum(:each)
+        enum.extend IteratorBlockMixin
+        enum.block = proc { |e| e.get_label }
+        enum
+      end
     end
 
     def result(name = nil)

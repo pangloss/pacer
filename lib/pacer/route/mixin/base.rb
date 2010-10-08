@@ -114,7 +114,8 @@ module Pacer
             yield item
           end
         else
-          iter.extend IteratorMixin
+          iter.extend IteratorGraphMixin
+          iter.graph = g
           iter
         end
       rescue NoSuchElementException

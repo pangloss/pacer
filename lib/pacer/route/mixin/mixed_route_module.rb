@@ -32,8 +32,9 @@ module Pacer::Routes
       e.both_v(*args, &block)
     end
 
-    def labels
-      e.map { |e| e.get_label }
+    # Return an iterator of or yield all labels on matching edges.
+    def labels(&block)
+      e.labels(&block)
     end
 
     def result(name = nil)

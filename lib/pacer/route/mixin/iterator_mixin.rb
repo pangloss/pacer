@@ -1,5 +1,5 @@
 module Pacer::Routes
-  module IteratorMixin
+  module IteratorGraphMixin
     def graph=(graph)
       @graph = graph
     end
@@ -8,6 +8,16 @@ module Pacer::Routes
       item = super
       item.graph = @graph
       item
+    end
+  end
+
+  module IteratorBlockMixin
+    def block=(block)
+      @block = block
+    end
+
+    def next
+      @block.call(super)
     end
   end
 end
