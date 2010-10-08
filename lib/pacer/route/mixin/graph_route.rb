@@ -14,10 +14,6 @@ module Pacer::Routes
       path
     end
 
-    def [](id)
-      vertex id
-    end
-
     def result
       self
     end

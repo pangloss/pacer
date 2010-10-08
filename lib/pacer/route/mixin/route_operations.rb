@@ -63,15 +63,6 @@ module Pacer::Routes
       result
     end
 
-    def group_map(into = [], operation = :<<)
-      result = Hash.new { |h,k| h[k] = into.clone }
-      each do |e|
-        k, v = yield e
-        result[k] = result[k].send(operation, v)
-      end
-      result
-    end
-
     def delete!
       map { |e| e.delete! }
     end
