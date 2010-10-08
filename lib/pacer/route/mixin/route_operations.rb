@@ -1,4 +1,7 @@
 module Pacer::Routes
+
+  # Additional convenience and data analysis methods that can be mixed into
+  # routes if they support the full route interface.
   module RouteOperations
     def paths
       PathsRoute.new(self)

@@ -1,6 +1,12 @@
 module Pacer
   module Routes
+
+    # The basic internal logic for routes and core route shared methods are
+    # defined here. Many of these methods are designed to be specialized by
+    # other modules included after Base is included.
     module Base
+
+      # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
         def vertex_path(name)
         end

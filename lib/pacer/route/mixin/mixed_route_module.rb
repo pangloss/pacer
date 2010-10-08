@@ -1,4 +1,7 @@
 module Pacer::Routes
+
+  # Basic methods for routes that may contain both vertices and edges. That can
+  # happen as the result of a branched route, for example.
   module MixedRouteModule
 
     # Pass through only vertices.

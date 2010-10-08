@@ -1,4 +1,7 @@
 module Pacer::Routes
+
+  # This module adds route methods to the basic graph classes returned from the
+  # blueprints library.
   module GraphRoute
 
     # Returns a new path to all graph vertices. Standard filter options.

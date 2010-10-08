@@ -1,4 +1,6 @@
 module Pacer::Routes
+
+  # Basic methods for routes that contain only edges.
   module EdgesRouteModule
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
@@ -20,7 +22,7 @@ module Pacer::Routes
       raise "Can't call vertices for EdgesRoute."
     end
 
-    # Return a new route with the additional label, property and block filters given.
+    # Extend route with the additional edge label, property and block filters.
     def e(*filters, &block)
       path = EdgesRoute.new(self, filters, block)
       path.pipe_class = nil
@@ -69,8 +71,7 @@ module Pacer::Routes
 
     protected
 
-    # The filters and block this processes are the ones that are passed to the
-    # initialize method, not the ones passed to in_v, out_v, etc...
+    # Specialize filter_pipe for edge labels.
     def filter_pipe(pipe, filters, block)
       labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
       if labels.empty?
