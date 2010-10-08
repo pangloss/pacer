@@ -1,33 +1,42 @@
 module Pacer::Routes
   module MixedRouteModule
+
+    # Pass through only vertices.
     def v
       VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
     end
 
+    # Pass through only edges.
     def e
       EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
     end
 
+    # Out edges from matching vertices.
     def out_e(*args, &block)
       v.out_e(*args, &block)
     end
 
+    # In edges from matching vertices.
     def in_e(*args, &block)
       v.in_e(*args, &block)
     end
 
+    # All edges from matching vertices.
     def both_e(*args, &block)
       v.both_e(*args, &block)
     end
 
+    # Out vertices from matching edges.
     def out_v(*args, &block)
       e.out_v(*args, &block)
     end
 
+    # In vertices from matching edges.
     def in_v(*args, &block)
       e.in_v(*args, &block)
     end
 
+    # All vertices from matching edges.
     def both_v(*args, &block)
       e.both_v(*args, &block)
     end
@@ -37,6 +46,7 @@ module Pacer::Routes
       e.labels(&block)
     end
 
+    # Calculate and save result.
     def result(name = nil)
       ids = map do |element|
         if element.is_a? Pacer::VertexMixin

@@ -1,4 +1,7 @@
 module Pacer::Routes
+
+  # Adds support to a route to store a variable inline during processing. See
+  # Pacer::Routes::RouteOperations#as
   module VariableRouteModule
     def initialize(back, variable_name)
       @back = back

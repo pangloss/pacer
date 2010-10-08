@@ -4,19 +4,27 @@ module Pacer::Routes
       PathsRoute.new(self)
     end
 
+    # Create a new TinkerGraph based on the paths of all matching elements.
     def subgraph
       paths.subgraph
     end
 
-    # bias is the chance the element will be returned from 0 to 1 (0% to 100%)
+    # Return elements based on a bias:1 chance.
+    #
+    # If given an integer (n) > 0, bias is calcualated at 1 / n.
     def random(bias = 0.5)
+      bias = 1 / bias.to_f if bias.is_a? Fixnum and bias > 0
       route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
     end
 
+    # Do not return duplicate elements.
     def uniq
       route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
     end
 
+    # Accepts a string or symbol to return an array of matching properties, or
+    # an integer to return the element at the given offset, or a range to
+    # return all elements between the offsets within the range.
     def [](prop_or_subset)
       case prop_or_subset
       when String, Symbol
@@ -35,10 +43,14 @@ module Pacer::Routes
       end
     end
 
+    # Returns an array of element ids.
     def ids
       map { |e| e.id }
     end
 
+    # Creates a hash where the key is the properties and return value of the
+    # given block, and the value is the number of times each key was found in
+    # the results set.
     def group_count(*props)
       result = Hash.new(0)
       props = props.map { |p| p.to_s }
@@ -63,10 +75,14 @@ module Pacer::Routes
       result
     end
 
+    # Delete all matching elements.
     def delete!
       map { |e| e.delete! }
     end
 
+    # Store the current intermediate element in the route's vars hash by the
+    # given name so that it is accessible subsequently in the processing of the
+    # route.
     def as(name)
       if vertices_route?
         VertexVariableRoute.new(self, name)
@@ -77,6 +93,9 @@ module Pacer::Routes
       end
     end
 
+    # Branch the route on a path defined within the given block. Call this
+    # method multiple times in a row to branch the route over different paths
+    # before merging back.
     def branch(&block)
       br = BranchedRoute.new(self, block)
       if br.branch_count == 0
@@ -86,18 +105,24 @@ module Pacer::Routes
       end
     end
 
+    # Returns true if this route could contain both vertices and edges.
     def mixed_route?
       self.is_a? MixedRouteModule
     end
 
+    # Returns true if this route countains only vertices.
     def vertices_route?
       self.is_a? VerticesRouteModule
     end
 
+    # Returns true if this route countains only edges.
     def edges_route?
       self.is_a? EdgesRouteModule
     end
 
+    # Apply the given path fragment multiple times in succession. If a range is given, the route
+    # is branched and each number of repeats is processed in a seperate branch before being
+    # merged back. That is useful if a pattern may be nested to varying depths.
     def repeat(range)
       if range.is_a? Fixnum
         range.to_enum(:times).inject(self) do |route_end, count|
