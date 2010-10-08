@@ -1,3 +1,4 @@
+require 'pacer/route/mixin/iterator_mixin'
 require 'pacer/route/mixin/base'
 require 'pacer/route/mixin/route_operations'
 require 'pacer/route/mixin/single_route'

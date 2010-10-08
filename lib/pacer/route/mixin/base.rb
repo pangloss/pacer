@@ -95,12 +95,18 @@ module Pacer
         end
       end
 
+
       def each
         iter = iterator(false)
         g = graph
-        while item = iter.next
-          item.graph = g
-          yield item
+        if block_given?
+          while item = iter.next
+            item.graph = g
+            yield item
+          end
+        else
+          iter.extend IteratorMixin
+          iter
         end
       rescue NoSuchElementException
         self
@@ -109,10 +115,15 @@ module Pacer
       def each_path
         iter = iterator(true)
         g = graph
-        while item = iter.next
-          path = iter.path
-          path.each { |item| item.graph = g }
-          yield path
+        if block_given?
+          while item = iter.next
+            path = iter.path
+            path.each { |item| item.graph = g }
+            yield path
+          end
+        else
+          iter.extend IteratorMixin
+          iter
         end
       rescue NoSuchElementException
         self
