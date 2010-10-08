@@ -143,6 +143,7 @@ module Pacer
             lens = results.map { |r| r.length }
             max = lens.max
             cols = (graph.columns / (max + 1).to_f).floor
+            cols = 1 if cols < 1
             template_part = ["%-#{max}s"]
             template = (template_part * cols).join(' ')
             results.each_slice(cols) do |row|
