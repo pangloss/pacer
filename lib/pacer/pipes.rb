@@ -1,4 +1,6 @@
 module Pacer
+  # Import the Pipes and related objects that we'll be using.
+
   import java.util.Iterator
   import java.util.NoSuchElementException
 

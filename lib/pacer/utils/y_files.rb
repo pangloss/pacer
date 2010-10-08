@@ -3,9 +3,23 @@ require 'set'
 
 module Pacer
   module Utils
+
+    # Exports a graph to GraphML with some yworks.com graphml formatting extensions.
     class YFilesExport
-      # these are all procs:
-      attr_accessor :vertex_label, :edge_label, :vertex_fill, :edge_color, :vertex_properties, :edge_properties
+
+      # a proc that takes a vertex and returns a label string
+      attr_accessor :vertex_label
+      # a proc that takes a vertex and returns a color in hex format: "#aaee00"
+      attr_accessor :vertex_fill
+      # a proc that takes a vertex and returns a hash of properties to be exported
+      attr_accessor :vertex_properties
+
+      # a proc that takes an edge and returns a label string
+      attr_accessor :edge_label
+      # a proc that takes an edge and returns a color in hex format: "#aaee00"
+      attr_accessor :edge_color
+      # a proc that takes an edge and returns a hash of properties to be exported
+      attr_accessor :edge_properties
 
       def initialize
         self.vertex_label = proc { |v| v[:name] }
@@ -15,6 +29,7 @@ module Pacer
         self.edge_color = proc { |e| "#000000" }
       end
 
+      # Export the given graph to the given path in an extended .graphml format.
       def export(graph, path)
         x = xml(graph)
         File.open(File.expand_path(path), 'w') do |f|
@@ -22,6 +37,7 @@ module Pacer
         end
       end
 
+      # Returns the xml builder used to construct the xml for the given graph.
       def xml(graph)
         node_keys = Set[]
         edge_keys = Set[]
