@@ -24,14 +24,6 @@ module Pacer
       end
 
 
-      def filters
-        @filters ||= []
-      end
-
-      def block
-        @block
-      end
-
       def back
         @back
       end
@@ -52,23 +44,34 @@ module Pacer
         @graph ||= (@back || @source).graph
       end
 
-      def pipe_class=(klass)
-        @pipe_class = klass
-      end
-
       def from_graph?(g)
         graph == g
       end
 
+      # TODO protect or remove method
+      # Specify which pipe class will be instantiated when an iterator is created.
+      def pipe_class=(klass)
+        @pipe_class = klass
+      end
+
+      # Return true if this route is at the beginning of the route definition.
       def root?
         !@source.nil? or @back.nil?
       end
 
+      # Prevents the route from being evaluated when it is inspected. Useful
+      # for computationally expensive routes.
       def route
         @inspect_route = true
         self
       end
 
+      # Returns the hash of variables used during the previous evaluation of
+      # the route.
+      #
+      # The contents of vars is expected to be in a state relevant to the
+      # latest route being evaluated and is primarily meant for internal use,
+      # but YMMV.
       def vars
         if @back
           @back.vars
@@ -77,6 +80,9 @@ module Pacer
         end
       end
 
+      # Argument may be either a path, a graph element or a symbol representing
+      # a key to the vars hash. Prevents any matching elements from being
+      # included in the results.
       def except(path)
         if path.is_a? Symbol
           route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
@@ -86,6 +92,9 @@ module Pacer
         end
       end
 
+      # Argument may be either a path, a graph element or a symbol representing
+      # a key to the vars hash. Ensures that only matching elements will be
+      # included in the results.
       def only(path)
         if path.is_a? Symbol
           route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
@@ -174,6 +183,14 @@ module Pacer
         @filters = filters || []
         @block = block
         @pipe_args = pipe_args
+      end
+
+      def filters
+        @filters ||= []
+      end
+
+      def block
+        @block
       end
 
       def back=(back)
