@@ -23,16 +23,6 @@ module Pacer
         target.extend RouteClassMethods
       end
 
-      def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
-        if back.is_a? Base
-          @back = back
-        else
-          @source = back
-        end
-        @filters = filters || []
-        @block = block
-        @pipe_args = pipe_args
-      end
 
       def filters
         @filters ||= []
@@ -163,6 +153,17 @@ module Pacer
       end
 
       protected
+
+      def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
+        if back.is_a? Base
+          @back = back
+        else
+          @source = back
+        end
+        @filters = filters || []
+        @block = block
+        @pipe_args = pipe_args
+      end
 
       def back=(back)
         @back = back
