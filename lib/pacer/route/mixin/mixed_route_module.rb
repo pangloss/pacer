@@ -38,10 +38,10 @@ module Pacer::Routes
 
     def result(name = nil)
       ids = map do |element|
-        if element.is_a? Pacer::Vertex
-          [:load_vertex, element.id]
+        if element.is_a? Pacer::VertexMixin
+          [:vertex, element.id]
         else
-          [:load_edge, element.id]
+          [:edge, element.id]
         end
       end
       if ids.count > 1
