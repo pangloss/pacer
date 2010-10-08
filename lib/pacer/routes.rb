@@ -12,7 +12,7 @@ require 'pacer/route/edges_route'
 require 'pacer/route/vertices_route'
 require 'pacer/route/vertex_variable_route'
 require 'pacer/route/edge_variable_route'
-require 'pacer/route/mixed_variable_route' #TODO: will need this one
+require 'pacer/route/mixed_variable_route'
 require 'pacer/route/vertices_identity_route'
 require 'pacer/route/edges_identity_route'
 require 'pacer/route/mixed_identity_route'
