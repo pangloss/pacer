@@ -30,6 +30,16 @@ module Pacer::Routes
       @vertex_name = a_proc
     end
 
+    # The proc used to name edges.
+    def edge_name
+      @edge_name
+    end
+
+    # Set the proc used to name edges.
+    def edge_name=(a_proc)
+      @edge_name = a_proc
+    end
+
     def columns
       @columns || 120
     end
