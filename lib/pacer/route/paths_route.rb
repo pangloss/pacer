@@ -19,6 +19,7 @@ module Pacer::Routes
     def subgraph(target_graph = nil)
       raise "Can't create a subgraph within itself." if target_graph == graph
       target_graph ||= Pacer.tg
+      target_graph.vertex_name ||= graph.vertex_name
       each do |path|
         path.select { |e| e.is_a? Pacer::VertexMixin }.each do |vertex|
           next if target_graph.vertex(vertex.id)

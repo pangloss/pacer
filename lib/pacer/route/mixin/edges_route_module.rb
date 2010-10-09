@@ -31,16 +31,7 @@ module Pacer::Routes
 
     # Return an iterator of or yield all labels
     def labels
-      if block_given?
-        each do |e|
-          yield e.get_label
-        end
-      else
-        enum = to_enum(:each)
-        enum.extend IteratorBlockMixin
-        enum.block = proc { |e| e.get_label }
-        enum
-      end
+      map { |e| e.get_label }
     end
 
     # Stores the result of the current path in a new path so it will not need
