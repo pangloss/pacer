@@ -6,18 +6,15 @@
     <default/>
   </key>
   <key attr.name="url" attr.type="string" for="node" id="d2"/>
-  <key attr.name="description" attr.type="string" for="node" id="d3"/>
   <key for="node" id="d4" yfiles.type="nodegraphics"/>
   <key attr.name="Description" attr.type="string" for="graph" id="d5">
     <default/>
   </key>
   <key attr.name="url" attr.type="string" for="edge" id="d6"/>
-  <key attr.name="description" attr.type="string" for="edge" id="d7"/>
   <key for="edge" id="d8" yfiles.type="edgegraphics"/>
   <graph edgedefault="directed" id="G">
-    <node id="n0">
+    <node id="0">
       <data key="name">pangloss</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="70.5322265625" x="2.332763671875" y="-45.0"/>
@@ -28,9 +25,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n1">
+    <node id="1">
       <data key="name">pacer</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="47.58544921875" x="175.754638671875" y="-45.0"/>
@@ -41,9 +37,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n2">
+    <node id="2">
       <data key="name">pipes</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="46.9951171875" x="526.190673828125" y="-87.51626984126985"/>
@@ -54,9 +49,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n3">
+    <node id="3">
       <data key="name">blueprints</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="77.3623046875" x="653.552978515625" y="-126.58293650793651"/>
@@ -67,9 +61,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n4">
+    <node id="4">
       <data key="name">gremlin</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="63.6767578125" x="367.146728515625" y="-113.76626984126985"/>
@@ -80,9 +73,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n5">
+    <node id="5">
       <data key="name">okram</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="54.21875" x="172.43798828125" y="-152.8329365079365"/>
@@ -93,9 +85,8 @@
         </y:ShapeNode>
       </data>
     </node>
-    <node id="n6">
+    <node id="6">
       <data key="name">tinkerpop</data>
-      <data key="d3"/>
       <data key="d4">
         <y:ShapeNode>
           <y:Geometry height="30.0" width="75.19775390625" x="0.0" y="-133.2996031746032"/>
@@ -106,8 +97,7 @@
         </y:ShapeNode>
       </data>
     </node>
-    <edge id="e0" source="n0" target="n1" label="wrote">
-      <data key="d7"/>
+    <edge id="0" source="0" target="1" label="wrote">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="35.26611328125" sy="-0.0" tx="-23.792724609375" ty="-0.0"/>
@@ -118,8 +108,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e1" source="n5" target="n4" label="wrote">
-      <data key="d7"/>
+    <edge id="1" source="5" target="4" label="wrote">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="27.109375" sy="10.0" tx="-31.83837890625" ty="-10.0">
@@ -135,8 +124,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e2" source="n1" target="n4" label="modelled_on">
-      <data key="d7"/>
+    <edge id="2" source="1" target="4" label="modelled_on">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="23.792724609375" sy="-10.0" tx="-31.83837890625" ty="10.0">
@@ -152,8 +140,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e3" source="n1" target="n2" label="uses">
-      <data key="d7"/>
+    <edge id="3" source="1" target="2" label="uses">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="23.792724609375" sy="-0.0" tx="-23.49755859375" ty="11.25">
@@ -169,8 +156,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e4" source="n1" target="n3" label="uses">
-      <data key="d7"/>
+    <edge id="4" source="1" target="3" label="uses">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="23.792724609375" sy="10.0" tx="-38.68115234375" ty="12.0">
@@ -184,8 +170,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e5" source="n4" target="n2" label="uses">
-      <data key="d7"/>
+    <edge id="5" source="4" target="2" label="uses">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="31.83837890625" sy="7.5" tx="-23.49755859375" ty="-3.75">
@@ -201,8 +186,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e6" source="n4" target="n3" label="uses">
-      <data key="d7"/>
+    <edge id="6" source="4" target="3" label="uses">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="31.83837890625" sy="-7.5" tx="-38.68115234375" ty="-0.0">
@@ -216,8 +200,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e7" source="n2" target="n3" label="uses">
-      <data key="d7"/>
+    <edge id="7" source="2" target="3" label="uses">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="23.49755859375" sy="-0.0" tx="-38.68115234375" ty="6.0">
@@ -231,8 +214,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e8" source="n6" target="n3" label="projects">
-      <data key="d7"/>
+    <edge id="8" source="6" target="3" label="projects">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="37.598876953125" sy="-11.250000000000014" tx="-38.68115234375" ty="-12.0">
@@ -248,8 +230,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e9" source="n6" target="n2" label="projects">
-      <data key="d7"/>
+    <edge id="9" source="6" target="2" label="projects">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="37.598876953125" sy="11.25" tx="-23.49755859375" ty="3.75">
@@ -265,8 +246,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e10" source="n6" target="n4" label="projects">
-      <data key="d7"/>
+    <edge id="10" source="6" target="4" label="projects">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="37.598876953125" sy="3.75" tx="-31.83837890625" ty="-0.0">
@@ -280,8 +260,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e11" source="n6" target="n5" label="member">
-      <data key="d7"/>
+    <edge id="11" source="6" target="5" label="member">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="37.598876953125" sy="-3.75" tx="-27.109375" ty="-0.0">
@@ -295,8 +274,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e12" source="n5" target="n3" label="wrote">
-      <data key="d7"/>
+    <edge id="12" source="5" target="3" label="wrote">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="27.109375" sy="-10.0" tx="-38.68115234375" ty="-6.0">
@@ -312,8 +290,7 @@
         </y:PolyLineEdge>
       </data>
     </edge>
-    <edge id="e13" source="n5" target="n2" label="wrote">
-      <data key="d7"/>
+    <edge id="13" source="5" target="2" label="wrote">
       <data key="d8">
         <y:PolyLineEdge>
           <y:Path sx="27.109375" sy="-0.0" tx="-23.49755859375" ty="-11.25">
