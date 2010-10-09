@@ -148,4 +148,19 @@ describe RouteOperations do
             [@g.vertex(5), @g.edge(12), @g.vertex(3)]]
     end
   end
+
+  describe '#subgraph' do
+    before do
+      @sg = @g.v(:type => 'person').out_e.in_v(:type => 'project').subgraph
+
+      @vertices = @g.v(:type => 'person').to_a + @g.v(:type => 'project').to_a
+      @edges = @g.v(:type => 'person').out_e(:wrote)
+    end
+
+    it { Set[*@sg.v.ids].should == Set[*@vertices.map { |v| v.id }] }
+    it { Set[*@sg.e.ids].should == Set[*@edges.map { |e| e.id }] }
+
+    it { @sg.e.labels.uniq.should == ['wrote'] }
+    it { Set[@sg.v.map { |v| v.properties }].should == Set[@vertices.map { |v| v.properties }] }
+  end
 end
