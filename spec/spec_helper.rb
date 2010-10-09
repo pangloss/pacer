@@ -1,6 +1,7 @@
 require 'pacer'
 
 Dir['./spec/support/**/*.rb'].map {|f| require f}
+Dir['./spec/tackle/*.rb'].map {|f| require f}
 
 module RSpec
   module Core

@@ -182,3 +182,124 @@ describe PathsRoute do
     it { Set[*@sg.v.map { |v| v.properties }].should == Set[*@vertices.map { |v| v.properties }] }
   end
 end
+
+describe BranchedRoute do
+  before :all do
+    @g = Pacer.tg 'spec/data/pacer.graphml'
+    @br = @g.v(:type => 'person').
+      branch { |b| b.out_e.in_v(:type => 'project') }.
+      branch { |b| b.out_e.in_v.out_e }
+  end
+
+  describe '#inspect' do
+    it 'should include both branches when inspecting' do
+      @br.inspect.should ==
+        '#<Vertices([{:type=>"person"}]) -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX, [{:type=>"project"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>'
+    end
+  end
+
+  it 'should return matches in round robin order by default' do
+    @br.to_a.should ==
+      [@g.vertex(1), @g.edge(3),
+       @g.vertex(4), @g.edge(2),
+       @g.vertex(2), @g.edge(4),
+       @g.vertex(3), @g.edge(6), @g.edge(5), @g.edge(7)]
+  end
+
+  it '#exhaustive should return matches in exhaustive merge order' do
+    @br.exhaustive.to_a.should ==
+      [@g.vertex(1), @g.vertex(4), @g.vertex(2), @g.vertex(3),
+        @g.edge(3), @g.edge(2), @g.edge(4), @g.edge(6), @g.edge(5), @g.edge(7)]
+  end
+
+  it { @br.branch_count.should == 2 }
+  it { @br.should_not be_root }
+
+  describe '#mixed' do
+    it { @br.mixed.to_a.should == @br.to_a }
+  end
+
+  describe 'chained branch routes' do
+    describe 'once' do
+      before do
+        @once = @g.v.branch { |v| v.v }.branch { |v| v.v }.v
+      end
+
+      it 'should double each vertex' do
+        @once.count.should == @g.v.count * 2
+      end
+
+      it 'should have 2 of each vertex' do
+        @once.group_count { |v| v.id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
+      end
+    end
+
+    describe 'twice' do
+      before do
+        @twice = @g.v.branch { |v| v.v }.branch { |v| v.v }.v.branch { |v| v.v }.branch { |v| v.v }.v
+        @twice_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v
+      end
+
+      it 'should double each vertex' do
+        pending 'bug in pipes'
+        @twice.count.should == @g.v.count * 2 * 2
+      end
+
+      it 'should have 4 of each vertex' do
+        pending 'bug in pipes'
+        @twice.group_count { |v| v.id.to_i }.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }
+      end
+
+      it 'should have 4 of each when exhaustive' do
+        pending 'bug in pipes'
+        @twice_e.group_count { |v| v.id.to_i }.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }
+      end
+    end
+  end
+
+  describe 'repeating branch routes' do
+  end
+
+  describe 'route with a custom split pipe' do
+    before do
+      @r = @g.v.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
+    end
+
+    describe 'vertices' do
+      it { @r.v.to_a.should == @r.v.uniq.to_a }
+      it 'should have only all person and project vertices' do
+        people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
+        Set[*@r.v].should == people_and_projects
+      end
+    end
+
+    describe 'edges' do
+      it { @r.e.to_a.should == @r.e.uniq.to_a }
+      it 'should have out edges from all vertices except person and project' do
+        # TODO: this type of thing should be much easier
+        people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
+        vertices = @g.v.to_a - people_and_projects.to_a
+        edges = Set[*vertices.map { |v| v.out_e.to_a }.flatten]
+        Set[*@r.e].should == edges
+      end
+    end
+
+    describe 'chained' do
+      def add_branch(vertices_path)
+        vertices_path.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).mixed
+      end
+
+      before do
+        @r2 = add_branch(add_branch(@g.v))
+      end
+
+      describe 'via #repeat' do
+        it 'should use the type splitter thing' do
+          pending 'bug in pipes'
+          pending 'Something is going wrong but I am not sure why. Not all elements matched by the first branch get passed into the next one.'
+          @r4 = @g.v.repeat(4) { |repeater| add_branch(repeater) }
+        end
+      end
+    end
+  end
+end
