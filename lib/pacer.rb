@@ -18,6 +18,7 @@ module Pacer
   require 'pacer/routes'
   require 'pacer/neo4j'
   require 'pacer/tg'
+  require 'pacer/support'
 
   class << self
     # Reload all Ruby files in the Pacer library. Useful for debugging in the
