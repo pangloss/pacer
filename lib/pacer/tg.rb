@@ -17,7 +17,6 @@ module Pacer
   # Extend the java class imported from blueprints.
   class TinkerGraph
     include Routes::Base
-    include Routes::RouteOperations
     include Routes::GraphRoute
 
     # Load and initialize a vertex by id.

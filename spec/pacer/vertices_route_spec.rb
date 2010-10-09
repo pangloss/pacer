@@ -15,6 +15,8 @@ describe GraphRoute do
   describe '#e' do
     it { @g.e.should be_an_instance_of(EdgesRoute) }
   end
+
+  it { @g.should_not be_is_a(RouteOperations) }
 end
 
 
