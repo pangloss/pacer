@@ -197,6 +197,10 @@ module Pacer
           other.instance_variable_get('@source') == @source
       end
 
+      def empty?
+        none?
+      end
+
       protected
 
       # Initializes some basic instance variables.
