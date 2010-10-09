@@ -46,6 +46,10 @@ module Pacer
       getEdges.to_a
     end
 
+    def ==(other)
+      other.class == self.class and other.object_id == self.object_id
+    end
+
     # Discourage use of the native getVertex and getEdge methods
     protected :get_vertex, :getVertex, :get_edge, :getEdge
   end

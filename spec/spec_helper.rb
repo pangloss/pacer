@@ -30,7 +30,9 @@ RSpec.configure do |c|
   c.color_enabled = !in_editor?
   c.filter_run :focus => true
   c.run_all_when_everything_filtered = true
-  c.alias_it_should_behave_like_to :it_should_call, ':'
+  Pacer.hide_route_elements = true
+  c.mock_with :rr
+
   # Not sure what this does: ...
   # c.filter_run_excluding :ruby => lambda {|version|
   #   case version.to_s
