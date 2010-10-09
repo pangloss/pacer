@@ -14,6 +14,10 @@ module Pacer::Routes
       EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
     end
 
+    def mixed
+      MixedRoute.pipe_filter(self, nil)
+    end
+
     # Out edges from matching vertices.
     def out_e(*args, &block)
       v.out_e(*args, &block)
