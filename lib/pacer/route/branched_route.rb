@@ -46,9 +46,17 @@ module Pacer::Routes
       self
     end
 
+    def merge_pipe?
+      @merge_pipe
+    end
+
     def split_pipe(pipe_class)
       @split_pipe = pipe_class
       self
+    end
+
+    def split_pipe?
+      @split_pipe
     end
 
     protected
@@ -61,6 +69,9 @@ module Pacer::Routes
     def add_branches_to_pipe(pipe, is_path_iterator)
       split_pipe = @split_pipe.new @branches.count
       split_pipe.set_starts pipe
+      if split_pipe.respond_to? :route=
+        split_pipe.route = self
+      end
       idx = 0
       pipes = @branches.map do |branch_start, branch_end|
         branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
