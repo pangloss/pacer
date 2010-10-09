@@ -64,6 +64,8 @@ describe Base do
       other_projects_by_gremlin_writer.inspect.should ==
         '#<Vertices([{:name=>"gremlin"}]) -> :grem -> Edges(IN_EDGES, [:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES, [:wrote], &block) -> Vertices(IN_VERTEX) -> Vertices(&block)>'
     end
+
+    it { @g.inspect.should == '<#TinkerGraph>' }
   end
 
   describe '#root?' do
@@ -102,7 +104,6 @@ describe Base do
     it { @g.v { true }.count.should == @g.v.count }
     it { @g.v { |v| v.out_e.none? }[:name].should == ['blueprints'] }
   end
-
 end
 
 describe RouteOperations do

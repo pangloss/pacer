@@ -71,6 +71,10 @@ module Pacer::Routes
       @inspect_limit = n
     end
 
+    def graph
+      self
+    end
+
     # Load vertices by id.
     def load_vertices(ids)
       ids.map do |id|
@@ -88,7 +92,7 @@ module Pacer::Routes
     protected
 
     # Don't try to inspect the graph data when inspecting.
-    def inspect_route
+    def hide_elements
       true
     end
   end
