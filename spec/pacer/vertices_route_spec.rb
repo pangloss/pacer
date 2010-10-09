@@ -91,6 +91,18 @@ describe Base do
     it { @g.v.out_e.each.should be_is_a(java.util.Iterator) }
     it { @g.v.each.to_a.should == @g.v.to_a }
   end
+
+  describe 'property filter' do
+    it { @g.v(:name => 'pacer').to_a.should == @g.v.select { |v| v[:name] == 'pacer' } }
+    it { @g.v(:name => 'pacer').count.should == 1 }
+  end
+
+  describe 'block filter' do
+    it { @g.v { false }.count.should == 0 }
+    it { @g.v { true }.count.should == @g.v.count }
+    it { @g.v { |v| v.out_e.none? }[:name].should == ['blueprints'] }
+  end
+
 end
 
 describe RouteOperations do
@@ -118,4 +130,11 @@ describe RouteOperations do
     end
   end
 
+  describe '#as' do
+    it 'should set the variable to the correct node' do
+      vars = Set[]
+      @g.v.as(:a_vertex).in_e(:wrote) { |edge| vars << edge.vars[:a_vertex] }.count
+      vars.should == Set[*@g.e(:wrote).in_v]
+    end
+  end
 end
