@@ -24,6 +24,22 @@ module Pacer
           f.pipe_class = pipe_class
           f
         end
+
+        def from_edge_ids(graph, ids)
+          r = new(proc { graph.load_edges ids })
+          r.graph = graph
+          r.pipe_class = nil
+          r.info = ids.count
+          r
+        end
+
+        def from_vertex_ids(graph, ids)
+          r = new(proc { graph.load_vertices ids })
+          r.graph = graph
+          r.pipe_class = nil
+          r.info = ids.count
+          r
+        end
       end
 
       def self.included(target)

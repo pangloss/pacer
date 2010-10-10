@@ -1,4 +1,6 @@
 module Pacer::Routes
+
+  # Basic methods for routes that contain only vertices.
   module VerticesRouteModule
 
     # Extends the route with out edges from this route's matching vertices.
@@ -33,11 +35,8 @@ module Pacer::Routes
     def result(name = nil)
       v_ids = ids
       if v_ids.count > 1
-        g = graph
-        r = VerticesRoute.new(proc { graph.load_vertices(v_ids) })
-        r.info = "#{ name }:#{v_ids.count}"
-        r.graph = g
-        r.pipe_class = nil
+        r = VerticesRoute.from_vertex_ids graph, v_ids
+        r.info = "#{ name }:#{r.info}" if name
         r
       else
         graph.vertex v_ids.first

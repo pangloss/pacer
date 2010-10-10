@@ -39,11 +39,8 @@ module Pacer::Routes
     def result(name = nil)
       edge_ids = ids
       if edge_ids.count > 1
-        g = graph
-        r = EdgesRoute.new(proc { graph.load_edges(edge_ids) })
-        r.graph = g
-        r.pipe_class = nil
-        r.info = "#{ name }:#{edge_ids.count}"
+        r = EdgesRoute.from_edge_ids graph, edge_ids
+        r.info = "#{ name }:#{r.info}" if name
         r
       else
         graph.edge ids.first
