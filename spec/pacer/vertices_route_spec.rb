@@ -219,6 +219,41 @@ describe BranchedRoute do
     it { @br.mixed.to_a.should == @br.to_a }
   end
 
+  describe 'branch chaining bug' do
+    before do
+      @linear = Pacer.tg
+      a, b, c, d = @linear.add_vertex('a'), @linear.add_vertex('b'), @linear.add_vertex('c'), @linear.add_vertex('d')
+      @linear.add_edge nil, a, b, 'to'
+      @linear.add_edge nil, b, c, 'to'
+      @linear.add_edge nil, c, d, 'to'
+      @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
+
+      @single_v = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.v
+      @single_m = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.mixed
+
+      @v =  @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.v.branch                { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      @m =  @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.mixed.branch            { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      @ve = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive.v.branch     { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
+      @me = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
+    end
+
+    it { @single_v.count.should == 4 }
+    it { @single_m.count.should == 4 }
+    it { @single_v.group_count { |v| v.id }.should ==  { 'b' => 2, 'c' => 2 } }
+    it { @single_m.group_count { |v| v.id }.should ==  { 'b' => 2, 'c' => 2 } }
+
+    it { @v.count.should ==  8 }
+    it { @m.count.should ==  8 }
+    it { @ve.count.should == 8 }
+    it { @me.count.should == 8 }
+
+    it { @v.group_count { |v| v.id }.should ==  { 'c' => 4, 'd' => 4 } }
+    it { @m.group_count { |v| v.id }.should ==  { 'c' => 4, 'd' => 4 } }
+    it { @ve.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
+    it { @me.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
+
+  end
+
   describe 'chained branch routes' do
     describe 'once' do
       before do
@@ -236,23 +271,23 @@ describe BranchedRoute do
 
     describe 'twice' do
       before do
-        @twice = @g.v.branch { |v| v.v }.branch { |v| v.v }.v.branch { |v| v.v }.branch { |v| v.v }.v
-        @twice_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v
+        # the difference must be with the object that's passed to the branch method
+        @twice_v = @g.v.branch { |v| v.v }.branch { |v| v.v }.v.branch { |v| v.v }.branch { |v| v.v }
+        @twice_m = @g.v.branch { |v| v.v }.branch { |v| v.v }.mixed.branch { |v| v.v }.branch { |v| v.v }
+        @twice_v_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive
+        @twice_m_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.mixed.branch { |v| v.v }.branch { |v| v.v }.exhaustive
       end
 
-      it 'should double each vertex' do
-        pending 'bug in pipes'
-        @twice.count.should == @g.v.count * 2 * 2
-      end
+      it { @twice_v.count.should == @g.v.count * 2 * 2 }
+      it { @twice_m.count.should == @g.v.count * 2 * 2 }
+      it { @twice_v_e.count.should == @g.v.count * 2 * 2 }
+      it { @twice_m_e.count.should == @g.v.count * 2 * 2 }
 
-      it 'should have 4 of each vertex' do
-        pending 'bug in pipes'
-        @twice.group_count { |v| v.id.to_i }.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }
-      end
-
-      it 'should have 4 of each when exhaustive' do
-        pending 'bug in pipes'
-        @twice_e.group_count { |v| v.id.to_i }.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }
+      describe 'should have 4 of each' do
+        it { @twice_v.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_m.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_v_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_m_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
       end
     end
   end
@@ -295,8 +330,7 @@ describe BranchedRoute do
 
       describe 'via #repeat' do
         it 'should use the type splitter thing' do
-          pending 'bug in pipes'
-          pending 'Something is going wrong but I am not sure why. Not all elements matched by the first branch get passed into the next one.'
+          #pending 'Something is going wrong but I am not sure why. Not all elements matched by the first branch get passed into the next one.'
           @r4 = @g.v.repeat(4) { |repeater| add_branch(repeater) }
         end
       end

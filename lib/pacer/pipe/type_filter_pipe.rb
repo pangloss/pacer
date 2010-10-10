@@ -11,7 +11,8 @@ module Pacer::Pipes
     end
 
     def processNextStart()
-      while s = @starts.next
+      while @starts.hasNext
+        s = @starts.next
         return s if s.is_a? @type
       end
       raise Pacer::NoSuchElementException.new
