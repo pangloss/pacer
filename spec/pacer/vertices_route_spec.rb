@@ -341,19 +341,25 @@ describe BranchedRoute do
 
     describe 'chained' do
       def add_branch(vertices_path)
-        vertices_path.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).mixed
+        vertices_path.
+          branch { |person| person.out_e.in_v }.
+          branch { |project| project.v }.
+          branch { |other| other.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).v
       end
 
-      before do
-        @r2 = add_branch(add_branch(@g.v))
+      it 'should have 5 unique elements when run once' do
+        @g.v.repeat(1) { |repeater| add_branch(repeater) }.count.should == 12
+        @g.v.repeat(1) { |repeater| add_branch(repeater) }.uniq.count.should == 5
       end
 
-      describe 'via #repeat' do
-        it 'should use the type splitter thing' do
-          #pending 'Something is going wrong but I am not sure why. Not all elements matched by the first branch get passed into the next one.'
-          @r4 = @g.v.repeat(4) { |repeater| add_branch(repeater) }
+      it 'should have 4 unique elements when run twice' do
+        @g.v.repeat(2) { |repeater| add_branch(repeater) }.count.should == 14
+        @g.v.repeat(2) { |repeater| add_branch(repeater) }.uniq.count.should == 4
+      end
 
-        end
+      it 'should have 4 unique elements when run thrice' do
+        @g.v.repeat(3) { |repeater| add_branch(repeater) }.count.should == 14
+        @g.v.repeat(3) { |repeater| add_branch(repeater) }.uniq.count.should == 4
       end
     end
   end

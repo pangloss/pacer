@@ -96,6 +96,16 @@ module Pacer
         self
       end
 
+      # Boolean whether the route alone should be returned by inspect. If
+      # false, the the elements that the route matches will also be displayed.
+      def hide_elements=(bool)
+        @hide_elements = bool
+      end
+
+      def hide_elements
+        @hide_elements
+      end
+
       # Returns the hash of variables used during the previous evaluation of
       # the route.
       #
@@ -291,12 +301,6 @@ module Pacer
           pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, prev_path_iterator)
         end
         pipe
-      end
-
-      # Boolean whether the route alone should be returned by inspect. If
-      # false, the the elements that the route matches will also be displayed.
-      def hide_elements
-        @hide_elements
       end
 
       # Returns an array of strings representing each route object in the
