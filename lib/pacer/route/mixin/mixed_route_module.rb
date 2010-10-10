@@ -62,7 +62,10 @@ module Pacer::Routes
           [:edge, element.id]
         end
       end
-      if ids.count > 1
+      if ids.count == 1
+        method, id = ids.first
+        graph.send method, id
+      else
         g = graph
         loader = proc do
           ids.map { |method, id| graph.send(method, id) }
@@ -72,9 +75,6 @@ module Pacer::Routes
         r.pipe_class = nil
         r.info = "#{ name }:#{ids.count}"
         r
-      else
-        method, id = ids.first
-        graph.send method, id
       end
     end
   end

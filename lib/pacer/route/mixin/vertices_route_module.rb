@@ -34,12 +34,12 @@ module Pacer::Routes
     # to be recalculated.
     def result(name = nil)
       v_ids = ids
-      if v_ids.count > 1
+      if v_ids.count == 1
+        graph.vertex v_ids.first
+      else
         r = VerticesRoute.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
         r
-      else
-        graph.vertex v_ids.first
       end
     end
 

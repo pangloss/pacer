@@ -106,6 +106,26 @@ describe Base do
     it { @g.v { true }.count.should == @g.v.count }
     it { @g.v { |v| v.out_e.none? }[:name].should == ['blueprints'] }
   end
+
+  describe '#result' do
+    it 'should not be nil when no matching vertices' do
+      empty = @g.v(:name => 'missing').result
+      empty.should be_is_a(VerticesRouteModule)
+      empty.count.should == 0
+    end
+
+    it 'should not be nil when no matching edges' do
+      empty = @g.e(:missing).result
+      empty.should be_is_a(EdgesRouteModule)
+      empty.count.should == 0
+    end
+
+    it 'should not be nil when no matching mixed results' do
+      empty = @g.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
+      empty.should be_is_a(MixedRouteModule)
+      empty.count.should == 0
+    end
+  end
 end
 
 describe RouteOperations do
@@ -332,6 +352,7 @@ describe BranchedRoute do
         it 'should use the type splitter thing' do
           #pending 'Something is going wrong but I am not sure why. Not all elements matched by the first branch get passed into the next one.'
           @r4 = @g.v.repeat(4) { |repeater| add_branch(repeater) }
+
         end
       end
     end

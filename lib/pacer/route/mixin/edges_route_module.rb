@@ -38,12 +38,12 @@ module Pacer::Routes
     # to be recalculated.
     def result(name = nil)
       edge_ids = ids
-      if edge_ids.count > 1
+      if edge_ids.count == 1
+        graph.edge ids.first
+      else
         r = EdgesRoute.from_edge_ids graph, edge_ids
         r.info = "#{ name }:#{r.info}" if name
         r
-      else
-        graph.edge ids.first
       end
     end
 
