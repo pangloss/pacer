@@ -24,9 +24,9 @@ module Pacer::Routes
 
     # Extend route with the additional edge label, property and block filters.
     def e(*filters, &block)
-      path = EdgesRoute.new(self, filters, block)
-      path.pipe_class = nil
-      path
+      route = EdgesRoute.new(self, filters, block)
+      route.pipe_class = nil
+      route
     end
 
     # Return an iterator of or yield all labels
@@ -34,7 +34,7 @@ module Pacer::Routes
       map { |e| e.get_label }
     end
 
-    # Stores the result of the current path in a new path so it will not need
+    # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
       edge_ids = ids

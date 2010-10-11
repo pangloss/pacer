@@ -120,27 +120,27 @@ module Pacer
         end
       end
 
-      # Argument may be either a path, a graph element or a symbol representing
+      # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Prevents any matching elements from being
       # included in the results.
-      def except(path)
-        if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
+      def except(route)
+        if route.is_a? Symbol
+          route_class.pipe_filter(self, nil) { |v| v != v.vars[route] }
         else
-          path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+          route = [route] unless route.is_a? Enumerable
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
         end
       end
 
-      # Argument may be either a path, a graph element or a symbol representing
+      # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Ensures that only matching elements will be
       # included in the results.
-      def only(path)
-        if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
+      def only(route)
+        if route.is_a? Symbol
+          route_class.pipe_filter(self, nil) { |v| v == v.vars[route] }
         else
-          path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+          route = [route] unless route.is_a? Enumerable
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
         end
       end
 
@@ -229,6 +229,7 @@ module Pacer
       protected
 
       # Initializes some basic instance variables.
+      # TODO: rename initialize_path initialize_route
       def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
         if back.is_a? Base
           @back = back
