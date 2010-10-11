@@ -61,12 +61,12 @@ module Pacer::Routes
 
     protected
 
-    def iterator(is_path_iterator)
-      pipe = source(is_path_iterator)
-      add_branches_to_pipe(pipe, is_path_iterator)
+    def iterator
+      pipe = source
+      add_branches_to_pipe(pipe)
     end
 
-    def add_branches_to_pipe(pipe, is_path_iterator)
+    def add_branches_to_pipe(pipe)
       split_pipe = @split_pipe.new @branches.count
       split_pipe.set_starts pipe
       if split_pipe.respond_to? :route=
@@ -76,13 +76,10 @@ module Pacer::Routes
       pipes = @branches.map do |branch_start, branch_end|
         branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
         idx += 1
-        branch_end.iterator(is_path_iterator)
+        branch_end.iterator
       end
       pipe = @merge_pipe.new
       pipe.set_starts(pipes)
-      if is_path_iterator
-        pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, pipe)
-      end
       pipe
     end
 

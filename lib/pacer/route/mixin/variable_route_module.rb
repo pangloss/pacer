@@ -14,7 +14,7 @@ module Pacer::Routes
 
     protected
 
-    def iterator(*args)
+    def iterator
       super do |pipe|
         Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
       end

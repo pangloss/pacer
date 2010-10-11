@@ -21,13 +21,10 @@ module Pacer::Routes
     protected
 
     # See Pacer::Routes:Base#iterator
-    def iterator(is_path_iterator)
+    def iterator
       pipe = @pipe
       raise "#new_identity_pipe must be called before #iterator" unless pipe
       pipe = yield pipe if block_given?
-      if is_path_iterator
-        pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, pipe)
-      end
       pipe
     end
   end
