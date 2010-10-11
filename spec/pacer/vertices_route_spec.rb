@@ -161,6 +161,36 @@ describe RouteOperations do
     end
   end
 
+  describe '#repeat' do
+    it 'should apply the route part twice' do
+      route = @g.v.repeat(2) { |tail| tail.out_e.in_v }.inspect
+      route.should == @g.v.out_e.in_v.out_e.in_v.inspect
+    end
+
+    it 'should apply the route part 3 times' do
+      route = @g.v.repeat(3) { |tail| tail.out_e.in_v }.inspect
+      route.should == @g.v.out_e.in_v.out_e.in_v.out_e.in_v.inspect
+    end
+
+    describe 'with a range' do
+      before do
+        @start = @g.vertex(0).v
+        @route = @start.repeat(1..3) { |tail| tail.out_e.in_v[0] }
+      end
+
+      it 'should be equivalent to executing each path separately' do
+        @route.to_a.should == [@start.out_e.in_v.first,
+                               @start.out_e.in_v.out_e.in_v.first,
+                               @start.out_e.in_v.out_e.in_v.out_e.in_v.first]
+      end
+
+      it { @route.should be_a(BranchedRoute) }
+      it { @route.back.should be_a(VerticesRoute) }
+      it { @route.back.back.should be_nil }
+    end
+
+  end
+
 end
 
 describe PathsRoute do
@@ -310,9 +340,6 @@ describe BranchedRoute do
         it { @twice_m_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
       end
     end
-  end
-
-  describe 'repeating branch routes' do
   end
 
   describe 'route with a custom split pipe' do
