@@ -16,7 +16,7 @@ describe GraphRoute do
     it { @g.e.should be_an_instance_of(EdgesRoute) }
   end
 
-  it { @g.should_not be_is_a(RouteOperations) }
+  it { @g.should_not be_a(RouteOperations) }
 end
 
 
@@ -91,8 +91,8 @@ describe Base do
   end
 
   describe '#each' do
-    it { @g.v.each.should be_is_a(java.util.Iterator) }
-    it { @g.v.out_e.each.should be_is_a(java.util.Iterator) }
+    it { @g.v.each.should be_a(java.util.Iterator) }
+    it { @g.v.out_e.each.should be_a(java.util.Iterator) }
     it { @g.v.each.to_a.should == @g.v.to_a }
   end
 
@@ -110,19 +110,19 @@ describe Base do
   describe '#result' do
     it 'should not be nil when no matching vertices' do
       empty = @g.v(:name => 'missing').result
-      empty.should be_is_a(VerticesRouteModule)
+      empty.should be_a(VerticesRouteModule)
       empty.count.should == 0
     end
 
     it 'should not be nil when no matching edges' do
       empty = @g.e(:missing).result
-      empty.should be_is_a(EdgesRouteModule)
+      empty.should be_a(EdgesRouteModule)
       empty.count.should == 0
     end
 
     it 'should not be nil when no matching mixed results' do
       empty = @g.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
-      empty.should be_is_a(MixedRouteModule)
+      empty.should be_a(MixedRouteModule)
       empty.count.should == 0
     end
   end
