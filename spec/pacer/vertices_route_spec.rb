@@ -278,13 +278,14 @@ describe BranchedRoute do
       @linear.add_edge nil, c, d, 'to'
       @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
 
-      @single_v = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.v
-      @single_m = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.mixed
+      single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      @single_v = single.v
+      @single_m = single.mixed
 
-      @v =  @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.v.branch                { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
-      @m =  @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.mixed.branch            { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
-      @ve = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive.v.branch     { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
-      @me = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
+      @v = single.v.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      @m = single.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      @ve = single.exhaustive.v.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
+      @me = single.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
     end
 
     it { @single_v.count.should == 4 }
@@ -322,10 +323,11 @@ describe BranchedRoute do
     describe 'twice' do
       before do
         # the difference must be with the object that's passed to the branch method
-        @twice_v = @g.v.branch { |v| v.v }.branch { |v| v.v }.v.branch { |v| v.v }.branch { |v| v.v }
-        @twice_m = @g.v.branch { |v| v.v }.branch { |v| v.v }.mixed.branch { |v| v.v }.branch { |v| v.v }
-        @twice_v_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive
-        @twice_m_e = @g.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive.mixed.branch { |v| v.v }.branch { |v| v.v }.exhaustive
+        single = @g.v.branch { |v| v.v }.branch { |v| v.v }
+        @twice_v = single.v.branch { |v| v.v }.branch { |v| v.v }
+        @twice_m = single.mixed.branch { |v| v.v }.branch { |v| v.v }
+        @twice_v_e = single.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive
+        @twice_m_e = single.exhaustive.mixed.branch { |v| v.v }.branch { |v| v.v }.exhaustive
       end
 
       it { @twice_v.count.should == @g.v.count * 2 * 2 }
