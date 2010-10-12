@@ -25,7 +25,6 @@ module Pacer
   end
 end
 
-require 'pacer/pipe/path_iterator_wrapper'
 require 'pacer/pipe/variable_store_iterator_wrapper'
 
 require 'pacer/pipe/enumerable_pipe'

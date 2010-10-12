@@ -318,6 +318,10 @@ describe BranchedRoute do
       it 'should have 2 of each vertex' do
         @once.group_count { |v| v.id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
       end
+
+      it 'should have a path to each result' do
+        pp @once.paths.to_a
+      end
     end
 
     describe 'twice' do
@@ -340,6 +344,10 @@ describe BranchedRoute do
         it { @twice_m.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
         it { @twice_v_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
         it { @twice_m_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+      end
+
+      it 'should have a path to each result' do
+        pp @twice_v.paths.to_a
       end
     end
   end

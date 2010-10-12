@@ -169,7 +169,7 @@ module Pacer
         if block_given?
           while item = iter.next
             path = iter.path
-            yield path.map { |item| item.graph = g; item }
+            yield path.map { |item| item and item.graph = g; item }
           end
         else
           iter.extend IteratorMixin
