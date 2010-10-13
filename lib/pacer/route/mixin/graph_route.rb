@@ -6,7 +6,12 @@ module Pacer::Routes
 
     # Returns a new path to all graph vertices. Standard filter options.
     def v(*filters, &block)
-      path = VerticesRoute.new(proc { self.get_vertices }, filters, block)
+      hash = filters.first if filters.first.is_a? Hash
+      if hash and matches = index.get(hash.keys.first.to_s, hash.values.first)
+        path = VerticesRoute.new(proc { index.get(hash.keys.first.to_s, hash.values.first).iterator }, filters, block)
+      else
+        path = VerticesRoute.new(proc { self.get_vertices }, filters, block)
+      end
       path.pipe_class = nil
       path.graph = self
       path
