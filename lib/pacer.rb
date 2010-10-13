@@ -38,6 +38,28 @@ module Pacer
     def hide_route_elements
       @hide_route_elements
     end
+
+    # Returns how many terminal columns we have.
+    def columns
+      @columns || 120
+    end
+
+    # Tell the graph how many terminal columns we have.
+    def columns=(n)
+      @columns = n
+    end
+
+    # Returns how many matching items should be displayed by #inspect before we
+    # give up and display nothing but the route definition.
+    def inspect_limit
+      @inspect_limit || 500
+    end
+
+    # Alter the inspect limit.
+    def inspect_limit=(n)
+      @inspect_limit = n
+    end
+
   end
 end
 

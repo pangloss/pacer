@@ -190,7 +190,7 @@ module Pacer
           "#<#{inspect_strings.join(' -> ')}>"
         else
           count = 0
-          limit ||= graph.inspect_limit
+          limit ||= Pacer.inspect_limit
           results = map do |v|
             count += 1
             return route.inspect if count > limit
@@ -199,7 +199,7 @@ module Pacer
           if count > 0
             lens = results.map { |r| r.length }
             max = lens.max
-            cols = (graph.columns / (max + 1).to_f).floor
+            cols = (Pacer.columns / (max + 1).to_f).floor
             cols = 1 if cols < 1
             template_part = ["%-#{max}s"]
             template = (template_part * cols).join(' ')
