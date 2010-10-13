@@ -128,7 +128,7 @@ module Pacer
           route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
         end
       end
 
@@ -140,7 +140,7 @@ module Pacer
           route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
         else
           path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_a, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
         end
       end
 
@@ -225,6 +225,10 @@ module Pacer
 
       def empty?
         none?
+      end
+
+      def to_hashset
+        inject(java.util.HashSet.new) { |hs, e| hs.add e; hs }
       end
 
       protected
