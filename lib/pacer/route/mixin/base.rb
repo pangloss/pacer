@@ -227,10 +227,6 @@ module Pacer
         none?
       end
 
-      def to_hashset
-        inject(java.util.HashSet.new) { |hs, e| hs.add e; hs }
-      end
-
       protected
 
       # Initializes some basic instance variables.
