@@ -10,6 +10,7 @@ require 'pacer/route/mixed_elements_route'
 require 'pacer/route/invalid_route' # TODO: delete this one, it's not used.
 require 'pacer/route/edges_route'
 require 'pacer/route/vertices_route'
+require 'pacer/route/indexed_vertices_route'
 require 'pacer/route/mixed_route'
 require 'pacer/route/vertex_variable_route'
 require 'pacer/route/edge_variable_route'

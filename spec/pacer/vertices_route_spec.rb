@@ -64,7 +64,7 @@ describe Base do
       other_projects_by_gremlin_writer = 
         @g.v(:name => 'gremlin').as(:grem).in_e(:wrote).out_v.out_e(:wrote) { |e| true }.in_v.except(:grem)
       other_projects_by_gremlin_writer.inspect.should ==
-        '#<Vertices([{:name=>"gremlin"}]) -> :grem -> Edges(IN_EDGES, [:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES, [:wrote], &block) -> Vertices(IN_VERTEX) -> Vertices(&block)>'
+        '#<IndexedVertices([{:name=>"gremlin"}]) -> :grem -> Edges(IN_EDGES, [:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES, [:wrote], &block) -> Vertices(IN_VERTEX) -> Vertices(&block)>'
     end
 
     it { @g.inspect.should == '#<TinkerGraph>' }
@@ -244,7 +244,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        '#<Vertices([{:type=>"person"}]) -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX, [{:type=>"project"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>'
+        '#<IndexedVertices([{:type=>"person"}]) -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX, [{:type=>"project"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>'
     end
   end
 
