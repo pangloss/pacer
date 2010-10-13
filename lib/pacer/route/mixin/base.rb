@@ -315,13 +315,16 @@ module Pacer
 
         if @pipe_class
           ps = @pipe_class.name
-          pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            if @pipe_args.any?
-              pipeargs = @pipe_args.map { |a| a.to_s }.join(', ')
-              ps = "#{ps}(#{pipeargs})"
+            pipeargs = @pipe_args.map do |arg|
+              if arg.is_a? Enumerable and arg.count > 10
+                "[...#{ arg.count } items...]"
+              else
+                arg.to_s
+              end
             end
+            ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
           else
             ps = @pipe_args
           end
