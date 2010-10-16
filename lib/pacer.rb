@@ -2,14 +2,31 @@ require 'java'
 require 'pp'
 
 module Pacer
+  def self.find_jars(path)
+    jars = Dir[File.expand_path(File.join(path, '*.jar'))]
+    jars = jars.map { |jar| [File.split(jar).last.scan(/(.*)-(\d{1,3}\.\d+.*)(-\w*)?\.jar/).first, jar] }
+    jars.sort.reverse.each do |(lib, ver, etc), file|
+      Pacer::JARS[lib] = file
+      Pacer::JAR_VERSIONS[[lib, ver, etc].compact] = file
+    end
+  end
+
   unless defined? Pacer::VERSION
     VERSION = '0.1.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+    JARS = {}
+    JAR_VERSIONS = {}
+
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.1-SNAPSHOT-standalone.jar'))
-      STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
-      exit 1
+    Pacer.find_jars('~/.m2/**')
+    Pacer.find_jars(File.join(PATH, 'vendor'))
+
+    (JARS.keys.select { |jar| jar =~ /^neo4j/ } + %w[ blueprints pipes ]).each do |jar|
+      unless require JARS[jar]
+        STDERR.puts "Missing dependency: #{ jar }. Please either update your maven repository or install the jar in the vendor folder."
+        exit 1
+      end
     end
   end
 
