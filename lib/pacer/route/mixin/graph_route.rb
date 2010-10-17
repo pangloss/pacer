@@ -4,23 +4,23 @@ module Pacer::Routes
   # blueprints library.
   module GraphRoute
 
-    # Returns a new path to all graph vertices. Standard filter options.
+    # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
-      path = indexed_vertices_path(filters, block)
-      unless path
-        path = VerticesRoute.new(proc { self.get_vertices }, filters, block)
-        path.pipe_class = nil
-        path.graph = self
+      route = indexed_vertices_route(filters, block)
+      unless route
+        route = VerticesRoute.new(proc { self.get_vertices }, filters, block)
+        route.pipe_class = nil
+        route.graph = self
       end
-      path
+      route
     end
 
-    # Returns a new path to all graph edges. Standard filter options.
+    # Returns a new route to all graph edges. Standard filter options.
     def e(*filters, &block)
-      path = EdgesRoute.new(proc { self.get_edges }, filters, block)
-      path.pipe_class = nil
-      path.graph = self
-      path
+      route = EdgesRoute.new(proc { self.get_edges }, filters, block)
+      route.pipe_class = nil
+      route.graph = self
+      route
     end
 
     # Specialization of result simply returns self.
@@ -90,7 +90,7 @@ module Pacer::Routes
       nil
     end
 
-    def indexed_vertices_path(filters, block)
+    def indexed_vertices_route(filters, block)
       idx = index rescue nil
       if idx
         each_property_filter(filters) do |key, value|
@@ -101,9 +101,9 @@ module Pacer::Routes
               index_keys[key] = true if indexed
             end
             if indexed
-              path = IndexedVerticesRoute.new(idx, key, value, filters, block)
-              path.graph = self
-              return path
+              route = IndexedVerticesRoute.new(idx, key, value, filters, block)
+              route.graph = self
+              return route
             end
           end
         end

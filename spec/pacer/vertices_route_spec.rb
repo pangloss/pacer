@@ -272,10 +272,10 @@ describe BranchedRoute do
   describe 'branch chaining bug' do
     before do
       @linear = Pacer.tg
-      a, b, c, d = @linear.add_vertex('a'), @linear.add_vertex('b'), @linear.add_vertex('c'), @linear.add_vertex('d')
-      @linear.add_edge nil, a, b, 'to'
-      @linear.add_edge nil, b, c, 'to'
-      @linear.add_edge nil, c, d, 'to'
+      @a, @b, @c, @d = @linear.add_vertex('a'), @linear.add_vertex('b'), @linear.add_vertex('c'), @linear.add_vertex('d')
+      @ab = @linear.add_edge nil, @a, @b, 'to'
+      @bc = @linear.add_edge nil, @b, @c, 'to'
+      @cd = @linear.add_edge nil, @c, @d, 'to'
       @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
 
       single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
@@ -302,6 +302,43 @@ describe BranchedRoute do
     it { @m.group_count { |v| v.id }.should ==  { 'c' => 4, 'd' => 4 } }
     it { @ve.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
     it { @me.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
+
+    it do
+      @single_v.paths.to_a.should ==
+        [[@a, @ab, @b],
+         [@b, @bc, @c],
+         [@a, @ab, @b],
+         [@b, @bc, @c]]
+    end
+
+    it do
+      @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
+      @v.paths.to_a.should ==
+        [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
+    end
+    it do
+      @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
+      @v.paths.to_a.should ==
+        [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
+    end
+    it do
+      @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
+      @ve.paths.to_a.should ==
+        [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d]]
+    end
+    it do
+      @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
+      @me.paths.to_a.should ==
+        [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
+         [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d]]
+    end
 
   end
 

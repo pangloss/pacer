@@ -120,33 +120,33 @@ module Pacer
         end
       end
 
-      # Argument may be either a path, a graph element or a symbol representing
+      # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Prevents any matching elements from being
       # included in the results.
-      def except(path)
-        if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v != v.vars[path] }
+      def except(route)
+        if route.is_a? Symbol
+          route_class.pipe_filter(self, nil) { |v| v != v.vars[route] }
         else
-          path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+          route = [route] unless route.is_a? Enumerable
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
         end
       end
 
-      # Argument may be either a path, a graph element or a symbol representing
+      # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Ensures that only matching elements will be
       # included in the results.
-      def only(path)
-        if path.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v == v.vars[path] }
+      def only(route)
+        if route.is_a? Symbol
+          route_class.pipe_filter(self, nil) { |v| v == v.vars[route] }
         else
-          path = [path] unless path.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, path.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+          route = [route] unless route.is_a? Enumerable
+          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
         end
       end
 
       # Yields each matching element or returns an iterator if no block is given.
       def each
-        iter = iterator(false)
+        iter = iterator
         g = graph
         if block_given?
           while item = iter.next
@@ -164,13 +164,13 @@ module Pacer
 
       # Yields each matching path or returns an iterator if no block is given.
       def each_path
-        iter = iterator(true)
+        iter = iterator
+        iter.enable_path
         g = graph
         if block_given?
           while item = iter.next
             path = iter.path
-            path.each { |item| item.graph = g }
-            yield path
+            yield path.map { |item| item and item.graph = g; item }
           end
         else
           iter.extend IteratorMixin
@@ -230,6 +230,7 @@ module Pacer
       protected
 
       # Initializes some basic instance variables.
+      # TODO: rename initialize_path initialize_route
       def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
         if back.is_a? Base
           @back = back
@@ -257,15 +258,11 @@ module Pacer
       end
 
       # Get the source of data for this route.
-      def source(is_path_iterator)
+      def source
         if @source
-          if is_path_iterator
-            Pacer::Pipes::PathIteratorWrapper.new(iterator_from_source(@source))
-          else
-            iterator_from_source(@source)
-          end
+          iterator_from_source(@source)
         else
-          @back.send(:iterator, is_path_iterator)
+          @back.send(:iterator)
         end
       end
 
@@ -281,25 +278,18 @@ module Pacer
       end
 
       # Return an iterator for this route loading data from all previous routes
-      # in the chain. If is_path_iterator is true, then return an iterator that
-      # yields arrays of the path through the graph successfully followed by
-      # the route.
-      def iterator(is_path_iterator)
+      # in the chain.
+      def iterator
         @vars = {}
         pipe = nil
-        prev_path_iterator = nil
         if @pipe_class
-          prev_path_iterator = prev_pipe = source(is_path_iterator)
           pipe = @pipe_class.new(*@pipe_args)
-          pipe.set_starts prev_pipe
+          pipe.set_starts source
         else
-          prev_path_iterator = pipe = source(is_path_iterator)
+          pipe = source
         end
         pipe = filter_pipe(pipe, filters, @block)
         pipe = yield pipe if block_given?
-        if is_path_iterator
-          pipe = Pacer::Pipes::PathIteratorWrapper.new(pipe, prev_path_iterator)
-        end
         pipe
       end
 

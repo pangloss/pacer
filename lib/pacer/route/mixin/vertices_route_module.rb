@@ -20,9 +20,9 @@ module Pacer::Routes
 
     # Extend route with the additional vertex property and block filters.
     def v(*filters, &block)
-      path = VerticesRoute.new(self, filters, block)
-      path.pipe_class = nil
-      path
+      route = VerticesRoute.new(self, filters, block)
+      route.pipe_class = nil
+      route
     end
 
     # Undefined for vertex routes.
@@ -30,7 +30,7 @@ module Pacer::Routes
       raise "Can't call edges for VerticesRoute."
     end
 
-    # Stores the result of the current path in a new path so it will not need
+    # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
       v_ids = ids
