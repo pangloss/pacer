@@ -146,3 +146,5 @@ module Pacer
     end
   end
 end
+
+require 'pacer/graph/transactions'
