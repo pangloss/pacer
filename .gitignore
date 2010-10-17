@@ -1,4 +1,4 @@
 *.graph
 *.db
-vendor/*.jar
+vendor/pipes*.jar
 *.graphml
