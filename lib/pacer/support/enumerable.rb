@@ -26,4 +26,11 @@ module Enumerable
       raise
     end
   end
+
+  def to_route(info = nil)
+    r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })
+    r.pipe_class = nil
+    r.info = info
+    r
+  end
 end
