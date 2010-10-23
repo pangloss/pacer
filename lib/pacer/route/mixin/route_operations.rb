@@ -144,6 +144,22 @@ module Pacer::Routes
       end
     end
 
+    def pages(elements_per_page = 1000)
+      page = []
+      results = []
+      idx = 0
+      each do |e|
+        page << e
+        idx += 1
+        if idx % elements_per_page == 0
+          results << yield(page)
+          page = []
+        end
+      end
+      yield page unless page.empty?
+      results
+    end
+
     protected
 
     def has_routable_class?
