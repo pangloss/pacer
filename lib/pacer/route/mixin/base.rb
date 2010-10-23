@@ -70,7 +70,7 @@ module Pacer
 
       # Return which graph this route operates on.
       def graph
-        @graph ||= (@back || @source).graph
+        @graph ||= (@back || @source).graph rescue nil
       end
 
       # Returns true if the given graph is the one this route operates on.
