@@ -21,5 +21,11 @@ module Pacer::Routes
         super
       end
     end
+
+    protected
+
+    def route_class
+      VerticesRoute
+    end
   end
 end
