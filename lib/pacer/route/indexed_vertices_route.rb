@@ -1,9 +1,5 @@
 module Pacer::Routes
-  class IndexedVerticesRoute
-    include Base
-    include RouteOperations
-    include VerticesRouteModule
-
+  class IndexedVerticesRoute < VerticesRoute
     def initialize(index, key, value, filters, block)
       if filters == [key => value] and block.nil?
         # indexed count is possible if no other conditions
