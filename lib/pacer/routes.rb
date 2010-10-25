@@ -18,4 +18,4 @@ require 'pacer/route/mixed_variable_route'
 require 'pacer/route/vertices_identity_route'
 require 'pacer/route/edges_identity_route'
 require 'pacer/route/mixed_identity_route'
-
+require 'pacer/route/context_route'

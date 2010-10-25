@@ -7,6 +7,10 @@ module Pacer::Routes
       PathsRoute.new(self)
     end
 
+    def context
+      ContextRoute.new(self)
+    end
+
     # Create a new TinkerGraph based on the paths of all matching elements.
     def subgraph
       paths.subgraph

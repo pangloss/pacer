@@ -180,6 +180,25 @@ module Pacer
         self
       end
 
+      def each_context
+        iter = iterator
+        g = graph
+        if block_given?
+          while item = iter.next
+            item.graph = g
+            item.extend Pacer::Routes::SingleRoute
+            item.back = @back
+            yield item
+          end
+        else
+          iter.extend IteratorGraphMixin
+          iter.graph = g
+          iter
+        end
+      rescue NoSuchElementException
+        self
+      end
+
       # Returns a string representation of the route definition. If there are
       # less than Graph#inspect_limit matches, it will also output all matching
       # elements formatted in columns up to a maximum character width of
