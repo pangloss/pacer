@@ -3,6 +3,8 @@ module Pacer::Routes
   # Additional convenience and data analysis methods that can be mixed into
   # routes if they support the full route interface.
   module RouteOperations
+    include BranchableRoute
+
     def paths
       PathsRoute.new(self)
     end
@@ -97,18 +99,6 @@ module Pacer::Routes
         EdgeVariableRoute.new(self, name)
       elsif mixed_route?
         MixedVariableRoute.new(self, name)
-      end
-    end
-
-    # Branch the route on a path defined within the given block. Call this
-    # method multiple times in a row to branch the route over different paths
-    # before merging back.
-    def branch(&block)
-      br = BranchedRoute.new(self, block)
-      if br.branch_count == 0
-        self
-      else
-        br
       end
     end
 
