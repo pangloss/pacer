@@ -14,8 +14,7 @@ module Pacer
       neo_graphs[path] = graph
       register_neo_shutdown(path)
       raw_graph = graph.raw_graph
-      def raw_graph.graph; @graph; end
-      raw_graph.instance_variable_set '@graph', graph
+      raw_graph.blueprints_graph = graph
       graph
     end
 
@@ -47,9 +46,6 @@ module Pacer
 
     alias vertex get_vertex
     alias edge get_edge
-
-    # Discourage use of the native getVertex and getEdge methods
-    protected :get_vertex, :getVertex, :get_edge, :getEdge
   end
 
 
@@ -60,7 +56,7 @@ module Pacer
     include VertexMixin
 
     def graph
-      raw_element.graph_database.graph
+      raw_element.graph_database.blueprints_graph
     end
   end
 
@@ -72,7 +68,12 @@ module Pacer
     include EdgeMixin
 
     def graph
-      raw_element.graph_database.graph
+      raw_element.graph_database.blueprints_graph
     end
   end
+end
+
+import org.neo4j.kernel.EmbeddedGraphDatabase
+class Java::OrgNeo4jKernel::EmbeddedGraphDatabase
+  attr_accessor :blueprints_graph
 end

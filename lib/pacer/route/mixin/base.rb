@@ -147,15 +147,11 @@ module Pacer
       # Yields each matching element or returns an iterator if no block is given.
       def each
         iter = iterator
-        g = graph
         if block_given?
           while item = iter.next
-            item.graph = g
             yield item
           end
         else
-          iter.extend IteratorGraphMixin
-          iter.graph = g
           iter
         end
       rescue NoSuchElementException
@@ -166,14 +162,11 @@ module Pacer
       def each_path
         iter = iterator
         iter.enable_path
-        g = graph
         if block_given?
           while item = iter.next
-            path = iter.path
-            yield path.map { |item| item and item.graph = g; item }
+            yield iter.path
           end
         else
-          iter.extend IteratorMixin
           iter
         end
       rescue NoSuchElementException
@@ -182,17 +175,13 @@ module Pacer
 
       def each_context
         iter = iterator
-        g = graph
         if block_given?
           while item = iter.next
-            item.graph = g
             item.extend Pacer::Routes::SingleRoute
             item.back = self
             yield item
           end
         else
-          iter.extend IteratorGraphMixin
-          iter.graph = g
           iter.extend IteratorContextMixin
           iter.context = self
           iter
