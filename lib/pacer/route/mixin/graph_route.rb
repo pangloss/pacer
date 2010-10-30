@@ -3,6 +3,7 @@ module Pacer::Routes
   # This module adds route methods to the basic graph classes returned from the
   # blueprints library.
   module GraphRoute
+    include BranchableRoute
 
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)

@@ -13,7 +13,9 @@ module Pacer::Routes
     end
 
     def branch(&block)
-      if @back.vertices_route?
+      if @back.is_a? Pacer::Graph
+        branch_start = @back
+      elsif @back.vertices_route?
         branch_start = VerticesIdentityRoute.new(self).route
       elsif @back.edges_route?
         branch_start = EdgesIdentityRoute.new(self).route
@@ -62,21 +64,29 @@ module Pacer::Routes
     protected
 
     def iterator
-      pipe = source
-      add_branches_to_pipe(pipe)
+      if @back.is_a? Pacer::Graph
+        add_branches_to_pipe(@back)
+      else
+        pipe = source
+        add_branches_to_pipe(pipe)
+      end
     end
 
     def add_branches_to_pipe(pipe)
-      split_pipe = @split_pipe.new @branches.count
-      split_pipe.set_starts pipe
-      if split_pipe.respond_to? :route=
-        split_pipe.route = self
-      end
-      idx = 0
-      pipes = @branches.map do |branch_start, branch_end|
-        branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
-        idx += 1
-        branch_end.iterator
+      if pipe.is_a? Pacer::Graph
+        pipes = @branches.map { |branch_start, branch_end| branch_end.send :iterator }
+      else
+        split_pipe = @split_pipe.new @branches.count
+        split_pipe.set_starts pipe
+        if split_pipe.respond_to? :route=
+          split_pipe.route = self
+        end
+        idx = 0
+        pipes = @branches.map do |branch_start, branch_end|
+          branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
+          idx += 1
+          branch_end.iterator
+        end
       end
       pipe = @merge_pipe.new
       pipe.set_starts(pipes)
