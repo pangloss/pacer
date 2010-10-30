@@ -267,6 +267,26 @@ module Pacer
         @back = back
       end
 
+      # Return the route which is attached to the given route.
+      def route_after(route)
+        if route == self
+          nil
+        elsif @back
+          if @back == route
+            self
+          elsif @back.is_a? Base
+            @back.route_after(route)
+          end
+        end
+      end
+
+      # This should not normally need to be set. It can be used to inject a route
+      # into another route during iterator generation.
+      def source=(source)
+        @back = nil
+        @source = source
+      end
+
       # Get the source of data for this route.
       def source
         if @source
@@ -347,6 +367,18 @@ module Pacer
       # the pipes for this route object.
       def filter_pipe(pipe, args_array, block)
         if args_array and args_array.any?
+          modules = args_array.select { |arg| arg.is_a? Module }
+          pipe = modules.inject(pipe) do |p, mod|
+            if mod.respond_to? :route_conditions
+              args_array = args_array + [mod.route_conditions]
+              p
+            elsif mod.respond_to? :route
+              route = mod.route(self)
+              beginning_of_condition = route.send :route_after, self
+              beginning_of_condition.send :source=, pipe
+              route.send :iterator
+            end
+          end
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
             hash.inject(p) do |p2, (key, value)|
               new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, value.to_java, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
