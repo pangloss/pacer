@@ -75,5 +75,12 @@ end
 
 import org.neo4j.kernel.EmbeddedGraphDatabase
 class Java::OrgNeo4jKernel::EmbeddedGraphDatabase
-  attr_accessor :blueprints_graph
+
+  def blueprints_graph=(g)
+    @blueprints_graph = g
+  end
+
+  def blueprints_graph
+    @blueprints_graph ||= Pacer.neo_graphs[getStoreDir]
+  end
 end
