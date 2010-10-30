@@ -187,12 +187,14 @@ module Pacer
           while item = iter.next
             item.graph = g
             item.extend Pacer::Routes::SingleRoute
-            item.back = @back
+            item.back = self
             yield item
           end
         else
           iter.extend IteratorGraphMixin
           iter.graph = g
+          iter.extend IteratorContextMixin
+          iter.context = self
           iter
         end
       rescue NoSuchElementException

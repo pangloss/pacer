@@ -29,4 +29,17 @@ module Pacer::Routes
       @block.call(super)
     end
   end
+
+  module IteratorContextMixin
+    # Set the context
+    def context=(context)
+      @context = context
+    end
+
+    def next
+      item = super
+      item.back = @context
+      item
+    end
+  end
 end
