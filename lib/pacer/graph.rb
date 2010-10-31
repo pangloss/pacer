@@ -22,6 +22,14 @@ module Pacer
 
   module VertexMixin
 
+    def add_extension(mod)
+      super
+      if mod.const_defined? :Vertex
+        extend mod::Vertex
+        extensions << mod
+      end
+    end
+
     # Returns a human-readable representation of the vertex.
     def inspect
       "#<#{ ["V[#{id}]", display_name].compact.join(' ') }>"
@@ -40,6 +48,14 @@ module Pacer
 
 
   module EdgeMixin
+
+    def add_extension(mod)
+      super
+      if mod.const_defined? :Edge
+        extend mod::Edge
+        extensions << mod
+      end
+    end
 
     # Returns a human-readable representation of the edge.
     def inspect
@@ -85,6 +101,41 @@ module Pacer
   module ElementMixin
     def self.included(target)
       target.send :include, Enumerable unless target.is_a? Enumerable
+    end
+
+    def add_extension(mod)
+      if mod.const_defined? :Route
+        extend mod::Route
+        extensions << mod
+      end
+    end
+
+    def extensions
+      @extensions ||= Set[]
+    end
+
+    # If any objects in the given array are modules that contain a Route
+    # submodule, extend this route with the Route module.
+    def add_extensions(exts)
+      modules = exts.select { |obj| obj.is_a? Module }
+      modules.each do |mod|
+        add_extension(mod)
+      end
+      self
+    end
+
+    def v(*args)
+      route = super
+      if args.empty? and not block_given?
+        route.add_extensions extensions
+      end
+    end
+
+    def e(*args)
+      route = super
+      if args.empty? and not block_given?
+        route.add_extensions extensions
+      end
     end
 
     # Specify the graph the element belongs to. For internal use only.
