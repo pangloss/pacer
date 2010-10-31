@@ -148,12 +148,25 @@ module Pacer
       # Yields each matching element or returns an iterator if no block is given.
       def each
         iter = iterator
-        if block_given?
-          while item = iter.next
-            yield item
+        if extensions.empty?
+          if block_given?
+            while item = iter.next
+              yield item
+            end
+          else
+            iter
           end
         else
-          iter
+          if block_given?
+            while item = iter.next
+              item.add_extensions extensions
+              yield item
+            end
+          else
+            iter.extend IteratorExtensionsMixin
+            iter.extensions = extensions
+            iter
+          end
         end
       rescue NoSuchElementException
         self
