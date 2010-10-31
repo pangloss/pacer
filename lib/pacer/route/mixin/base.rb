@@ -248,9 +248,19 @@ module Pacer
           @source = back
         end
         @filters = filters || []
-        @filters.select { |f| f.is_a? Module }.each { |mod| extend mod }
+        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
+        add_extensions @filters
         @block = block
         @pipe_args = pipe_args
+      end
+
+      # If any objects in the given array are modules that contain a Route
+      # submodule, extend this route with the Route module.
+      def add_extensions(array)
+        modules = array.select { |obj| obj.is_a? Module and obj.const_defined? :Route }
+        modules.each do |mod|
+          extend mod::Route
+        end
       end
 
       # Return an array of filter options for the current route.
