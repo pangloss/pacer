@@ -1,3 +1,4 @@
+require 'set'
 module Pacer
   module Routes
 
@@ -254,13 +255,29 @@ module Pacer
         @pipe_args = pipe_args
       end
 
-      # If any objects in the given array are modules that contain a Route
-      # submodule, extend this route with the Route module.
-      def add_extensions(array)
-        modules = array.select { |obj| obj.is_a? Module and obj.const_defined? :Route }
-        modules.each do |mod|
+      def add_extension(mod)
+        is_extension = false
+        if mod.const_defined? :Route
+          is_extension = true
           extend mod::Route
         end
+        if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
+          extensions << mod
+        end
+      end
+
+      def extensions
+        @extensions ||= Set[]
+      end
+
+      # If any objects in the given array are modules that contain a Route
+      # submodule, extend this route with the Route module.
+      def add_extensions(exts)
+        modules = exts.select { |obj| obj.is_a? Module }
+        modules.each do |mod|
+          add_extension(mod)
+        end
+        self
       end
 
       # Return an array of filter options for the current route.
