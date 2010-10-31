@@ -255,23 +255,6 @@ module Pacer
         none?
       end
 
-      protected
-
-      # Initializes some basic instance variables.
-      # TODO: rename initialize_path initialize_route
-      def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
-        if back.is_a? Base
-          @back = back
-        else
-          @source = back
-        end
-        @filters = filters || []
-        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
-        add_extensions @filters
-        @block = block
-        @pipe_args = pipe_args
-      end
-
       def add_extension(mod)
         is_extension = false
         if mod.const_defined? :Route
@@ -295,6 +278,23 @@ module Pacer
           add_extension(mod)
         end
         self
+      end
+
+      protected
+
+      # Initializes some basic instance variables.
+      # TODO: rename initialize_path initialize_route
+      def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
+        if back.is_a? Base
+          @back = back
+        else
+          @source = back
+        end
+        @filters = filters || []
+        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
+        add_extensions @filters
+        @block = block
+        @pipe_args = pipe_args
       end
 
       # Return an array of filter options for the current route.
