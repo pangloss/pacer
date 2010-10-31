@@ -92,7 +92,7 @@ module Pacer::Routes
           filter.each { |key, value| yield key, value if key }
         elsif filter.is_a? Module
           if filter.respond_to? :route_conditions
-            each_property_filter(filter.route_conditions) { |k, v| yield k, v }
+            each_property_filter([filter.route_conditions]) { |k, v| yield k, v }
           elsif filter.respond_to? :route
             yield filter, filter
           end
