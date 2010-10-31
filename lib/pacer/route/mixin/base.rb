@@ -248,6 +248,7 @@ module Pacer
           @source = back
         end
         @filters = filters || []
+        @filters.select { |f| f.is_a? Module }.each { |mod| extend mod }
         @block = block
         @pipe_args = pipe_args
       end

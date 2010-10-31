@@ -13,6 +13,7 @@ module Pacer::Routes
         route.pipe_class = nil
         route.graph = self
       end
+      filters.select { |f| f.is_a? Module }.each { |mod| route.extend mod }
       route
     end
 
@@ -21,6 +22,7 @@ module Pacer::Routes
       route = EdgesRoute.new(proc { self.get_edges }, filters, block)
       route.pipe_class = nil
       route.graph = self
+      filters.select { |f| f.is_a? Module }.each { |mod| route.extend mod }
       route
     end
 
