@@ -25,4 +25,17 @@ module Pacer::Routes
       item
     end
   end
+
+  module IteratorExtensionsMixin
+    # Set the extensions
+    def extensions=(extensions)
+      @extensions = extensions
+    end
+
+    def next
+      item = super
+      item.add_extensions @extensions
+      item
+    end
+  end
 end

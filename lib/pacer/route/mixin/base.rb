@@ -1,3 +1,4 @@
+require 'set'
 module Pacer
   module Routes
 
@@ -124,35 +125,52 @@ module Pacer
       # a key to the vars hash. Prevents any matching elements from being
       # included in the results.
       def except(route)
-        if route.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v != v.vars[route] }
-        else
-          route = [route] unless route.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
-        end
+        result = if route.is_a? Symbol
+            route_class.pipe_filter(self, nil) { |v| v != v.vars[route] }
+          else
+            route = [route] unless route.is_a? Enumerable
+            route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+          end
+        result.add_extensions extensions
+        result
       end
 
       # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Ensures that only matching elements will be
       # included in the results.
       def only(route)
-        if route.is_a? Symbol
-          route_class.pipe_filter(self, nil) { |v| v == v.vars[route] }
-        else
-          route = [route] unless route.is_a? Enumerable
-          route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
-        end
+        result = if route.is_a? Symbol
+            route_class.pipe_filter(self, nil) { |v| v == v.vars[route] }
+          else
+            route = [route] unless route.is_a? Enumerable
+            route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+          end
+        result.add_extensions extensions
+        result
       end
 
       # Yields each matching element or returns an iterator if no block is given.
       def each
         iter = iterator
-        if block_given?
-          while item = iter.next
-            yield item
+        if extensions.empty?
+          if block_given?
+            while item = iter.next
+              yield item
+            end
+          else
+            iter
           end
         else
-          iter
+          if block_given?
+            while item = iter.next
+              item.add_extensions extensions
+              yield item
+            end
+          else
+            iter.extend IteratorExtensionsMixin
+            iter.extensions = extensions
+            iter
+          end
         end
       rescue NoSuchElementException
         self
@@ -237,6 +255,31 @@ module Pacer
         none?
       end
 
+      def add_extension(mod)
+        is_extension = false
+        if mod.const_defined? :Route
+          is_extension = true
+          extend mod::Route
+        end
+        if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
+          extensions << mod
+        end
+      end
+
+      def extensions
+        @extensions ||= Set[]
+      end
+
+      # If any objects in the given array are modules that contain a Route
+      # submodule, extend this route with the Route module.
+      def add_extensions(exts)
+        modules = exts.select { |obj| obj.is_a? Module }
+        modules.each do |mod|
+          add_extension(mod)
+        end
+        self
+      end
+
       protected
 
       # Initializes some basic instance variables.
@@ -248,6 +291,8 @@ module Pacer
           @source = back
         end
         @filters = filters || []
+        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
+        add_extensions @filters
         @block = block
         @pipe_args = pipe_args
       end
@@ -265,6 +310,26 @@ module Pacer
       # Set the previous route in the chain.
       def back=(back)
         @back = back
+      end
+
+      # Return the route which is attached to the given route.
+      def route_after(route)
+        if route == self
+          nil
+        elsif @back
+          if @back == route
+            self
+          elsif @back.is_a? Base
+            @back.route_after(route)
+          end
+        end
+      end
+
+      # This should not normally need to be set. It can be used to inject a route
+      # into another route during iterator generation.
+      def source=(source)
+        @back = nil
+        @source = source
       end
 
       # Get the source of data for this route.
@@ -347,6 +412,18 @@ module Pacer
       # the pipes for this route object.
       def filter_pipe(pipe, args_array, block)
         if args_array and args_array.any?
+          modules = args_array.select { |arg| arg.is_a? Module }
+          pipe = modules.inject(pipe) do |p, mod|
+            if mod.respond_to? :route_conditions
+              args_array = args_array + [mod.route_conditions]
+              p
+            elsif mod.respond_to? :route
+              route = mod.route(self)
+              beginning_of_condition = route.send :route_after, self
+              beginning_of_condition.send :source=, pipe
+              route.send :iterator
+            end
+          end
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
             hash.inject(p) do |p2, (key, value)|
               new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, value.to_java, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)

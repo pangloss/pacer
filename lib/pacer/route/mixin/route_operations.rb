@@ -3,6 +3,8 @@ module Pacer::Routes
   # Additional convenience and data analysis methods that can be mixed into
   # routes if they support the full route interface.
   module RouteOperations
+    include BranchableRoute
+
     def paths
       PathsRoute.new(self)
     end
@@ -21,12 +23,16 @@ module Pacer::Routes
     # If given an integer (n) > 0, bias is calcualated at 1 / n.
     def random(bias = 0.5)
       bias = 1 / bias.to_f if bias.is_a? Fixnum and bias > 0
-      route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
+      route = route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
+      route.add_extensions extensions
+      route
     end
 
     # Do not return duplicate elements.
     def uniq
-      route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
+      route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
+      route.add_extensions extensions
+      route
     end
 
     # Accepts a string or symbol to return an array of matching properties, or
@@ -41,11 +47,15 @@ module Pacer::Routes
           element.get_property(prop_or_subset.to_s)
         end
       when Fixnum
-        route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+        route = route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
+        route.add_extensions extensions
+        route
       when Range
         end_index = prop_or_subset.end
         end_index += 1 unless prop_or_subset.exclude_end?
-        route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset.begin, end_index)
+        route = route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset.begin, end_index)
+        route.add_extensions extensions
+        route
       when Array
       end
     end
@@ -91,25 +101,15 @@ module Pacer::Routes
     # given name so that it is accessible subsequently in the processing of the
     # route.
     def as(name)
-      if vertices_route?
-        VertexVariableRoute.new(self, name)
-      elsif edges_route?
-        EdgeVariableRoute.new(self, name)
-      elsif mixed_route?
-        MixedVariableRoute.new(self, name)
-      end
-    end
-
-    # Branch the route on a path defined within the given block. Call this
-    # method multiple times in a row to branch the route over different paths
-    # before merging back.
-    def branch(&block)
-      br = BranchedRoute.new(self, block)
-      if br.branch_count == 0
-        self
-      else
-        br
-      end
+      route = if vertices_route?
+          VertexVariableRoute.new(self, name)
+        elsif edges_route?
+          EdgeVariableRoute.new(self, name)
+        elsif mixed_route?
+          MixedVariableRoute.new(self, name)
+        end
+      route.add_extensions extensions
+      route
     end
 
     # Returns true if this route could contain both vertices and edges.
@@ -131,21 +131,23 @@ module Pacer::Routes
     # is branched and each number of repeats is processed in a seperate branch before being
     # merged back. That is useful if a pattern may be nested to varying depths.
     def repeat(range)
-      if range.is_a? Fixnum
-        range.to_enum(:times).inject(self) do |route_end, count|
-          yield route_end
-        end
-      else
-        br = BranchedRoute.new(self)
-        range.each do |count|
-          br.branch do |branch_root|
-            count.to_enum(:times).inject(branch_root) do |route_end, count|
-              yield route_end
+      route = if range.is_a? Fixnum
+          range.to_enum(:times).inject(self) do |route_end, count|
+            yield route_end
+          end
+        else
+          br = BranchedRoute.new(self)
+          range.each do |count|
+            br.branch do |branch_root|
+              count.to_enum(:times).inject(branch_root) do |route_end, count|
+                yield route_end
+              end
             end
           end
+          br
         end
-        br
-      end
+      route.add_extensions extensions
+      route
     end
 
     def pages(elements_per_page = 1000)

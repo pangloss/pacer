@@ -3,6 +3,7 @@ module Pacer::Routes
   # This module adds route methods to the basic graph classes returned from the
   # blueprints library.
   module GraphRoute
+    include BranchableRoute
 
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
@@ -12,6 +13,7 @@ module Pacer::Routes
         route.pipe_class = nil
         route.graph = self
       end
+      route.add_extensions filters
       route
     end
 
@@ -20,6 +22,7 @@ module Pacer::Routes
       route = EdgesRoute.new(proc { self.get_edges }, filters, block)
       route.pipe_class = nil
       route.graph = self
+      route.add_extensions filters
       route
     end
 
@@ -71,6 +74,7 @@ module Pacer::Routes
       end.compact
     end
 
+    # Index keys are stored here only as they are discovered.
     def index_keys
       @index_keys ||= {}
     end
@@ -83,9 +87,16 @@ module Pacer::Routes
     end
 
     def each_property_filter(filters)
-      hash = filters.last
-      if hash.is_a? Hash
-        hash.each { |key, value| yield key, value if key }
+      filters.each do |filter|
+        if filter.is_a? Hash
+          filter.each { |key, value| yield key, value if key }
+        elsif filter.is_a? Module
+          if filter.respond_to? :route_conditions
+            each_property_filter([filter.route_conditions]) { |k, v| yield k, v }
+          elsif filter.respond_to? :route
+            yield filter, filter
+          end
+        end
       end
       nil
     end
@@ -94,7 +105,9 @@ module Pacer::Routes
       idx = index rescue nil
       if idx
         each_property_filter(filters) do |key, value|
-          if value
+          if value.is_a? Module
+            return value.route(self)
+          elsif value
             indexed = index_keys.key? key
             unless indexed
               indexed = idx.get key, value
