@@ -166,6 +166,16 @@ module Pacer::Routes
       results
     end
 
+    def clone_into(target_graph, opts = {})
+      each do |element|
+        element.clone_into(target_graph, opts)
+      end
+    end
+
+    def copy_into(target_graph, opts = {})
+      each { |element| element.copy_into(target_graph, opts) }
+    end
+
     protected
 
     def has_routable_class?

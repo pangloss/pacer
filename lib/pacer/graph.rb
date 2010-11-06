@@ -44,6 +44,25 @@ module Pacer
     def delete!
       graph.remove_vertex self
     end
+
+    def clone_into(target_graph, opts = {})
+      return if target_graph.vertex(id)
+      v = target_graph.add_vertex id
+      properties.each do |name, value|
+        v[name] = value
+      end
+      yield v if block_given?
+      v
+    end
+
+    def copy_into(target_graph, opts = {})
+      v = target_graph.add_vertex nil
+      properties.each do |name, value|
+        v[name] = value
+      end
+      yield v if block_given?
+      v
+    end
   end
 
 
@@ -94,6 +113,35 @@ module Pacer
       else
         in_vertex
       end
+    end
+
+    def clone_into(target_graph, opts = {})
+      return if target_graph.edge(id)
+      iv = target_graph.vertex(in_v.id)
+      ov = target_graph.vertex(out_v.id)
+      if opts[:create_vertices]
+        iv ||= in_v.clone_into target_graph
+        ov ||= out_v.clone_into target_graph
+      end
+      return if not iv or not ov
+      e = target_graph.add_edge id, iv, ov, label
+      properties.each do |name, value|
+        e[name] = value
+      end
+      yield e if block_given?
+      e
+    end
+
+    def copy_into(target_graph, opts = {})
+      iv = target_graph.vertex(in_v.id)
+      ov = target_graph.vertex(out_v.id)
+      return if not iv or not ov
+      e = target_graph.add_edge nil, iv, ov, label
+      properties.each do |name, value|
+        e[name] = value
+      end
+      yield e if block_given?
+      e
     end
   end
 
@@ -166,13 +214,8 @@ module Pacer
     end
 
     # Query whether the current node belongs to the given graph.
-    def from_graph?(graph)
-      if @graph
-        @graph == graph
-      elsif graph.raw_graph == raw_vertex.graph_database
-        @graph = graph
-        true
-      end
+    def from_graph?(g)
+      g == graph
     end
 
     # Returns a hash of property values by name.

@@ -22,19 +22,11 @@ module Pacer::Routes
       target_graph.vertex_name ||= graph.vertex_name
       each do |path|
         path.select { |e| e.is_a? Pacer::VertexMixin }.each do |vertex|
-          next if target_graph.vertex(vertex.id)
-          v = target_graph.add_vertex vertex.id
-          vertex.properties.each do |name, value|
-            v[name] = value
-          end
+          vertex.clone_into target_graph
         end
 
         path.select { |e| e.is_a? Pacer::EdgeMixin }.each do |edge|
-          next if target_graph.edge(edge.id)
-          e = target_graph.add_edge edge.id, target_graph.vertex(edge.out_v.id), target_graph.vertex(edge.in_v.id), edge.label
-          edge.properties.each do |name, value|
-            e[name] = value
-          end
+          edge.clone_into target_graph
         end
       end
       target_graph
