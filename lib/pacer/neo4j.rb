@@ -54,10 +54,6 @@ module Pacer
     include Routes::VerticesRouteModule
     include ElementMixin
     include VertexMixin
-
-    def graph
-      raw_element.graph_database.blueprints_graph
-    end
   end
 
 
@@ -66,10 +62,6 @@ module Pacer
     include Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
-
-    def graph
-      raw_element.graph_database.blueprints_graph
-    end
   end
 end
 
