@@ -13,8 +13,6 @@ module Pacer
       graph = Neo4jGraph.new(path)
       neo_graphs[path] = graph
       register_neo_shutdown(path)
-      raw_graph = graph.raw_graph
-      raw_graph.blueprints_graph = graph
       graph
     end
 
@@ -54,10 +52,6 @@ module Pacer
     include Routes::VerticesRouteModule
     include ElementMixin
     include VertexMixin
-
-    def graph
-      raw_element.graph_database.blueprints_graph
-    end
   end
 
 
@@ -66,21 +60,5 @@ module Pacer
     include Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
-
-    def graph
-      raw_element.graph_database.blueprints_graph
-    end
-  end
-end
-
-import org.neo4j.kernel.EmbeddedGraphDatabase
-class Java::OrgNeo4jKernel::EmbeddedGraphDatabase
-
-  def blueprints_graph=(g)
-    @blueprints_graph = g
-  end
-
-  def blueprints_graph
-    @blueprints_graph ||= Pacer.neo_graphs[getStoreDir]
   end
 end

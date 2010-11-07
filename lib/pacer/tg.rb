@@ -19,23 +19,8 @@ module Pacer
     include Routes::Base
     include Routes::GraphRoute
 
-    # TODO: set the vertex graph when the vertex is created
-    # Load and initialize a vertex by id.
-    def vertex(id)
-      if v = get_vertex(id)
-        v.graph = self
-        v
-      end
-    end
-
-    # TODO: set the edge graph when the edge is created
-    # Load and initialize an edge by id.
-    def edge(id)
-      if e = get_edge(id)
-        e.graph = self
-        e
-      end
-    end
+    alias vertex getVertex
+    alias edge getEdge
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
