@@ -7,7 +7,7 @@ module Pacer
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.1-SNAPSHOT-standalone.jar'))
+    unless require(File.join(PATH, 'vendor/pipes-0.2-SNAPSHOT-standalone.jar'))
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
