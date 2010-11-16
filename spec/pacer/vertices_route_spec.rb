@@ -200,7 +200,7 @@ describe PathsRoute do
 
   describe '#paths' do
     it 'should return the paths between people and projects' do
-      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths].should ==
+      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.map(&:to_a)].should ==
         Set[[@g.vertex(0), @g.edge(0), @g.vertex(1)],
             [@g.vertex(5), @g.edge(1), @g.vertex(4)],
             [@g.vertex(5), @g.edge(13), @g.vertex(2)],
@@ -210,7 +210,7 @@ describe PathsRoute do
 
   describe '#transpose' do
     it 'should return the paths between people and projects' do
-      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose].should ==
+      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose.map(&:to_a)].should ==
         Set[[@g.vertex(0), @g.vertex(5), @g.vertex(5), @g.vertex(5)],
             [@g.edge(0), @g.edge(1), @g.edge(13), @g.edge(12)],
             [@g.vertex(1), @g.vertex(4), @g.vertex(2), @g.vertex(3)]]
@@ -304,7 +304,7 @@ describe BranchedRoute do
     it { @me.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
 
     it do
-      @single_v.paths.to_a.should ==
+      @single_v.paths.map(&:to_a).should ==
         [[@a, @ab, @b],
          [@b, @bc, @c],
          [@a, @ab, @b],
@@ -313,19 +313,19 @@ describe BranchedRoute do
 
     it do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.to_a.should ==
+      @v.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     it do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.to_a.should ==
+      @v.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     it do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @ve.paths.to_a.should ==
+      @ve.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -333,7 +333,7 @@ describe BranchedRoute do
     end
     it do
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
-      @me.paths.to_a.should ==
+      @me.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
