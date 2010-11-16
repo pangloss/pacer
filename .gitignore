@@ -4,3 +4,4 @@ vendor/pipes*.jar
 *.graphml
 pacer.gemspec
 pkg
+tmp
