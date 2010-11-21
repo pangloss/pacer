@@ -1,10 +1,8 @@
 module Pacer::Pipes
-  class BlockFilterPipe < AbstractPipe
-    attr_accessor :starts
-
+  class BlockFilterPipe < RubyPipe
     def initialize(starts, back, block)
       super()
-      @starts = starts
+      set_starts(starts)
       @back = back
       @block = block
     end

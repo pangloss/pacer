@@ -1,5 +1,5 @@
 module Pacer::Pipes
-  class LabelsFilterPipe < AbstractPipe
+  class LabelsFilterPipe < RubyPipe
     attr_accessor :starts
 
     def set_labels(labels)

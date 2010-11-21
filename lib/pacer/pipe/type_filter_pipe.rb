@@ -1,13 +1,8 @@
 module Pacer::Pipes
-  class TypeFilterPipe < AbstractPipe
+  class TypeFilterPipe < RubyPipe
     def initialize(type)
       super()
       @type = type
-    end
-
-    def set_starts(starts)
-      @starts = starts
-      super
     end
 
     def processNextStart()

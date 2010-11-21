@@ -34,6 +34,11 @@ describe VerticesRoute do
     it { Set[*@g.v.out_e].should == Set[*@g.edges] }
 
     it { @g.v.out_e.count.should >= 1 }
+
+    it 'with label filter should work with path generation' do
+      paths = @g.v.out_e.in_v.in_e { |e| e.label == 'wrote' }.out_v.paths.map(&:to_a)
+      @g.v.out_e.in_v.in_e(:wrote).out_v.paths.map(&:to_a).should == paths
+    end
   end
 end
 
@@ -105,6 +110,12 @@ describe Base do
     it { @g.v { false }.count.should == 0 }
     it { @g.v { true }.count.should == @g.v.count }
     it { @g.v { |v| v.out_e.none? }[:name].should == ['blueprints'] }
+
+    it 'should work with paths' do
+      paths = @g.v.out_e(:wrote).in_v.paths.map(&:to_a)
+      filtered_paths = @g.v { true }.out_e(:wrote).e { true }.in_v.paths.map(&:to_a)
+      filtered_paths.should == paths
+    end
   end
 
   describe '#result' do
@@ -159,6 +170,14 @@ describe RouteOperations do
       @g.v.as(:a_vertex).in_e(:wrote) { |edge| vars << edge.vars[:a_vertex] }.count
       vars.should == Set[*@g.e(:wrote).in_v]
     end
+
+    it 'should not break path generation' do
+      who_wrote_what = nil
+      @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v| who_wrote_what = [v.vars[:who], v.vars[:wrote], v.vars[:what]] }.paths.each do |path|
+        pp [who_wrote_what, path.to_a]
+        path.to_a.should == who_wrote_what
+      end
+    end
   end
 
   describe '#repeat' do
@@ -206,11 +225,21 @@ describe PathsRoute do
             [@g.vertex(5), @g.edge(13), @g.vertex(2)],
             [@g.vertex(5), @g.edge(12), @g.vertex(3)]]
     end
+
+    it 'should include all elements traversed' do
+      @g.v.out_e.in_v.paths.each do |path|
+        path[0].should be_an_instance_of(Pacer::TinkerVertex)
+        path[1].should be_an_instance_of(Pacer::TinkerEdge)
+        path[2].should be_an_instance_of(Pacer::TinkerVertex)
+        path.length.should == 3
+      end
+    end
+
   end
 
   describe '#transpose' do
     it 'should return the paths between people and projects' do
-      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose.map(&:to_a)].should ==
+      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose].should ==
         Set[[@g.vertex(0), @g.vertex(5), @g.vertex(5), @g.vertex(5)],
             [@g.edge(0), @g.edge(1), @g.edge(13), @g.edge(12)],
             [@g.vertex(1), @g.vertex(4), @g.vertex(2), @g.vertex(3)]]

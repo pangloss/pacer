@@ -1,21 +1,22 @@
 module Pacer::Pipes
-  class EnumerablePipe < AbstractPipe
+  class EnumerablePipe < RubyPipe
     def initialize(enumerable)
       super()
       case enumerable
       when Enumerable::Enumerator
-        @enumerable = enumerable
+        starts = enumerable
       when Pacer::ElementMixin
-        @enumerable = [enumerable].to_enum
+        starts = [enumerable].to_enum
       when Enumerable
-        @enumerable = enumerable.to_enum
+        starts = enumerable.to_enum
       else
-        @enumerable = [enumerable].to_enum
+        starts = [enumerable].to_enum
       end
+      set_starts starts
     end
 
     def processNextStart()
-      @enumerable.next
+      @starts.next
     rescue
       raise Pacer::NoSuchElementException.new
     end

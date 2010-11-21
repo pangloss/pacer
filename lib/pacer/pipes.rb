@@ -25,6 +25,8 @@ module Pacer
   end
 end
 
+require 'pacer/pipe/ruby_pipe'
+
 require 'pacer/pipe/variable_store_iterator_wrapper'
 
 require 'pacer/pipe/enumerable_pipe'
