@@ -13,7 +13,6 @@ module Pacer::Pipes
     end
 
     def enablePath
-      puts 'vs enable path!'
       @pipe.enablePath
     end
     alias enable_path enablePath

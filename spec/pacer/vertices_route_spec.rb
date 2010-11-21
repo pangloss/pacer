@@ -174,7 +174,6 @@ describe RouteOperations do
     it 'should not break path generation' do
       who_wrote_what = nil
       @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v| who_wrote_what = [v.vars[:who], v.vars[:wrote], v.vars[:what]] }.paths.each do |path|
-        pp [who_wrote_what, path.to_a]
         path.to_a.should == who_wrote_what
       end
     end
