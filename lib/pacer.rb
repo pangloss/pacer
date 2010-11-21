@@ -11,6 +11,8 @@ module Pacer
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
+
+    require File.join(PATH, 'vendor/blueprints-neo4j-1.2-SNAPSHOT-standalone.jar')
   end
 
   require 'pacer/graph'
