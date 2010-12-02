@@ -12,7 +12,8 @@ module Pacer
       exit 1
     end
 
-    require File.join(PATH, 'vendor/blueprints-neo4j-1.2-SNAPSHOT-standalone.jar')
+    require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.1-SNAPSHOT-standalone.jar')
+    require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M04.jar')
   end
 
   require 'pacer/graph'
