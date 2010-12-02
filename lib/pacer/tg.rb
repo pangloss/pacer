@@ -36,6 +36,17 @@ module Pacer
       other.class == self.class and other.object_id == self.object_id
     end
 
+    def element_type(et)
+      case et
+      when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+        TinkerVertex
+      when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+        TinkerEdge
+      else
+        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+      end
+    end
+
     # Discourage use of the native getVertex and getEdge methods
     protected :get_vertex, :getVertex, :get_edge, :getEdge
   end

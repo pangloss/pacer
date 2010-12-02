@@ -104,16 +104,32 @@ module Pacer::Routes
       nil
     end
 
-    def indexed_route(element_interface, filters, block)
-      element_interface = Pacer.element_interface(element_interface)
-      each_property_filter(filters) do |key, value|
-        if value.is_a? Module
-          return value.route(self)
-        elsif value
-          idx = indices.detect { |i| i.index_class == element_interface and i.index_name == key }
+    def use_index?(index, element_type, index_name, index_value)
+      if index.index_class == element_type.java_class
+        key, value, index_specified = index_key_value(index_name, index_value)
+        if index.index_type == Pacer.automatic_index and not index.auto_index_keys.include? key
+          return false
+        end
+        index.index_name == index_name or (not index_specified and index.index_type == Pacer.automatic_index)
+      end
+    end
+
+    def index_key_value(key, value)
+      index_specified = value.is_a? Hash
+      key, value = value.first if index_specified
+      [key.to_s, value, index_specified]
+    end
+
+    def indexed_route(element_type, filters, block)
+      element_type = self.element_type(element_type)
+      each_property_filter(filters) do |index_name, index_value|
+        if index_value.is_a? Module
+          return index_value.route(self)
+        elsif index_value
+          idx = indices.detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
-            key, value = value.first if value.is_a? Hash
-            if element_interface == Pacer.element_interface(:edge)
+            key, value = index_key_value(index_name, index_value)
+            if element_type == self.element_type(:edge)
               route = IndexedEdgesRoute.new(idx, key, value, filters, block)
             else
               route = IndexedVerticesRoute.new(idx, key, value, filters, block)

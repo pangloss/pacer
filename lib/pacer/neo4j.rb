@@ -44,6 +44,18 @@ module Pacer
 
     alias vertex get_vertex
     alias edge get_edge
+
+    def element_type(et)
+      case et
+      when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+        Neo4jVertex
+      when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+        Neo4jEdge
+      else
+        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+      end
+    end
+
   end
 
 
