@@ -107,8 +107,9 @@ module Pacer::Routes
     def use_index?(index, element_type, index_name, index_value)
       if index.index_class == element_type.java_class
         key, value, index_specified = index_key_value(index_name, index_value)
-        if index.index_type == Pacer.automatic_index and not index.auto_index_keys.include? key
-          return false
+        if index.index_type == Pacer.automatic_index
+          keys = index.auto_index_keys
+          return false if keys and not keys.include? key
         end
         index.index_name == index_name or (not index_specified and index.index_type == Pacer.automatic_index)
       end
@@ -126,7 +127,7 @@ module Pacer::Routes
         if index_value.is_a? Module
           return index_value.route(self)
         elsif index_value
-          idx = indices.detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
+          idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
             key, value = index_key_value(index_name, index_value)
             if element_type == self.element_type(:edge)
