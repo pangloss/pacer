@@ -7,7 +7,7 @@ module Pacer::Routes
 
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
-      route = indexed_vertices_route(filters, block)
+      route = indexed_route(:vertex, filters, block)
       unless route
         route = VerticesRoute.new(proc { self.get_vertices }, filters, block)
         route.pipe_class = nil
@@ -19,9 +19,12 @@ module Pacer::Routes
 
     # Returns a new route to all graph edges. Standard filter options.
     def e(*filters, &block)
-      route = EdgesRoute.new(proc { self.get_edges }, filters, block)
-      route.pipe_class = nil
-      route.graph = self
+      route = indexed_route(:edge, filters, block)
+      unless route
+        route = EdgesRoute.new(proc { self.get_edges }, filters, block)
+        route.pipe_class = nil
+        route.graph = self
+      end
       route.add_extensions filters
       route
     end
@@ -101,27 +104,25 @@ module Pacer::Routes
       nil
     end
 
-    def indexed_vertices_route(filters, block)
-      idx = index rescue nil
-      if idx
-        each_property_filter(filters) do |key, value|
-          if value.is_a? Module
-            return value.route(self)
-          elsif value
-            indexed = index_keys.key? key
-            unless indexed
-              indexed = idx.get key, value
-              index_keys[key] = true if indexed
-            end
-            if indexed
+    def indexed_route(element_interface, filters, block)
+      element_interface = Pacer.element_interface(element_interface)
+      each_property_filter(filters) do |key, value|
+        if value.is_a? Module
+          return value.route(self)
+        elsif value
+          idx = indices.detect { |i| i.index_class == element_interface and i.index_name == key }
+          if idx
+            key, value = value.first if value.is_a? Hash
+            if element_interface == Pacer.element_interface(:edge)
+              route = IndexedEdgesRoute.new(idx, key, value, filters, block)
+            else
               route = IndexedVerticesRoute.new(idx, key, value, filters, block)
-              route.graph = self
-              return route
             end
+            route.graph = self
+            return route
           end
         end
       end
     end
-
   end
 end

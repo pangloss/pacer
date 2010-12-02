@@ -63,6 +63,34 @@ module Pacer
       @inspect_limit = n
     end
 
+    def element_interface(et)
+      case et
+      when :vertex
+        com.tinkerpop.blueprints.pgm.Vertex
+      when :edge
+        com.tinkerpop.blueprints.pgm.Edge
+      when com.tinkerpop.blueprints.pgm.Vertex, com.tinkerpop.blueprints.pgm.Edge
+        et
+      else
+        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+      end
+    end
+
+    def vertex?(element)
+      element.is_a? com.tinkerpop.blueprints.pgm.Vertex
+    end
+
+    def edge?(element)
+      element.is_a? com.tinkerpop.blueprints.pgm.Edge
+    end
+
+    def manual_index
+      com.tinkerpop.blueprints.pgm.Index::Type::MANUAL
+    end
+
+    def automatic_index
+      com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
+    end
   end
 end
 
