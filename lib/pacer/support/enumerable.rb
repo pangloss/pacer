@@ -33,4 +33,11 @@ module Enumerable
     r.info = info
     r
   end
+
+  def group_count
+    result = Hash.new(0)
+    each { |e| result[yield(e)] += 1 }
+    result
+  end
+
 end
