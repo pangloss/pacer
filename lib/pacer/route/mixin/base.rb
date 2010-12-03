@@ -429,6 +429,8 @@ module Pacer
               beginning_of_condition = route.send :route_after, self
               beginning_of_condition.send :source=, pipe
               route.send :iterator
+            else
+              pipe
             end
           end
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
