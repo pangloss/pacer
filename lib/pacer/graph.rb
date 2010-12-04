@@ -21,6 +21,7 @@ module Pacer
   end
 
   module VertexMixin
+    attr_accessor :graph
 
     def add_extension(mod)
       super
@@ -67,6 +68,7 @@ module Pacer
 
 
   module EdgeMixin
+    attr_accessor :graph
 
     def add_extension(mod)
       super

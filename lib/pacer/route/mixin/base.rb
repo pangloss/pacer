@@ -161,7 +161,9 @@ module Pacer
         iter = iterator
         if extensions.empty?
           if block_given?
+            g = graph
             while item = iter.next
+              item.graph = g
               yield item
             end
           else
@@ -175,6 +177,7 @@ module Pacer
             end
           else
             iter.extend IteratorExtensionsMixin
+            iter.graph = graph
             iter.extensions = extensions
             iter
           end
@@ -188,8 +191,9 @@ module Pacer
         iter = iterator
         iter.enable_path
         if block_given?
+          g = graph
           while item = iter.next
-            yield iter.path
+            yield iter.path.map { |e| e.graph = g }
           end
         else
           iter
@@ -201,13 +205,16 @@ module Pacer
       def each_context
         iter = iterator
         if block_given?
+          g = graph
           while item = iter.next
+            item.graph = g
             item.extend Pacer::Routes::SingleRoute
             item.back = self
             yield item
           end
         else
           iter.extend IteratorContextMixin
+          iter.graph = graph
           iter.context = self
           iter
         end
