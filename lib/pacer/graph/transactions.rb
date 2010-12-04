@@ -2,6 +2,14 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
   module Graph
+    def manual_transaction
+      manual_transactions do
+        transaction do
+          yield
+        end
+      end
+    end
+
     def manual_transactions
       original_mode = get_transaction_mode
       if original_mode != TransactionalGraph::Mode::MANUAL
