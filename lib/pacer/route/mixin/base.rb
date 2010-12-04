@@ -172,6 +172,7 @@ module Pacer
         else
           if block_given?
             while item = iter.next
+              item.graph ||= graph
               item.add_extensions extensions
               yield item
             end
@@ -193,9 +194,11 @@ module Pacer
         if block_given?
           g = graph
           while item = iter.next
-            yield iter.path.map { |e| e.graph = g }
+            yield iter.path.map { |e| e.graph ||= g; e }
           end
         else
+          iter.extend IteratorPathMixin
+          iter.graph = graph
           iter
         end
       rescue NoSuchElementException
@@ -207,7 +210,7 @@ module Pacer
         if block_given?
           g = graph
           while item = iter.next
-            item.graph = g
+            item.graph ||= g
             item.extend Pacer::Routes::SingleRoute
             item.back = self
             yield item

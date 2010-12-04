@@ -12,7 +12,7 @@ module Pacer::Routes
 
     def next
       item = super
-      item.graph = @graph
+      item.graph ||= @graph
       @block.call(item)
     end
   end
@@ -28,8 +28,18 @@ module Pacer::Routes
     def next
       item = super
       item.back = @context
-      item.graph = @graph
+      item.graph ||= @graph
       item
+    end
+  end
+
+  module IteratorPathMixin
+    attr_accessor :graph
+
+    def next
+      path = super
+      path.map { |e| e.graph ||= @graph; e }
+      path
     end
   end
 
@@ -44,7 +54,7 @@ module Pacer::Routes
     def next
       item = super
       item.add_extensions @extensions
-      item.graph = @graph
+      item.graph ||= @graph
       item
     end
   end
