@@ -58,9 +58,9 @@ module Pacer::Routes
         to_vertices = [to_vertices]
       end
       map do |from_v|
-        to_vertices.map do |to_v|
+        [*to_vertices].compact.map do |to_v|
           begin
-            e = graph.add_edge(nil, from_v, to_v, label)
+            e = from_v.graph.add_edge(nil, from_v, to_v, label)
             props.each do |name, value|
               e.set_property name.to_s, value
             end
