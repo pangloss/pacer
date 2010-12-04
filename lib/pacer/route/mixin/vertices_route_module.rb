@@ -47,7 +47,7 @@ module Pacer::Routes
     # matching this route to all vertices matching the given
     # to_route. If any properties are given, they will be applied
     # to each created edge.
-    def to(label, to_vertices, props = {})
+    def add_edges_to(label, to_vertices, props = {})
       case to_vertices
       when Base
         raise "Must be from same graph" unless to_vertices.from_graph?(graph)
