@@ -3,8 +3,12 @@ module Enumerable
 
   # Transform the enumerable into a java HashSet.
   def to_hashset(method = nil, *args)
+    return self if self.is_a? java.util.HashSet
     hs = java.util.HashSet.new
-    iter = self.each
+    iter = self.each rescue nil
+    if not iter and respond_to? :iterator
+      iter = self.iterator
+    end
     e = iter.next
     if method
       while true
