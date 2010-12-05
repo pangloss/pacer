@@ -49,16 +49,13 @@ module Pacer::Routes
     # to each created edge.
     def add_edges_to(label, to_vertices, props = {})
       case to_vertices
-      when Base
-        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
-      when Enumerable, Iterator
-        raise "Must be from same graph" unless to_vertices.first.from_graph?(graph)
+      when Base, Enumerable, java.util.Iterator
       else
-        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
-        to_vertices = [to_vertices]
+        to_vertices = [to_vertices].compact
       end
       map do |from_v|
-        [*to_vertices].compact.map do |to_v|
+        g = graph || from_v.graph
+        to_vertices.map do |to_v|
           begin
             e = from_v.graph.add_edge(nil, from_v, to_v, label)
             props.each do |name, value|
