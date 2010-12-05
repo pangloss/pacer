@@ -20,6 +20,7 @@ module Pacer
     import com.tinkerpop.pipes.pgm.EdgeVertexPipe
 
     import com.tinkerpop.pipes.split.CopySplitPipe
+    import com.tinkerpop.pipes.split.RobinSplitPipe
     import com.tinkerpop.pipes.merge.RobinMergePipe
     import com.tinkerpop.pipes.merge.ExhaustiveMergePipe
   end

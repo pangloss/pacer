@@ -39,12 +39,17 @@ module Pacer::Routes
       MixedElementsRoute.new(self)
     end
 
+    def robin_split
+      split_pipe(Pacer::Pipes::RobinSplitPipe)
+    end
+
     def exhaustive
       merge_pipe(Pacer::Pipes::ExhaustiveMergePipe)
     end
 
-    def merge_pipe(pipe_class)
+    def merge_pipe(pipe_class, &block)
       @merge_pipe = pipe_class
+      @configure_merge_pipe = block
       self
     end
 
@@ -52,8 +57,9 @@ module Pacer::Routes
       @merge_pipe
     end
 
-    def split_pipe(pipe_class)
+    def split_pipe(pipe_class, &block)
       @split_pipe = pipe_class
+      @configure_split_pipe = block
       self
     end
 
@@ -81,6 +87,7 @@ module Pacer::Routes
         if split_pipe.respond_to? :route=
           split_pipe.route = self
         end
+        @configure_split_pipe.call(pipe) if @configure_split_pipe
         idx = 0
         pipes = @branches.map do |branch_start, branch_end|
           branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
@@ -90,6 +97,7 @@ module Pacer::Routes
       end
       pipe = @merge_pipe.new
       pipe.set_starts(pipes)
+      @configure_merge_pipe.call(pipe) if @configure_merge_pipe
       pipe
     end
 
