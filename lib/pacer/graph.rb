@@ -21,8 +21,6 @@ module Pacer
   end
 
   module VertexMixin
-    attr_accessor :graph
-
     def add_extension(mod)
       super
       if mod.const_defined? :Vertex
@@ -38,12 +36,12 @@ module Pacer
 
     # Returns the display name of the vertex.
     def display_name
-      graph.vertex_name.call self if graph and graph.vertex_name
+      @graph.vertex_name.call self if @graph and @graph.vertex_name
     end
 
     # Deletes the vertex from its graph along with all related edges.
     def delete!
-      graph.remove_vertex self
+      @graph.remove_vertex self
     end
 
     def clone_into(target_graph, opts = {})
@@ -68,8 +66,6 @@ module Pacer
 
 
   module EdgeMixin
-    attr_accessor :graph
-
     def add_extension(mod)
       super
       if mod.const_defined? :Edge
@@ -85,8 +81,8 @@ module Pacer
 
     # Returns the display name of the vertex.
     def display_name
-      if graph and graph.edge_name
-        graph.edge_name.call self
+      if @graph and @graph.edge_name
+        @graph.edge_name.call self
       else
         "#{ out_vertex.id }-#{ get_label }-#{ in_vertex.id }"
       end
@@ -94,7 +90,7 @@ module Pacer
 
     # Deletes the edge from its graph.
     def delete!
-      graph.remove_edge self
+      @graph.remove_edge self
     end
 
     # Returns a path if arguments are given, otherwise returns the out vertex

@@ -163,7 +163,7 @@ module Pacer
           if block_given?
             g = graph
             while item = iter.next
-              item.graph = g
+              item.graph ||= g
               yield item
             end
           else

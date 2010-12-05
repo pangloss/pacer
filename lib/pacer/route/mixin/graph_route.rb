@@ -82,6 +82,18 @@ module Pacer::Routes
       @index_keys ||= {}
     end
 
+    def vertex(id)
+      v = super
+      v.graph = self
+      v
+    end
+
+    def edge(id)
+      e = super
+      e.graph = self
+      e
+    end
+
     protected
 
     # Don't try to inspect the graph data when inspecting.
