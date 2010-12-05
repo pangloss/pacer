@@ -78,7 +78,7 @@ module Pacer
 
     # Returns a basic display name for the element. This method should be specialized.
     def display_name
-      id
+      get_id
     end
 
     def <=>(other)

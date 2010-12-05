@@ -10,7 +10,7 @@ module Pacer
 
     # Returns a human-readable representation of the vertex.
     def inspect
-      "#<#{ ["V[#{id}]", display_name].compact.join(' ') }>"
+      "#<#{ ["V[#{get_id}]", display_name].compact.join(' ') }>"
     end
 
     # Returns the display name of the vertex.
