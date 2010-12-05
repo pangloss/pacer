@@ -1,7 +1,10 @@
 require 'pacer'
+require 'set'
 
 Dir['./spec/support/**/*.rb'].map {|f| require f}
 Dir['./spec/tackle/*.rb'].map {|f| require f}
+
+include Pacer::Routes
 
 module RSpec
   module Core
