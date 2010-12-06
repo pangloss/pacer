@@ -23,6 +23,8 @@ module Pacer
       @graph.remove_vertex self
     end
 
+    # Copies including the vertex id unless a vertex with that id
+    # already exists.
     def clone_into(target_graph, opts = {})
       return if target_graph.vertex(id)
       v = target_graph.add_vertex id
@@ -33,6 +35,8 @@ module Pacer
       v
     end
 
+    # Make a new copy of the element with the next available vertex
+    # id.
     def copy_into(target_graph, opts = {})
       v = target_graph.add_vertex nil
       properties.each do |name, value|
