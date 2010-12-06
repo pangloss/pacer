@@ -176,22 +176,31 @@ module Pacer::Routes
       each { |element| element.copy_into(target_graph, opts) }
     end
 
+    def in_bulk_job?
+      @in_bulk_job
+    end
+
     def bulk_job(size = nil)
-      if graph
-        size ||= graph.bulk_job_size
-        counter = 0
-        each_slice(size) do |slice|
-          print counter if Pacer.verbose?
-          counter += size
-          graph.manual_transaction do
-            slice.each do |element|
-              yield element
+      if graph and not graph.in_bulk_job?
+        begin
+          graph.in_bulk_job = true
+          size ||= graph.bulk_job_size
+          counter = 0
+          each_slice(size) do |slice|
+            print counter if Pacer.verbose?
+            counter += size
+            graph.manual_transaction do
+              slice.each do |element|
+                yield element
+              end
+              print '.' if Pacer.verbose?
             end
-            print '.' if Pacer.verbose?
           end
+        ensure
+          graph.in_bulk_job = false
         end
       else
-        puts 'No graph in route for bulk job' if Pacer.verbose?
+        puts 'No graph in route for bulk job' if not graph and Pacer.verbose?
         each do |element|
           yield element
         end
