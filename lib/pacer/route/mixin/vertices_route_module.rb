@@ -57,7 +57,7 @@ module Pacer::Routes
         g = graph || from_v.graph
         to_vertices.map do |to_v|
           begin
-            e = from_v.graph.add_edge(nil, from_v, to_v, label)
+            e = g.add_edge(nil, from_v, to_v, label)
             props.each do |name, value|
               e.set_property name.to_s, value
             end
