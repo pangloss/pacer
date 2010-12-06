@@ -6,12 +6,16 @@ module Pacer::Routes
 
     # Pass through only vertices.
     def v
-      VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
+      route = VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
+      route.add_extensions extensions unless route.extensions.any?
+      route
     end
 
     # Pass through only edges.
     def e
-      EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
+      route = EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
+      route.add_extensions extensions unless route.extensions.any?
+      route
     end
 
     def mixed

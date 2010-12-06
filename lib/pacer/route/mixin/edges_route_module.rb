@@ -26,6 +26,7 @@ module Pacer::Routes
     def e(*filters, &block)
       route = EdgesRoute.new(self, filters, block)
       route.pipe_class = nil
+      route.add_extensions extensions unless route.extensions.any?
       route
     end
 

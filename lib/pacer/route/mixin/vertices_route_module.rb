@@ -22,6 +22,7 @@ module Pacer::Routes
     def v(*filters, &block)
       route = VerticesRoute.new(self, filters, block)
       route.pipe_class = nil
+      route.add_extensions extensions unless route.extensions.any?
       route
     end
 
