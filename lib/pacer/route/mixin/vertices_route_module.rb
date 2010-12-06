@@ -73,7 +73,13 @@ module Pacer::Routes
           end
         end
       end
-      (first_edge_id..last_edge_id)
+      if first_edge_id
+        if last_edge_id != first_edge_id
+          (first_edge_id..last_edge_id)
+        else
+          first_edge_id
+        end
+      end
     end
   end
 end
