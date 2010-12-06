@@ -30,6 +30,10 @@ module Pacer::Routes
       route
     end
 
+    def filter(*args, &block)
+      e(*args, &block)
+    end
+
     # Return an iterator of or yield all labels
     def labels
       map { |e| e.get_label }

@@ -26,6 +26,10 @@ module Pacer::Routes
       route
     end
 
+    def filter(*args, &block)
+      v(*args, &block)
+    end
+
     # Undefined for vertex routes.
     def e(*filters, &block)
       raise "Can't call edges for VerticesRoute."

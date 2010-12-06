@@ -29,6 +29,10 @@ module Pacer::Routes
       route
     end
 
+    def filter(*args)
+      raise 'Not implemented'
+    end
+
     # Specialization of result simply returns self.
     def result
       self

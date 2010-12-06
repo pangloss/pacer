@@ -18,6 +18,12 @@ module Pacer::Routes
       route
     end
 
+    def filter(*args, &block)
+      route = branch { |b| b.v(*args, &block) }.branch { |b| b.v(*args, &block) }.mixed
+      route.add_extensions extensions unless route.extensions.any?
+      route
+    end
+
     def mixed
       MixedRoute.pipe_filter(self, nil)
     end
