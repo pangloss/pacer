@@ -177,13 +177,23 @@ module Pacer::Routes
     end
 
     def bulk_job(size = nil)
-      size ||= graph.bulk_job_size
-      each_slice(size) do |slice|
-        graph.manual_transaction do
-          slice.each do |element|
-            yield element
+      if graph
+        size ||= graph.bulk_job_size
+        counter = 0
+        each_slice(size) do |slice|
+          print counter if Pacer.verbose?
+          counter += size
+          graph.manual_transaction do
+            slice.each do |element|
+              yield element
+            end
+            print '.' if Pacer.verbose?
           end
-          print '.' if Pacer.verbose?
+        end
+      else
+        puts 'No graph in route for bulk job' if Pacer.verbose?
+        each do |element|
+          yield element
         end
       end
     end

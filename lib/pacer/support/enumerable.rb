@@ -32,10 +32,14 @@ module Enumerable
   end
 
   def to_route(info = nil)
-    r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })
-    r.pipe_class = nil
-    r.info = info
-    r
+    if self.is_a? Pacer::Routes::Base
+      self
+    else
+      r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })
+      r.pipe_class = nil
+      r.info = info
+      r
+    end
   end
 
   def group_count

@@ -53,19 +53,27 @@ module Pacer::Routes
       else
         to_vertices = [to_vertices].compact
       end
+      g = graph
+      has_props = !props.empty?
+      first_edge_id = last_edge_id = nil
       map do |from_v|
-        g = graph || from_v.graph
-        to_vertices.map do |to_v|
+        g ||= from_v.graph
+        to_vertices.to_route.v.bulk_job do |to_v|
           begin
-            e = g.add_edge(nil, from_v, to_v, label)
-            props.each do |name, value|
-              e.set_property name.to_s, value
+            edge = (g || to_v.graph).add_edge(nil, from_v, to_v, label)
+            first_edge_id ||= edge.get_id
+            last_edge_id = edge.get_id
+            if has_props
+              props.each do |name, value|
+                edge.set_property name.to_s, value
+              end
             end
           rescue => e
             puts e.message
           end
         end
       end
+      (first_edge_id..last_edge_id)
     end
   end
 end
