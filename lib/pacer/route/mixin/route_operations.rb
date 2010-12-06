@@ -176,6 +176,37 @@ module Pacer::Routes
       each { |element| element.copy_into(target_graph, opts) }
     end
 
+    def bulk_job(size = nil)
+      size ||= graph.bulk_job_size
+      each_slice(size) do |slice|
+        graph.manual_transaction do
+          slice.each do |element|
+            yield element
+          end
+          print '.' if Pacer.verbose?
+        end
+      end
+    end
+
+    def build_index(index, index_key = nil, property = nil)
+      unless index.is_a? com.tinkerpop.blueprints.pgm.Index
+        index = graph.indices.find { |i| i.index_name == index.to_s }
+      end
+      raise "No index found for #{ index } on #{ graph }" unless index
+      index_key ||= index.index_name
+      if property
+        bulk_job do |element|
+          value = element[property]
+          index.put(index_key, value, element) if value
+        end
+      else
+        bulk_job do |element|
+          value = yield(element)
+          index.put(index_key, value, element) if value
+        end
+      end
+    end
+
     protected
 
     def has_routable_class?

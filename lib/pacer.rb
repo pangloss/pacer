@@ -25,6 +25,8 @@ module Pacer
   require 'pacer/utils'
 
   class << self
+    attr_accessor :verbose
+
     # Reload all Ruby files in the Pacer library. Useful for debugging in the
     # console. Does not do any of the fancy stuff that Rails reloading does.
     # Certain types of changes will still require restarting the session.
@@ -62,6 +64,10 @@ module Pacer
     # Alter the inspect limit.
     def inspect_limit=(n)
       @inspect_limit = n
+    end
+
+    def verbose?
+      @verbose
     end
 
     def vertex?(element)

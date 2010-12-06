@@ -18,6 +18,14 @@ module Pacer
       stream = java.io.FileOutputStream.new path
       com.tinkerpop.blueprints.pgm.parser.GraphMLWriter.outputGraph self, stream
     end
+
+    def bulk_job_size=(size)
+      @bulk_job_size = size
+    end
+
+    def bulk_job_size
+      @bulk_job_size || 5000
+    end
   end
 end
 
