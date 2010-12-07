@@ -184,24 +184,25 @@ module Pacer::Routes
       @in_bulk_job
     end
 
-    def bulk_map(size = nil)
+    def bulk_map(size = nil, target_graph = nil)
       result = []
-      bulk_job(size) do |e|
+      bulk_job(size, target_graph) do |e|
         result << yield(e)
       end
       result
     end
 
-    def bulk_job(size = nil)
-      if graph and not graph.in_bulk_job?
+    def bulk_job(size = nil, target_graph = nil)
+      target_graph ||= graph
+      if target_graph and not target_graph.in_bulk_job?
         begin
-          graph.in_bulk_job = true
-          size ||= graph.bulk_job_size
+          target_graph.in_bulk_job = true
+          size ||= target_graph.bulk_job_size
           counter = 0
           each_slice(size) do |slice|
             print counter if Pacer.verbose?
             counter += size
-            graph.manual_transaction do
+            target_graph.manual_transaction do
               slice.each do |element|
                 yield element
               end
@@ -209,13 +210,14 @@ module Pacer::Routes
             end
           end
         ensure
-          graph.in_bulk_job = false
+          target_graph.in_bulk_job = false
         end
-      else
-        puts 'No graph in route for bulk job' if not graph and Pacer.verbose?
+      elsif target_graph
         each do |element|
           yield element
         end
+      else
+        raise 'No graph in route for bulk job'
       end
     end
 
