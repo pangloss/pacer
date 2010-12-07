@@ -29,10 +29,14 @@ module Pacer::Routes
     end
 
     # Do not return duplicate elements.
-    def uniq
-      route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
-      route.add_extensions extensions
-      route
+    def uniq(*filters, &block)
+      if filters.any? or block
+        filter(*filters, &block).uniq
+      else
+        route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
+        route.add_extensions extensions
+        route
+      end
     end
 
     # Accepts a string or symbol to return an array of matching properties, or
