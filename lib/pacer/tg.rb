@@ -17,6 +17,7 @@ module Pacer
   # Extend the java class imported from blueprints.
   class TinkerGraph
     include GraphMixin
+    include GraphTransactionsStub
     include Routes::Base
     include Routes::GraphRoute
 

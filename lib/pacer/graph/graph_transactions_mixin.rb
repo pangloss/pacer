@@ -5,7 +5,33 @@ module Pacer
     @graphs ||= Set[]
   end
 
-  module Graph
+  module GraphTransactionsStub
+    def manual_transaction
+      yield
+    end
+
+    def manual_transactions
+      yield
+    end
+
+    def transaction
+      yield
+    end
+
+    def start_transaction
+    end
+
+    def commit_transaction
+    end
+
+    def rollback_transaction
+    end
+
+    def checkpoint
+    end
+  end
+
+  module GraphTransactionsMixin
     def manual_transaction
       manual_transactions do
         transaction do
@@ -21,6 +47,8 @@ module Pacer
           puts "transaction mode reset to MANUAL" if Pacer.verbose == :very
           set_transaction_mode TransactionalGraph::Mode::MANUAL
           yield
+        rescue IRB::Abort, Exception
+          rollback_transaction if Pacer.graphs_in_transaction.include? self
         ensure
           puts "transaction mode reset to #{ original_mode }" if Pacer.verbose == :very
           set_transaction_mode original_mode
@@ -31,7 +59,6 @@ module Pacer
     end
 
     def transaction
-      Pacer.graphs_in_transaction << self
       start_transaction
       conclusion = TransactionalGraph::Conclusion::FAILURE
       begin
@@ -49,18 +76,23 @@ module Pacer
     end
 
     def start_transaction
-      startTransaction
+      r = startTransaction
+      Pacer.graphs_in_transaction << self
+      puts "transaction started" if Pacer.verbose == :very
+      r
     end
 
     def commit_transaction
       r = stop_transaction TransactionalGraph::Conclusion::SUCCESS
       Pacer.graphs_in_transaction.delete self
+      puts "transaction committed" if Pacer.verbose == :very
       r
     end
 
     def rollback_transaction
       r = stop_transaction TransactionalGraph::Conclusion::FAILURE
       Pacer.graphs_in_transaction.delete self
+      puts "transaction rolled back" if Pacer.verbose == :very
       r
     end
 
@@ -69,5 +101,7 @@ module Pacer
       start_transaction
       Pacer.graphs_in_transaction << self
     end
+
+    #protected :startTransaction
   end
 end
