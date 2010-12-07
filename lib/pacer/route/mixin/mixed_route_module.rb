@@ -76,12 +76,11 @@ module Pacer::Routes
         method, id = ids.first
         graph.send method, id
       else
-        g = graph
         loader = proc do
           ids.map { |method, id| graph.send(method, id) }
         end
         r = MixedElementsRoute.new(loader)
-        r.graph = g
+        r.graph = graph
         r.pipe_class = nil
         r.info = "#{ name }:#{ids.count}"
         r

@@ -48,6 +48,7 @@ module Pacer::Routes
       else
         r = EdgesRoute.from_edge_ids graph, edge_ids
         r.info = "#{ name }:#{r.info}" if name
+        r.graph = graph
         r
       end
     end

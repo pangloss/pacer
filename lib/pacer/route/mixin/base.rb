@@ -139,6 +139,7 @@ module Pacer
             route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
           end
         result.add_extensions extensions
+        result.graph = graph
         result
       end
 
@@ -153,6 +154,7 @@ module Pacer
             route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
           end
         result.add_extensions extensions
+        result.graph = graph
         result
       end
 
