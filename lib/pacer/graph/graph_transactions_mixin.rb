@@ -49,6 +49,7 @@ module Pacer
           yield
         rescue IRB::Abort, Exception
           rollback_transaction if Pacer.graphs_in_transaction.include? self
+          raise
         ensure
           puts "transaction mode reset to #{ original_mode }" if Pacer.verbose == :very
           set_transaction_mode original_mode
@@ -68,6 +69,7 @@ module Pacer
         end
       rescue IRB::Abort
         puts "transaction aborted" if Pacer.verbose == :very
+        raise
       ensure
         puts "transaction finished #{ conclusion }" if Pacer.verbose == :very
         stop_transaction conclusion
