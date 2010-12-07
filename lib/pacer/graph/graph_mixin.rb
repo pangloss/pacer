@@ -73,5 +73,18 @@ module Pacer
     def in_bulk_job?
       @in_bulk_job
     end
+
+    def load_vertices(ids)
+      ids.map do |id|
+        vertex id rescue nil
+      end.compact
+    end
+
+    def load_edges(ids)
+      ids.map do |id|
+        edge id rescue nil
+      end.compact
+    end
+
   end
 end
