@@ -44,6 +44,7 @@ module Pacer::Routes
       else
         r = VerticesRoute.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
+        r.graph = graph
         r
       end
     end

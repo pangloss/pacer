@@ -23,7 +23,7 @@ module Pacer
       v
     end
 
-    def add_vertex(*args)
+    def create_vertex(*args)
       if args.last.is_a? Hash
         props = args.last
       end
@@ -36,7 +36,7 @@ module Pacer
       v
     end
 
-    def add_edge(id, from_v, to_v, label, props = nil)
+    def create_edge(id, from_v, to_v, label, props = nil)
       e = addEdge(id, from_v, to_v, label)
       e.graph = self
       if props

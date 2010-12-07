@@ -56,7 +56,7 @@ module Pacer
         ov ||= out_v.clone_into target_graph
       end
       return if not iv or not ov
-      e = target_graph.add_edge get_id, iv, ov, label
+      e = target_graph.create_edge get_id, iv, ov, label
       properties.each do |name, value|
         e[name] = value
       end
@@ -68,7 +68,7 @@ module Pacer
       iv = target_graph.vertex(in_v.get_id)
       ov = target_graph.vertex(out_v.get_id)
       return if not iv or not ov
-      e = target_graph.add_edge nil, iv, ov, label
+      e = target_graph.create_edge nil, iv, ov, label
       properties.each do |name, value|
         e[name] = value
       end

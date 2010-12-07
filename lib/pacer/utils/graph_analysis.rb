@@ -7,7 +7,7 @@ module Pacer
       def self.structure(graph, type_field = :type)
         result = Pacer.tg
         types = graph.v.group_count(type_field).inject({}) do |hash, (type, count)|
-          v = result.add_vertex nil
+          v = result.create_vertex nil
           v[type_field] = type
           v[:count] = count
           v.graph = result

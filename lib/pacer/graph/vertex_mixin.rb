@@ -27,7 +27,7 @@ module Pacer
     # already exists.
     def clone_into(target_graph, opts = {})
       return if target_graph.vertex(id)
-      v = target_graph.add_vertex id
+      v = target_graph.create_vertex id
       properties.each do |name, value|
         v[name] = value
       end
@@ -38,7 +38,7 @@ module Pacer
     # Make a new copy of the element with the next available vertex
     # id.
     def copy_into(target_graph, opts = {})
-      v = target_graph.add_vertex nil
+      v = target_graph.create_vertex
       properties.each do |name, value|
         v[name] = value
       end
