@@ -98,7 +98,7 @@ module Pacer::Routes
 
     # Delete all matching elements.
     def delete!
-      map { |e| e.delete! }
+      bulk_map { |e| e.delete! }
     end
 
     # Store the current intermediate element in the route's vars hash by the
@@ -182,6 +182,14 @@ module Pacer::Routes
 
     def in_bulk_job?
       @in_bulk_job
+    end
+
+    def bulk_map(size = nil)
+      result = []
+      bulk_job(size) do |e|
+        result << yield(e)
+      end
+      result
     end
 
     def bulk_job(size = nil)
