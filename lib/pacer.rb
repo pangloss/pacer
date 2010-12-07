@@ -27,7 +27,7 @@ module Pacer
   require 'pacer/utils'
 
   class << self
-    attr_accessor :verbose
+    attr_accessor :debug_info
 
     # Returns the time pacer was last reloaded (or when it was started).
     def reload_time
@@ -61,7 +61,7 @@ module Pacer
 
     # Returns how many terminal columns we have.
     def columns
-      @columns || 120
+      @columns || 150
     end
 
     # Tell the graph how many terminal columns we have.
@@ -80,9 +80,14 @@ module Pacer
       @inspect_limit = n
     end
 
-    def verbose?
-      @verbose
+    def verbose=(v)
+      @verbose = v
     end
+
+    def verbose?
+      @verbose ||= true
+    end
+    alias verbose verbose?
 
     def vertex?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Vertex
