@@ -59,23 +59,37 @@ module Pacer::Routes
       else
         to_vertices = [to_vertices].compact
       end
-      g = graph
+      graph = self.graph
+      unless graph
+        v = (detect { |v| v.graph } || to_vertices.detect { |v| v.graph })
+        graph = v.graph if v
+        unless graph
+          Pacer.debug_info << { :error => 'No graph found', :from => self, :to => to_vertices, :graph => graph }
+          raise "No graph found"
+        end
+      end
       has_props = !props.empty?
       first_edge_id = last_edge_id = nil
-      map do |from_v|
-        g ||= from_v.graph
-        to_vertices.to_route.v.bulk_job do |to_v|
-          begin
-            edge = (g || to_v.graph).add_edge(nil, from_v, to_v, label)
-            first_edge_id ||= edge.get_id
-            last_edge_id = edge.get_id
-            if has_props
-              props.each do |name, value|
-                edge.set_property name.to_s, value
+      counter = 0
+      graph.manual_transactions do
+        graph.transaction do
+          each do |from_v|
+            to_vertices.to_route.each do |to_v|
+              counter += 1
+              graph.checkpoint if counter % graph.bulk_job_size == 0
+              begin
+                edge = graph.create_edge(nil, from_v, to_v, label)
+                first_edge_id ||= edge.get_id
+                last_edge_id = edge.get_id
+                if has_props
+                  props.each do |name, value|
+                    edge.set_property name.to_s, value
+                  end
+                end
+              rescue => e
+                puts e.message
               end
             end
-          rescue => e
-            puts e.message
           end
         end
       end
