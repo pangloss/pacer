@@ -98,7 +98,7 @@ module Pacer::Routes
 
     # Delete all matching elements.
     def delete!
-      bulk_map { |e| e.delete! }
+      bulk_job { |e| e.delete! }
     end
 
     # Store the current intermediate element in the route's vars hash by the
@@ -171,13 +171,13 @@ module Pacer::Routes
     end
 
     def clone_into(target_graph, opts = {})
-      each do |element|
+      bulk_job(nil, target_graph) do |element|
         element.clone_into(target_graph, opts)
       end
     end
 
     def copy_into(target_graph, opts = {})
-      each { |element| element.copy_into(target_graph, opts) }
+      bulk_job(nil, target_graph) { |element| element.copy_into(target_graph, opts) }
     end
 
     def in_bulk_job?
