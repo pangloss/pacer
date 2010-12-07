@@ -30,6 +30,7 @@ module Pacer
       if args.empty? and not block_given?
         route.add_extensions extensions
       end
+      route
     end
 
     def e(*args)
@@ -37,6 +38,7 @@ module Pacer
       if args.empty? and not block_given?
         route.add_extensions extensions
       end
+      route
     end
 
     # Specify the graph the element belongs to. For internal use only.
