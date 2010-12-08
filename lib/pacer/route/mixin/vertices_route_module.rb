@@ -40,10 +40,13 @@ module Pacer::Routes
     def result(name = nil)
       v_ids = ids
       if v_ids.count == 1
-        graph.vertex v_ids.first
+        v = graph.vertex v_ids.first
+        v.add_extensions extensions
+        v
       else
         r = VerticesRoute.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
+        r.add_extensions extensions
         r.graph = graph
         r
       end
