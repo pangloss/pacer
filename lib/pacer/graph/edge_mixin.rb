@@ -33,7 +33,9 @@ module Pacer
       if args.any?
         super
       else
-        out_vertex
+        v = out_vertex
+        v.graph = graph
+        v
       end
     end
 
@@ -43,7 +45,9 @@ module Pacer
       if args.any?
         super
       else
-        in_vertex
+        v = in_vertex
+        v.graph = graph
+        v
       end
     end
 
