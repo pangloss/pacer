@@ -1,6 +1,15 @@
 # Extend the built-in Enumerable module:
 module Enumerable
 
+  def one?
+    self[1].nil? and count == 1
+  end
+
+  def many?
+    counter = 0
+    any? { if counter == 1; true; else; counter += 1; false; end }
+  end
+
   # Transform the enumerable into a java HashSet.
   def to_hashset(method = nil, *args)
     return self if self.is_a? java.util.HashSet
