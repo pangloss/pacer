@@ -85,7 +85,8 @@ module Pacer
     end
 
     def verbose?
-      @verbose ||= true
+      @verbose = true if @verbose.nil?
+      @verbose
     end
     alias verbose verbose?
 

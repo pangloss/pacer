@@ -11,9 +11,18 @@ module Pacer
     end
 
     def manage_transactions?
-      @manage_transactions ||= true
+      @manage_transactions = true if @manage_transactions.nil?
+      @manage_transactions
     end
     alias manage_transactions manage_transactions?
+
+    def unmanaged_transactions
+      old_value = @manage_transactions
+      @manage_transactions = false
+      yield
+    ensure
+      @manage_transactions = old_value
+    end
 
     def managed_transactions
       if manage_transactions?
@@ -40,7 +49,7 @@ module Pacer
     end
 
     def managed_start_transaction
-      start_transaction if manage_transactions?
+      begin_transaction if manage_transactions?
     end
 
     def managed_commit_transaction
@@ -65,7 +74,7 @@ module Pacer
       yield
     end
 
-    def start_transaction
+    def begin_transaction
     end
 
     def commit_transaction
@@ -107,7 +116,7 @@ module Pacer
     end
 
     def transaction
-      start_transaction
+      begin_transaction
       conclusion = TransactionalGraph::Conclusion::FAILURE
       begin
         catch :transaction_failed do
@@ -124,7 +133,7 @@ module Pacer
       end
     end
 
-    def start_transaction
+    def begin_transaction
       r = startTransaction
       Pacer.graphs_in_transaction << self
       puts "transaction started" if Pacer.verbose == :very
@@ -147,7 +156,7 @@ module Pacer
 
     def checkpoint
       commit_transaction
-      start_transaction
+      begin_transaction
       Pacer.graphs_in_transaction << self
     end
 
