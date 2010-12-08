@@ -18,6 +18,7 @@ module Pacer
   class TinkerGraph
     include GraphMixin
     include GraphTransactionsStub
+    include ManagedTransactionsMixin
     include Routes::Base
     include Routes::GraphRoute
 

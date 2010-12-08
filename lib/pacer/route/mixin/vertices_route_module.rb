@@ -71,12 +71,12 @@ module Pacer::Routes
       has_props = !props.empty?
       first_edge_id = last_edge_id = nil
       counter = 0
-      graph.manual_transactions do
-        graph.transaction do
+      graph.managed_transactions do
+        graph.managed_transaction do
           each do |from_v|
             to_vertices.to_route.each do |to_v|
               counter += 1
-              graph.checkpoint if counter % graph.bulk_job_size == 0
+              graph.managed_checkpoint if counter % graph.bulk_job_size == 0
               begin
                 edge = graph.create_edge(nil, from_v, to_v, label)
                 first_edge_id ||= edge.get_id

@@ -41,6 +41,7 @@ module Pacer
   class Neo4jGraph
     include GraphMixin
     include GraphTransactionsMixin
+    include ManagedTransactionsMixin
     include Routes::Base
     include Routes::GraphRoute
 
