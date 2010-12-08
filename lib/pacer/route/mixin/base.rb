@@ -299,6 +299,14 @@ module Pacer
         self
       end
 
+      def set_pipe_source(source)
+        if @back
+          @back.set_pipe_source source
+        else
+          self.source = source
+        end
+      end
+
       protected
 
       # Initializes some basic instance variables.
