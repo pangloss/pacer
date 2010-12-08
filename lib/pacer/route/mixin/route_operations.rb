@@ -223,20 +223,28 @@ module Pacer::Routes
       end
     end
 
-    def build_index(index, index_key = nil, property = nil)
+    def build_index(index, index_key = nil, property = nil, create = true)
+      index_name = index
       unless index.is_a? com.tinkerpop.blueprints.pgm.Index
         index = graph.indices.find { |i| i.index_name == index.to_s }
       end
-      raise "No index found for #{ index } on #{ graph }" unless index
+      unless index
+        if create
+          index = graph.create_index index_name, graph.element_type(first), Pacer.manual_index
+        else
+          raise "No index found for #{ index } on #{ graph }" unless index
+        end
+      end
       index_key ||= index.index_name
-      if property
+      property ||= index_key
+      if block_given?
         bulk_job do |element|
-          value = element[property]
+          value = yield(element)
           index.put(index_key, value, element) if value
         end
       else
         bulk_job do |element|
-          value = yield(element)
+          value = element[property]
           index.put(index_key, value, element) if value
         end
       end
