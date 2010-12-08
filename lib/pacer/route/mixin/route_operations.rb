@@ -202,9 +202,11 @@ module Pacer::Routes
           each_slice(size) do |slice|
             print counter if Pacer.verbose?
             counter += size
-            target_graph.managed_transaction do
-              slice.each do |element|
-                yield element
+            target_graph.managed_manual_transaction do
+              target_graph.unmanaged_transactions do
+                slice.each do |element|
+                  yield element
+                end
               end
               print '.' if Pacer.verbose?
             end
