@@ -1,6 +1,7 @@
 module Pacer::Routes
   class PathsRoute
     include Base
+    include BulkOperations
 
     def initialize(back)
       @back = back
@@ -20,12 +21,12 @@ module Pacer::Routes
       raise "Can't create a subgraph within itself." if target_graph == graph
       target_graph ||= Pacer.tg
       target_graph.vertex_name ||= graph.vertex_name
-      each do |path|
-        path.select { |e| e.is_a? Pacer::VertexMixin }.each do |vertex|
+      bulk_job(nil, target_graph) do |path|
+        path_route = path.to_route(:graph => graph)
+        path_route.v.each do |vertex|
           vertex.clone_into target_graph
         end
-
-        path.select { |e| e.is_a? Pacer::EdgeMixin }.each do |edge|
+        path_route.e.each do |edge|
           edge.clone_into target_graph
         end
       end

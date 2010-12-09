@@ -4,6 +4,7 @@ module Pacer::Routes
   # routes if they support the full route interface.
   module RouteOperations
     include BranchableRoute
+    include BulkOperations
 
     def paths
       PathsRoute.new(self)
@@ -197,49 +198,6 @@ module Pacer::Routes
 
     def copy_into(target_graph, opts = {})
       bulk_job(nil, target_graph) { |element| element.copy_into(target_graph, opts) }
-    end
-
-    def in_bulk_job?
-      @in_bulk_job
-    end
-
-    def bulk_map(size = nil, target_graph = nil)
-      result = []
-      bulk_job(size, target_graph) do |e|
-        result << yield(e)
-      end
-      result
-    end
-
-    def bulk_job(size = nil, target_graph = nil)
-      target_graph ||= graph
-      if target_graph and not target_graph.in_bulk_job?
-        begin
-          target_graph.in_bulk_job = true
-          size ||= target_graph.bulk_job_size
-          counter = 0
-          each_slice(size) do |slice|
-            print counter if Pacer.verbose?
-            counter += size
-            target_graph.managed_manual_transaction do
-              target_graph.unmanaged_transactions do
-                slice.each do |element|
-                  yield element
-                end
-              end
-              print '.' if Pacer.verbose?
-            end
-          end
-        ensure
-          target_graph.in_bulk_job = false
-        end
-      elsif target_graph
-        each do |element|
-          yield element
-        end
-      else
-        raise 'No graph in route for bulk job'
-      end
     end
 
     def build_index(index, index_key = nil, property = nil, create = true)
