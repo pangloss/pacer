@@ -2,7 +2,12 @@
 module Enumerable
 
   def one?
-    self[1].nil? and count == 1
+    counter = 0
+    each do
+      return false if counter == 1
+      counter += 1
+    end
+    true
   end
 
   def many?
