@@ -45,13 +45,20 @@ module Enumerable
     end
   end
 
-  def to_route(info = nil)
+  def to_route(opts = {})
     if self.is_a? Pacer::Routes::Base
       self
     else
       r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })
       r.pipe_class = nil
-      r.info = info
+      if based_on = opts[:based_on]
+        r.graph = based_on.graph
+        r.add_extensions based_on.extensions
+        r.info = based_on.info if based_on.info
+      end
+      r.add_extensions opts[:extensions] if opts[:extensions]
+      r.graph = opts[:graph] if opts[:graph]
+      r.info = opts[:info]
       r
     end
   end

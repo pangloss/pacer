@@ -105,7 +105,9 @@ module Pacer::Routes
     end
 
     def all_but_most_frequent
-      group_count.sort_by { |k, v| -v }.map { |k, v| k }[1..-1].to_route
+      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[1..-1]
+      elements ||= []
+      elements.to_route(:based_on => self)
     end
 
     # Delete all matching elements.
