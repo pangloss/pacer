@@ -92,8 +92,20 @@ module Pacer::Routes
         each do |e|
           result[props.map { |p| e.get_property(p) }] += 1
         end
+      else
+        each do |e|
+          result[e] += 1
+        end
       end
       result
+    end
+
+    def most_frequent
+      group_count.sort_by { |k, v| -v }.map { |k, v| k }.first
+    end
+
+    def all_but_most_frequent
+      group_count.sort_by { |k, v| -v }.map { |k, v| k }[1..-1].to_route
     end
 
     # Delete all matching elements.
