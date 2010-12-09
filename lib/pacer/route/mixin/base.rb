@@ -283,6 +283,7 @@ module Pacer
         if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
           extensions << mod
         end
+        self
       end
 
       def extensions

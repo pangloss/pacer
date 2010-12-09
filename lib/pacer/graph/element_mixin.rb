@@ -9,6 +9,7 @@ module Pacer
         extend mod::Route
         extensions << mod
       end
+      self
     end
 
     def extensions

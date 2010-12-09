@@ -6,6 +6,7 @@ module Pacer
         extend mod::Vertex
         extensions << mod
       end
+      self
     end
 
     # Returns a human-readable representation of the vertex.
