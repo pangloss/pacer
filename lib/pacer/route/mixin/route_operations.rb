@@ -61,6 +61,11 @@ module Pacer::Routes
         route.add_extensions extensions
         route
       when Array
+        if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
+          map do |element|
+            prop_or_subset.map { |i| element.get_property(i.to_s) }
+          end
+        end
       end
     end
 
