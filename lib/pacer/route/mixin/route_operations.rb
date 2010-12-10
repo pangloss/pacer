@@ -106,12 +106,12 @@ module Pacer::Routes
       result
     end
 
-    def most_frequent
-      group_count.sort_by { |k, v| -v }.map { |k, v| k }.first
+    def most_frequent(range = 0)
+      group_count.sort_by { |k, v| -v }.map { |k, v| k }[range]
     end
 
-    def all_but_most_frequent
-      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[1..-1]
+    def all_but_most_frequent(start_at = 1)
+      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[start_at..-1]
       elements ||= []
       elements.to_route(:based_on => self)
     end
