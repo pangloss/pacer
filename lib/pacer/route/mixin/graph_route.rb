@@ -109,7 +109,7 @@ module Pacer::Routes
       filters.each do |filter|
         if filter.is_a? Hash
           filter.each { |key, value| yield key, value if key }
-        elsif filter.is_a? Module
+        elsif filter.is_a? Module or filter.is_a? Class
           if filter.respond_to? :route_conditions
             each_property_filter([filter.route_conditions]) { |k, v| yield k, v }
           elsif filter.respond_to? :route
@@ -140,7 +140,7 @@ module Pacer::Routes
     def indexed_route(element_type, filters, block)
       element_type = self.element_type(element_type)
       each_property_filter(filters) do |index_name, index_value|
-        if index_value.is_a? Module
+        if index_value.is_a? Module or index_value.is_a? Class
           return index_value.route(self)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }

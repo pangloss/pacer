@@ -19,7 +19,7 @@ module Pacer
     # If any objects in the given array are modules that contain a Route
     # submodule, extend this route with the Route module.
     def add_extensions(exts)
-      modules = exts.select { |obj| obj.is_a? Module }
+      modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
       modules.each do |mod|
         add_extension(mod)
       end

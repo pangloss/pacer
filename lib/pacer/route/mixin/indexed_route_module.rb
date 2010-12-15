@@ -24,7 +24,7 @@ module Pacer::Routes
 
     def extract_route_conditions(filters)
       filters.map do |filter|
-        if filter.is_a? Module and filter.respond_to? :route_conditions
+        if (filter.is_a? Module or filter.is_a? Class) and filter.respond_to? :route_conditions
           Hash[filters.first.route_conditions.map { |k, v| [k.to_s, v] }]
         else
           filter

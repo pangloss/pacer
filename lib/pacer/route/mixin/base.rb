@@ -293,7 +293,7 @@ module Pacer
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
       def add_extensions(exts)
-        modules = exts.select { |obj| obj.is_a? Module }
+        modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
         modules.each do |mod|
           add_extension(mod)
         end
@@ -440,7 +440,7 @@ module Pacer
       # the pipes for this route object.
       def filter_pipe(pipe, args_array, block)
         if args_array and args_array.any?
-          modules = args_array.select { |arg| arg.is_a? Module }
+          modules = args_array.select { |obj| obj.is_a? Module or obj.is_a? Class }
           pipe = modules.inject(pipe) do |p, mod|
             if mod.respond_to? :route_conditions
               args_array = args_array + [mod.route_conditions]
