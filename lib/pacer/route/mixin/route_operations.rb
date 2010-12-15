@@ -40,6 +40,10 @@ module Pacer::Routes
       end
     end
 
+    def has?(element)
+      any? { |e| e == element }
+    end
+
     # Accepts a string or symbol to return an array of matching properties, or
     # an integer to return the element at the given offset, or a range to
     # return all elements between the offsets within the range.
@@ -118,7 +122,7 @@ module Pacer::Routes
 
     # Delete all matching elements.
     def delete!
-      bulk_job { |e| e.delete! }
+      uniq.bulk_job { |e| e.delete! }
     end
 
     # Store the current intermediate element in the route's vars hash by the

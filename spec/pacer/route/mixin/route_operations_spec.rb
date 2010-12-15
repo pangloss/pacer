@@ -67,7 +67,9 @@ describe RouteOperations do
       it { @route.back.should be_a(VerticesRoute) }
       it { @route.back.back.should be_nil }
     end
-
   end
 
+  describe :delete! do
+    it 'should not try to delete an element twice'
+  end
 end

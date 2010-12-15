@@ -20,5 +20,21 @@ describe VerticesRoute do
       @g.v.out_e.in_v.in_e(:wrote).out_v.paths.map(&:to_a).should == paths
     end
   end
+
+  describe :add_edges_to do
+    it 'should not add properties with null values'
+
+    context 'from empty route' do
+
+    end
+
+    context 'to empty array' do
+
+    end
+
+    context 'to nil' do
+
+    end
+  end
 end
 

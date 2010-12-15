@@ -86,7 +86,7 @@ module Pacer::Routes
                 last_edge_id = edge.get_id
                 if has_props
                   props.each do |name, value|
-                    edge.set_property name.to_s, value
+                    edge[name] = value
                   end
                 end
               rescue => e
