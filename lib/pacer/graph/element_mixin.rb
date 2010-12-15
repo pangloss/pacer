@@ -83,6 +83,15 @@ module Pacer
       property_keys.inject({}) { |h, name| h[name] = get_property(name); h }
     end
 
+    def properties=(props)
+      (property_keys - props.keys.map { |k| k.to_s }).each do |key|
+        remove_property key
+      end
+      props.each do |key, value|
+        self[key] = value
+      end
+    end
+
     # Returns a basic display name for the element. This method should be specialized.
     def display_name
       get_id
