@@ -11,14 +11,24 @@ begin
     gem.email = "darrick@innatesoftware.com"
     gem.homepage = "http://github.com/pangloss/pacer"
     gem.authors = ["Darrick Wiebe"]
+    gem.license = "MIT"
     gem.add_dependency "nokogiri", "~> 1.4"
     gem.add_development_dependency "rspec", "~> 2.1"
     gem.add_development_dependency "rr", "~> 1.0"
     gem.files = FileList['lib/**/*.rb', 'script/*', '[A-Z]*', 'spec/**/*', 'vendor/*'].to_a
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
   end
+  Jeweler::GemcutterTasks.new
+  Jeweler::RubygemsDotOrgTasks.new
 rescue LoadError
   puts "Jeweler (or a dependency) not available. Install it with: gem install jeweler"
+end
+
+begin
+  require 'yard'
+  YARD::Rake::YardocTask.new
+rescue LoadError
+  puts "YARD not available. gem install yard"
 end
 
 if Config::CONFIG['host_os'] =~ /mswin/
@@ -44,18 +54,18 @@ if Config::CONFIG['host_os'] =~ /mswin/
       end
     end
     task :install => jgem
+    task :build => jgem
   end
 end
 
 
-require 'spec/rake/spectask'
-Spec::Rake::SpecTask.new(:spec) do |spec|
-  spec.libs << 'lib' << 'spec'
-  spec.spec_files = FileList['spec/**/*_spec.rb']
+require 'rspec/core'
+require 'rspec/core/rake_task'
+RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
-Spec::Rake::SpecTask.new(:rcov) do |spec|
-  spec.libs << 'lib' << 'spec'
+RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
   spec.rcov = true
 end
@@ -63,13 +73,3 @@ end
 task :spec => :check_dependencies
 
 task :default => :spec
-
-require 'rake/rdoctask'
-Rake::RDocTask.new do |rdoc|
-  version = File.exist?('VERSION') ? File.read('VERSION') : ""
-
-  rdoc.rdoc_dir = 'rdoc'
-  rdoc.title = "pacer #{version}"
-  rdoc.rdoc_files.include('README*')
-  rdoc.rdoc_files.include('lib/**/*.rb')
-end
