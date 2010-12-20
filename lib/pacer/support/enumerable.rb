@@ -65,7 +65,11 @@ module Enumerable
 
   def group_count
     result = Hash.new(0)
-    each { |e| result[yield(e)] += 1 }
+    if block_given?
+      each { |e| result[yield(e)] += 1 }
+    else
+      each { |e| result[e] += 1 }
+    end
     result
   end
 
