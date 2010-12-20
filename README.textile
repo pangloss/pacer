@@ -4,8 +4,8 @@ Please look at my "Introducing Pacer":http://ofallpossibleworlds.wordpress.com/2
 
 Until I write some documentation, you may find it helpful to refer to the following specs files as well:
 
-* base_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/base_spec.rb
-* route_operations_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/route_operations_spec.rb
-* paths_route_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/paths_route_spec.rb
-* vertices_route_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/vertices_route_spec.rb
+* "base_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/base_spec.rb
+* "route_operations_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/route_operations_spec.rb
+* "paths_route_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/paths_route_spec.rb
+* "vertices_route_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/vertices_route_spec.rb
 
