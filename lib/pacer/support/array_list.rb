@@ -4,3 +4,11 @@ class Java::JavaUtil::ArrayList
     to_a.inspect
   end
 end
+
+require 'set'
+java.util.HashSet
+class Java::JavaUtil::HashSet
+  def inspect
+    to_set.inspect
+  end
+end

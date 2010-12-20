@@ -4,6 +4,7 @@ module Pacer::Routes
   # routes if they support the full route interface.
   module RouteOperations
     include BranchableRoute
+    include BulkOperations
 
     def paths
       PathsRoute.new(self)
@@ -29,10 +30,18 @@ module Pacer::Routes
     end
 
     # Do not return duplicate elements.
-    def uniq
-      route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
-      route.add_extensions extensions
-      route
+    def uniq(*filters, &block)
+      if filters.any? or block
+        filter(*filters, &block).uniq
+      else
+        route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
+        route.add_extensions extensions
+        route
+      end
+    end
+
+    def has?(element)
+      any? { |e| e == element }
     end
 
     # Accepts a string or symbol to return an array of matching properties, or
@@ -57,6 +66,11 @@ module Pacer::Routes
         route.add_extensions extensions
         route
       when Array
+        if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
+          map do |element|
+            prop_or_subset.map { |i| element.get_property(i.to_s) }
+          end
+        end
       end
     end
 
@@ -88,13 +102,27 @@ module Pacer::Routes
         each do |e|
           result[props.map { |p| e.get_property(p) }] += 1
         end
+      else
+        each do |e|
+          result[e] += 1
+        end
       end
       result
     end
 
+    def most_frequent(range = 0)
+      group_count.sort_by { |k, v| -v }.map { |k, v| k }[range]
+    end
+
+    def all_but_most_frequent(start_at = 1)
+      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[start_at..-1]
+      elements ||= []
+      elements.to_route(:based_on => self)
+    end
+
     # Delete all matching elements.
     def delete!
-      map { |e| e.delete! }
+      uniq.bulk_job { |e| e.delete! }
     end
 
     # Store the current intermediate element in the route's vars hash by the
@@ -167,13 +195,40 @@ module Pacer::Routes
     end
 
     def clone_into(target_graph, opts = {})
-      each do |element|
+      bulk_job(nil, target_graph) do |element|
         element.clone_into(target_graph, opts)
       end
     end
 
     def copy_into(target_graph, opts = {})
-      each { |element| element.copy_into(target_graph, opts) }
+      bulk_job(nil, target_graph) { |element| element.copy_into(target_graph, opts) }
+    end
+
+    def build_index(index, index_key = nil, property = nil, create = true)
+      index_name = index
+      unless index.is_a? com.tinkerpop.blueprints.pgm.Index
+        index = graph.indices.find { |i| i.index_name == index.to_s }
+      end
+      unless index
+        if create
+          index = graph.create_index index_name, graph.element_type(first), Pacer.manual_index
+        else
+          raise "No index found for #{ index } on #{ graph }" unless index
+        end
+      end
+      index_key ||= index.index_name
+      property ||= index_key
+      if block_given?
+        bulk_job do |element|
+          value = yield(element)
+          index.put(index_key, value, element) if value
+        end
+      else
+        bulk_job do |element|
+          value = element[property]
+          index.put(index_key, value, element) if value
+        end
+      end
     end
 
     protected

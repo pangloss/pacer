@@ -22,7 +22,12 @@ module Pacer::Routes
     def v(*filters, &block)
       route = VerticesRoute.new(self, filters, block)
       route.pipe_class = nil
+      route.add_extensions extensions unless route.extensions.any?
       route
+    end
+
+    def filter(*args, &block)
+      v(*args, &block)
     end
 
     # Undefined for vertex routes.
@@ -35,10 +40,14 @@ module Pacer::Routes
     def result(name = nil)
       v_ids = ids
       if v_ids.count == 1
-        graph.vertex v_ids.first
+        v = graph.vertex v_ids.first
+        v.add_extensions extensions
+        v
       else
         r = VerticesRoute.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
+        r.add_extensions extensions
+        r.graph = graph
         r
       end
     end
@@ -47,26 +56,51 @@ module Pacer::Routes
     # matching this route to all vertices matching the given
     # to_route. If any properties are given, they will be applied
     # to each created edge.
-    def to(label, to_vertices, props = {})
+    def add_edges_to(label, to_vertices, props = {})
       case to_vertices
-      when Base
-        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
-      when Enumerable, Iterator
-        raise "Must be from same graph" unless to_vertices.first.from_graph?(graph)
+      when Base, Enumerable, java.util.Iterator
       else
-        raise "Must be from same graph" unless to_vertices.from_graph?(graph)
-        to_vertices = [to_vertices]
+        to_vertices = [to_vertices].compact
       end
-      map do |from_v|
-        to_vertices.map do |to_v|
-          begin
-            e = graph.add_edge(nil, from_v, to_v, label)
-            props.each do |name, value|
-              e.set_property name.to_s, value
+      graph = self.graph
+      unless graph
+        v = (detect { |v| v.graph } || to_vertices.detect { |v| v.graph })
+        graph = v.graph if v
+        unless graph
+          Pacer.debug_info << { :error => 'No graph found', :from => self, :to => to_vertices, :graph => graph }
+          raise "No graph found"
+        end
+      end
+      has_props = !props.empty?
+      first_edge_id = last_edge_id = nil
+      counter = 0
+      graph.managed_transactions do
+        graph.managed_transaction do
+          each do |from_v|
+            to_vertices.to_route.each do |to_v|
+              counter += 1
+              graph.managed_checkpoint if counter % graph.bulk_job_size == 0
+              begin
+                edge = graph.create_edge(nil, from_v, to_v, label.to_s)
+                first_edge_id ||= edge.get_id
+                last_edge_id = edge.get_id
+                if has_props
+                  props.each do |name, value|
+                    edge[name] = value
+                  end
+                end
+              rescue => e
+                puts e.message
+              end
             end
-          rescue => e
-            puts e.message
           end
+        end
+      end
+      if first_edge_id
+        if last_edge_id != first_edge_id
+          (first_edge_id..last_edge_id)
+        else
+          first_edge_id
         end
       end
     end

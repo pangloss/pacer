@@ -2,7 +2,7 @@ require 'java'
 require 'pp'
 
 module Pacer
-  unless defined? Pacer::VERSION
+  unless const_defined? :VERSION
     VERSION = '0.1.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
@@ -12,8 +12,10 @@ module Pacer
       exit 1
     end
 
+    START_TIME = Time.now
+
     require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.1-SNAPSHOT-standalone.jar')
-    require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M04.jar')
+    require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M05.jar')
   end
 
   require 'pacer/graph'
@@ -22,14 +24,29 @@ module Pacer
   require 'pacer/neo4j'
   require 'pacer/tg'
   require 'pacer/support'
+  require 'pacer/utils'
 
   class << self
-    # Reload all Ruby files in the Pacer library. Useful for debugging in the
-    # console. Does not do any of the fancy stuff that Rails reloading does.
-    # Certain types of changes will still require restarting the session.
+    attr_accessor :debug_info
+
+    # Returns the time pacer was last reloaded (or when it was started).
+    def reload_time
+      @reload_time || START_TIME
+    end
+
+    # Reload all Ruby modified files in the Pacer library. Useful for debugging
+    # in the console. Does not do any of the fancy stuff that Rails reloading
+    # does.  Certain types of changes will still require restarting the
+    # session.
     def reload!
-      Dir[File.join(PATH, 'lib/**/*.rb')].each { |file| load file }
-      true
+      require 'pathname'
+      Pathname.new(__FILE__).parent.find do |path|
+        if path.extname == '.rb' and path.mtime > reload_time
+          puts path.to_s
+          load path.to_s
+        end
+      end
+      @reload_time = Time.now
     end
 
     # Set to true to prevent inspecting any route from printing
@@ -44,7 +61,7 @@ module Pacer
 
     # Returns how many terminal columns we have.
     def columns
-      @columns || 120
+      @columns || 150
     end
 
     # Tell the graph how many terminal columns we have.
@@ -62,6 +79,16 @@ module Pacer
     def inspect_limit=(n)
       @inspect_limit = n
     end
+
+    def verbose=(v)
+      @verbose = v
+    end
+
+    def verbose?
+      @verbose = true if @verbose.nil?
+      @verbose
+    end
+    alias verbose verbose?
 
     def vertex?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Vertex

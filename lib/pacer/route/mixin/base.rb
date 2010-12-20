@@ -50,6 +50,13 @@ module Pacer
 
       # The previous route in the path
       def back
+        # TODO: something like @back.look_ahead(self)
+        #       it should be the previous route in the path but which
+        #       emits an element only if the future route that is defined
+        #       actually emits anything. That functionality exists in
+        #       FutureFilterPipe and is how gremlin's .. step works.
+        #       Also, the look_ahead should have a .back method that
+        #       pushes the route back farther...
         @back
       end
 
@@ -132,6 +139,7 @@ module Pacer
             route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
           end
         result.add_extensions extensions
+        result.graph = graph
         result
       end
 
@@ -146,6 +154,7 @@ module Pacer
             route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
           end
         result.add_extensions extensions
+        result.graph = graph
         result
       end
 
@@ -154,7 +163,9 @@ module Pacer
         iter = iterator
         if extensions.empty?
           if block_given?
+            g = graph
             while item = iter.next
+              item.graph ||= g
               yield item
             end
           else
@@ -163,11 +174,13 @@ module Pacer
         else
           if block_given?
             while item = iter.next
+              item.graph ||= graph
               item.add_extensions extensions
               yield item
             end
           else
             iter.extend IteratorExtensionsMixin
+            iter.graph = graph
             iter.extensions = extensions
             iter
           end
@@ -181,10 +194,13 @@ module Pacer
         iter = iterator
         iter.enable_path
         if block_given?
+          g = graph
           while item = iter.next
-            yield iter.path
+            yield iter.path.map { |e| e.graph ||= g; e }
           end
         else
+          iter.extend IteratorPathMixin
+          iter.graph = graph
           iter
         end
       rescue NoSuchElementException
@@ -194,13 +210,16 @@ module Pacer
       def each_context
         iter = iterator
         if block_given?
+          g = graph
           while item = iter.next
+            item.graph ||= g
             item.extend Pacer::Routes::SingleRoute
             item.back = self
             yield item
           end
         else
           iter.extend IteratorContextMixin
+          iter.graph = graph
           iter.context = self
           iter
         end
@@ -264,6 +283,7 @@ module Pacer
         if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
           extensions << mod
         end
+        self
       end
 
       def extensions
@@ -273,11 +293,19 @@ module Pacer
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
       def add_extensions(exts)
-        modules = exts.select { |obj| obj.is_a? Module }
+        modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
         modules.each do |mod|
           add_extension(mod)
         end
         self
+      end
+
+      def set_pipe_source(source)
+        if @back
+          @back.set_pipe_source source
+        else
+          self.source = source
+        end
       end
 
       protected
@@ -412,7 +440,7 @@ module Pacer
       # the pipes for this route object.
       def filter_pipe(pipe, args_array, block)
         if args_array and args_array.any?
-          modules = args_array.select { |arg| arg.is_a? Module }
+          modules = args_array.select { |obj| obj.is_a? Module or obj.is_a? Class }
           pipe = modules.inject(pipe) do |p, mod|
             if mod.respond_to? :route_conditions
               args_array = args_array + [mod.route_conditions]
@@ -422,6 +450,8 @@ module Pacer
               beginning_of_condition = route.send :route_after, self
               beginning_of_condition.send :source=, pipe
               route.send :iterator
+            else
+              pipe
             end
           end
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|

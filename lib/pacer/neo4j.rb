@@ -39,11 +39,11 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jGraph
+    include GraphMixin
+    include GraphTransactionsMixin
+    include ManagedTransactionsMixin
     include Routes::Base
     include Routes::GraphRoute
-
-    alias vertex get_vertex
-    alias edge get_edge
 
     def element_type(et)
       case et

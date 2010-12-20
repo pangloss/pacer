@@ -1,7 +1,10 @@
 require 'pacer'
+require 'set'
 
 Dir['./spec/support/**/*.rb'].map {|f| require f}
 Dir['./spec/tackle/*.rb'].map {|f| require f}
+
+include Pacer::Routes
 
 module RSpec
   module Core
@@ -32,6 +35,7 @@ RSpec.configure do |c|
   c.filter_run :focus => true
   c.run_all_when_everything_filtered = true
   Pacer.hide_route_elements = true
+  Pacer.verbose = false
   c.mock_with :rr
 
   # Not sure what this does: ...

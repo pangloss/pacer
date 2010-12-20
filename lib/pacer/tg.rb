@@ -16,11 +16,11 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class TinkerGraph
+    include GraphMixin
+    include GraphTransactionsStub
+    include ManagedTransactionsMixin
     include Routes::Base
     include Routes::GraphRoute
-
-    alias vertex getVertex
-    alias edge getEdge
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
@@ -47,8 +47,6 @@ module Pacer
       end
     end
 
-    # Discourage use of the native getVertex and getEdge methods
-    protected :get_vertex, :getVertex, :get_edge, :getEdge
   end
 
 

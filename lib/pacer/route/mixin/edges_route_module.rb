@@ -26,7 +26,12 @@ module Pacer::Routes
     def e(*filters, &block)
       route = EdgesRoute.new(self, filters, block)
       route.pipe_class = nil
+      route.add_extensions extensions unless route.extensions.any?
       route
+    end
+
+    def filter(*args, &block)
+      e(*args, &block)
     end
 
     # Return an iterator of or yield all labels
@@ -39,10 +44,14 @@ module Pacer::Routes
     def result(name = nil)
       edge_ids = ids
       if edge_ids.count == 1
-        graph.edge ids.first
+        e = graph.edge ids.first
+        e.add_extensions extensions
+        e
       else
         r = EdgesRoute.from_edge_ids graph, edge_ids
         r.info = "#{ name }:#{r.info}" if name
+        r.add_extensions extensions
+        r.graph = graph
         r
       end
     end
