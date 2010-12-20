@@ -1,0 +1,11 @@
+Pacer is a JRuby library that enables very expressive graph traversals.
+
+Please look at my "Introducing Pacer":http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer post for a detailed introduction and explanation of how Pacer is at once similar to and quite different from "Gremlin":http://gremlin.tinkerpop.com , the project that inspired it.
+
+Until I write some documentation, you may find it helpful to refer to the following specs files as well:
+
+ - base_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/base_spec.rb
+ - route_operations_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/route_operations_spec.rb
+ - paths_route_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/paths_route_spec.rb
+ - vertices_route_spec.rb:https://github.com/pangloss/pacer/blob/master/spec/pacer/route/vertices_route_spec.rb
+
