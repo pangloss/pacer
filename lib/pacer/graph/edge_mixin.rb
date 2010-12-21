@@ -1,12 +1,7 @@
 module Pacer
   module EdgeMixin
-    def add_extension(mod)
-      super
-      if mod.const_defined? :Edge
-        extend mod::Edge
-        extensions << mod
-      end
-      self
+    def add_extensions(exts)
+      EdgeWrapper.wrap(self, exts)
     end
 
     # Returns a human-readable representation of the edge.

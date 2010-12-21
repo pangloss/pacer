@@ -1,12 +1,7 @@
 module Pacer
   module VertexMixin
-    def add_extension(mod)
-      super
-      if mod.const_defined? :Vertex
-        extend mod::Vertex
-        extensions << mod
-      end
-      self
+    def add_extensions(exts)
+      VertexWrapper.wrap(self, exts)
     end
 
     # Returns a human-readable representation of the vertex.
@@ -27,8 +22,8 @@ module Pacer
     # Copies including the vertex id unless a vertex with that id
     # already exists.
     def clone_into(target_graph, opts = {})
-      return if target_graph.vertex(id)
-      v = target_graph.create_vertex id
+      return if target_graph.vertex(get_id)
+      v = target_graph.create_vertex get_id
       properties.each do |name, value|
         v[name] = value
       end

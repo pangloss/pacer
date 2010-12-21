@@ -70,7 +70,6 @@ module Pacer
         @info = str
       end
 
-      # TODO: is this method necessary?
       # Set which graph this route will operate on.
       def graph=(graph)
         @graph = graph
@@ -175,8 +174,7 @@ module Pacer
           if block_given?
             while item = iter.next
               item.graph ||= graph
-              item.add_extensions extensions
-              yield item
+              yield item.add_extensions(extensions)
             end
           else
             iter.extend IteratorExtensionsMixin
@@ -371,7 +369,9 @@ module Pacer
 
       # Return an iterator for a variety of source object types.
       def iterator_from_source(src)
-        if src.is_a? Proc
+        if src.is_a? Pacer::ElementWrapper
+          Pacer::Pipes::EnumerablePipe.new src.element
+        elsif src.is_a? Proc
           iterator_from_source(src.call)
         elsif src.is_a? Iterator
           src

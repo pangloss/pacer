@@ -21,6 +21,8 @@ module Pacer
   require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/routes'
+  require 'pacer/wrappers'
+  require 'pacer/extensions'
   require 'pacer/neo4j'
   require 'pacer/tg'
   require 'pacer/support'
