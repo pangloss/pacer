@@ -42,7 +42,7 @@ module Pacer
     # session.
     def reload!
       require 'pathname'
-      Pathname.new(__FILE__).parent.find do |path|
+      Pathname.new(File.expand_path(__FILE__)).parent.find do |path|
         if path.extname == '.rb' and path.mtime > reload_time
           puts path.to_s
           load path.to_s
