@@ -86,5 +86,25 @@ module Pacer
       end.compact
     end
 
+    def index_name(name, type = nil)
+      if type
+        indices.detect { |i| i.index_name == name and i.index_type == element_type(type) }
+      else
+        indices.detect { |i| i.index_name == name }
+      end
+    end
+
+    def rebuild_automatic_index(old_index)
+      name = old_index.index_name
+      index_class = old_index.index_class
+      keys = old_index.auto_index_keys
+      index = create_index name, index_class.java_object, Pacer.automatic_index
+      keys.each { |key| index.add_auto_index_key key }
+      if index_class == element_type(:vertex).java_class
+        v.bulk_job { |v| index.add_element v }
+      else
+        e.bulk_job { |e| index.add_element e }
+      end
+    end
   end
 end
