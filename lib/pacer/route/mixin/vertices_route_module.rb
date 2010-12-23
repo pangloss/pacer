@@ -35,6 +35,12 @@ module Pacer::Routes
       raise "Can't call edges for VerticesRoute."
     end
 
+    # Delete all matching elements.
+    def delete!
+      uniq.both_e.uniq.bulk_job { |e| e.delete! }
+      uniq.bulk_job { |e| e.delete! }
+    end
+
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
