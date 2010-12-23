@@ -6,7 +6,7 @@ module Pacer
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts).new(element)
+        wrapper_for(exts).new(element.element)
       end
 
       def extensions
@@ -41,13 +41,10 @@ module Pacer
 
     def_delegators :@element, :get_id,
       :property_keys, :get_property, :set_property, :remove_property,
-      :out_edges, :in_edges, :out_vertices, :in_vertices,
+      :out_edges, :in_edges, :in_vertex, :out_vertex,
       :raw_vertex, :raw_edge,
-      :label
-
-    def element
-      @element
-    end
+      :label,
+      :graph, :graph=
   end
 
   class EdgeWrapper < ElementWrapper
@@ -69,6 +66,10 @@ module Pacer
         @wrappers[exts] ||= build_edge_wrapper(exts)
       end
     end
+
+    def element
+      @element
+    end
   end
 
   class VertexWrapper < ElementWrapper
@@ -89,6 +90,10 @@ module Pacer
         @wrappers ||= {}
         @wrappers[exts] ||= build_vertex_wrapper(exts)
       end
+    end
+
+    def element
+      @element
     end
   end
 end

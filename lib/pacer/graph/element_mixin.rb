@@ -97,5 +97,9 @@ module Pacer
         [self].to_enum
       end
     end
+
+    def element
+      self
+    end
   end
 end

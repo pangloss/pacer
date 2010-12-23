@@ -11,18 +11,19 @@ module Pacer
 
     # Returns the display name of the vertex.
     def display_name
-      @graph.vertex_name.call self if @graph and @graph.vertex_name
+      graph.vertex_name.call self if graph and graph.vertex_name
     end
 
     # Deletes the vertex from its graph along with all related edges.
     def delete!
-      @graph.remove_vertex self
+      graph.remove_vertex self
     end
 
     # Copies including the vertex id unless a vertex with that id
     # already exists.
     def clone_into(target_graph, opts = {})
-      return if target_graph.vertex(get_id)
+      v = target_graph.vertex(get_id)
+      return v if v
       v = target_graph.create_vertex get_id
       properties.each do |name, value|
         v[name] = value
