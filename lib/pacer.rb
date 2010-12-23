@@ -21,6 +21,8 @@ module Pacer
   require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/routes'
+  require 'pacer/wrappers'
+  require 'pacer/extensions'
   require 'pacer/neo4j'
   require 'pacer/tg'
   require 'pacer/support'
@@ -40,7 +42,7 @@ module Pacer
     # session.
     def reload!
       require 'pathname'
-      Pathname.new(__FILE__).parent.find do |path|
+      Pathname.new(File.expand_path(__FILE__)).parent.find do |path|
         if path.extname == '.rb' and path.mtime > reload_time
           puts path.to_s
           load path.to_s

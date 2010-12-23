@@ -1,12 +1,7 @@
 module Pacer
   module VertexMixin
-    def add_extension(mod)
-      super
-      if mod.const_defined? :Vertex
-        extend mod::Vertex
-        extensions << mod
-      end
-      self
+    def add_extensions(exts)
+      VertexWrapper.wrap(self, exts)
     end
 
     # Returns a human-readable representation of the vertex.
@@ -16,19 +11,20 @@ module Pacer
 
     # Returns the display name of the vertex.
     def display_name
-      @graph.vertex_name.call self if @graph and @graph.vertex_name
+      graph.vertex_name.call self if graph and graph.vertex_name
     end
 
     # Deletes the vertex from its graph along with all related edges.
     def delete!
-      @graph.remove_vertex self
+      graph.remove_vertex self
     end
 
     # Copies including the vertex id unless a vertex with that id
     # already exists.
     def clone_into(target_graph, opts = {})
-      return if target_graph.vertex(id)
-      v = target_graph.create_vertex id
+      v = target_graph.vertex(get_id)
+      return v if v
+      v = target_graph.create_vertex get_id
       properties.each do |name, value|
         v[name] = value
       end

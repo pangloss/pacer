@@ -4,26 +4,12 @@ module Pacer
       target.send :include, Enumerable unless target.is_a? Enumerable
     end
 
-    def add_extension(mod)
-      if mod.const_defined? :Route
-        extend mod::Route
-        extensions << mod
-      end
-      self
-    end
-
     def extensions
-      @extensions ||= Set[]
-    end
-
-    # If any objects in the given array are modules that contain a Route
-    # submodule, extend this route with the Route module.
-    def add_extensions(exts)
-      modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
-      modules.each do |mod|
-        add_extension(mod)
+      if self.class.respond_to? :extensions
+        self.class.extensions
+      else
+        Set[]
       end
-      self
     end
 
     def v(*args)
@@ -110,6 +96,10 @@ module Pacer
       else
         [self].to_enum
       end
+    end
+
+    def element
+      self
     end
   end
 end
