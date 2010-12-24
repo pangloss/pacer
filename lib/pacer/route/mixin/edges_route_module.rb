@@ -69,7 +69,8 @@ module Pacer::Routes
     protected
 
     # Specialize filter_pipe for edge labels.
-    def filter_pipe(pipe, filters, block)
+    def filter_pipe(pipe, filters, block, expand_extensions)
+      pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
       labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
       if labels.empty?
         super
@@ -77,7 +78,7 @@ module Pacer::Routes
         label_pipe = Pacer::Pipes::LabelsFilterPipe.new
         label_pipe.set_labels labels
         label_pipe.set_starts pipe
-        super(label_pipe, filters - labels, block)
+        super(label_pipe, filters - labels, block, false)
       end
     end
   end
