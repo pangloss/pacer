@@ -13,6 +13,10 @@ module Pacer
         @extensions ||= Set[]
       end
 
+      def clear_cache
+        @wrappers = nil
+      end
+
       protected
 
       def build_extension_wrapper(exts, mod_names)

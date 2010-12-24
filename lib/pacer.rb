@@ -48,6 +48,7 @@ module Pacer
           load path.to_s
         end
       end
+      clear_wrapper_cache
       @reload_time = Time.now
     end
 
@@ -91,6 +92,11 @@ module Pacer
       @verbose
     end
     alias verbose verbose?
+
+    def clear_wrapper_cache
+      VertexWrapper.clear_cache
+      EdgeWrapper.clear_cache
+    end
 
     def vertex?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Vertex
