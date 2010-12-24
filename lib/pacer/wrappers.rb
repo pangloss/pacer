@@ -38,19 +38,18 @@ module Pacer
     def initialize(element)
       @element = element
     end
-
-    def_delegators :@element, :get_id,
-      :property_keys, :get_property, :set_property, :remove_property,
-      :out_edges, :in_edges, :in_vertex, :out_vertex,
-      :raw_vertex, :raw_edge,
-      :label,
-      :graph, :graph=
   end
 
   class EdgeWrapper < ElementWrapper
     include Pacer::Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
+
+    def_delegators :@element, :get_id,
+      :label, :get_label, :property_keys, :get_property, :set_property, :remove_property,
+      :in_vertex, :out_vertex,
+      :raw_edge,
+      :graph, :graph=
 
     class << self
       protected
@@ -76,6 +75,12 @@ module Pacer
     include Pacer::Routes::VerticesRouteModule
     include ElementMixin
     include VertexMixin
+
+    def_delegators :@element, :get_id,
+      :property_keys, :get_property, :set_property, :remove_property,
+      :out_edges, :in_edges,
+      :raw_vertex,
+      :graph, :graph=
 
     class << self
       protected
