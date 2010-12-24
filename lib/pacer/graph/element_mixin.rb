@@ -70,6 +70,7 @@ module Pacer
     end
 
     def properties=(props)
+      props = graph.sanitize_properties(props) if graph
       (property_keys - props.keys.map { |k| k.to_s }).each do |key|
         remove_property key
       end

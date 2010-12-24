@@ -56,6 +56,24 @@ module Pacer
       end
     end
 
+    def sanitize_properties(props)
+      props.inject({}) do |result, (name, value)|
+        case value
+        when Date, Time, Symbol
+          value = value.to_s
+        when ''
+          value = nil
+        when String
+          value = value.strip
+          value = nil if value == ''
+        else
+          value = value.to_s
+        end
+        result[name] = value if value
+        result
+      end
+    end
+
   end
 
 

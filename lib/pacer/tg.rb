@@ -47,6 +47,9 @@ module Pacer
       end
     end
 
+    def sanitize_properties(props)
+      props
+    end
   end
 
 

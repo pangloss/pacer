@@ -2,7 +2,7 @@ module Pacer
   module GraphMixin
     def self.included(target)
       target.class_eval do
-        protected :addVertex, :addEdge
+        protected :addVertex, :addEdge, :add_vertex, :add_edge
         protected :getVertex, :getEdge
         alias vertex get_vertex
         alias edge get_edge
@@ -30,19 +30,37 @@ module Pacer
       id = args.first if args.first.is_a? Fixnum
       v = addVertex(id)
       if props
-        props.each { |k, v| e[k.to_s] = v if v }
+        sanitize_properties(props).each { |k, v| e[k.to_s] = v }
       end
       v.graph = self
       v
     end
 
     def create_edge(id, from_v, to_v, label, props = nil)
-      e = addEdge(id, from_v, to_v, label)
+      e = addEdge(id, from_v.element, to_v.element, label)
       e.graph = self
       if props
-        props.each { |k, v| e[k.to_s] = v if v }
+        sanitize_properties(props).each { |k, v| e[k.to_s] = v }
       end
       e
+    end
+
+    def sanitize_properties(props)
+      props.inject({}) do |result, (name, value)|
+        case value
+        when Symbol
+          value = value.to_s
+        when ''
+          value = nil
+        when String
+          value = value.strip
+          value = nil if value == ''
+        else
+          value = value.to_s
+        end
+        result[name] = value if value
+        result
+      end
     end
 
     def import(path)
