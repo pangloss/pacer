@@ -24,14 +24,10 @@ module Pacer
     end
 
     def create_vertex(*args)
-      if args.last.is_a? Hash
-        props = args.last
-      end
-      id = args.first if args.first.is_a? Fixnum
+      props = args.last if args.last.is_a? Hash
+      id = args.first unless args.first == props
       v = addVertex(id)
-      if props
-        sanitize_properties(props).each { |k, v| e[k.to_s] = v }
-      end
+      sanitize_properties(props).each { |k, v| e[k.to_s] = v } if props
       v.graph = self
       v
     end
