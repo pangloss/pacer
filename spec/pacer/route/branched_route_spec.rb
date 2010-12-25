@@ -39,10 +39,10 @@ describe BranchedRoute do
   describe 'branch chaining bug' do
     before do
       @linear = Pacer.tg
-      @a, @b, @c, @d = @linear.add_vertex('a'), @linear.add_vertex('b'), @linear.add_vertex('c'), @linear.add_vertex('d')
-      @ab = @linear.add_edge nil, @a, @b, 'to'
-      @bc = @linear.add_edge nil, @b, @c, 'to'
-      @cd = @linear.add_edge nil, @c, @d, 'to'
+      @a, @b, @c, @d = @linear.create_vertex('a'), @linear.create_vertex('b'), @linear.create_vertex('c'), @linear.create_vertex('d')
+      @ab = @linear.create_edge nil, @a, @b, 'to'
+      @bc = @linear.create_edge nil, @b, @c, 'to'
+      @cd = @linear.create_edge nil, @c, @d, 'to'
       @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
 
       single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
