@@ -26,19 +26,17 @@ module Pacer
     def create_vertex(*args)
       props = args.last if args.last.is_a? Hash
       id = args.first unless args.first == props
-      v = addVertex(id)
-      sanitize_properties(props).each { |k, v| e[k.to_s] = v } if props
-      v.graph = self
-      v
+      vertex = addVertex(id)
+      vertex.graph = self
+      sanitize_properties(props).each { |k, v| vertex[k.to_s] = v } if props
+      vertex
     end
 
     def create_edge(id, from_v, to_v, label, props = nil)
-      e = addEdge(id, from_v.element, to_v.element, label)
-      e.graph = self
-      if props
-        sanitize_properties(props).each { |k, v| e[k.to_s] = v }
-      end
-      e
+      edge = addEdge(id, from_v.element, to_v.element, label)
+      edge.graph = self
+      sanitize_properties(props).each { |k, v| edge[k.to_s] = v } if props
+      edge
     end
 
     def sanitize_properties(props)
