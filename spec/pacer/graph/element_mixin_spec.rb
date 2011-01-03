@@ -96,4 +96,62 @@ describe Pacer::ElementMixin do
       end
     end
   end
+
+  describe '#graph' do
+    it { v0.graph.should == graph }
+    it { e0.graph.should == graph }
+  end
+
+  describe '#[]' do
+    context 'value types' do
+      it '(String)' do
+        v0[:string] = 'words'
+        v0[:string].should == 'words'
+      end
+
+      it '(Time)' do
+        time = Time.now
+        v0[:time] = time
+        v0[:time].should == time
+      end
+
+      it '(Fixnum)' do
+        v0[:number] = 123
+        v0[:number].should == 123
+      end
+
+      it '(Float)' do
+        v0[:float] = 12.345
+        v0[:float].should == 12.345
+      end
+
+      it '(Bignum)' do
+        v0[:big] = 123321123321123321
+        v0[:big].should == 123321123321123321
+      end
+
+      it "('')" do
+        v0[:name] = ''
+        v0[:name].should be_nil
+        v0.property_keys.should_not include('name')
+      end
+
+      it '(nil)' do
+        v0[:name] = nil
+        v0[:name].should be_nil
+        v0.property_keys.should_not include('name')
+      end
+    end
+
+    context 'key types' do
+      it 'String' do
+        v0['name'].should == v0[:name]
+      end
+
+      it 'Fixnum' do
+        v0[123] = 'value'
+        v0[123].should == 'value'
+      end
+    end
+  end
 end

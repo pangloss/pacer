@@ -43,7 +43,7 @@ module Pacer
 
     # Convenience method to set a property by name to the given value.
     def []=(key, value)
-      if value
+      if value and value != ''
         set_property(key.to_s, value) if value != get_property(key.to_s)
       else
         remove_property(key.to_s)
