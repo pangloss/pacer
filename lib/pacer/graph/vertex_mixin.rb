@@ -10,7 +10,7 @@ module Pacer
 
     # Returns a human-readable representation of the vertex.
     def inspect
-      "#<#{ ["V[#{get_id}]", display_name].compact.join(' ') }>"
+      "#<#{ ["V[#{element_id}]", display_name].compact.join(' ') }>"
     end
 
     # Returns the display name of the vertex.
@@ -26,9 +26,9 @@ module Pacer
     # Copies including the vertex id unless a vertex with that id
     # already exists.
     def clone_into(target_graph, opts = {})
-      v = target_graph.vertex(get_id)
+      v = target_graph.vertex(element_id)
       return v if v
-      v = target_graph.create_vertex get_id
+      v = target_graph.create_vertex element_id
       properties.each do |name, value|
         v[name] = value
       end

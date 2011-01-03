@@ -10,7 +10,7 @@ module Pacer
 
     # Returns a human-readable representation of the edge.
     def inspect
-      "#<E[#{get_id}]:#{display_name}>"
+      "#<E[#{element_id}]:#{display_name}>"
     end
 
     # Returns the display name of the vertex.
@@ -18,7 +18,7 @@ module Pacer
       if @graph and @graph.edge_name
         @graph.edge_name.call self
       else
-        "#{ out_vertex.get_id }-#{ get_label }-#{ in_vertex.get_id }"
+        "#{ out_vertex.element_id }-#{ get_label }-#{ in_vertex.element_id }"
       end
     end
 
@@ -52,15 +52,15 @@ module Pacer
     end
 
     def clone_into(target_graph, opts = {})
-      return if target_graph.edge(get_id)
-      iv = target_graph.vertex(in_v.get_id)
-      ov = target_graph.vertex(out_v.get_id)
+      return if target_graph.edge(element_id)
+      iv = target_graph.vertex(in_v.element_id)
+      ov = target_graph.vertex(out_v.element_id)
       if opts[:create_vertices]
         iv ||= in_v.clone_into target_graph
         ov ||= out_v.clone_into target_graph
       end
       return if not iv or not ov
-      e = target_graph.create_edge get_id, iv, ov, label
+      e = target_graph.create_edge element_id, iv, ov, label
       properties.each do |name, value|
         e[name] = value
       end
@@ -69,8 +69,8 @@ module Pacer
     end
 
     def copy_into(target_graph, opts = {})
-      iv = target_graph.vertex(in_v.get_id)
-      ov = target_graph.vertex(out_v.get_id)
+      iv = target_graph.vertex(in_v.element_id)
+      ov = target_graph.vertex(out_v.element_id)
       return if not iv or not ov
       e = target_graph.create_edge nil, iv, ov, label
       properties.each do |name, value|

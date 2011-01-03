@@ -31,12 +31,12 @@ describe Pacer::GraphMixin do
     end
 
     subject { graph.vertex '0' }
-    its(:get_id) { should == '0' }
+    its(:element_id) { should == '0' }
     its(:graph) { should == graph }
 
     context 'with mixins' do
       subject { graph.vertex '0', Tackle::SimpleMixin }
-      its(:get_id) { should == '0' }
+      its(:element_id) { should == '0' }
       it_behaves_like 'a vertex with a mixin'
     end
   end
@@ -48,12 +48,12 @@ describe Pacer::GraphMixin do
     end
 
     subject { graph.edge '0' }
-    its(:get_id) { should == '0' }
+    its(:element_id) { should == '0' }
     its(:graph) { should == graph }
 
     context 'with mixins' do
       subject { graph.edge '0', Tackle::SimpleMixin }
-      its(:get_id) { should == '0' }
+      its(:element_id) { should == '0' }
       it_behaves_like 'an edge with a mixin'
     end
   end
@@ -68,17 +68,17 @@ describe Pacer::GraphMixin do
     context 'with properties' do
       subject { graph.create_vertex :name => 'Frank' }
       it { subject[:name].should == 'Frank' }
-      its(:get_id) { should_not be_nil }
+      its(:element_id) { should_not be_nil }
 
       context 'and an id' do
         subject { graph.create_vertex 123, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
-        its(:get_id) { should == '123' }
+        its(:element_id) { should == '123' }
 
         context 'and mixins' do
           subject { graph.create_vertex 123, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
-          its(:get_id) { should == '123' }
+          its(:element_id) { should == '123' }
           it_behaves_like 'a vertex with a mixin'
         end
       end
@@ -86,11 +86,11 @@ describe Pacer::GraphMixin do
 
     context 'with an id' do
       subject { graph.create_vertex 123 }
-      its(:get_id) { should == '123' }
+      its(:element_id) { should == '123' }
 
       context 'and mixins' do
         subject { graph.create_vertex 123, Tackle::SimpleMixin }
-        its(:get_id) { should == '123' }
+        its(:element_id) { should == '123' }
         it_behaves_like 'a vertex with a mixin'
       end
     end
@@ -116,19 +116,19 @@ describe Pacer::GraphMixin do
       subject { graph.create_edge nil, from, to, :connects, :name => 'Frank' }
       it { subject[:name].should == 'Frank' }
       its(:label) { should == 'connects' }
-      its(:get_id) { should_not be_nil }
+      its(:element_id) { should_not be_nil }
 
       context 'and an id' do
         subject { graph.create_edge 123, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its(:get_id) { should == '123' }
+        its(:element_id) { should == '123' }
 
         context 'and mixins' do
           subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its(:get_id) { should == '123' }
+          its(:element_id) { should == '123' }
           it_behaves_like 'an edge with a mixin'
         end
       end
@@ -137,12 +137,12 @@ describe Pacer::GraphMixin do
     context 'with an id' do
       subject { graph.create_edge 123, from, to, :connects }
       its(:label) { should == 'connects' }
-      its(:get_id) { should == '123' }
+      its(:element_id) { should == '123' }
 
       context 'and mixins' do
         subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its(:get_id) { should == '123' }
+        its(:element_id) { should == '123' }
         it_behaves_like 'an edge with a mixin'
       end
     end

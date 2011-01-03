@@ -28,9 +28,4 @@ describe Pacer::Utils::TSort do
       serve.add_edges_to :requires, breakfast
     end
   end
-
-  { breakfast => {
-      serve => {
-        cook => [eggs, bacon]
-  } } }.to_graph(graph, :requires) { |v| v }
 end

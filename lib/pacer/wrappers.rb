@@ -39,6 +39,10 @@ module Pacer
       end
     end
 
+    def element_id
+      @element.get_id
+    end
+
     def initialize(element)
       @element = element
     end
@@ -49,7 +53,7 @@ module Pacer
     include ElementMixin
     include EdgeMixin
 
-    def_delegators :@element, :get_id,
+    def_delegators :@element,
       :label, :get_label, :property_keys, :get_property, :set_property, :remove_property,
       :in_vertex, :out_vertex,
       :raw_edge,
@@ -80,7 +84,7 @@ module Pacer
     include ElementMixin
     include VertexMixin
 
-    def_delegators :@element, :get_id,
+    def_delegators :@element,
       :property_keys, :get_property, :set_property, :remove_property,
       :out_edges, :in_edges,
       :raw_vertex,

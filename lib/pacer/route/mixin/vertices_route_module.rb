@@ -88,8 +88,8 @@ module Pacer::Routes
               graph.managed_checkpoint if counter % graph.bulk_job_size == 0
               begin
                 edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
-                first_edge_id ||= edge.get_id
-                last_edge_id = edge.get_id
+                first_edge_id ||= edge.element_id
+                last_edge_id = edge.element_id
               end
             end
           end
