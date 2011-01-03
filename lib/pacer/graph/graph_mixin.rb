@@ -91,19 +91,19 @@ module Pacer
 
     def load_vertices(ids)
       ids.map do |id|
-        vertex id rescue nil
+        vertex id
       end.compact
     end
 
     def load_edges(ids)
       ids.map do |id|
-        edge id rescue nil
+        edge id
       end.compact
     end
 
     def index_name(name, type = nil)
       if type
-        indices.detect { |i| i.index_name == name and i.index_type == element_type(type) }
+        indices.detect { |i| i.index_name == name and i.index_class == element_type(type) }
       else
         indices.detect { |i| i.index_name == name }
       end
@@ -113,13 +113,19 @@ module Pacer
       name = old_index.index_name
       index_class = old_index.index_class
       keys = old_index.auto_index_keys
-      index = create_index name, index_class.java_object, Pacer.automatic_index
-      keys.each { |key| index.add_auto_index_key key }
+      drop_index name
+      index = create_index name, index_class, Pacer.automatic_index
+      keys.each { |key| index.add_auto_index_key key } if keys
       if index_class == element_type(:vertex).java_class
-        v.bulk_job { |v| index.add_element v }
+        v.bulk_job do |v|
+          Pacer::Utils::IndexHelper.autoIndexElement(index, v)
+        end
       else
-        e.bulk_job { |e| index.add_element e }
+        e.bulk_job do |e|
+          Pacer::Utils::IndexHelper.autoIndexElement(index, e)
+        end
       end
+      index
     end
 
     def graph
@@ -144,6 +150,10 @@ module Pacer
     # Set the proc used to name edges.
     def edge_name=(a_proc)
       @edge_name = a_proc
+    end
+
+    def index_class(et)
+      element_type(et).java_class.to_java
     end
 
     protected

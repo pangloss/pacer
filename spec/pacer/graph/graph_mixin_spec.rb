@@ -2,10 +2,12 @@ require 'spec_helper'
 
 describe Pacer::GraphMixin do
   let(:graph) { Pacer.tg }
+  let(:v0) { graph.create_vertex }
+  let(:v1) { graph.create_vertex }
+  let(:e0) { graph.create_edge '0', v0, v1, :links }
+  let(:e1) { graph.create_edge '1', v0, v1, :relinks }
   before do
-    v0 = graph.create_vertex
-    v1 = graph.create_vertex
-    graph.create_edge '0', v0, v1, :default
+    e0 # force edge and vertices to be created.
   end
 
   shared_examples_for 'an edge with a mixin' do
@@ -202,6 +204,121 @@ describe Pacer::GraphMixin do
   end
 
   describe '#load_vertices' do
+    context 'invalid' do
+      subject { graph.load_vertices [0, nil, '0', 'missing'] }
+      it { should == [v0, v0] }
+    end
 
+    context 'valid' do
+      subject { graph.load_vertices [0, 1] }
+      it { should == [v0, v1] }
+    end
+  end
+
+  describe '#load_edges' do
+    context 'invalid' do
+      subject { graph.load_edges [0, nil, '0', 'missing'] }
+      it { should == [e0, e0] }
+    end
+
+    context 'valid' do
+      subject { graph.load_edges [0] }
+      it { should == [e0] }
+    end
+  end
+
+  describe '#index_name' do
+    context "('vertices')" do
+      subject { graph.index_name 'vertices' }
+      it { should_not be_nil }
+      its(:index_name) { should == 'vertices' }
+      its(:index_type) { should == Pacer.automatic_index }
+      its(:index_class) { should == graph.index_class(:vertex) }
+    end
+
+    context "('edges')" do
+      subject { graph.index_name 'edges' }
+      it { should_not be_nil }
+      its(:index_name) { should == 'edges' }
+      its(:index_type) { should == Pacer.automatic_index }
+      its(:index_class) { should == graph.index_class(:edge) }
+    end
+
+    context 'missing' do
+      subject { graph.index_name 'invalid' }
+      it { should be_nil }
+    end
+
+    it 'should return the same object each time' do
+      graph.index_name('vertices').should equal(graph.index_name('vertices'))
+    end
+  end
+
+  describe 'rebuild_automatic_index' do
+    context 'vertices' do
+      before do
+        v0.properties = { :name => 'darrick', :type => 'person' }
+        v1.properties = { :name => 'eliza', :type => 'person' }
+        @new_idx = graph.rebuild_automatic_index orig_idx
+      end
+      let(:orig_idx) { graph.index_name 'vertices' }
+      subject { @new_idx }
+      it { should_not equal(orig_idx) }
+      it 'should not use the old vertices index' do
+        graph.index_name('vertices').should_not equal(orig_idx)
+      end
+      it { should equal(graph.index_name('vertices')) }
+      it 'should have 2 persons' do
+        subject.count('type', 'person').should == 2
+      end
+      it 'should have v1 for eliza' do
+        subject.get('name', 'eliza').should == [v1].to_hashset
+      end
+    end
+
+    context 'edges' do
+      before do
+        v0.properties = { :name => 'darrick', :type => 'person' }
+        v1.properties = { :name => 'eliza', :type => 'person' }
+        e0.properties = { :style => 'edgy' }
+        e1.properties = { :style => 'edgy' }
+        @new_idx = graph.rebuild_automatic_index orig_idx
+      end
+      let(:orig_idx) { graph.index_name 'edges' }
+      subject { @new_idx }
+      it { should_not equal(orig_idx) }
+      it 'should not use the old edges index' do
+        graph.index_name('edges').should_not equal(orig_idx)
+      end
+      it { should equal(graph.index_name('edges')) }
+      it 'should have 1 edge' do
+        subject.count('label', 'links').should == 1
+      end
+      it 'should have e0 and e1 for style => edgy' do
+        subject.get('style', 'edgy').should == [e0, e1].to_hashset
+      end
+    end
+  end
+
+  describe '#graph' do
+    subject { graph.graph }
+    it { should == graph }
+  end
+
+  describe '#vertex_name' do
+    before { graph.vertex_name = :some_proc }
+    subject { graph.vertex_name }
+    it { should == :some_proc }
+  end
+
+  describe '#edge_name' do
+    before { graph.edge_name = :some_proc }
+    subject { graph.edge_name }
+    it { should == :some_proc }
+  end
+
+  describe '#index_class' do
+    subject { graph.index_class(:vertex) }
+    it { should == graph.element_type(:vertex).java_class.to_java }
   end
 end

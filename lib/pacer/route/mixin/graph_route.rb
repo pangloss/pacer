@@ -43,6 +43,11 @@ module Pacer::Routes
       true
     end
 
+    def graph
+      # This must be defined here to overwrite the #graph method in Base.
+      self
+    end
+
     protected
 
     # Don't try to inspect the graph data when inspecting.
