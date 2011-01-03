@@ -1,13 +1,16 @@
 require 'spec_helper'
 
 describe Pacer::Neo4jGraph do
-  before(:all) { @graph = Pacer.neo4j(File.expand_path('tmp/spec.neo4j')) }
+  before(:all) do
+    @spec_neo4j_path = File.expand_path('tmp/spec.neo4j')
+    @graph = Pacer.neo4j(@spec_neo4j_path)
+  end
   let(:graph) { @graph }
   before { graph.clear }
   let(:v0) { graph.create_vertex }
   let(:v1) { graph.create_vertex }
   let(:e0) { graph.create_edge '0', v0, v1, :default }
-  after(:all) { Dir.rmdir(File.expand_path('tmp/spec.neo4j')) }
+  after(:all) { @graph.shutdown; Pathname.new(@spec_neo4j_path).rmtree if @spec_neo4j_path }
 
   describe '#element_type' do
     context 'invalid' do
