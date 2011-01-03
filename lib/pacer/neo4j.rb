@@ -52,7 +52,7 @@ module Pacer
       when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
         Neo4jEdge
       else
-        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+        raise ArgumentError, 'Element type may be one of :vertex or :edge'
       end
     end
 

@@ -43,7 +43,7 @@ module Pacer
       when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
         TinkerEdge
       else
-        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+        raise ArgumentError, 'Element type may be one of :vertex or :edge'
       end
     end
 
