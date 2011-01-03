@@ -3,57 +3,54 @@ module Pacer
     def self.included(target)
       target.class_eval do
         protected :addVertex, :addEdge, :add_vertex, :add_edge
-        protected :getVertex, :getEdge
-        alias vertex get_vertex
-        alias edge get_edge
+        protected :getVertex, :getEdge, :get_vertex, :get_edge
       end
     end
 
     attr_accessor :in_bulk_job
 
-    def get_vertex(id)
+    def vertex(id, *modules)
       v = getVertex(id)
-      v.graph = self
-      v
+      if v
+        v.graph = self
+        v.add_extensions modules
+      else
+        v
+      end
     end
 
-    def get_edge(id)
+    def edge(id, *modules)
       v = getEdge(id)
-      v.graph = self
-      v
+      if v
+        v.graph = self
+        v.add_extensions modules
+      end
+    end
+
+    def find_or_create_vertex(id, *args)
     end
 
     def create_vertex(*args)
-      props = args.last if args.last.is_a? Hash
-      id = args.first unless args.first == props
-      vertex = addVertex(id)
+      id, modules, props = id_modules_properties(args)
+      vertex = creating_elements { addVertex(id) }
       vertex.graph = self
       sanitize_properties(props).each { |k, v| vertex[k.to_s] = v } if props
-      vertex
+      if modules.any?
+        vertex.add_extensions modules
+      else
+        vertex
+      end
     end
 
-    def create_edge(id, from_v, to_v, label, props = nil)
-      edge = addEdge(id, from_v.element, to_v.element, label)
+    def create_edge(id, from_v, to_v, label, *args)
+      _, modules, props = id_modules_properties(args)
+      edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
       edge.graph = self
       sanitize_properties(props).each { |k, v| edge[k.to_s] = v } if props
-      edge
-    end
-
-    def sanitize_properties(props)
-      props.inject({}) do |result, (name, value)|
-        case value
-        when Symbol
-          value = value.to_s
-        when ''
-          value = nil
-        when String
-          value = value.strip
-          value = nil if value == ''
-        else
-          value = value.to_s
-        end
-        result[name] = value if value
-        result
+      if modules.any?
+        edge.add_extensions modules
+      else
+        edge
       end
     end
 
@@ -64,14 +61,20 @@ module Pacer
       rescue java.net.MalformedURLException
         stream = java.io.FileInputStream.new path
       end
-      com.tinkerpop.blueprints.pgm.parser.GraphMLReader.input_graph self, stream
+      creating_elements do
+        com.tinkerpop.blueprints.pgm.util.graphml.GraphMLReader.input_graph self, stream
+      end
       true
+    ensure
+      stream.close if stream
     end
 
     def export(path)
       path = File.expand_path path
       stream = java.io.FileOutputStream.new path
-      com.tinkerpop.blueprints.pgm.parser.GraphMLWriter.outputGraph self, stream
+      com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter.outputGraph self, stream
+    ensure
+      stream.close if stream
     end
 
     def bulk_job_size=(size)
@@ -118,5 +121,70 @@ module Pacer
         e.bulk_job { |e| index.add_element e }
       end
     end
+
+    def graph
+      self
+    end
+
+    # The proc used to name vertices.
+    def vertex_name
+      @vertex_name
+    end
+
+    # Set the proc used to name vertices.
+    def vertex_name=(a_proc)
+      @vertex_name = a_proc
+    end
+
+    # The proc used to name edges.
+    def edge_name
+      @edge_name
+    end
+
+    # Set the proc used to name edges.
+    def edge_name=(a_proc)
+      @edge_name = a_proc
+    end
+
+    protected
+
+    def creating_elements
+      begin
+        yield
+      rescue NativeException => e
+        if e.message =~ /already exists/
+          raise ElementExists, e.message
+        else
+          raise
+        end
+      end
+    end
+
+    def id_modules_properties(args)
+      props = args.last if args.last.is_a? Hash
+      modules = args.select { |obj| obj.is_a? Module or obj.is_a? Class }
+      id = args.first
+      id = nil if id == props or modules.include? id
+      [id, modules, props]
+    end
+
+    def sanitize_properties(props)
+      props.inject({}) do |result, (name, value)|
+        case value
+        when Symbol
+          value = value.to_s
+        when ''
+          value = nil
+        when String
+          value = value.strip
+          value = nil if value == ''
+        else
+          value = value.to_s
+        end
+        result[name] = value if value
+        result
+      end
+    end
+
   end
 end

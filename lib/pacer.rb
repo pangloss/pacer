@@ -18,6 +18,7 @@ module Pacer
     require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M05.jar')
   end
 
+  require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/routes'

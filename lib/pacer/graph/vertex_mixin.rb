@@ -1,7 +1,11 @@
 module Pacer
   module VertexMixin
     def add_extensions(exts)
-      VertexWrapper.wrap(self, exts)
+      if exts.any?
+        VertexWrapper.wrap(self, exts)
+      else
+        self
+      end
     end
 
     # Returns a human-readable representation of the vertex.

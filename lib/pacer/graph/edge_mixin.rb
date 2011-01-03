@@ -1,7 +1,11 @@
 module Pacer
   module EdgeMixin
     def add_extensions(exts)
-      EdgeWrapper.wrap(self, exts)
+      if exts.any?
+        EdgeWrapper.wrap(self, exts)
+      else
+        self
+      end
     end
 
     # Returns a human-readable representation of the edge.
