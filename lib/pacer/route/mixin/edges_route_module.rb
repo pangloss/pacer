@@ -19,7 +19,7 @@ module Pacer::Routes
 
     # v is undefined for edge routes.
     def v(*filters)
-      raise "Can't call vertices for EdgesRoute."
+      raise Pacer::UnsupportedOperation, "Can't call vertices for EdgesRoute."
     end
 
     # Extend route with the additional edge label, property and block filters.

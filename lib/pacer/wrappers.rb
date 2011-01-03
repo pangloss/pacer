@@ -39,6 +39,10 @@ module Pacer
       end
     end
 
+    def extensions
+      self.class.extensions
+    end
+
     def element_id
       @element.get_id
     end
@@ -52,12 +56,13 @@ module Pacer
     include Pacer::Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
+    include Comparable
 
     def_delegators :@element,
       :label, :get_label, :property_keys, :get_property, :set_property, :remove_property,
       :in_vertex, :out_vertex,
       :raw_edge,
-      :graph, :graph=
+      :graph, :graph=, :<=>
 
     class << self
       protected
@@ -83,12 +88,13 @@ module Pacer
     include Pacer::Routes::VerticesRouteModule
     include ElementMixin
     include VertexMixin
+    include Comparable
 
     def_delegators :@element,
       :property_keys, :get_property, :set_property, :remove_property,
       :out_edges, :in_edges,
       :raw_vertex,
-      :graph, :graph=
+      :graph, :graph=, :<=>
 
     class << self
       protected

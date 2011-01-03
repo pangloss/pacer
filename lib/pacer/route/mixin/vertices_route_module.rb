@@ -32,7 +32,7 @@ module Pacer::Routes
 
     # Undefined for vertex routes.
     def e(*filters, &block)
-      raise "Can't call edges for VerticesRoute."
+      raise Pacer::UnsupportedOperation, "Can't call edges for VerticesRoute."
     end
 
     # Delete all matching elements.

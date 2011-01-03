@@ -5,11 +5,7 @@ module Pacer
     end
 
     def extensions
-      if self.class.respond_to? :extensions
-        self.class.extensions
-      else
-        Set[]
-      end
+      Set[]
     end
 
     def v(*args)

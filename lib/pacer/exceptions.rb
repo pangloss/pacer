@@ -4,5 +4,8 @@ module Pacer
 
   class ElementExists < StandardError
   end
+
+  class UnsupportedOperation < StandardError
+  end
 end
 
