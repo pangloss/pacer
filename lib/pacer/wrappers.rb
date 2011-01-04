@@ -39,10 +39,6 @@ module Pacer
       end
     end
 
-    def extensions
-      self.class.extensions
-    end
-
     def element_id
       @element.get_id
     end
@@ -79,6 +75,10 @@ module Pacer
       end
     end
 
+    def extensions
+      self.class.extensions
+    end
+
     def element
       @element
     end
@@ -109,6 +109,10 @@ module Pacer
         @wrappers ||= {}
         @wrappers[exts] ||= build_vertex_wrapper(exts)
       end
+    end
+
+    def extensions
+      self.class.extensions
     end
 
     def element
