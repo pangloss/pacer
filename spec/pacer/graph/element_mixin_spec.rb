@@ -1,12 +1,10 @@
 require 'spec_helper'
 
-describe Pacer::ElementMixin do
-  let(:graph) { Pacer.tg }
-  let(:graph) { Pacer.tg }
+shared_examples_for Pacer::ElementMixin do
   let(:v0) { graph.create_vertex :name => 'eliza' }
   let(:v1) { graph.create_vertex :name => 'darrick' }
-  let(:e0) { graph.create_edge '0', v0, v1, :links }
-  let(:e1) { graph.create_edge '1', v0, v1, :relinks }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 
   describe '#extensions' do
     subject { v0.extensions }
@@ -110,6 +108,7 @@ describe Pacer::ElementMixin do
       end
 
       it '(Time)' do
+        pending 'property converter'
         time = Time.now
         v0[:time] = time
         v0[:time].should == time
@@ -154,4 +153,8 @@ describe Pacer::ElementMixin do
       end
     end
   end
+end
+
+for_each_graph do
+  it_should_behave_like Pacer::ElementMixin
 end

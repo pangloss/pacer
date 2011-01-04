@@ -10,7 +10,7 @@ module Pacer
     attr_accessor :in_bulk_job
 
     def vertex(id, *modules)
-      v = getVertex(id)
+      v = getVertex(id) rescue nil
       if v
         v.graph = self
         v.add_extensions modules
@@ -20,7 +20,7 @@ module Pacer
     end
 
     def edge(id, *modules)
-      v = getEdge(id)
+      v = getEdge(id) rescue nil
       if v
         v.graph = self
         v.add_extensions modules

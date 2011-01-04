@@ -103,7 +103,7 @@ module Pacer
           puts "transaction mode reset to MANUAL" if Pacer.verbose == :very
           set_transaction_mode TransactionalGraph::Mode::MANUAL
           yield
-        rescue IRB::Abort, Exception
+        rescue Exception
           rollback_transaction if Pacer.graphs_in_transaction.include? self
           raise
         ensure
@@ -123,7 +123,7 @@ module Pacer
           yield
           conclusion = TransactionalGraph::Conclusion::SUCCESS
         end
-      rescue IRB::Abort
+      rescue Exception
         puts "transaction aborted" if Pacer.verbose == :very
         raise
       ensure
@@ -154,8 +154,12 @@ module Pacer
       r
     end
 
-    def checkpoint
-      commit_transaction
+    def checkpoint(success = true)
+      if success
+        commit_transaction
+      else
+        rollback_transaction
+      end
       begin_transaction
       Pacer.graphs_in_transaction << self
     end

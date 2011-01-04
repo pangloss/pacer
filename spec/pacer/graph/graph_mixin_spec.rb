@@ -1,61 +1,60 @@
 require 'spec_helper'
 
-describe Pacer::GraphMixin do
-  let(:graph) { Pacer.tg }
+shared_examples_for 'an edge with a mixin' do
+  its(:route_mixin_method) { should be_true }
+  its(:edge_mixin_method) { should be_true }
+  it 'should not inclued the Vertex module' do
+    expect { subject.vertex_mixin_method }.to raise_error(NoMethodError)
+  end
+end
+
+shared_examples_for 'a vertex with a mixin' do
+  its(:route_mixin_method) { should be_true }
+  its(:vertex_mixin_method) { should be_true }
+  it 'should not inclued the Edge module' do
+    expect { subject.edge_mixin_method }.to raise_error(NoMethodError)
+  end
+end
+
+shared_examples_for Pacer::GraphMixin do
   let(:v0) { graph.create_vertex }
   let(:v1) { graph.create_vertex }
-  let(:e0) { graph.create_edge '0', v0, v1, :links }
-  let(:e1) { graph.create_edge '1', v0, v1, :relinks }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
   before do
     e0 # force edge and vertices to be created.
   end
 
-  shared_examples_for 'an edge with a mixin' do
-    its(:route_mixin_method) { should be_true }
-    its(:edge_mixin_method) { should be_true }
-    it 'should not inclued the Vertex module' do
-      expect { subject.vertex_mixin_method }.to raise_error(NoMethodError)
-    end
-  end
-
-  shared_examples_for 'a vertex with a mixin' do
-    its(:route_mixin_method) { should be_true }
-    its(:vertex_mixin_method) { should be_true }
-    it 'should not inclued the Edge module' do
-      expect { subject.edge_mixin_method }.to raise_error(NoMethodError)
-    end
-  end
-
   describe '#vertex' do
     context 'not found' do
-      subject { graph.vertex 'nonexistant' }
+      subject { graph.vertex '-1' }
       it { should be_nil }
     end
 
-    subject { graph.vertex '0' }
-    its(:element_id) { should == '0' }
+    subject { graph.vertex v0.element_id }
+    its(:element_id) { should == v0.element_id }
     its(:graph) { should == graph }
 
     context 'with mixins' do
-      subject { graph.vertex '0', Tackle::SimpleMixin }
-      its(:element_id) { should == '0' }
+      subject { graph.vertex v0.element_id, Tackle::SimpleMixin }
+      its(:element_id) { should == v0.element_id }
       it_behaves_like 'a vertex with a mixin'
     end
   end
 
   describe '#edge' do
     context 'not found' do
-      subject { graph.edge 'nonexistant' }
+      subject { graph.edge '-1' }
       it { should be_nil }
     end
 
-    subject { graph.edge '0' }
-    its(:element_id) { should == '0' }
+    subject { graph.edge e0.element_id }
+    its(:element_id) { should == e0.element_id }
     its(:graph) { should == graph }
 
     context 'with mixins' do
-      subject { graph.edge '0', Tackle::SimpleMixin }
-      its(:element_id) { should == '0' }
+      subject { graph.edge e0.element_id, Tackle::SimpleMixin }
+      its(:element_id) { should == e0.element_id }
       it_behaves_like 'an edge with a mixin'
     end
   end
@@ -63,7 +62,9 @@ describe Pacer::GraphMixin do
   describe '#create_vertex' do
     context 'existing' do
       it 'should raise an exception' do
-        expect { graph.create_vertex '0' }.to raise_error(Pacer::ElementExists)
+        if supports_custom_id
+          expect { graph.create_vertex v0.element_id }.to raise_error(Pacer::ElementExists)
+        end
       end
     end
 
@@ -75,12 +76,12 @@ describe Pacer::GraphMixin do
       context 'and an id' do
         subject { graph.create_vertex 123, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
-        its(:element_id) { should == '123' }
+        its('element_id.to_i') { should == 123 if supports_custom_id }
 
         context 'and mixins' do
           subject { graph.create_vertex 123, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
-          its(:element_id) { should == '123' }
+          its('element_id.to_i') { should == 123 if supports_custom_id }
           it_behaves_like 'a vertex with a mixin'
         end
       end
@@ -88,11 +89,11 @@ describe Pacer::GraphMixin do
 
     context 'with an id' do
       subject { graph.create_vertex 123 }
-      its(:element_id) { should == '123' }
+      its('element_id.to_i') { should == 123 if supports_custom_id }
 
       context 'and mixins' do
         subject { graph.create_vertex 123, Tackle::SimpleMixin }
-        its(:element_id) { should == '123' }
+        its('element_id.to_i') { should == 123 if supports_custom_id }
         it_behaves_like 'a vertex with a mixin'
       end
     end
@@ -105,12 +106,14 @@ describe Pacer::GraphMixin do
 
 
   describe '#create_edge' do
-    let(:from) { graph.vertex '0' }
-    let(:to) { graph.vertex '1' }
+    let(:from) { graph.vertex v0.element_id }
+    let(:to) { graph.vertex v1.element_id }
 
     context 'existing' do
       it 'should raise an exception' do
-        expect { graph.create_edge '0', from, to, :connects }.to raise_error(Pacer::ElementExists)
+        if supports_custom_id
+          expect { graph.create_edge e0.element_id, from, to, :connects }.to raise_error(Pacer::ElementExists)
+        end
       end
     end
 
@@ -124,13 +127,13 @@ describe Pacer::GraphMixin do
         subject { graph.create_edge 123, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its(:element_id) { should == '123' }
+        its('element_id.to_i') { should == 123 if supports_custom_id }
 
         context 'and mixins' do
           subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its(:element_id) { should == '123' }
+          its('element_id.to_i') { should == 123 if supports_custom_id }
           it_behaves_like 'an edge with a mixin'
         end
       end
@@ -139,12 +142,12 @@ describe Pacer::GraphMixin do
     context 'with an id' do
       subject { graph.create_edge 123, from, to, :connects }
       its(:label) { should == 'connects' }
-      its(:element_id) { should == '123' }
+      its('element_id.to_i') { should == 123 if supports_custom_id }
 
       context 'and mixins' do
         subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its(:element_id) { should == '123' }
+        its('element_id.to_i') { should == 123 if supports_custom_id }
         it_behaves_like 'an edge with a mixin'
       end
     end
@@ -153,28 +156,6 @@ describe Pacer::GraphMixin do
       subject { graph.create_edge nil, from, to, :connects, Tackle::SimpleMixin }
       its(:label) { should == 'connects' }
       it_behaves_like 'an edge with a mixin'
-    end
-  end
-
-  describe '#import' do
-    it 'should load the data into an empty graph' do
-      g = Pacer.tg
-      g.import 'spec/data/pacer.graphml'
-      g.v.count.should == 7
-      g.e.count.should == 14
-    end
-
-    it 'should not load the data into a graph with conflicting vertex ids' do
-      expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
-    end
-  end
-
-  describe '#export' do
-    it 'should create a file that can be read back' do
-      graph.export 'spec/data/graph_mixin_spec_export.tmp'
-      g = Pacer.tg 'spec/data/graph_mixin_spec_export.tmp'
-      g.v.count.should == graph.v.count
-      g.e.count.should == graph.e.count
     end
   end
 
@@ -205,29 +186,34 @@ describe Pacer::GraphMixin do
 
   describe '#load_vertices' do
     context 'invalid' do
-      subject { graph.load_vertices [0, nil, '0', 'missing'] }
+      subject { graph.load_vertices [v0.element_id, nil, v0.element_id, 'missing'] }
       it { should == [v0, v0] }
     end
 
     context 'valid' do
-      subject { graph.load_vertices [0, 1] }
+      subject { graph.load_vertices [v0.element_id, v1.element_id] }
       it { should == [v0, v1] }
     end
   end
 
   describe '#load_edges' do
+    before { graph.checkpoint }
     context 'invalid' do
-      subject { graph.load_edges [0, nil, '0', 'missing'] }
+      subject { graph.load_edges [e0.element_id, nil, e0.element_id, 'missing'] }
       it { should == [e0, e0] }
     end
 
     context 'valid' do
-      subject { graph.load_edges [0] }
+      subject { graph.load_edges [e0.element_id] }
       it { should == [e0] }
     end
   end
 
   describe '#index_name' do
+    it 'should have 2 indices' do
+      graph.indices.count.should == 2
+    end
+
     context "('vertices')" do
       subject { graph.index_name 'vertices' }
       it { should_not be_nil }
@@ -254,6 +240,62 @@ describe Pacer::GraphMixin do
     end
   end
 
+  describe '#graph' do
+    subject { graph.graph }
+    it { should == graph }
+  end
+
+  describe '#vertex_name' do
+    before { graph.vertex_name = :some_proc }
+    subject { graph.vertex_name }
+    it { should == :some_proc }
+    after { graph.vertex_name = nil }
+  end
+
+  describe '#edge_name' do
+    before { graph.edge_name = :some_proc }
+    subject { graph.edge_name }
+    it { should == :some_proc }
+    after { graph.edge_name = nil }
+  end
+
+  describe '#index_class' do
+    subject { graph.index_class(:vertex) }
+    it { should == graph.element_type(:vertex).java_class.to_java }
+  end
+
+  describe '#import' do
+    it 'should load the data into an empty graph' do
+      graph2.v.count.should == 0
+      graph2.import 'spec/data/pacer.graphml'
+      graph2.v.count.should == 7
+      graph2.e.count.should == 14
+    end
+
+    it 'should not load the data into a graph with conflicting vertex ids' do
+      if supports_custom_id
+        expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
+      end
+    end
+  end
+
+  describe '#export' do
+    it 'should create a file that can be read back' do
+      graph.export 'spec/data/graph_mixin_spec_export.tmp'
+      graph2.import 'spec/data/graph_mixin_spec_export.tmp'
+      graph2.v.count.should == graph.v.count
+      graph2.e.count.should == graph.e.count
+    end
+  end
+end
+
+
+shared_examples_for 'Pacer::GraphMixin without transaction' do
+  let(:v0) { graph.create_vertex }
+  let(:v1) { graph.create_vertex }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+
   describe 'rebuild_automatic_index' do
     context 'vertices' do
       before do
@@ -272,7 +314,7 @@ describe Pacer::GraphMixin do
         subject.count('type', 'person').should == 2
       end
       it 'should have v1 for eliza' do
-        subject.get('name', 'eliza').should == [v1].to_hashset
+        subject.get('name', 'eliza').to_a.should == [v1].to_a
       end
     end
 
@@ -295,30 +337,30 @@ describe Pacer::GraphMixin do
         subject.count('label', 'links').should == 1
       end
       it 'should have e0 and e1 for style => edgy' do
-        subject.get('style', 'edgy').should == [e0, e1].to_hashset
+        subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
       end
     end
   end
+end
 
-  describe '#graph' do
-    subject { graph.graph }
-    it { should == graph }
+for_each_graph do
+  it_uses Pacer::GraphMixin
+end
+
+for_each_graph false do
+  it_uses 'Pacer::GraphMixin without transaction'
+end
+
+for_neo4j do
+  describe '#vertex' do
+    it 'should not raise an exception for invalid key type' do
+      graph.vertex('bad id').should be_nil
+    end
   end
 
-  describe '#vertex_name' do
-    before { graph.vertex_name = :some_proc }
-    subject { graph.vertex_name }
-    it { should == :some_proc }
-  end
-
-  describe '#edge_name' do
-    before { graph.edge_name = :some_proc }
-    subject { graph.edge_name }
-    it { should == :some_proc }
-  end
-
-  describe '#index_class' do
-    subject { graph.index_class(:vertex) }
-    it { should == graph.element_type(:vertex).java_class.to_java }
+  describe '#edge' do
+    it 'should not raise an exception for invalid key type' do
+      graph.edge('bad id').should be_nil
+    end
   end
 end
