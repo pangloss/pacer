@@ -61,8 +61,8 @@ shared_examples_for Pacer::ElementMixin do
     it { should_not be_a(Pacer::VertexMixin) }
     it { should_not be_a(Pacer::ElementWrapper) }
 
-    describe '#e' do
-      context '()', :transactions => false do
+    describe '#e', :transactions => false do
+      context '()' do
         subject { e0.e }
         its(:to_a) { should == [e0] }
         it(:a => :b) { should be_a(Pacer::Routes::EdgesRoute) }

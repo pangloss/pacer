@@ -21,7 +21,7 @@ module RSpec
     class Example
       class Procsy
         def use_transactions?
-          find_metadata(metadata, :transactions)
+          find_metadata(metadata, :transactions) != false
         end
 
         def find_metadata(hash, key)
@@ -105,7 +105,6 @@ RSpec.configure do |c|
   c.mock_with :rr
 
   c.before(:suite) do
-    puts 'before suite'
     # Make sure these instance variables exist in the correct scope
     path1 = File.expand_path('tmp/spec.neo4j')
     dir = Pathname.new(path1)
