@@ -45,7 +45,7 @@ module Pacer
               puts e.message
             end
           end
-          result.v(Vertices)
+          result
         end
       end
 
@@ -74,14 +74,18 @@ module Pacer
             all_edges = graph.v(Edges)
             out_e.labels.uniq.inject(all_edges) do |route, label|
               route.branch { |b| b.filter(:label => label) }
-            end
+            end.v.v(Edges)
           end
 
           def in_edge_types
             all_edges = graph.v(Edges)
             in_e.labels.uniq.inject(all_edges) do |route, label|
               route.branch { |b| b.filter(:label => label) }
-            end
+            end.v.v(Edges)
+          end
+
+          def property_variations
+            out_e(:properties).in_v(Properties)
           end
         end
       end
@@ -92,15 +96,15 @@ module Pacer
         end
 
         module Route
+          def property_variations
+            out_e(:properties).in_v(Properties)
+          end
         end
       end
 
       module Properties
         def self.route_conditions
           { :element_type => 'property keys' }
-        end
-
-        module Route
         end
       end
     end
