@@ -17,6 +17,24 @@ module RSpec
         raise_error(::RSpec::Expectations::ExpectationNotMetError, message)
       end
     end
+
+    class Example
+      class Procsy
+        def use_transactions?
+          find_metadata(metadata, :transactions)
+        end
+
+        def find_metadata(hash, key)
+          return unless hash.is_a? Hash
+          if hash.key? key
+            hash[key]
+          elsif hash.key? :example_group
+            find_metadata(hash[:example_group], key)
+          end
+        end
+      end
+    end
+
   end
 end
 
@@ -30,12 +48,12 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-def for_each_graph(tx = true, &block)
-  for_tg(tx, &block)
-  for_neo4j(tx, &block)
+def for_each_graph(&block)
+  for_tg(&block)
+  for_neo4j(&block)
 end
 
-def for_tg(tx = nil, &block)
+def for_tg(&block)
   describe 'tg' do
     let(:supports_custom_id) { true }
     let(:graph) { Pacer.tg }
@@ -44,7 +62,8 @@ def for_tg(tx = nil, &block)
   end
 end
 
-def for_neo4j(tx = true, &block)
+
+def for_neo4j(&block)
   describe 'neo4j' do
     let(:supports_custom_id) { false }
     let(:graph) do
@@ -53,27 +72,24 @@ def for_neo4j(tx = true, &block)
     let(:graph2) do
       $neo_graph2
     end
-    if tx
-      around do |spec|
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+    around do |spec|
+      $neo_graph.v.delete!
+      $neo_graph2.v.delete!
+      if spec.use_transactions?
         graph.manual_transactions do
           graph2.manual_transactions do
             begin
               graph.start_transaction
               graph2.start_transaction
-              spec.call
+              spec.run
             ensure
               graph.rollback_transaction rescue nil
               graph2.rollback_transaction rescue nil
             end
           end
         end
-      end
-    else
-      before do
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+      else
+        spec.run
       end
     end
     instance_eval(&block)

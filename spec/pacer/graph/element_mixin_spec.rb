@@ -62,10 +62,10 @@ shared_examples_for Pacer::ElementMixin do
     it { should_not be_a(Pacer::ElementWrapper) }
 
     describe '#e' do
-      context '()' do
+      context '()', :transactions => false do
         subject { e0.e }
         its(:to_a) { should == [e0] }
-        it { should be_a(Pacer::Routes::EdgesRoute) }
+        it(:a => :b) { should be_a(Pacer::Routes::EdgesRoute) }
       end
 
       context '(:links)' do
@@ -125,8 +125,9 @@ shared_examples_for Pacer::ElementMixin do
       end
 
       it '(Bignum)' do
-        v0[:big] = 123321123321123321
-        v0[:big].should == 123321123321123321
+        pending 'property converter'
+        v0[:big] = 123321123321123321123321123321123321
+        v0[:big].should == 123321123321123321123321123321123321
       end
 
       it "('')" do

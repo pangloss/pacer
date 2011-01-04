@@ -287,16 +287,8 @@ shared_examples_for Pacer::GraphMixin do
       graph2.e.count.should == graph.e.count
     end
   end
-end
 
-
-shared_examples_for 'Pacer::GraphMixin without transaction' do
-  let(:v0) { graph.create_vertex }
-  let(:v1) { graph.create_vertex }
-  let(:e0) { graph.create_edge nil, v0, v1, :links }
-  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
-
-  describe 'rebuild_automatic_index' do
+  describe 'rebuild_automatic_index', :transactions => false do
     context 'vertices' do
       before do
         v0.properties = { :name => 'darrick', :type => 'person' }
@@ -345,10 +337,6 @@ end
 
 for_each_graph do
   it_uses Pacer::GraphMixin
-end
-
-for_each_graph false do
-  it_uses 'Pacer::GraphMixin without transaction'
 end
 
 for_neo4j do
