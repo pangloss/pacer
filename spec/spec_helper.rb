@@ -18,6 +18,17 @@ module RSpec
       end
     end
 
+    module SharedExampleGroup
+      def contexts(ctxts, &block)
+        ctxts.each do |name, setup_proc|
+          context(*[*name]) do
+            instance_eval &setup_proc
+            instance_eval &block
+          end
+        end
+      end
+    end
+
     class Example
       class Procsy
         def use_transactions?
@@ -105,7 +116,6 @@ RSpec.configure do |c|
   c.mock_with :rr
 
   c.before(:suite) do
-    # Make sure these instance variables exist in the correct scope
     path1 = File.expand_path('tmp/spec.neo4j')
     dir = Pathname.new(path1)
     dir.rmtree if dir.exist?
@@ -118,7 +128,7 @@ RSpec.configure do |c|
   end
 
 
-  c.alias_it_should_behave_like_to :it_uses, ':'
+  c.alias_it_should_behave_like_to :it_uses, '-'
 
   # Not sure what this does: ...
   # c.filter_run_excluding :ruby => lambda {|version|

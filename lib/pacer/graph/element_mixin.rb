@@ -57,7 +57,7 @@ module Pacer
 
     # Query whether the current node belongs to the given graph.
     def from_graph?(g)
-      g == graph
+      g.equal? graph
     end
 
     # Returns a hash of property values by name.
@@ -73,11 +73,6 @@ module Pacer
       props.each do |key, value|
         self[key] = value
       end
-    end
-
-    # Returns a basic display name for the element. This method should be specialized.
-    def display_name
-      element_id
     end
 
     def element_id
