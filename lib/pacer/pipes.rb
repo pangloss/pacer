@@ -18,6 +18,7 @@ module Pacer
     import com.tinkerpop.pipes.pgm.GraphElementPipe
     import com.tinkerpop.pipes.pgm.VertexEdgePipe
     import com.tinkerpop.pipes.pgm.EdgeVertexPipe
+    import com.tinkerpop.pipes.pgm.IdPipe
 
     import com.tinkerpop.pipes.split.CopySplitPipe
     import com.tinkerpop.pipes.split.RobinSplitPipe

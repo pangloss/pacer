@@ -76,7 +76,9 @@ module Pacer::Routes
 
     # Returns an array of element ids.
     def ids
-      map { |e| e.id }
+      route = Pacer::Routes::ObjectRoute.new(self)
+      route.pipe_class = Pacer::Pipes::IdPipe
+      route.to_a
     end
 
     # Creates a hash where the key is the properties and return value of the

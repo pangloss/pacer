@@ -225,6 +225,19 @@ module Pacer
         self
       end
 
+      def each_object
+        iter = iterator
+        if block_given?
+          while item = iter.next
+            yield item
+          end
+        else
+          iter
+        end
+      rescue NoSuchElementException
+        self
+      end
+
       # Returns a string representation of the route definition. If there are
       # less than Graph#inspect_limit matches, it will also output all matching
       # elements formatted in columns up to a maximum character width of
@@ -320,7 +333,7 @@ module Pacer
         # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
         add_extensions @filters
         @block = block
-        @pipe_args = pipe_args
+        @pipe_args = pipe_args || []
       end
 
       # Return an array of filter options for the current route.
