@@ -5,7 +5,6 @@ shared_examples_for Pacer::EdgeMixin do
   let(:v1) { graph.create_vertex :name => 'darrick' }
   let(:e0) { graph.create_edge nil, v0, v1, :links }
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
-
   describe '#add_extensions' do
     context 'no extensions' do
       subject { e0.add_extensions([]) }
@@ -29,7 +28,65 @@ shared_examples_for Pacer::EdgeMixin do
     end
   end
 
+  describe '#delete!' do
+    before do
+      @edge_id = e0.element_id
+      e0.delete!
+      graph.checkpoint # deleted edges in neo may be looked up during the transaction
+    end
+    it 'should be removed' do
+      graph.edge(@edge_id).should be_nil
+    end
+  end
+
+  contexts(
+  'into new tg' => proc {
+    let(:dest) { Pacer.tg }
+  },
+  'into graph2' => proc {
+    let(:dest) { graph2 }
+  }) do
+    describe '#clone_into', :transactions => false do
+      context 'including vertices' do
+        subject { e0.clone_into(dest, :create_vertices => true) }
+
+        its('element_id.to_s') { should == e0.element_id.to_s if supports_custom_id }
+        its(:label) { should == 'links' }
+        its(:graph) { should equal(dest) }
+        its('in_vertex.properties') { should == { 'name' => 'eliza' } }
+        its('out_vertex.properties') { should == { 'name' => 'darrick' } }
+      end
+
+      context 'without vertices' do
+        subject { e0.clone_into(dest) rescue nil }
+        it { should be_nil }
+
+        context 'but already existing' do
+          before do
+            v0.clone_into(dest)
+            v1.clone_into(dest)
+          end
+          its('element_id.to_s') { should == e0.element_id.to_s if supports_custom_id }
+          its(:label) { should == 'links' }
+          its(:graph) { should equal(dest) }
+          its('in_vertex.properties') { should == { 'name' => 'eliza' } }
+          its('out_vertex.properties') { should == { 'name' => 'darrick' } }
+        end
+      end
+    end
+
+    describe '#copy_into', :transactions => false do
+      subject { v0.clone_into(dest); v1.clone_into(dest); e0.copy_into(dest) }
+      its(:label) { should == 'links' }
+      its(:graph) { should equal(dest) }
+      its('in_vertex.properties') { should == { 'name' => 'eliza' } }
+      its('out_vertex.properties') { should == { 'name' => 'darrick' } }
+    end
+
+  end
+
   subject { e0 }
+  its(:graph) { should equal(graph) }
   its(:display_name) { should == "#{ v0.element_id }-links-#{ v1.element_id }" }
   its(:inspect) { should == "#<E[#{ e0.element_id }]:#{ v0.element_id }-links-#{ v1.element_id }>" }
   context 'with label proc' do

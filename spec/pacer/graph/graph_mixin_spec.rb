@@ -214,25 +214,64 @@ shared_examples_for Pacer::GraphMixin do
       graph.indices.count.should == 2
     end
 
-    context "('vertices')" do
+    context "'vertices'" do
       subject { graph.index_name 'vertices' }
       it { should_not be_nil }
       its(:index_name) { should == 'vertices' }
       its(:index_type) { should == Pacer.automatic_index }
       its(:index_class) { should == graph.index_class(:vertex) }
+      context ':vertex' do
+        subject { graph.index_name 'vertices', :vertex }
+        it { should_not be_nil }
+      end
+      context ':edge' do
+        subject { graph.index_name 'vertices', :edge }
+        it { should be_nil }
+      end
     end
 
-    context "('edges')" do
+    context "'edges'" do
       subject { graph.index_name 'edges' }
       it { should_not be_nil }
       its(:index_name) { should == 'edges' }
       its(:index_type) { should == Pacer.automatic_index }
       its(:index_class) { should == graph.index_class(:edge) }
+      context ':vertex' do
+        subject { graph.index_name 'edges', :vertex }
+        it { should be_nil }
+      end
+      context ':edge' do
+        subject { graph.index_name 'edges', :edge }
+        it { should_not be_nil }
+      end
     end
 
     context 'missing' do
       subject { graph.index_name 'invalid' }
       it { should be_nil }
+      context 'edge' do
+        before do
+          graph.drop_index 'missing_edge' rescue nil
+          graph.index_name('missing_edge').should be_nil
+        end
+        subject { graph.index_name 'missing_edge', :edge, :create => true }
+        its(:index_name) { should == 'missing_edge' }
+        its(:index_type) { should == Pacer.manual_index }
+        its(:index_class) { should == graph.index_class(:edge) }
+        after { graph.drop_index 'missing_edge' rescue nil }
+      end
+
+      context 'vertex' do
+        before do
+          graph.drop_index 'missing_vertex' rescue nil
+          graph.index_name('missing_vertex').should be_nil
+        end
+        subject { graph.index_name 'missing_vertex', :vertex, :create => true }
+        its(:index_name) { should == 'missing_vertex' }
+        its(:index_type) { should == Pacer.manual_index }
+        its(:index_class) { should == graph.index_class(:vertex) }
+        after { graph.drop_index 'missing_vertex' rescue nil }
+      end
     end
 
     it 'should return the same object each time' do
@@ -281,8 +320,8 @@ shared_examples_for Pacer::GraphMixin do
 
   describe '#export' do
     it 'should create a file that can be read back' do
-      graph.export 'spec/data/graph_mixin_spec_export.tmp'
-      graph2.import 'spec/data/graph_mixin_spec_export.tmp'
+      graph.export 'tmp/graph_mixin_spec_export.graphml'
+      graph2.import 'tmp/graph_mixin_spec_export.graphml'
       graph2.v.count.should == graph.v.count
       graph2.e.count.should == graph.e.count
     end

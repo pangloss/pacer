@@ -90,8 +90,8 @@ def for_neo4j(&block)
         graph.manual_transactions do
           graph2.manual_transactions do
             begin
-              graph.start_transaction
-              graph2.start_transaction
+              graph.begin_transaction
+              graph2.begin_transaction
               spec.run
             ensure
               graph.rollback_transaction rescue nil

@@ -101,12 +101,17 @@ module Pacer
       end.compact
     end
 
-    def index_name(name, type = nil)
+    def index_name(name, type = nil, opts = {})
       if type
-        indices.detect { |i| i.index_name == name and i.index_class == element_type(type) }
+        idx = indices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
+        if idx.nil? and opts[:create]
+          idx = create_index name, element_type(type), Pacer.manual_index
+        end
       else
-        indices.detect { |i| i.index_name == name }
+        idx = indices.detect { |i| i.index_name == name }
       end
+      idx.graph = self if idx
+      idx
     end
 
     def rebuild_automatic_index(old_index)
@@ -130,6 +135,10 @@ module Pacer
 
     def graph
       self
+    end
+
+    def description
+      toString
     end
 
     # The proc used to name vertices.
