@@ -1,11 +1,6 @@
 require 'spec_helper'
 
 shared_examples_for Pacer::ElementMixin do
-  let(:v0) { graph.create_vertex :name => 'eliza' }
-  let(:v1) { graph.create_vertex :name => 'darrick' }
-  let(:e0) { graph.create_edge nil, v0, v1, :links }
-  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
-
   context 'vertex' do
     subject { v0 }
     it { should be_a(Pacer::Routes::VerticesRouteModule) }
@@ -226,5 +221,10 @@ shared_examples_for Pacer::ElementMixin do
 end
 
 for_each_graph do
-  it_uses Pacer::ElementMixin
+  it_uses Pacer::ElementMixin do
+    let(:v0) { graph.create_vertex :name => 'eliza' }
+    let(:v1) { graph.create_vertex :name => 'darrick' }
+    let(:e0) { graph.create_edge nil, v0, v1, :links }
+    let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+  end
 end
