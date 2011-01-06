@@ -95,5 +95,26 @@ module Pacer
     include Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
+
+    def in_vertex(extensions = nil)
+      v = inVertex
+      v.graph = graph
+      if extensions
+        v.add_extensions extensions
+      else
+        v
+      end
+    end
+
+    def out_vertex(extensions = nil)
+      v = outVertex
+      v.graph = graph
+      if extensions
+        v.add_extensions extensions
+      else
+        v
+      end
+    end
+
   end
 end

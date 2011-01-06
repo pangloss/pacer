@@ -1,3 +1,4 @@
+# TODO: move this module from Routes into Support
 module Pacer::Routes
   # This mixin allows an iterator to be returned from methods that perform a
   # transformation on the elements in their collection. Set the block property
