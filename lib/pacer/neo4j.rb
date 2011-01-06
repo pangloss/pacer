@@ -1,7 +1,8 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  Neo4jGraph = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
+  Neo4jVertex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
+  Neo4jEdge = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  Neo4jIndex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jIndex
 
   # Add 'static methods' to the Pacer namespace.
   class << self
@@ -73,7 +74,11 @@ module Pacer
         result
       end
     end
+  end
 
+
+  class Neo4jIndex
+    include IndexMixin
   end
 
 

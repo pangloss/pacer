@@ -2,6 +2,7 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraph
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge
+  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerIndex
 
   # Create a new TinkerGraph. If path is given, import the GraphML data from
   # the file specified.
@@ -50,6 +51,11 @@ module Pacer
     def sanitize_properties(props)
       props
     end
+  end
+
+
+  class TinkerIndex
+    include IndexMixin
   end
 
 
