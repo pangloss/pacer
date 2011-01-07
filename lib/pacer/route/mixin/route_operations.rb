@@ -78,7 +78,7 @@ module Pacer::Routes
     def ids
       route = Pacer::Routes::ObjectRoute.new(self)
       route.pipe_class = Pacer::Pipes::IdPipe
-      route.to_a
+      route
     end
 
     # Creates a hash where the key is the properties and return value of the
