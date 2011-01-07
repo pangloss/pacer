@@ -107,6 +107,13 @@ def for_neo4j(&block)
   end
 end
 
+def use_simple_graph_data
+  let(:v0) { graph.create_vertex :name => 'eliza' }
+  let(:v1) { graph.create_vertex :name => 'darrick' }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+end
+
 RSpec.configure do |c|
   c.color_enabled = !in_editor?
   c.filter_run :focus => true

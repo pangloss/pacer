@@ -39,7 +39,7 @@ module Pacer
     # Make a new copy of the element with the next available vertex id.
     # @returns the new vertex
     def copy_into(target_graph, opts = {})
-      v = target_graph.create_vertex, properties
+      v = target_graph.create_vertex properties
       yield v if block_given?
       v
     end

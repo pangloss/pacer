@@ -1,10 +1,7 @@
 require 'spec_helper'
 
 shared_examples_for Pacer::EdgeMixin do
-  let(:v0) { graph.create_vertex :name => 'eliza' }
-  let(:v1) { graph.create_vertex :name => 'darrick' }
-  let(:e0) { graph.create_edge nil, v0, v1, :links }
-  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+  use_simple_graph_data
   describe '#add_extensions' do
     context 'no extensions' do
       subject { e0.add_extensions([]) }
