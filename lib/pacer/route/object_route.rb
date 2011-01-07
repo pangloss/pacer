@@ -4,7 +4,7 @@ module Pacer::Routes
     # TODO: split RouteOperations into
     # - ElementRouteOperations
     # - ObjectRouteOperations
-    #include RouteOperations
+    include RouteOperations
 
     def initialize(back)
       initialize_path(back)

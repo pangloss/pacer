@@ -39,7 +39,9 @@ module Pacer::Routes
 
     def next
       path = super
-      path.map { |e| e.graph ||= @graph; e }
+      path.each do |e|
+        e.graph ||= @graph rescue nil
+      end
       path
     end
   end

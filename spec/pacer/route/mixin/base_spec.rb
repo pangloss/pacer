@@ -67,7 +67,7 @@ describe Base do
   describe 'block filter' do
     it { @g.v { false }.count.should == 0 }
     it { @g.v { true }.count.should == @g.v.count }
-    it { @g.v { |v| v.out_e.none? }[:name].should == ['blueprints'] }
+    it { @g.v { |v| v.out_e.none? }[:name].to_a.should == ['blueprints'] }
 
     it 'should work with paths' do
       paths = @g.v.out_e(:wrote).in_v.paths.map(&:to_a)

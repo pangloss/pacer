@@ -91,6 +91,10 @@ module Pacer
         @pipe_class = klass
       end
 
+      def set_pipe_args(*args)
+        @pipe_args = args
+      end
+
       # Return true if this route is at the beginning of the route definition.
       def root?
         !@source.nil? or @back.nil?
@@ -194,7 +198,11 @@ module Pacer
         if block_given?
           g = graph
           while item = iter.next
-            yield iter.path.map { |e| e.graph ||= g; e }
+            path = iter.path.map do |e|
+              e.graph ||= g rescue nil
+              e
+            end
+            yield path
           end
         else
           iter.extend IteratorPathMixin
