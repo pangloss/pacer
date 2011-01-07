@@ -77,11 +77,13 @@ module Pacer
       end
 
       # TODO protect or remove method
+      # TODO move into constructor?
       # Specify which pipe class will be instantiated when an iterator is created.
       def pipe_class=(klass)
         @pipe_class = klass
       end
 
+      # TODO move into constructor?
       def set_pipe_args(*args)
         @pipe_args = args
       end

@@ -114,6 +114,16 @@ def use_simple_graph_data
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 end
 
+def use_pacer_graphml_data
+  before do
+    graph.import 'spec/data/pacer.graphml'
+  end
+  let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
+  let(:pacer) { graph.v(:name => 'pacer', :type => 'project').first }
+  let(:people) { graph.v(:type => 'person') }
+  let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer } }
+end
+
 RSpec.configure do |c|
   c.color_enabled = !in_editor?
   c.filter_run :focus => true
