@@ -9,15 +9,6 @@ module Pacer
 
       # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
-        def vertex_path(name)
-        end
-
-        def edge_path(name)
-        end
-
-        def path(name)
-        end
-
         # An alternate constructor for creating a route that uses the given
         # pipe class initialized with the given arguments.
         def pipe_filter(back, pipe_class, *args, &block)
@@ -82,7 +73,7 @@ module Pacer
 
       # Returns true if the given graph is the one this route operates on.
       def from_graph?(g)
-        graph == g
+        graph.equals g
       end
 
       # TODO protect or remove method
