@@ -79,6 +79,10 @@ module Pacer
       element.get_id
     end
 
+    def ==(other)
+      other.element.class == element.class and other.element_id == element_id
+    end
+
     def <=>(other)
       display_name.to_s <=> other.display_name.to_s
     end

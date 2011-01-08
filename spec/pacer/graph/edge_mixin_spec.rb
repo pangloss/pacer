@@ -93,6 +93,12 @@ shared_examples_for Pacer::EdgeMixin do
     its(:display_name) { should == "some name" }
     its(:inspect) { should == "#<E[#{ e0.element_id }]:some name>" }
   end
+
+  context '', :transactions => true do
+    it { should_not == e1 }
+    it { should == e0 }
+    it { should_not == v0 }
+  end
 end
 
 for_each_graph do

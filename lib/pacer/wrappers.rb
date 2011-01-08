@@ -58,7 +58,7 @@ module Pacer
       :label, :get_label, :property_keys, :get_property, :set_property, :remove_property,
       :in_vertex, :out_vertex,
       :raw_edge,
-      :graph, :graph=, :<=>
+      :graph, :graph=, :<=>, :==
 
     class << self
       protected
@@ -94,7 +94,7 @@ module Pacer
       :property_keys, :get_property, :set_property, :remove_property,
       :out_edges, :in_edges,
       :raw_vertex,
-      :graph, :graph=, :<=>
+      :graph, :graph=, :<=>, :==
 
     class << self
       protected

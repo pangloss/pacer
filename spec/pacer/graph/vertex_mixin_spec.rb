@@ -68,6 +68,11 @@ shared_examples_for Pacer::VertexMixin do
     its(:display_name) { should == "some name" }
     its(:inspect) { should == "#<V[#{ v0.element_id }] some name>" }
   end
+  it { should_not == v1 }
+  it { should == v0 }
+  context 'edge with same element id', :transactions => false do
+    it { should_not == e0 }
+  end
 end
 
 for_each_graph do
