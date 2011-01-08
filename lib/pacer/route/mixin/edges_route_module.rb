@@ -42,9 +42,9 @@ module Pacer::Routes
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
-      edge_ids = ids.to_a
+      edge_ids = element_ids.to_a
       if edge_ids.count == 1
-        e = graph.edge ids.first
+        e = graph.edge edge_ids.first
         e.add_extensions extensions
         e
       else

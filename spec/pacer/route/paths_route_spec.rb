@@ -42,8 +42,8 @@ describe PathsRoute do
       @edges = @g.v(:type => 'person').out_e(:wrote)
     end
 
-    it { Set[*@sg.v.ids].should == Set[*@vertices.map { |v| v.id }] }
-    it { Set[*@sg.e.ids].should == Set[*@edges.map { |e| e.id }] }
+    it { Set[*@sg.v.element_ids].should == Set[*@vertices.map { |v| v.element_id }] }
+    it { Set[*@sg.e.element_ids].should == Set[*@edges.map { |e| e.element_id }] }
 
     it { @sg.e.labels.uniq.should == ['wrote'] }
     it { Set[*@sg.v.map { |v| v.properties }].should == Set[*@vertices.map { |v| v.properties }] }

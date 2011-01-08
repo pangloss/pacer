@@ -48,7 +48,7 @@ module Pacer::Routes
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
-      v_ids = ids.to_a
+      v_ids = element_ids.to_a
       if v_ids.count == 1
         v = graph.vertex v_ids.first
         v.add_extensions extensions

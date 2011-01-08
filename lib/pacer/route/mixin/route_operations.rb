@@ -76,7 +76,7 @@ module Pacer::Routes
     end
 
     # Returns an array of element ids.
-    def ids
+    def element_ids
       route = Pacer::Routes::ObjectRoute.new(self)
       route.pipe_class = Pacer::Pipes::IdPipe
       route
