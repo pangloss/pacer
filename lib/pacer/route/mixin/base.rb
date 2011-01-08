@@ -127,12 +127,17 @@ module Pacer
       # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Prevents any matching elements from being
       # included in the results.
-      def except(route)
-        result = if route.is_a? Symbol
-            route_class.pipe_filter(self, nil) { |v| v != v.vars[route] }
+      def except(excluded)
+        result = if excluded.is_a? Symbol
+            route_class.pipe_filter(self, nil) { |v| v != v.vars[excluded] }
           else
-            route = [route] unless route.is_a? Enumerable
-            route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+            excluded = [excluded] unless excluded.is_a? Enumerable
+            hashset = element_id_hashset(excluded)
+            if hashset
+              route_class.pipe_filter(self, Pacer::Pipes::IdCollectionFilterPipe, hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+            else
+              route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, excluded.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL)
+            end
           end
         result.add_extensions extensions
         result.graph = graph
@@ -142,12 +147,17 @@ module Pacer
       # Argument may be either a route, a graph element or a symbol representing
       # a key to the vars hash. Ensures that only matching elements will be
       # included in the results.
-      def only(route)
-        result = if route.is_a? Symbol
-            route_class.pipe_filter(self, nil) { |v| v == v.vars[route] }
+      def only(included)
+        result = if included.is_a? Symbol
+            route_class.pipe_filter(self, nil) { |v| v == v.vars[included] }
           else
-            route = [route] unless route.is_a? Enumerable
-            route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, route.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+            included = [included] unless included.is_a? Enumerable
+            hashset = element_id_hashset(included)
+            if hashset
+              route_class.pipe_filter(self, Pacer::Pipes::IdCollectionFilterPipe, hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+            else
+              route_class.pipe_filter(self, Pacer::Pipes::CollectionFilterPipe, included.to_hashset, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+            end
           end
         result.add_extensions extensions
         result.graph = graph
@@ -287,6 +297,7 @@ module Pacer
       end
 
       def add_extension(mod)
+        return self unless mod.respond_to?(:const_defined?)
         is_extension = false
         if mod.const_defined? :Route
           is_extension = true
@@ -367,6 +378,16 @@ module Pacer
           elsif @back.is_a? Base
             @back.route_after(route)
           end
+        end
+      end
+
+      # Returns a HashSet of element ids from the collection, but
+      # only if all elements in the collection have an element_id.
+      def element_id_hashset(collection)
+        if collection.respond_to? :element_ids
+          collection.element_ids.to_hashset
+        else
+          collection.to_hashset(:element_id) rescue nil
         end
       end
 
