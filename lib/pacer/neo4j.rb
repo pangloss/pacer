@@ -1,7 +1,9 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
-  import com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  Neo4jGraph = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
+  Neo4jVertex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
+  Neo4jEdge = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  Neo4jElement = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jElement
+  Neo4jIndex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jIndex
 
   # Add 'static methods' to the Pacer namespace.
   class << self
@@ -51,11 +53,41 @@ module Pacer
         Neo4jVertex
       when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
         Neo4jEdge
+      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+        Neo4jElement
+      when :object
+        Object
       else
-        raise InvalidArgumentException, 'Element type may be one of :vertex or :edge'
+        if et == Object
+          Object
+        else
+          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+        end
       end
     end
 
+    def sanitize_properties(props)
+      props.inject({}) do |result, (name, value)|
+        case value
+        when Date, Time, Symbol
+          value = value.to_s
+        when ''
+          value = nil
+        when String
+          value = value.strip
+          value = nil if value == ''
+        else
+          value = value.to_s
+        end
+        result[name] = value if value
+        result
+      end
+    end
+  end
+
+
+  class Neo4jIndex
+    include IndexMixin
   end
 
 
@@ -72,5 +104,26 @@ module Pacer
     include Routes::EdgesRouteModule
     include ElementMixin
     include EdgeMixin
+
+    def in_vertex(extensions = nil)
+      v = inVertex
+      v.graph = graph
+      if extensions
+        v.add_extensions extensions
+      else
+        v
+      end
+    end
+
+    def out_vertex(extensions = nil)
+      v = outVertex
+      v.graph = graph
+      if extensions
+        v.add_extensions extensions
+      else
+        v
+      end
+    end
+
   end
 end

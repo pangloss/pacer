@@ -6,31 +6,15 @@ module Pacer::Pipes
       @back = back
       @block = block
 
-      @extensions = @back.extensions
-      @extension = package_extensions @back, @back.extensions
-    end
-
-    def package_extensions(route, extensions)
-      extension = Module.new
-      extensions.each do |mod|
-        extension.send :include, mod::Route if mod.const_defined? :Route
-        if route.is_a? Pacer::Routes::VerticesRouteModule
-          extension.send(:include, mod::Vertex) if mod.const_defined? :Vertex
-        elsif route.is_a? Pacer::Routes::EdgeRouteModule
-          extension.send(:include, mod::Edge) if mod.const_defined? :Edge
-        end
-      end
-      extension
+      @extensions = @back.extensions + [Pacer::Extensions::BlockFilterElement]
     end
 
     def processNextStart()
-      while s = @starts.next
-        s.extend Pacer::Routes::SingleRoute
-        s.back = @back
-        s.extensions.replace @extensions
-        s.extend @extension
-        ok = @block.call s
-        return s if ok
+      while raw_element = @starts.next
+        extended_element = raw_element.add_extensions(@extensions)
+        extended_element.back = @back
+        ok = @block.call extended_element
+        return raw_element if ok
       end
       raise Pacer::NoSuchElementException.new
     end

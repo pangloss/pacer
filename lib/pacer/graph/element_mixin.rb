@@ -4,26 +4,8 @@ module Pacer
       target.send :include, Enumerable unless target.is_a? Enumerable
     end
 
-    def add_extension(mod)
-      if mod.const_defined? :Route
-        extend mod::Route
-        extensions << mod
-      end
-      self
-    end
-
     def extensions
-      @extensions ||= Set[]
-    end
-
-    # If any objects in the given array are modules that contain a Route
-    # submodule, extend this route with the Route module.
-    def add_extensions(exts)
-      modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
-      modules.each do |mod|
-        add_extension(mod)
-      end
-      self
+      Set[]
     end
 
     def v(*args)
@@ -61,7 +43,7 @@ module Pacer
 
     # Convenience method to set a property by name to the given value.
     def []=(key, value)
-      if value
+      if value and value != ''
         set_property(key.to_s, value) if value != get_property(key.to_s)
       else
         remove_property(key.to_s)
@@ -75,7 +57,7 @@ module Pacer
 
     # Query whether the current node belongs to the given graph.
     def from_graph?(g)
-      g == graph
+      g.equal? graph
     end
 
     # Returns a hash of property values by name.
@@ -84,6 +66,7 @@ module Pacer
     end
 
     def properties=(props)
+      props = graph.sanitize_properties(props) if graph
       (property_keys - props.keys.map { |k| k.to_s }).each do |key|
         remove_property key
       end
@@ -92,9 +75,12 @@ module Pacer
       end
     end
 
-    # Returns a basic display name for the element. This method should be specialized.
-    def display_name
-      get_id
+    def element_id
+      element.get_id
+    end
+
+    def ==(other)
+      other.element.class == element.class and other.element_id == element_id
     end
 
     def <=>(other)
@@ -110,6 +96,10 @@ module Pacer
       else
         [self].to_enum
       end
+    end
+
+    def element
+      self
     end
   end
 end

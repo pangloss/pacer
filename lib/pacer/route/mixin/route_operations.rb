@@ -52,9 +52,10 @@ module Pacer::Routes
       when String, Symbol
         # could use PropertyPipe but that would mean supporting objects that I don't think
         # would have much purpose.
-        map do |element|
-          element.get_property(prop_or_subset.to_s)
-        end
+        route = Pacer::Routes::ObjectRoute.new(self)
+        route.pipe_class = Pacer::Pipes::PropertyPipe
+        route.set_pipe_args prop_or_subset.to_s
+        route
       when Fixnum
         route = route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
         route.add_extensions extensions
@@ -75,8 +76,10 @@ module Pacer::Routes
     end
 
     # Returns an array of element ids.
-    def ids
-      map { |e| e.id }
+    def element_ids
+      route = Pacer::Routes::ObjectRoute.new(self)
+      route.pipe_class = Pacer::Pipes::IdPipe
+      route
     end
 
     # Creates a hash where the key is the properties and return value of the

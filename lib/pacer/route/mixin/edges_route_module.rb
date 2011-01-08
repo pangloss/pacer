@@ -19,7 +19,7 @@ module Pacer::Routes
 
     # v is undefined for edge routes.
     def v(*filters)
-      raise "Can't call vertices for EdgesRoute."
+      raise Pacer::UnsupportedOperation, "Can't call vertices for EdgesRoute."
     end
 
     # Extend route with the additional edge label, property and block filters.
@@ -42,9 +42,9 @@ module Pacer::Routes
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
-      edge_ids = ids
+      edge_ids = element_ids.to_a
       if edge_ids.count == 1
-        e = graph.edge ids.first
+        e = graph.edge edge_ids.first
         e.add_extensions extensions
         e
       else
@@ -66,10 +66,15 @@ module Pacer::Routes
       end
     end
 
+    def element_type
+      graph.element_type(:edge)
+    end
+
     protected
 
     # Specialize filter_pipe for edge labels.
-    def filter_pipe(pipe, filters, block)
+    def filter_pipe(pipe, filters, block, expand_extensions)
+      pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
       labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
       if labels.empty?
         super
@@ -77,7 +82,7 @@ module Pacer::Routes
         label_pipe = Pacer::Pipes::LabelsFilterPipe.new
         label_pipe.set_labels labels
         label_pipe.set_starts pipe
-        super(label_pipe, filters - labels, block)
+        super(label_pipe, filters - labels, block, false)
       end
     end
   end

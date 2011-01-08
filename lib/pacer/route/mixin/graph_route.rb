@@ -43,59 +43,13 @@ module Pacer::Routes
       true
     end
 
-    # The proc used to name vertices.
-    def vertex_name
-      @vertex_name
-    end
-
-    # Set the proc used to name vertices.
-    def vertex_name=(a_proc)
-      @vertex_name = a_proc
-    end
-
-    # The proc used to name edges.
-    def edge_name
-      @edge_name
-    end
-
-    # Set the proc used to name edges.
-    def edge_name=(a_proc)
-      @edge_name = a_proc
-    end
-
     def graph
+      # This must be defined here to overwrite the #graph method in Base.
       self
     end
 
-    # Load vertices by id.
-    def load_vertices(ids)
-      ids.map do |id|
-        vertex id rescue nil
-      end.compact
-    end
-
-    # Load edges by id.
-    def load_edges(ids)
-      ids.map do |id|
-        edge id rescue nil
-      end.compact
-    end
-
-    # Index keys are stored here only as they are discovered.
-    def index_keys
-      @index_keys ||= {}
-    end
-
-    def vertex(id)
-      v = super
-      v.graph = self
-      v
-    end
-
-    def edge(id)
-      e = super
-      e.graph = self
-      e
+    def ==(other)
+      equal?(other)
     end
 
     protected
@@ -124,7 +78,7 @@ module Pacer::Routes
       if index.index_class == element_type.java_class
         key, value, index_specified = index_key_value(index_name, index_value)
         if index.index_type == Pacer.automatic_index
-          keys = index.auto_index_keys
+          keys = index.auto_index_keys_in_use
           return false if keys and not keys.include? key
         end
         index.index_name == index_name or (not index_specified and index.index_type == Pacer.automatic_index)

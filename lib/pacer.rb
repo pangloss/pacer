@@ -7,7 +7,7 @@ module Pacer
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.2-SNAPSHOT-standalone.jar'))
+    unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
@@ -18,9 +18,12 @@ module Pacer
     require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M05.jar')
   end
 
+  require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/routes'
+  require 'pacer/wrappers'
+  require 'pacer/extensions'
   require 'pacer/neo4j'
   require 'pacer/tg'
   require 'pacer/support'
@@ -40,12 +43,13 @@ module Pacer
     # session.
     def reload!
       require 'pathname'
-      Pathname.new(__FILE__).parent.find do |path|
+      Pathname.new(File.expand_path(__FILE__)).parent.find do |path|
         if path.extname == '.rb' and path.mtime > reload_time
           puts path.to_s
           load path.to_s
         end
       end
+      clear_wrapper_cache
       @reload_time = Time.now
     end
 
@@ -89,6 +93,11 @@ module Pacer
       @verbose
     end
     alias verbose verbose?
+
+    def clear_wrapper_cache
+      VertexWrapper.clear_cache
+      EdgeWrapper.clear_cache
+    end
 
     def vertex?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Vertex

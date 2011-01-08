@@ -1,6 +1,6 @@
 module Tackle
   class TypeSplitPipe < com.tinkerpop.pipes.split.AbstractSplitPipe
-    include Pacer::Support::GetJavaField
+    field_reader :splits
 
     def initialize(count)
       super(3)
@@ -12,7 +12,6 @@ module Tackle
 
     def routeNext
       if self.hasNext
-        splits = get_java_field(:splits)
         element = self.next
         case element[:type]
         when 'person'

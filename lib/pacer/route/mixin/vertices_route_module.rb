@@ -30,15 +30,25 @@ module Pacer::Routes
       v(*args, &block)
     end
 
+    def element_type
+      graph.element_type(:vertex)
+    end
+
     # Undefined for vertex routes.
     def e(*filters, &block)
-      raise "Can't call edges for VerticesRoute."
+      raise Pacer::UnsupportedOperation, "Can't call edges for VerticesRoute."
+    end
+
+    # Delete all matching elements.
+    def delete!
+      uniq.both_e.uniq.bulk_job { |e| e.delete! }
+      uniq.bulk_job { |e| e.delete! }
     end
 
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
-      v_ids = ids
+      v_ids = element_ids.to_a
       if v_ids.count == 1
         v = graph.vertex v_ids.first
         v.add_extensions extensions
@@ -81,16 +91,9 @@ module Pacer::Routes
               counter += 1
               graph.managed_checkpoint if counter % graph.bulk_job_size == 0
               begin
-                edge = graph.create_edge(nil, from_v, to_v, label.to_s)
-                first_edge_id ||= edge.get_id
-                last_edge_id = edge.get_id
-                if has_props
-                  props.each do |name, value|
-                    edge[name] = value
-                  end
-                end
-              rescue => e
-                puts e.message
+                edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
+                first_edge_id ||= edge.element_id
+                last_edge_id = edge.element_id
               end
             end
           end

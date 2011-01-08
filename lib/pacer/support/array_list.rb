@@ -9,6 +9,6 @@ require 'set'
 java.util.HashSet
 class Java::JavaUtil::HashSet
   def inspect
-    to_set.inspect
+    to_set.inspect.sub(/Set/, 'HashSet')
   end
 end
