@@ -120,7 +120,7 @@ module Pacer
         if @back
           @back.vars
         else
-          @vars
+          @vars ||= {}
         end
       end
 
