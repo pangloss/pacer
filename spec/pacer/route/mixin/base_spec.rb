@@ -82,6 +82,7 @@ shared_examples_for Pacer::Routes::Base do
   let(:result_type) { raise 'specify :vertex, :edge, :mixed or :object' }
   let(:back) { nil }
   let(:info) { nil }
+  let(:route_extensions) { Set[] }
 
   context 'without data' do
     subject { route }
@@ -130,12 +131,16 @@ shared_examples_for Pacer::Routes::Base do
 
     let(:first_element) { route.first }
     let(:all_elements) { route.to_a }
+    subject { route }
+
+    its(:extensions) { should == route_extensions }
 
     describe '#[Fixnum]' do
       subject { route[number_of_results - 1] }
       it { should be_a(Pacer::Routes::Base) }
       its(:count) { should == 1 }
       its(:result) { should be_a(graph.element_type(result_type)) }
+      its(:extensions) { should == route.extensions }
     end
 
     describe '#result' do
@@ -161,12 +166,14 @@ shared_examples_for Pacer::Routes::Base do
       subject { route.to_a }
       its(:count) { should == number_of_results }
       it { should be_a(Array) }
+      its('first.extensions') { should == route.extensions }
     end
 
     describe '#except' do
       context '(first_element)' do
         subject { route.except(first_element) }
         it { should_not include(first_element) }
+        its(:extensions) { should == route.extensions }
       end
       context '(all_elements)' do
         subject { route.except(all_elements) }
@@ -177,6 +184,7 @@ shared_examples_for Pacer::Routes::Base do
     describe '#only' do
       subject { route.only(first_element).uniq }
       its(:to_a) { should == [first_element] }
+      its(:extensions) { should == route.extensions }
     end
   end
 
@@ -217,18 +225,69 @@ shared_examples_for Pacer::Routes::Base do
       its(:count) { should == number_of_results }
       it { should be_a(Array) }
     end
+
+    describe '#element_type' do
+      its(:element_type) { should == graph.element_type(result_type) }
+    end
+
+    describe '#add_extension' do
+      # Note that this mixin doesn't need to include
+      # versions of each test with extensions applied because
+      context '(SimpleMixin)' do
+        before do
+          @orig_ancestors = route.class.ancestors
+          r = route.add_extension Tackle::SimpleMixin
+          r.should equal(route)
+        end
+        its(:extensions) { should include(Tackle::SimpleMixin) }
+        it { should respond_to(:route_mixin_method) }
+        its('class.ancestors') { should_not == @orig_ancestors }
+      end
+
+      context '(Object)' do
+        before do
+          @orig_ancestors = route.class.ancestors
+          route.add_extension Object
+        end
+        its(:extensions) { should include(Object) }
+        its('class.ancestors') { should == @orig_ancestors }
+      end
+
+      context '(invalid)' do
+        before do
+          @orig_ancestors = route.class.ancestors
+          route.add_extension :invalid
+        end
+        its(:extensions) { should_not include(:invalid) }
+        its('class.ancestors') { should == @orig_ancestors }
+      end
+    end
   end
 end
 
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
-  context 'vertices' do
+  context 'vertices', :focus => true do
     it_uses Pacer::Routes::Base do
       let(:route) { graph.v }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
     end
   end
+end
+for_each_graph(:read_only) do
+  use_pacer_graphml_data(:read_only)
+  context 'vertices with extension', :focus => true do
+    it_uses Pacer::Routes::Base do
+      let(:route) { graph.v(Tackle::SimpleMixin) }
+      let(:number_of_results) { 7 }
+      let(:result_type) { :vertex }
+      let(:route_extensions) { Set[Tackle::SimpleMixin] }
+    end
+  end
+end
+for_each_graph(:read_only) do
+  use_pacer_graphml_data(:read_only)
   context 'no vertices' do
     it_uses Pacer::Routes::Base do
       let(:route) { graph.v(:something => 'missing') }
@@ -236,6 +295,9 @@ for_each_graph(:read_only) do
       let(:result_type) { :vertex }
     end
   end
+end
+for_each_graph(:read_only) do
+  use_pacer_graphml_data(:read_only)
   context 'edges' do
     it_uses Pacer::Routes::Base do
       let(:route) { graph.e }
