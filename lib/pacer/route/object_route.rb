@@ -6,8 +6,8 @@ module Pacer::Routes
     # - ObjectRouteOperations
     include RouteOperations
 
-    def initialize(back)
-      initialize_path(back)
+    def initialize(*args)
+      initialize_path(*args)
     end
 
     alias each each_object

@@ -188,6 +188,11 @@ shared_examples_for Pacer::Routes::Base do
       its(:to_a) { should == [first_element] }
       its('first.class') { should == first_element.class }
       its(:extensions) { should == route.extensions }
+
+      context 'for non-elements' do
+        subject { route.element_ids.only(first_element.element_id).uniq }
+        its(:to_a) { should == [first_element.element_id] }
+      end
     end
   end
 
