@@ -48,6 +48,10 @@ module Pacer::Routes
       self
     end
 
+    def ==(other)
+      equal?(other)
+    end
+
     protected
 
     # Don't try to inspect the graph data when inspecting.

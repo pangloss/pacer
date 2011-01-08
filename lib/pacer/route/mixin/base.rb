@@ -288,8 +288,8 @@ module Pacer
       # defined routes unless the routes are actually the same object.
       def ==(other)
         other.class == self.class and
-          other.back == @back and
-          other.instance_variable_get('@source') == @source
+          other.graph == graph and
+          other.send(:inspect_strings) == inspect_strings
       end
 
       def empty?

@@ -46,11 +46,20 @@ for_each_graph(:read_only) do
       end
     end
 
+    describe '#==' do
+      specify { graph.v.should == graph.v }
+      specify { graph.v.should_not == graph.v { true } }
+      specify { graph.v.should_not == graph.v(:x => 1) }
+      specify { graph.e.should == graph.e }
+      specify { graph.v.should_not == graph.e }
+    end
+
     describe '#result' do
       context 'no matching vertices' do
         subject { graph.v(:name => 'missing').result }
         it { should be_a(VerticesRouteModule) }
         its(:count) { should == 0 }
+        its(:empty?) { should be_true }
       end
 
       it 'should not be nil when no matching vertices' do
@@ -268,6 +277,11 @@ shared_examples_for Pacer::Routes::Base do
         end
         its(:extensions) { should_not include(:invalid) }
       end
+    end
+
+    describe '#add_extensions' do
+      subject { route.add_extensions([Tackle::SimpleMixin, Object, :invalid]) }
+      its(:extensions) { should include(Tackle::SimpleMixin) }
     end
   end
 end
