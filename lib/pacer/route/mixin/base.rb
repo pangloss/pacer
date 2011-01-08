@@ -320,6 +320,11 @@ module Pacer
         end
       end
 
+      def element_type
+        Object
+      end
+
+
       protected
 
       # Initializes some basic instance variables.

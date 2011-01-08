@@ -66,6 +66,10 @@ module Pacer::Routes
       end
     end
 
+    def element_type
+      graph.element_type(:edge)
+    end
+
     protected
 
     # Specialize filter_pipe for edge labels.

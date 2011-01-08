@@ -30,6 +30,10 @@ module Pacer::Routes
       v(*args, &block)
     end
 
+    def element_type
+      graph.element_type(:vertex)
+    end
+
     # Undefined for vertex routes.
     def e(*filters, &block)
       raise Pacer::UnsupportedOperation, "Can't call edges for VerticesRoute."
