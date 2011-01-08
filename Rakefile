@@ -13,7 +13,7 @@ begin
     gem.authors = ["Darrick Wiebe"]
     gem.license = "MIT"
     gem.add_dependency "nokogiri", "~> 1.4"
-    gem.add_development_dependency "rspec", "~> 2.1"
+    gem.add_development_dependency "rspec", "~> 2.4"
     gem.add_development_dependency "rr", "~> 1.0"
     gem.files = FileList['lib/**/*.rb', 'script/*', '[A-Z]*', 'spec/**/*', 'vendor/*'].to_a
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
