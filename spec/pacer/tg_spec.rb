@@ -30,6 +30,16 @@ for_tg do
         subject { graph.element_type(e0) }
         it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
       end
+
+      context ':mixed' do
+        subject { graph.element_type(:mixed) }
+        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement }
+      end
+
+      context ':object' do
+        subject { graph.element_type(:object) }
+        it { should == Object }
+      end
     end
   end
 end

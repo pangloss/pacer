@@ -2,6 +2,7 @@ module Pacer
   Neo4jGraph = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
   Neo4jVertex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
   Neo4jEdge = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge
+  Neo4jElement = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jElement
   Neo4jIndex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jIndex
 
   # Add 'static methods' to the Pacer namespace.
@@ -52,8 +53,16 @@ module Pacer
         Neo4jVertex
       when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
         Neo4jEdge
+      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+        Neo4jElement
+      when :object
+        Object
       else
-        raise ArgumentError, 'Element type may be one of :vertex or :edge'
+        if et == Object
+          Object
+        else
+          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+        end
       end
     end
 

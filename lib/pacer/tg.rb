@@ -2,6 +2,7 @@ module Pacer
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraph
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge
+  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement
   import com.tinkerpop.blueprints.pgm.impls.tg.TinkerIndex
 
   # Create a new TinkerGraph. If path is given, import the GraphML data from
@@ -43,8 +44,16 @@ module Pacer
         TinkerVertex
       when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
         TinkerEdge
+      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+        TinkerElement
+      when :object
+        Object
       else
-        raise ArgumentError, 'Element type may be one of :vertex or :edge'
+        if et == Object
+          Object
+        else
+          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+        end
       end
     end
 
