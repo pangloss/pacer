@@ -1,9 +1,10 @@
 require 'spec_helper'
 
 # TODO: hopefully this block can be removed as the test suite is fleshed out
-for_each_graph do
+for_each_graph(:read_only) do
   describe Pacer::Routes::Base do
-    use_pacer_graphml_data
+    use_pacer_graphml_data(:read_only)
+    before { setup_data }
     describe '#inspect' do
       it 'should show the path in the resulting string' do
         other_projects_by_gremlin_writer = 
@@ -18,8 +19,6 @@ for_each_graph do
       it { Set[*(graph.v.to_a)].should == Set[*graph.vertices] }
       it { Set[*graph.e].should == Set[*graph.edges] }
       it { Set[*(graph.e.to_a)].should == Set[*graph.edges] }
-      it { graph.v.to_a.count.should == graph.vertices.count }
-      it { graph.e.to_a.count.should == graph.edges.count }
     end
 
     describe '#root?' do
@@ -75,86 +74,173 @@ for_each_graph do
   end
 end
 
-shared_examples_for 'Route results' do
-  context '#first' do
-    subject { route.first }
-    it { should_not be_nil }
-    its(:graph) { should equal(graph) }
-    its(:extensions) { should == route.extensions }
-  end
-
-end
-
+# These specs are :read_only
 shared_examples_for Pacer::Routes::Base do
-  # defaults
+  # defaults -- you
+  let(:route) { raise 'define a route' }
+  let(:number_of_results) { raise 'how many results are expected' }
+  let(:result_type) { raise 'specify :vertex, :edge, :mixed or :object' }
   let(:back) { nil }
   let(:info) { nil }
 
-  subject { route }
-  it { should be_a(Pacer::Routes::Base) }
-  its(:graph) { should equal(graph) }
-  its(:back) { should equal(back) }
-  its(:info) { should == info }
-  context 'with info' do
-    before { route.info = 'some info' }
-    its(:info) { should == 'some info' }
-  end
-  its(:vars) { should be_a(Hash) }
-
-  describe '#from_graph?' do
-    context 'current graph' do
-      subject { route.from_graph? graph }
-      it { should be_true }
+  context 'without data' do
+    subject { route }
+    it { should be_a(Pacer::Routes::Base) }
+    its(:graph) { should equal(graph) }
+    its(:back) { should equal(back) }
+    its(:info) { should == info }
+    context 'with info' do
+      before { route.info = 'some info' }
+      its(:info) { should == 'some info' }
+      after { route.info = nil }
     end
-    context 'other graph' do
-      subject { route.from_graph? graph2 }
-      it { should be_false }
+    its(:vars) { should be_a(Hash) }
+
+    describe '#from_graph?' do
+      context 'current graph' do
+        subject { route.from_graph? graph }
+        it { should be_true }
+      end
+      context 'other graph' do
+        subject { route.from_graph? graph2 }
+        it { should be_false }
+      end
+    end
+
+    describe '#each' do
+      it { route.each.should be_a(java.util.Iterator) }
+    end
+
+    describe '#result' do
+      before { graph.checkpoint }
+      subject { route.result }
+      it { should be_root }
+      its(:element_type) { should == route.element_type }
+    end
+
+  end
+
+  context 'with data' do
+    around do |spec|
+      if number_of_results > 0
+        setup_data
+        spec.run
+      end
+    end
+
+    let(:first_element) { route.first }
+    let(:all_elements) { route.to_a }
+
+    describe '#[Fixnum]' do
+      subject { route[number_of_results - 1] }
+      it { should be_a(Pacer::Routes::Base) }
+      its(:count) { should == 1 }
+      its(:result) { should be_a(graph.element_type(result_type)) }
+    end
+
+    describe '#result' do
+      subject { route.result }
+      it { should be_a(Pacer::Routes::Base) }
+      its(:count) { should == number_of_results }
+    end
+
+    describe '#route' do
+      subject { route.route }
+      its(:hide_elements) { should be_true }
+      it { should equal(route) }
+    end
+
+    describe '#first' do
+      subject { route.first }
+      it { should_not be_nil }
+      its(:graph) { should equal(graph) }
+      its(:extensions) { should == route.extensions }
+    end
+
+    describe '#to_a' do
+      subject { route.to_a }
+      its(:count) { should == number_of_results }
+      it { should be_a(Array) }
+    end
+
+    describe '#except' do
+      context '(first_element)' do
+        subject { route.except(first_element) }
+        it { should_not include(first_element) }
+      end
+      context '(all_elements)' do
+        subject { route.except(all_elements) }
+        its(:count) { should == 0 }
+      end
+    end
+
+    describe '#only' do
+      subject { route.only(first_element).uniq }
+      its(:to_a) { should == [first_element] }
     end
   end
 
-  describe '#[]' do
-    it { graph.v[2].count.should == 1 }
-    it { graph.v[2].result.is_a?(Pacer::VertexMixin).should be_true }
-  end
-
-  describe '#each' do
-    it { route.each.should be_a(java.util.Iterator) }
-  end
-
-  describe '#result' do
-    subject { route.result }
-    its(:count) { should == route.count }
-    it { should be_root }
-    it 'should have the right type' do
-      pending 'can I check the type of a route?'
-      it { should be_a(VerticesRouteModule) }
-      empty.should be_a(EdgesRouteModule)
-      empty.should be_a(MixedRouteModule)
+  context 'without data' do
+    around do |spec|
+      if number_of_results == 0
+        setup_data
+        spec.run
+      end
     end
-  end
 
-  describe '#route' do
-    subject { route.route }
-    its(:hide_elements) { should be_true }
-    it { should equal(route) }
-  end
+    describe '#[Fixnum]' do
+      subject { route[0] }
+      it { should be_a(Pacer::Routes::Base) }
+      its(:count) { should == 0 }
+      its(:result) { should be_a(Pacer::Routes::Base) }
+    end
 
-  describe '#vars' do
+    describe '#result' do
+      subject { route.result }
+      it { should be_a(Pacer::Routes::Base) }
+      its(:count) { should == number_of_results }
+    end
+
+    describe '#route' do
+      subject { route.route }
+      its(:hide_elements) { should be_true }
+      it { should equal(route) }
+    end
+
+    describe '#first' do
+      subject { route.first }
+      it { should be_nil }
+    end
+
+    describe '#to_a' do
+      subject { route.to_a }
+      its(:count) { should == number_of_results }
+      it { should be_a(Array) }
+    end
   end
 end
 
-for_each_graph do
-  use_pacer_graphml_data
-  it_uses Pacer::Routes::Base do
-    let(:route) { graph.v }
+for_each_graph(:read_only) do
+  use_pacer_graphml_data(:read_only)
+  context 'vertices' do
+    it_uses Pacer::Routes::Base do
+      let(:route) { graph.v }
+      let(:number_of_results) { 7 }
+      let(:result_type) { :vertex }
+    end
   end
-  it_uses 'Route results' do
-    let(:route) { graph.v }
+  context 'no vertices' do
+    it_uses Pacer::Routes::Base do
+      let(:route) { graph.v(:something => 'missing') }
+      let(:number_of_results) { 0 }
+      let(:result_type) { :vertex }
+    end
   end
-  it_uses Pacer::Routes::Base do
-    let(:route) { graph.e }
-  end
-  it_uses 'Route results' do
-    let(:route) { graph.e }
+  context 'edges' do
+    it_uses Pacer::Routes::Base do
+      let(:route) { graph.e }
+      let(:number_of_results) { 14 }
+      let(:result_type) { :edge }
+    end
   end
 end

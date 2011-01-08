@@ -59,12 +59,12 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-def for_each_graph(&block)
-  for_tg(&block)
-  for_neo4j(&block)
+def for_each_graph(usage_style = :read_write, &block)
+  for_tg(usage_style, &block)
+  for_neo4j(usage_style, &block)
 end
 
-def for_tg(&block)
+def for_tg(usage_style = :read_write, &block)
   describe 'tg' do
     let(:supports_custom_id) { true }
     let(:graph) { Pacer.tg }
@@ -74,7 +74,7 @@ def for_tg(&block)
 end
 
 
-def for_neo4j(&block)
+def for_neo4j(usage_style = :read_write, &block)
   describe 'neo4j' do
     let(:supports_custom_id) { false }
     let(:graph) do
@@ -83,9 +83,17 @@ def for_neo4j(&block)
     let(:graph2) do
       $neo_graph2
     end
+    if usage_style == :read_only
+      before(:all) do
+        $neo_graph.v.delete!
+        $neo_graph2.v.delete!
+      end
+    end
     around do |spec|
-      $neo_graph.v.delete!
-      $neo_graph2.v.delete!
+      if usage_style == :read_write
+        $neo_graph.v.delete!
+        $neo_graph2.v.delete!
+      end
       if spec.use_transactions?
         graph.manual_transactions do
           graph2.manual_transactions do
@@ -108,15 +116,23 @@ def for_neo4j(&block)
 end
 
 def use_simple_graph_data
+  let(:setup_data) {}
   let(:v0) { graph.create_vertex :name => 'eliza' }
   let(:v1) { graph.create_vertex :name => 'darrick' }
   let(:e0) { graph.create_edge nil, v0, v1, :links }
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 end
 
-def use_pacer_graphml_data
-  before do
-    graph.import 'spec/data/pacer.graphml'
+def use_pacer_graphml_data(usage_style = :read_write)
+  if usage_style == :read_only
+    let(:setup_data) { }
+    before(:all) do
+      graph.import 'spec/data/pacer.graphml'
+    end
+  else
+    let(:setup_data) do
+      graph.import 'spec/data/pacer.graphml'
+    end
   end
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
   let(:pacer) { graph.v(:name => 'pacer', :type => 'project').first }
