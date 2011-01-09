@@ -306,6 +306,11 @@ module Pacer
         self
       end
 
+      def extensions=(exts)
+        @extensions ||= Set[]
+        add_extensions exts
+      end
+
       def extensions
         @extensions ||= Set[]
       end
