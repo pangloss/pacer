@@ -7,6 +7,7 @@ module Pacer
   module Pipes
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.IdentityPipe
+    import com.tinkerpop.pipes.Pipeline
 
     import com.tinkerpop.pipes.filter.RandomFilterPipe
     import com.tinkerpop.pipes.filter.DuplicateFilterPipe
