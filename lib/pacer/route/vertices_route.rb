@@ -4,9 +4,9 @@ module Pacer::Routes
     include RouteOperations
     include VerticesRouteModule
 
-    def initialize(*args)
+    def initialize(back, *pipe_args)
       @pipe_class = Pacer::Pipes::EdgeVertexPipe
-      initialize_path(*args)
+      initialize_path(back, *pipe_args)
     end
   end
 end
