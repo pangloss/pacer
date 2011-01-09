@@ -69,13 +69,15 @@ module Pacer::Routes
 
     protected
 
-    def iterator
+    def build_pipeline
       if @back.is_a? Pacer::Graph
+        raise 'wtf?'
         add_branches_to_pipe(@back)
       else
-        pipe = source
+        start, pipe = pipe_source
         add_branches_to_pipe(pipe)
       end
+      [(start || pipe), pipe]
     end
 
     def add_branches_to_pipe(pipe)
