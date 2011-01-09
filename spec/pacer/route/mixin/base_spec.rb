@@ -24,6 +24,22 @@ for_tg do
       end
     end
 
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
+      subject { route }
+
+      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:out_v) { should_not be_nil }
+    end
+
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
+      subject { route }
+
+      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:out_v) { should_not be_nil }
+    end
+
     context "graph.v(:name => 'darrick')" do
       use_simple_graph_data
       before { setup_data }

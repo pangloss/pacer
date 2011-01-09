@@ -39,10 +39,10 @@ module Pacer::Routes
     include RouteOperations
 
     def initialize(args = {})
-      args = Hash[args]
+      args = args.dup
+      element_type = args.delete(:element_type)
       @filter = module_for_args(args)
       extend @filter
-      element_type = args.delete(:element_type)
       args.each do |key, value|
         send("#{key}=", value)
       end
@@ -62,9 +62,9 @@ module Pacer::Routes
       @element_type = graph.element_type(et)
       if @element_type == graph.element_type(:vertex)
         extend VerticesRouteModule
-      elsif @element_type == graph.element_type(:vertex)
+      elsif @element_type == graph.element_type(:edge)
         extend EdgesRouteModule
-      elsif @element_type == graph.element_type(:vertex)
+      elsif @element_type == graph.element_type(:mixed)
         extend MixedRouteModule
       else
         @each_method = :each_object

@@ -11,8 +11,8 @@ module Pacer
       module RouteClassMethods
         # An alternate constructor for creating a route that uses the given
         # pipe class initialized with the given arguments.
-        def pipe_filter(back, pipe_class, *args, &block)
-          f = new(back, nil, block, *args)
+        def pipe_filter(back, pipe_class, *args)
+          f = new(back, *args)
           f.pipe_class = pipe_class
           f
         end
@@ -301,7 +301,7 @@ module Pacer
 
       # Initializes some basic instance variables.
       # TODO: rename initialize_path initialize_route
-      def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
+      def initialize_path(back = nil, *pipe_args)
         self.back = back
         @pipe_args = pipe_args || []
       end
