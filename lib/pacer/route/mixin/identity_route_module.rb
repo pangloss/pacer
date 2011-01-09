@@ -5,27 +5,14 @@ module Pacer::Routes
   # in named subroutes.
   module IdentityRouteModule
     def initialize(back)
-      @back = back
+      @pipe_class = Pacer::Pipes::IdentityPipe
+      @pipe_args = []
+      self.back = back
     end
 
     # Identity routes are always considered root.
     def root?
       true
-    end
-
-    # Prepare and return the current temporary identity pipe.
-    def new_identity_pipe
-      @pipe = Pacer::Pipes::IdentityPipe.new
-    end
-
-    protected
-
-    # See Pacer::Routes:Base#iterator
-    def iterator
-      pipe = @pipe
-      raise "#new_identity_pipe must be called before #iterator" unless pipe
-      pipe = yield pipe if block_given?
-      pipe
     end
   end
 end
