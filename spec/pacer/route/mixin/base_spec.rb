@@ -24,6 +24,17 @@ for_tg do
       end
     end
 
+    context "graph.v(:name => 'darrick')" do
+      use_simple_graph_data
+      before { setup_data }
+      subject { graph.v(:name => 'darrick') }
+
+      its(:build_pipeline) { should == [nil, nil] }
+      its(:pipe_source) { should be_nil }
+      its('iterator.next') { should == v1 }
+      its(:to_a) { should == [v1] }
+    end
+
     context 'graph.v.element_ids' do
       describe '#build_pipeline' do
         subject { graph.v.element_ids.send(:build_pipeline) }
@@ -57,7 +68,7 @@ for_tg do
 end
 
 for_each_graph(:read_only) do
-  describe Pacer::Routes::Base, :focus => true do
+  describe Pacer::Routes::Base do
     use_pacer_graphml_data(:read_only)
     before { setup_data }
     describe '#inspect' do

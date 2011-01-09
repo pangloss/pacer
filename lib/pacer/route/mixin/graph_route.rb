@@ -108,12 +108,22 @@ module Pacer::Routes
               route = IndexedVerticesRoute.new(idx, key, value)
             end
             route.graph = self
-            filters = Hash[filters.reject { |k, v| k.to_s == key.to_s }]
-            filters = nil if filters.empty?
-            return FilterRoute.property_filter(route, filters, block)
+            return FilterRoute.property_filter(route, filters_without_key(filters, key), block)
           end
         end
       end
+    end
+
+    def filters_without_key(filters, key)
+      fs = filters.map do |f|
+        if f.is_a? Hash
+          f = Hash[f.reject { |k, v| k.to_s == key.to_s }]
+          f unless f.empty?
+        else
+          f
+        end
+      end.compact
+      fs unless fs.empty?
     end
   end
 end

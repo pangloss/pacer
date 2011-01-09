@@ -427,8 +427,12 @@ module Pacer
       def iterator
         @vars = {}
         start, pipe = build_pipeline
-        start.set_starts source
-        pipe
+        if start
+          start.set_starts source
+          pipe
+        else
+          source
+        end
       end
 
       def attach_pipe(end_pipe)
