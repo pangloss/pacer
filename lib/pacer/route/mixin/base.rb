@@ -259,7 +259,7 @@ module Pacer
       # Graph#columns.  If this output behaviour is undesired, it may be turned
       # off by calling #route on the current route.
       def inspect(limit = nil)
-        if Pacer.hide_route_elements or hide_elements
+        if Pacer.hide_route_elements or hide_elements or source.nil?
           "#<#{inspect_strings.join(' -> ')}>"
         else
           count = 0
@@ -339,21 +339,14 @@ module Pacer
         Object
       end
 
-
       protected
 
       # Initializes some basic instance variables.
       # TODO: rename initialize_path initialize_route
       def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
-        if back.is_a? Base
-          @back = back
-        else
-          @source = back
-        end
-        @filters = filters || []
-        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
-        add_extensions @filters
-        @block = block
+        self.back = back
+        self.filters = filters
+        self.block = block
         @pipe_args = pipe_args || []
       end
 
@@ -369,7 +362,15 @@ module Pacer
 
       # Set the previous route in the chain.
       def back=(back)
-        @back = back
+        if back.is_a? Base and not back.is_a? GraphMixin
+          @back = back
+        else
+          @source = back
+        end
+      end
+
+      def source=(source)
+        self.back = source
       end
 
       # Return the route which is attached to the given route.
