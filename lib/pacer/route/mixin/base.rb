@@ -164,8 +164,12 @@ module Pacer
         result
       end
 
+      def each(&block)
+        each_element(&block)
+      end
+
       # Yields each matching element or returns an iterator if no block is given.
-      def each
+      def each_element
         iter = iterator
         if extensions.empty?
           if block_given?
