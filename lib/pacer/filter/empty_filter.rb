@@ -3,6 +3,11 @@ module Pacer
     module EmptyFilter
       protected
 
+      def after_initialize
+        @back = @source = nil
+        super
+      end
+
       def build_pipeline
         nil
       end

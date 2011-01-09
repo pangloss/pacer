@@ -56,6 +56,7 @@ module Pacer::Routes
       if back.element_type == self.element_type and not args.key? :extensions
         self.extensions = back.extensions
       end
+      after_initialize
     end
 
     def element_type=(et)
@@ -84,6 +85,9 @@ module Pacer::Routes
     end
 
     protected
+
+    def after_initialize
+    end
 
     def module_for_args(args)
       filter = args[:filter]

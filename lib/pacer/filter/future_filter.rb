@@ -30,12 +30,21 @@ module Pacer
       end
 
       def lookahead_route
-        empty = FilterRoute.new :filter => :empty, :back => self
-        @lookahead.call(empty)
+        empty = Pacer::Routes::FilterRoute.new :filter => :empty, :back => self
+        r = @lookahead.call(empty)
+        r
       end
 
       def lookahead_pipe
-        lookahead_route.send :build_pipeline
+        # The lookahead route actually requires a pipeline object because it
+        # changes the starts on the same object as it requests the next result
+        # from.
+        s, e = lookahead_route.send(:build_pipeline)
+        if s.equal?(e)
+          s
+        else
+          Pacer::Pipes::Pipeline.new s, e
+        end
       end
 
       def inspect_string
