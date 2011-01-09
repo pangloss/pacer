@@ -74,6 +74,16 @@ module Pacer
         end
         [pipe, args_array]
       end
+
+      def inspect_string
+        fs = "#{filters.inspect}" if filters.any?
+        bs = '&block' if @block
+        s = inspect_class_name
+        if fs or bs
+          s = "#{s}(#{ [fs, bs].compact.join(', ') })"
+        end
+        s
+      end
     end
   end
 end

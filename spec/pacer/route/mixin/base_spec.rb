@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 for_tg do
-  describe Pacer::Routes::Base, 'pipe creation internals', :focus => true do
+  describe Pacer::Routes::Base, 'pipe creation internals' do
     context "graph.v" do
       describe '#build_pipeline' do
         subject { graph.v.send(:build_pipeline) }

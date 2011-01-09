@@ -29,10 +29,17 @@ module Pacer
         pipe
       end
 
-      def lookahead_pipe
+      def lookahead_route
         empty = FilterRoute.new :filter => :empty, :back => self
-        route = @lookahead.call(empty)
-        route.send :build_pipeline
+        @lookahead.call(empty)
+      end
+
+      def lookahead_pipe
+        lookahead_route.send :build_pipeline
+      end
+
+      def inspect_string
+        "#{ inspect_class_name }(#{ lookahead_route.inspect })"
       end
     end
   end

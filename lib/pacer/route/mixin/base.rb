@@ -448,6 +448,11 @@ module Pacer
         ins = []
         ins += @back.inspect_strings unless root?
 
+        ins << inspect_string
+        ins
+      end
+
+      def inspect_string
         if @pipe_class
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/
@@ -464,15 +469,9 @@ module Pacer
             ps = @pipe_args
           end
         end
-        fs = "#{filters.inspect}" if filters.any?
-        bs = '&block' if @block
-
         s = inspect_class_name
-        if ps or fs or bs
-          s = "#{s}(#{ [ps, fs, bs].compact.join(', ') })"
-        end
-        ins << s
-        ins
+        s = "#{s}(#{ ps })" if ps
+        s
       end
 
       # Return the class name of the current route.
