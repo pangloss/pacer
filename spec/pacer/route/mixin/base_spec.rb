@@ -1,6 +1,38 @@
 require 'spec_helper'
 
-# TODO: hopefully this block can be removed as the test suite is fleshed out
+for_tg do
+  describe Pacer::Routes::Base, 'pipe creation internals', :focus => true do
+    context "graph.e" do
+      use_simple_graph_data
+
+      describe '#build_pipeline' do
+        subject { graph.e.send(:build_pipeline) }
+        it { should be_a(Array) }
+        its(:count) { should == 2 }
+        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        specify { subject.first.should equal(subject.last) }
+      end
+
+      describe '#pipe_source' do
+        subject { graph.e.send(:pipe_source) }
+        it { should be_nil }
+      end
+
+      describe '#iterator' do
+        before { setup_data }
+        subject { graph.e.send(:iterator) }
+        its(:next) { should_not be_nil }
+      end
+
+      describe '#ids' do
+        before { setup_data }
+        subject { graph.e.element_ids.to_a }
+        it { should == ['0', '1'] }
+      end
+    end
+  end
+end
+
 for_each_graph(:read_only) do
   describe Pacer::Routes::Base do
     use_pacer_graphml_data(:read_only)
