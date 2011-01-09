@@ -101,11 +101,15 @@ module Pacer
     end
 
     def vertex?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Vertex
+      element.is_a? com.tinkerpop.blueprints.pgm.Vertex or
+        (element.respond_to? :element and
+         element.element.is_a? com.tinkerpop.blueprints.pgm.Vertex)
     end
 
     def edge?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Edge
+        (element.respond_to? :element and
+         element.element.is_a? com.tinkerpop.blueprints.pgm.Edge)
     end
 
     def manual_index
