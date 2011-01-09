@@ -58,7 +58,7 @@ module Pacer
       end
 
       def inspect_string
-        "#{ inspect_class_name }(#{ lookahead_route.inspect })"
+        "#{ inspect_class_name }(#{ @collection[0] }, #{ @collection[1] }...#{collection.count})"
       end
     end
   end
