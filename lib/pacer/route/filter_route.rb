@@ -6,33 +6,47 @@ module Pacer::Routes
   end
 
   class FilterRoute
+
+    class << self
+      def filter_map
+        @filter_map ||= Pacer::Filter.constants.group_by { |name| symbolize_filter_name(name) }
+      end
+
+      def trigger_map
+        return @trigger_map if @trigger_map
+        @trigger_map = {}
+        Pacer::Filter.constants.each do |name|
+          mod = Pacer::Filter.const_get(name)
+          if mod.respond_to? :triggers
+            [*mod.triggers].each do |trigger|
+              @trigger_map[trigger] = mod
+            end
+          end
+        end
+        @trigger_map
+      end
+
+      def symbolize_filter_name(name)
+        name.sub(/Filter$/, '').gsub(/([a-z])([A-Z])/, "\\1_\\2").downcase.to_sym
+      end
+    end
     include Base
     include RouteOperations
 
     def initialize(args = {})
       args = Hash[args]
-      extend module_for_args(args)
+      @filter = module_for_args(args)
+      extend @filter
+      element_type = args.delete(:element_type)
       args.each do |key, value|
         send("#{key}=", value)
       end
-      unless args.key? :element_type
-        if back
-          self.element_type = back.element_type
-        else
-          raise "No element_type specified"
-        end
-      end
-    end
-
-    def source=(source)
-      self.back = source
-    end
-
-    def back=(back)
-      if back.is_a? Base
-        @back = back
+      if element_type
+        self.element_type = element_type
+      elsif back
+        self.element_type = back.element_type
       else
-        @source = back
+        raise "No element_type specified"
       end
     end
 
@@ -64,46 +78,33 @@ module Pacer::Routes
     protected
 
     def module_for_args(args)
-      filter = args.delete(:filter)
+      filter = args[:filter]
       if filter
         if filter.is_a? Module
           return filter
         else
           case filter
           when Symbol, String
-            mod_name = filter_map[fm.to_sym]
-            return Pacer::Filter.const_get(mod) if mod
+            mod_names = FilterRoute.filter_map[filter.to_sym]
+            if mod_names
+              args.delete :filter
+              return Pacer::Filter.const_get(mod_names.first)
+            end
           end
         end
       else
         args.each_key do |key|
-          mod = trigger_map[key]
+          mod = FilterRoute.trigger_map[key]
           return mod if mod
         end
       end
-      raise "No module found for #{ fm.inspect }"
+      raise "No module found for #{ args.inspect }"
     end
 
-    def filter_map
-      @filter_map ||= Pacer::Filter.constants.group_by { |name| symbolize_filter_name(name) }
-    end
-
-    def trigger_map
-      return @trigger_map if @trigger_map
-      @trigger_map = {}
-      Pacer::Filter.constants.each do |name|
-        mod = Pacer::Filter.const_get(name)
-        if mod.respond_to? :triggers
-          [*mod.triggers].each do |trigger|
-            @trigger_map[trigger] = mod
-          end
-        end
-      end
-      @trigger_map
-    end
-
-    def symbolize_filter_name(name)
-      name.sub(/Filter$/, '').gsub(/([a-z])([A-Z])/, "\\1_\\2").downcase.to_sym 
+    def inspect_class_name
+      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}-#{@filter.name.split('::').last.sub(/Filter|Route$/, '')}"
+      s = "#{s} #{ @info }" if @info
+      s
     end
   end
 end
