@@ -57,7 +57,7 @@ for_tg do
 end
 
 for_each_graph(:read_only) do
-  describe Pacer::Routes::Base do
+  describe Pacer::Routes::Base, :focus => true do
     use_pacer_graphml_data(:read_only)
     before { setup_data }
     describe '#inspect' do

@@ -103,12 +103,14 @@ module Pacer::Routes
           if idx
             key, value = index_key_value(index_name, index_value)
             if element_type == self.element_type(:edge)
-              route = IndexedEdgesRoute.new(idx, key, value, filters, block)
+              route = IndexedEdgesRoute.new(idx, key, value)
             else
-              route = IndexedVerticesRoute.new(idx, key, value, filters, block)
+              route = IndexedVerticesRoute.new(idx, key, value)
             end
             route.graph = self
-            return route
+            filters = Hash[filters.reject { |k, v| k.to_s == key.to_s }]
+            filters = nil if filters.empty?
+            return FilterRoute.property_filter(route, filters, block)
           end
         end
       end
