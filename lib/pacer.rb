@@ -28,6 +28,7 @@ module Pacer
   require 'pacer/tg'
   require 'pacer/support'
   require 'pacer/utils'
+  require 'pacer/filter'
 
   class << self
     attr_accessor :debug_info
