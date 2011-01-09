@@ -414,7 +414,9 @@ module Pacer
 
       # Return an iterator for a variety of source object types.
       def iterator_from_source(src)
-        if src.is_a? Pacer::ElementWrapper
+        if src.is_a? Pacer::GraphMixin
+          [src].to_enum
+        elsif src.is_a? Pacer::ElementWrapper
           Pacer::Pipes::EnumerablePipe.new src.element
         elsif src.is_a? Proc
           iterator_from_source(src.call)
