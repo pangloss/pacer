@@ -29,17 +29,6 @@ module Pacer::Routes
       route
     end
 
-    # Do not return duplicate elements.
-    def uniq(*filters, &block)
-      if filters.any? or block
-        filter(*filters, &block).uniq
-      else
-        route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
-        route.add_extensions extensions
-        route
-      end
-    end
-
     def has?(element)
       any? { |e| e == element }
     end
