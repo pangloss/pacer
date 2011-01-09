@@ -382,7 +382,8 @@ for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
     it_uses Pacer::Routes::Base do
-      let(:route) { graph.v(Tackle::SimpleMixin) }
+      let(:back) { graph.v }
+      let(:route) { back.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
       let(:route_extensions) { Set[Tackle::SimpleMixin] }
@@ -393,7 +394,8 @@ for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'no vertices' do
     it_uses Pacer::Routes::Base do
-      let(:route) { graph.v(:something => 'missing') }
+      let(:back) { graph.v }
+      let(:route) { back.filter(:something => 'missing') }
       let(:number_of_results) { 0 }
       let(:result_type) { :vertex }
     end
