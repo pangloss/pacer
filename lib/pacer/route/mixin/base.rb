@@ -403,12 +403,21 @@ module Pacer
         @source = source
       end
 
-      # Get the source of data for this route.
+      # Get the actual source of data for this route.
       def source
         if @source
           iterator_from_source(@source)
-        else
-          @back.send(:iterator)
+        elsif @back
+          @back.send(:source)
+        end
+      end
+
+      # Get the first and last pipes in the pipeline before the current route's pipes are added.
+      def pipe_source
+        if @source
+          nil
+        elsif @back
+          @back.send(:build_pipeline)
         end
       end
 
@@ -431,16 +440,25 @@ module Pacer
       # in the chain.
       def iterator
         @vars = {}
-        pipe = nil
+        start, pipe = build_pipeline
+        start.set_starts source
+        pipe
+      end
+
+      def attach_pipe(end_pipe)
         if @pipe_class
           pipe = @pipe_class.new(*@pipe_args)
-          pipe.set_starts source
+          pipe.set_starts end_pipe if end_pipe
+          pipe
         else
-          pipe = source
+          end_pipe
         end
-        pipe = filter_pipe(pipe, filters, @block, true)
-        pipe = yield pipe if block_given?
-        pipe
+      end
+
+      def build_pipeline
+        start, end_pipe = pipe_source
+        pipe = attach_pipe(end_pipe)
+        [start || pipe, pipe]
       end
 
       # Returns an array of strings representing each route object in the
