@@ -2,11 +2,9 @@ require 'spec_helper'
 
 for_tg do
   describe Pacer::Routes::Base, 'pipe creation internals', :focus => true do
-    context "graph.e" do
-      use_simple_graph_data
-
+    context "graph.v" do
       describe '#build_pipeline' do
-        subject { graph.e.send(:build_pipeline) }
+        subject { graph.v.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
         its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
@@ -14,20 +12,45 @@ for_tg do
       end
 
       describe '#pipe_source' do
-        subject { graph.e.send(:pipe_source) }
+        subject { graph.v.send(:pipe_source) }
         it { should be_nil }
       end
 
       describe '#iterator' do
+        use_simple_graph_data
         before { setup_data }
-        subject { graph.e.send(:iterator) }
+        subject { graph.v.send(:iterator) }
         its(:next) { should_not be_nil }
       end
+    end
 
-      describe '#ids' do
+    context 'graph.v.element_ids' do
+      describe '#build_pipeline' do
+        subject { graph.v.element_ids.send(:build_pipeline) }
+        it { should be_a(Array) }
+        its(:count) { should == 2 }
+        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        its(:last) { should be_a(Pacer::Pipes::IdPipe) }
+      end
+
+      describe '#iterator' do
+        use_simple_graph_data
         before { setup_data }
-        subject { graph.e.element_ids.to_a }
-        it { should == ['0', '1'] }
+        subject { graph.v.element_ids.send(:iterator) }
+        its(:next) { should_not be_nil }
+        it 'should iterate twice then raise an exception' do
+          2.times {
+            [v0.element_id, v1.element_id].should include(subject.next)
+          }
+          expect { subject.next }.to raise_error(StopIteration)
+        end
+      end
+
+      describe '#to_a' do
+        use_simple_graph_data
+        before { setup_data }
+        subject { graph.v.element_ids.to_a }
+        its(:sort) { should == [v0.element_id, v1.element_id].sort }
       end
     end
   end
