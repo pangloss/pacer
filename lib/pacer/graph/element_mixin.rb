@@ -80,7 +80,7 @@ module Pacer
     end
 
     def ==(other)
-      other.element.class == element.class and other.element_id == element_id
+      other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
     end
 
     def <=>(other)

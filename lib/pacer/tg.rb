@@ -39,20 +39,24 @@ module Pacer
     end
 
     def element_type(et)
-      case et
-      when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
-        TinkerVertex
-      when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
-        TinkerEdge
-      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
-        TinkerElement
-      when :object
-        Object
+      if et == TinkerVertex or et == TinkerEdge or et == TinkerElement
+        et
       else
-        if et == Object
+        case et
+        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+          TinkerVertex
+        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+          TinkerEdge
+        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+          TinkerElement
+        when :object
           Object
         else
-          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+          if et == Object
+            Object
+          else
+            raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object'
+          end
         end
       end
     end

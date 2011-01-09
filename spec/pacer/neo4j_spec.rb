@@ -40,6 +40,28 @@ for_neo4j do
         subject { graph.element_type(:object) }
         it { should == Object }
       end
+
+      context 'from result' do
+        context ':vertex' do
+          subject { graph.element_type(graph.element_type :vertex) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex }
+        end
+
+        context ':edge' do
+          subject { graph.element_type(graph.element_type :edge) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge }
+        end
+
+        context ':mixed' do
+          subject { graph.element_type(graph.element_type :mixed) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jElement }
+        end
+
+        context ':object' do
+          subject { graph.element_type(graph.element_type :object) }
+          it { should == Object }
+        end
+      end
     end
 
     describe '#indices' do
