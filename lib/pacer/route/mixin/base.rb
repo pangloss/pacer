@@ -41,13 +41,6 @@ module Pacer
 
       # The previous route in the path
       def back
-        # TODO: something like @back.look_ahead(self)
-        #       it should be the previous route in the path but which
-        #       emits an element only if the future route that is defined
-        #       actually emits anything. That functionality exists in
-        #       FutureFilterPipe and is how gremlin's .. step works.
-        #       Also, the look_ahead should have a .back method that
-        #       pushes the route back farther...
         @back
       end
 
