@@ -4,7 +4,7 @@ module Pacer::Routes
   module EdgesRouteModule
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
-      FilterRoute.property_filter(VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX),
+      FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX),
                                   filters, block)
     end
 
@@ -16,7 +16,7 @@ module Pacer::Routes
 
     # Extends the route with both in and oud vertices from this route's matching edges.
     def both_v(*filters, &block)
-      FilterRoute.property_filter(VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES),
+      FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES),
                                   filters, block)
     end
 
