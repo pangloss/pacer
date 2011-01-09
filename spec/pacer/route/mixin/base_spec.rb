@@ -40,6 +40,15 @@ for_tg do
       its(:out_v) { should_not be_nil }
     end
 
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v.in_e.out_v(Tackle::SimpleMixin) }
+      subject { route }
+
+      its(:in_e) { should_not be_nil }
+      its(:to_a) { should == [] }
+      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+    end
+
     context "graph.v(:name => 'darrick')" do
       use_simple_graph_data
       before { setup_data }
