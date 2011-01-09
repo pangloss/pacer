@@ -345,19 +345,7 @@ module Pacer
       # TODO: rename initialize_path initialize_route
       def initialize_path(back = nil, filters = nil, block = nil, *pipe_args)
         self.back = back
-        self.filters = filters
-        self.block = block
         @pipe_args = pipe_args || []
-      end
-
-      # Return an array of filter options for the current route.
-      def filters
-        @filters ||= []
-      end
-
-      # Return the block filter for the current route.
-      def block
-        @block
       end
 
       # Set the previous route in the chain.

@@ -22,6 +22,16 @@ module Pacer
         @block = block
       end
 
+      # Return an array of filter options for the current route.
+      def filters
+        @filters ||= []
+      end
+
+      # Return the block filter for the current route.
+      def block
+        @block
+      end
+
       protected
 
       def attach_pipe(end_pipe)
