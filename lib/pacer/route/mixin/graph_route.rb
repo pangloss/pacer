@@ -9,8 +9,9 @@ module Pacer::Routes
     def v(*filters, &block)
       route = indexed_route(:vertex, filters, block)
       unless route
-        route = VerticesRoute.new(proc { self.get_vertices }, filters, block)
-        route.pipe_class = nil
+        route = VerticesRoute.new(self, filters, block)
+        route.pipe_class = Pacer::Pipes::GraphElementPipe
+        route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
         route.graph = self
       end
       route.add_extensions filters
@@ -21,8 +22,9 @@ module Pacer::Routes
     def e(*filters, &block)
       route = indexed_route(:edge, filters, block)
       unless route
-        route = EdgesRoute.new(proc { self.get_edges }, filters, block)
-        route.pipe_class = nil
+        route = EdgesRoute.new(self, filters, block)
+        route.pipe_class = Pacer::Pipes::GraphElementPipe
+        route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::EDGE
         route.graph = self
       end
       route.add_extensions filters
