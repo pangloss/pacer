@@ -1,4 +1,26 @@
 module Pacer
+  module Routes
+    class FilterRoute
+      class << self
+        def property_filter_before(base, filters, block)
+          if filters and filters.any? or block
+            yield new(:back => base, :filter => :property, :filters => filters, :block => block)
+          else
+            yield base
+          end
+        end
+
+        def property_filter(base, filters, block)
+          if filters and filters.any? or block
+            new(:back => base, :filter => :property, :filters => filters, :block => block)
+          else
+            base
+          end
+        end
+      end
+    end
+  end
+
   module Filter
     module PropertyFilter
       def self.triggers
