@@ -46,15 +46,23 @@ module Pacer::Routes
       args.each do |key, value|
         send("#{key}=", value)
       end
+      if back.respond_to? :element_type
+        back_object = back
+        back_element_type = back.element_type
+      elsif args[:back].respond_to? :element_type
+        back_object = args[:back]
+        back_element_type = args[:back].element_type
+      end
+      back_element_type
       if element_type
         self.element_type = element_type
-      elsif back
-        self.element_type = back.element_type
+      elsif back_element_type
+        self.element_type = back_element_type
       else
         raise NoFilterSpecified, "No element_type specified"
       end
-      if back.element_type == self.element_type and not args.key? :extensions
-        self.extensions = back.extensions
+      if back_element_type == self.element_type and not args.key? :extensions
+        self.extensions = back_object.extensions if back_object.respond_to? :extensions
       end
       after_initialize
     end
