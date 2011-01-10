@@ -27,12 +27,12 @@ module Pacer
 
       def except=(collection)
         self.collection = collection
-        @comparisen = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
       end
 
       def only=(collection)
         self.collection = collection
-        @comparisen = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
+        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
       end
 
       protected
@@ -53,9 +53,9 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @ids
-          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparisen)
+          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparison)
         else
-          pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparisen)
+          pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
         end
         pipe.set_starts(end_pipe)
         pipe
@@ -66,7 +66,7 @@ module Pacer
       end
 
       def inspect_class_name
-        if @comparisen == Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        if @comparison == Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
           'Except'
         else
           'Only'
@@ -74,7 +74,8 @@ module Pacer
       end
 
       def inspect_string
-        "#{ inspect_class_name }([#{ @collection[0, 2].map(&:inpsect).join(', ') }...#{collection.count}])"
+        c = (@ids || @objects)
+        "#{ inspect_class_name }(#{c.count} elements)"
       end
     end
   end
