@@ -13,6 +13,10 @@ module Pacer
         def property_filter(base, filters, block)
           if filters and filters.any? or block
             new(:back => base, :filter => :property, :filters => filters, :block => block)
+          elsif Pacer.vertex? base
+            VerticesIdentityRoute.new(base)
+          elsif Pacer.edge? base
+            EdgesIdentityRoute.new(base)
           else
             base
           end

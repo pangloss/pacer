@@ -389,7 +389,9 @@ module Pacer
           start.set_starts source
           pipe
         else
-          source
+          pipe = Pacer::Pipes::IdentityPipe.new
+          pipe.set_starts source
+          pipe
         end
       end
 
