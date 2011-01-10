@@ -78,7 +78,12 @@ for_tg do
           2.times {
             [v0.element_id, v1.element_id].should include(subject.next)
           }
-          expect { subject.next }.to raise_error(StopIteration)
+          begin
+            subject.next
+            fail 'expected exception to be raised'
+          rescue NativeException => e
+            e.cause.should == java.util.NoSuchElementException
+          end
         end
       end
 

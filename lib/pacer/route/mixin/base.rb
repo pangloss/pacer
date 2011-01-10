@@ -147,7 +147,7 @@ module Pacer
             iter
           end
         end
-      rescue StopIteration, NoSuchElementException
+      rescue NoSuchElementException
         self
       end
 
@@ -169,7 +169,7 @@ module Pacer
           iter.graph = graph
           iter
         end
-      rescue StopIteration, NoSuchElementException
+      rescue NoSuchElementException
         self
       end
 
@@ -189,7 +189,7 @@ module Pacer
           iter.context = self
           iter
         end
-      rescue StopIteration, NoSuchElementException
+      rescue NoSuchElementException
         self
       end
 
@@ -202,7 +202,7 @@ module Pacer
         else
           iter
         end
-      rescue StopIteration, NoSuchElementException
+      rescue NoSuchElementException
         self
       end
 
