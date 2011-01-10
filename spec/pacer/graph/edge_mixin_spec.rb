@@ -19,7 +19,7 @@ shared_examples_for Pacer::EdgeMixin do
       describe '#e' do
         subject { e0.add_extensions([Tackle::SimpleMixin]).e }
         its(:extensions) { should == Set[Tackle::SimpleMixin] }
-        it { should be_a(Pacer::Routes::EdgesRoute) }
+        it { should be_an_edges_route }
         it { should be_a(Tackle::SimpleMixin::Route) }
       end
     end

@@ -19,7 +19,7 @@ shared_examples_for Pacer::VertexMixin do
       describe '#v' do
         subject { v0.add_extensions([Tackle::SimpleMixin]).v }
         its(:extensions) { should == Set[Tackle::SimpleMixin] }
-        it { should be_a(Pacer::Routes::VerticesRoute) }
+        it { should be_a_vertices_route }
         it { should be_a(Tackle::SimpleMixin::Route) }
       end
     end
