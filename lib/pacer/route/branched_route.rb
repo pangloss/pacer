@@ -66,33 +66,28 @@ module Pacer::Routes
     protected
 
     def build_pipeline
-      start, pipe = pipe_source
-      pipe = add_branches_to_pipe(pipe)
-      [(start || pipe), pipe]
-    end
-
-    def add_branches_to_pipe(pipe)
-      if pipe.is_a? Pacer::Graph
-        pipes = @branches.map { |branch| branch.send :iterator }
+      first_pipe, source_pipe = pipe_source
+      if source_pipe.is_a? Pacer::Graph
+        branch_pipes = @branches.map { |branch| branch.send :iterator }
       else
         split_pipe = @split_pipe.new @branches.count
-        split_pipe.set_starts pipe
+        split_pipe.set_starts source_pipe if source_pipe
         if split_pipe.respond_to? :route=
           split_pipe.route = self
         end
-        @configure_split_pipe.call(pipe) if @configure_split_pipe
+        @configure_split_pipe.call(split_pipe) if @configure_split_pipe
         idx = 0
-        pipes = @branches.map do |branch|
+        branch_pipes = @branches.map do |branch|
           start_pipe, end_pipe = branch.send(:build_pipeline)
           start_pipe.set_starts(split_pipe.get_split(idx))
           idx += 1
           end_pipe
         end
       end
-      pipe = @merge_pipe.new
-      pipe.set_starts(pipes)
-      @configure_merge_pipe.call(pipe) if @configure_merge_pipe
-      pipe
+      merge_pipe = @merge_pipe.new
+      merge_pipe.set_starts(branch_pipes)
+      @configure_merge_pipe.call(merge_pipe) if @configure_merge_pipe
+      [first_pipe || split_pipe || merge_pipe, merge_pipe]
     end
 
     def inspect_class_name

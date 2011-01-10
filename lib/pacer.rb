@@ -119,6 +119,20 @@ module Pacer
     def automatic_index
       com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
     end
+
+    def debug_pipe(pipe)
+      @debug_pipes = []
+      result = pipe.send :iterator
+      [debug_source, debug_pipes, result]
+    end
+
+    def debug_pipe!
+      @debug_pipes = []
+    end
+
+    attr_accessor :debug_source
+    attr_reader :debug_pipes
+
   end
 end
 
