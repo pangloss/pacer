@@ -384,10 +384,12 @@ module Pacer
       # in the chain.
       def iterator
         @vars = {}
-        start, pipe = build_pipeline
+        start, end_pipe = build_pipeline
         if start
           start.set_starts source
-          pipe
+          end_pipe
+        elsif end_pipe
+          raise "End pipe without start pipe"
         else
           pipe = Pacer::Pipes::IdentityPipe.new
           pipe.set_starts source

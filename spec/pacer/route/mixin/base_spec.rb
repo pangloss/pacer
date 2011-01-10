@@ -106,7 +106,7 @@ for_each_graph(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<IndexedVertices -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES) -> E-Property([:wrote], &block) -> Vertices(IN_VERTEX) -> Except(:grem)>"
+          "#<IndexedVertices -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES) -> E-Property([:wrote], &block) -> Vertices(IN_VERTEX) -> V-Property(&block)>"
       end
     end
 
