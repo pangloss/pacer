@@ -2,11 +2,19 @@ module Pacer
   module Routes
     module Base
       def except(excluded)
-        chain_route(:back => self, :filter => :collection, :except => excluded)
+        if excluded.is_a? Symbol
+          chain_route :back => self, :filter => :property, :block => proc { |v| v.vars[excluded] != v }
+        else
+          chain_route(:back => self, :filter => :collection, :except => excluded)
+        end
       end
 
       def only(included)
-        chain_route(:back => self, :filter => :collection, :only => included)
+        if included.is_a? Symbol
+          chain_route :back => self, :filter => :property, :block => proc { |v| v.vars[included] == v }
+        else
+          chain_route(:back => self, :filter => :collection, :only => included)
+        end
       end
     end
   end
@@ -19,12 +27,12 @@ module Pacer
 
       def except=(collection)
         self.collection = collection
-        @filter = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        @comparisen = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
       end
 
       def only=(collection)
         self.collection = collection
-        @filter = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
+        @comparisen = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
       end
 
       protected
@@ -45,9 +53,9 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @ids
-          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @filter)
+          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparisen)
         else
-          pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @filter)
+          pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparisen)
         end
         pipe.set_starts(end_pipe)
         pipe
@@ -57,8 +65,16 @@ module Pacer
         @collection.count
       end
 
+      def inspect_class_name
+        if @comparisen == Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+          'Except'
+        else
+          'Only'
+        end
+      end
+
       def inspect_string
-        "#{ inspect_class_name }(#{ @collection[0] }, #{ @collection[1] }...#{collection.count})"
+        "#{ inspect_class_name }([#{ @collection[0, 2].map(&:inpsect).join(', ') }...#{collection.count}])"
       end
     end
   end

@@ -98,10 +98,15 @@ for_each_graph(:read_only) do
     before { setup_data }
     describe '#inspect' do
       it 'should show the path in the resulting string' do
-        other_projects_by_gremlin_writer = 
-          graph.v(:name => 'gremlin').as(:grem).in_e(:wrote).out_v.out_e(:wrote) { |e| true }.in_v.except(:grem)
-        other_projects_by_gremlin_writer.inspect.should ==
-          '#<IndexedVertices -> :grem -> Edges(IN_EDGES, [:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES, [:wrote], &block) -> Vertices(IN_VERTEX) -> Vertices(&block)>'
+        r = graph.v(:name => 'gremlin')
+        r = r.as(:grem)
+        r = r.in_e(:wrote)
+        r = r.out_v
+        r = r.out_e(:wrote) { |e| true }
+        r = r.in_v
+        r = r.except(:grem)
+        r.inspect.should ==
+          "#<IndexedVertices -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES) -> E-Property([:wrote], &block) -> Vertices(IN_VERTEX) -> Except(:grem)>"
       end
     end
 
