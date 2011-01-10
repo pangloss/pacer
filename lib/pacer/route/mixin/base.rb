@@ -412,7 +412,7 @@ module Pacer
       def build_pipeline
         start, end_pipe = pipe_source
         pipe = attach_pipe(end_pipe)
-        Pacer.debug_pipes << [inspect_class_name, start || pipe, pipe] if Pacer.debug_pipes
+        Pacer.debug_pipes << [inspect_class_name, start, pipe] if Pacer.debug_pipes
         [start || pipe, pipe]
       end
 

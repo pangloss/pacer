@@ -77,8 +77,10 @@ module Pacer::Routes
         end
         @configure_split_pipe.call(split_pipe) if @configure_split_pipe
         idx = 0
+        branch_start_pipes = []
         branch_pipes = @branches.map do |branch|
           start_pipe, end_pipe = branch.send(:build_pipeline)
+          branch_start_pipes << start_pipe
           start_pipe.set_starts(split_pipe.get_split(idx))
           idx += 1
           end_pipe
@@ -87,6 +89,7 @@ module Pacer::Routes
       merge_pipe = @merge_pipe.new
       merge_pipe.set_starts(branch_pipes)
       @configure_merge_pipe.call(merge_pipe) if @configure_merge_pipe
+      Pacer.debug_pipes << (['Split', first_pipe, split_pipe] + branch_start_pipes + [merge_pipe]) if Pacer.debug_pipes
       [first_pipe || split_pipe || merge_pipe, merge_pipe]
     end
 
