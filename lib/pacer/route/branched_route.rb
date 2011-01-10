@@ -15,15 +15,11 @@ module Pacer::Routes
     def branch(&block)
       if @back.is_a? Pacer::Graph
         branch_start = @back
-      elsif @back.vertices_route?
-        branch_start = VerticesIdentityRoute.new(self).route
-      elsif @back.edges_route?
-        branch_start = EdgesIdentityRoute.new(self).route
-      elsif
-        branch_start = MixedIdentityRoute.new(self).route
+      else
+        branch_start = FilterRoute.new(:back => @back, :filter => :empty)
       end
       branch = yield(branch_start)
-      @branches << [branch_start, branch.route] if branch and branch != branch_start
+      @branches << branch.route if branch and branch != branch_start
       self
     end
 
@@ -70,19 +66,14 @@ module Pacer::Routes
     protected
 
     def build_pipeline
-      if @back.is_a? Pacer::Graph
-        raise 'wtf?'
-        add_branches_to_pipe(@back)
-      else
-        start, pipe = pipe_source
-        add_branches_to_pipe(pipe)
-      end
+      start, pipe = pipe_source
+      pipe = add_branches_to_pipe(pipe)
       [(start || pipe), pipe]
     end
 
     def add_branches_to_pipe(pipe)
       if pipe.is_a? Pacer::Graph
-        pipes = @branches.map { |branch_start, branch_end| branch_end.send :iterator }
+        pipes = @branches.map { |branch| branch.send :iterator }
       else
         split_pipe = @split_pipe.new @branches.count
         split_pipe.set_starts pipe
@@ -91,10 +82,11 @@ module Pacer::Routes
         end
         @configure_split_pipe.call(pipe) if @configure_split_pipe
         idx = 0
-        pipes = @branches.map do |branch_start, branch_end|
-          branch_start.new_identity_pipe.set_starts(split_pipe.get_split(idx))
+        pipes = @branches.map do |branch|
+          start_pipe, end_pipe = branch.send(:build_pipeline)
+          start_pipe.set_starts(split_pipe.get_split(idx))
           idx += 1
-          branch_end.iterator
+          end_pipe
         end
       end
       pipe = @merge_pipe.new
@@ -104,7 +96,7 @@ module Pacer::Routes
     end
 
     def inspect_class_name
-      "#{super} { #{ @branches.map { |s, e| e.inspect }.join(' | ') } }"
+      "#{super} { #{ @branches.map { |e| e.inspect }.join(' | ') } }"
     end
 
     def route_class
