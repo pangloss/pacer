@@ -386,7 +386,9 @@ module Pacer
         @vars = {}
         start, end_pipe = build_pipeline
         if start
-          start.set_starts source
+          src = source
+          Pacer.debug_source = src if Pacer.debug_pipes
+          start.set_starts src
           end_pipe
         elsif end_pipe
           raise "End pipe without start pipe"
@@ -410,6 +412,7 @@ module Pacer
       def build_pipeline
         start, end_pipe = pipe_source
         pipe = attach_pipe(end_pipe)
+        Pacer.debug_pipes << [inspect_class_name, start || pipe, pipe] if Pacer.debug_pipes
         [start || pipe, pipe]
       end
 
