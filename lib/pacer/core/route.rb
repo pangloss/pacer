@@ -9,14 +9,6 @@ module Pacer
 
       # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
-        # An alternate constructor for creating a route that uses the given
-        # pipe class initialized with the given arguments.
-        def pipe_filter(back, pipe_class, *args)
-          f = new(back, *args)
-          f.pipe_class = pipe_class
-          f
-        end
-
         def from_edge_ids(graph, ids)
           begin
             r = new(proc { graph.load_edges ids })
@@ -84,9 +76,12 @@ module Pacer
         @pipe_class = klass
       end
 
-      # TODO move into constructor?
-      def set_pipe_args(*args)
-        @pipe_args = args
+      def pipe_args=(args)
+        if args.is_a? Array
+          @pipe_args = args
+        else
+          @pipe_args = [args]
+        end
       end
 
       # Return true if this route is at the beginning of the route definition.
@@ -276,7 +271,7 @@ module Pacer
 
       def extensions=(exts)
         @extensions ||= Set[]
-        add_extensions exts
+        add_extensions Set[*exts]
       end
 
       def extensions
@@ -406,7 +401,15 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @pipe_class
-          pipe = @pipe_class.new(*@pipe_args)
+          begin
+            if @pipe_args
+              pipe = @pipe_class.new(*@pipe_args)
+            else
+              pipe = @pipe_class.new
+            end
+          rescue ArgumentError
+            raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }(*#{@pipe_args.inspect})"
+          end
           pipe.set_starts end_pipe if end_pipe
           pipe
         else
