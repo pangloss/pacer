@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 for_tg(:read_only) do
-  describe VerticesRoute do
+  describe Pacer::Core::Graph::VerticesRoute do
     use_pacer_graphml_data(:read_only)
 
     describe '#out_e' do
@@ -25,7 +25,7 @@ for_tg(:read_only) do
 end
 
 for_tg do
-  describe VerticesRoute do
+  describe Pacer::Core::Graph::VerticesRoute do
     describe :add_edges_to do
       it 'should not add properties with null values'
 

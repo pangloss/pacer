@@ -86,11 +86,7 @@ module Pacer::Core::Graph
         loader = proc do
           ids.map { |method, id| graph.send(method, id) }
         end
-        r = Pacer::Routes::MixedElementsRoute.new(loader)
-        r.graph = graph
-        r.pipe_class = nil
-        r.info = "#{ name }:#{ids.count}"
-        r
+        chain_route :back => loader, :graph => graph, :element_type => :mixed, :info => "#{ name }:#{ids.count}", :extensions => extensions
       end
     end
   end

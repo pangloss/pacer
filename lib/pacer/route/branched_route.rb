@@ -44,7 +44,7 @@ module Pacer::Routes
     end
 
     def merge
-      MixedElementsRoute.new(self)
+      chain_route
     end
 
     def robin_split
