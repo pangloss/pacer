@@ -1,5 +1,6 @@
 require 'java'
 require 'pp'
+require 'rubygems'
 
 module Pacer
   unless const_defined? :VERSION
