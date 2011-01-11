@@ -100,7 +100,7 @@ module Pacer
     def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
-      Route::Helper.clear_cache
+      Route::Helpers.clear_cache
     end
 
     def vertex?(element)
