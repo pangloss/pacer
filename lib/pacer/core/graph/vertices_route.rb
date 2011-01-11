@@ -7,7 +7,8 @@ module Pacer::Core::Graph
     def out_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES),
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES,
+                                               :route_name => 'outE'),
                                   filters, block)
     end
 
@@ -15,7 +16,8 @@ module Pacer::Core::Graph
     def in_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES),
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES,
+                                               :route_name => 'inE'),
                                   filters, block)
     end
 
@@ -23,7 +25,8 @@ module Pacer::Core::Graph
     def both_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES),
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES,
+                                               :route_name => 'bothE'),
                                   filters, block)
     end
 

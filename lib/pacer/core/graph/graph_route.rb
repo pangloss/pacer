@@ -9,7 +9,8 @@ module Pacer::Core::Graph
       unless route
         route = chain_route :element_type => :vertex,
           :pipe_class => Pacer::Pipes::GraphElementPipe,
-          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
+          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::VERTEX,
+          :route_name => 'GraphV'
         route = Pacer::Route.property_filter(route, filters, block)
       end
       route
@@ -21,7 +22,8 @@ module Pacer::Core::Graph
       unless route
         route = chain_route :element_type => :edge,
           :pipe_class => Pacer::Pipes::GraphElementPipe,
-          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::EDGE
+          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::EDGE,
+          :route_name => 'GraphE'
         route = Pacer::Route.property_filter(route, filters, block)
       end
       route

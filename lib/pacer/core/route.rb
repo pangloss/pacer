@@ -29,19 +29,19 @@ module Pacer
         target.extend RouteClassMethods
       end
 
+      # Set these to effect how the route is displayed when inspected.
+      attr_accessor :route_name, :info
+
+      # Specify which pipe class will be instantiated when an iterator is created.
+      attr_accessor :pipe_class
+
+      # Boolean whether the route alone should be returned by inspect. If
+      # false, the the elements that the route matches will also be displayed.
+      attr_accessor :hide_elements
+
       # The previous route in the path
       def back
         @back
-      end
-
-      # Returns the info.
-      def info
-        @info
-      end
-
-      # Store arbitrary info here. Usually a description of the route.
-      def info=(str)
-        @info = str
       end
 
       # Set which graph this route will operate on.
@@ -57,13 +57,6 @@ module Pacer
       # Returns true if the given graph is the one this route operates on.
       def from_graph?(g)
         graph.equals g
-      end
-
-      # TODO protect or remove method
-      # TODO move into constructor?
-      # Specify which pipe class will be instantiated when an iterator is created.
-      def pipe_class=(klass)
-        @pipe_class = klass
       end
 
       def pipe_args=(args)
@@ -84,16 +77,6 @@ module Pacer
       def route
         @hide_elements = true
         self
-      end
-
-      # Boolean whether the route alone should be returned by inspect. If
-      # false, the the elements that the route matches will also be displayed.
-      def hide_elements=(bool)
-        @hide_elements = bool
-      end
-
-      def hide_elements
-        @hide_elements
       end
 
       # Returns the hash of variables used during the previous evaluation of
@@ -425,6 +408,7 @@ module Pacer
       end
 
       def inspect_string
+        return @route_name if @route_name
         if @pipe_class
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/

@@ -28,7 +28,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<V(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -36,7 +36,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<V(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -111,7 +111,7 @@ for_each_graph(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<IndexedVertices -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES) -> E-Property([:wrote], &block) -> Vertices(IN_VERTEX) -> V-Property(&block)>"
+          "#<IndexedVertices -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
       end
     end
 
