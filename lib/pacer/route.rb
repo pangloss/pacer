@@ -145,7 +145,6 @@ module Pacer
       if mods = args[:modules]
         @modules = [*mods]
         @modules.each do |mod|
-          puts "Add module: #{ mod.inspect }"
           extend mod
         end
       end

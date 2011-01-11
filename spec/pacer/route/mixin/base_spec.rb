@@ -28,7 +28,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<V(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -36,7 +36,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<V(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 

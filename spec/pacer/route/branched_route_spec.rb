@@ -43,7 +43,7 @@ describe BranchedRoute do
       @ab = @linear.create_edge nil, @a, @b, 'to'
       @bc = @linear.create_edge nil, @b, @c, 'to'
       @cd = @linear.create_edge nil, @c, @d, 'to'
-      @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
+      @source = Pacer::Route.from_vertex_ids @linear, ['a', 'b']
 
       single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
       @single_v = single.v
