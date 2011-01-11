@@ -5,23 +5,25 @@ module Pacer::Core::Graph
   module MixedRoute
 
     # Pass through only vertices.
-    def v
-      route = Pacer::Routes::VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
-      route.add_extensions extensions unless route.extensions.any?
-      route
+    def v(*args, &block)
+      chain_route :element_type => :vertex,
+        :pipe_class => Pacer::Pipes::TypeFilterPipe,
+        :pipe_args => Pacer::VertexMixin,
+        :extensions => extensions
+      Pacer::Route.property_filter(route, args, block)
     end
 
     # Pass through only edges.
-    def e
-      route = Pacer::Routes::EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
-      route.add_extensions extensions unless route.extensions.any?
-      route
+    def e(*args, &block)
+      route = chain_route :element_type => :edge,
+        :pipe_class => Pacer::Pipes::TypeFilterPipe,
+        :pipe_args => Pacer::EdgeMixin,
+        :extensions => extensions
+      Pacer::Route.property_filter(route, args, block)
     end
 
     def filter(*args, &block)
-      route = branch { |b| b.v(*args, &block) }.branch { |b| b.v(*args, &block) }.mixed
-      route.add_extensions extensions unless route.extensions.any?
-      route
+      branch { |b| b.v(*args, &block) }.branch { |b| b.v(*args, &block) }.mixed
     end
 
     def mixed

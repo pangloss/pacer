@@ -7,10 +7,9 @@ module Pacer::Core::Graph
     def v(*filters, &block)
       route = indexed_route(:vertex, filters, block)
       unless route
-        route = Pacer::Routes::VerticesRoute.new(self)
-        route.pipe_class = Pacer::Pipes::GraphElementPipe
-        route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
-        route.graph = self
+        route = chain_route :element_type => :vertex,
+          :pipe_class => Pacer::Pipes::GraphElementPipe,
+          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
         route = Pacer::Route.property_filter(route, filters, block)
       end
       route
@@ -20,10 +19,9 @@ module Pacer::Core::Graph
     def e(*filters, &block)
       route = indexed_route(:edge, filters, block)
       unless route
-        route = Pacer::Routes::EdgesRoute.new(self, filters, block)
-        route.pipe_class = Pacer::Pipes::GraphElementPipe
-        route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::EDGE
-        route.graph = self
+        route = chain_route :element_type => :edge,
+          :pipe_class => Pacer::Pipes::GraphElementPipe,
+          :pipe_args => Pacer::Pipes::GraphElementPipe::ElementType::EDGE
         route = Pacer::Route.property_filter(route, filters, block)
       end
       route
