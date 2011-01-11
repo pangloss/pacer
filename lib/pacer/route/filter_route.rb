@@ -12,11 +12,11 @@ module Pacer::Routes
     module Helpers
       class << self
         def filter_map
-          @filter_map ||= Pacer::Filter.constants.group_by { |name| symbolize_filter_name(name) }
+          @filter_map = Pacer::Filter.constants.group_by { |name| symbolize_filter_name(name) }
         end
 
         def trigger_map
-          return @trigger_map if @trigger_map
+          #return @trigger_map if @trigger_map
           @trigger_map = {}
           Pacer::Filter.constants.each do |name|
             mod = Pacer::Filter.const_get(name)
