@@ -10,27 +10,17 @@ module Pacer
       # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
         def from_edge_ids(graph, ids)
-          begin
-            r = new(proc { graph.load_edges ids })
-          rescue NoMethodError, ArgumentError
-            r = Pacer::Routes::EdgesRoute.new(proc { graph.load_edges ids })
-          end
-          r.graph = graph
-          r.pipe_class = nil
-          r.info = ids.count
-          r
+          Pacer::Route.new :element_type => :edge,
+            :graph => graph,
+            :back => proc { graph.load_edges ids },
+            :info => ids.count
         end
 
         def from_vertex_ids(graph, ids)
-          begin
-            r = new(proc { graph.load_vertices ids })
-          rescue NoMethodError, ArgumentError
-            r = Pacer::Routes::VerticesRoute.new(proc { graph.load_vertices ids })
-          end
-          r.graph = graph
-          r.pipe_class = nil
-          r.info = ids.count
-          r
+          Pacer::Route.new :element_type => :vertex,
+            :graph => graph,
+            :back => proc { graph.load_vertices ids },
+            :info => ids.count
         end
       end
 
