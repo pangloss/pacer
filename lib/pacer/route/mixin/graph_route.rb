@@ -97,7 +97,9 @@ module Pacer::Routes
       element_type = self.element_type(element_type)
       each_property_filter(filters) do |index_name, index_value, extension|
         if index_value.is_a? Module or index_value.is_a? Class
-          return FilterRoute.property_filter(index_value.route(self), filters_without_key(filters, key, extension), block)
+          route = index_value.route(self)
+          route.add_extension extension if extension
+          return FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
