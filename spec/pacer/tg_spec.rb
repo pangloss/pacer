@@ -61,7 +61,7 @@ for_tg do
           subject { graph.element_type(Pacer.tg.element_type :object) }
           it { should == Object }
         end
-        end
+      end
     end
   end
 end
