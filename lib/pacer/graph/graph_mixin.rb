@@ -197,6 +197,7 @@ module Pacer
         when String
           value = value.strip
           value = nil if value == ''
+        when Numeric
         else
           value = value.to_s
         end
