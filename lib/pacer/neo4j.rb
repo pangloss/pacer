@@ -97,7 +97,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jVertex
-    include Routes::VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include ElementMixin
     include VertexMixin
   end

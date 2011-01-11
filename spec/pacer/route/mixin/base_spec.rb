@@ -158,14 +158,14 @@ for_each_graph(:read_only) do
     describe '#result' do
       context 'no matching vertices' do
         subject { graph.v(:name => 'missing').result }
-        it { should be_a(VerticesRouteModule) }
+        it { should be_a(Pacer::Core::Graph::VerticesRoute) }
         its(:count) { should == 0 }
         its(:empty?) { should be_true }
       end
 
       it 'should not be nil when no matching vertices' do
         empty = graph.v(:name => 'missing').result
-        empty.should be_a(VerticesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::VerticesRoute)
         empty.count.should == 0
       end
 

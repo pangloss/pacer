@@ -133,7 +133,7 @@ module Pacer::Routes
 
     # Returns true if this route countains only vertices.
     def vertices_route?
-      self.is_a? VerticesRouteModule
+      self.is_a? Pacer::Core::Graph::VerticesRoute
     end
 
     # Returns true if this route countains only edges.

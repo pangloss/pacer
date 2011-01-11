@@ -72,7 +72,7 @@ module Pacer::Routes
     def element_type=(et)
       @element_type = graph.element_type(et)
       if @element_type == graph.element_type(:vertex)
-        extend VerticesRouteModule
+        extend Pacer::Core::Graph::VerticesRoute
       elsif @element_type == graph.element_type(:edge)
         extend Pacer::Core::Graph::EdgesRoute
       elsif @element_type == graph.element_type(:mixed)

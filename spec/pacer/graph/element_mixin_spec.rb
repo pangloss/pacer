@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples_for Pacer::ElementMixin do
   context 'vertex' do
     subject { v0 }
-    it { should be_a(Pacer::Routes::VerticesRouteModule) }
+    it { should be_a(Pacer::Core::Graph::VerticesRoute) }
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::VertexMixin) }
     it { should_not be_a(Pacer::EdgeMixin) }

@@ -85,7 +85,7 @@ module Pacer
   end
 
   class VertexWrapper < ElementWrapper
-    include Pacer::Routes::VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include ElementMixin
     include VertexMixin
     include Comparable

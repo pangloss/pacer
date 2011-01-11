@@ -2,7 +2,7 @@ module Pacer::Routes
   class VerticesIdentityRoute
     include Pacer::Core::Route
     include RouteOperations
-    include VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include IdentityRouteModule
 
     protected

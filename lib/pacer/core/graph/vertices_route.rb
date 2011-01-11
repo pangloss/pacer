@@ -1,23 +1,23 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
-  module VerticesRouteModule
+  module VerticesRoute
 
     # Extends the route with out edges from this route's matching vertices.
     def out_e(*filters, &block)
-      FilterRoute.property_filter(EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES),
+      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES),
                                   filters, block)
     end
 
     # Extends the route with in edges from this route's matching vertices.
     def in_e(*filters, &block)
-      FilterRoute.property_filter(EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES),
+      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES),
                                   filters, block)
     end
 
     # Extends the route with all edges from this route's matching vertices.
     def both_e(*filters, &block)
-      FilterRoute.property_filter(EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES),
+      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES),
                                   filters, block)
     end
 
@@ -54,7 +54,7 @@ module Pacer::Routes
         v.add_extensions extensions
         v
       else
-        r = VerticesRoute.from_vertex_ids graph, v_ids
+        r = self.class.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
         r.add_extensions extensions
         r.graph = graph
