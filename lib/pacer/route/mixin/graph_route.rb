@@ -64,12 +64,12 @@ module Pacer::Routes
     def each_property_filter(filters)
       filters.each do |filter|
         if filter.is_a? Hash
-          filter.each { |key, value| yield key, value if key }
+          filter.each { |key, value| yield key, value, nil if key }
         elsif filter.is_a? Module or filter.is_a? Class
           if filter.respond_to? :route_conditions
-            each_property_filter([filter.route_conditions]) { |k, v| yield k, v }
+            each_property_filter([filter.route_conditions]) { |k, v, _| yield k, v, filter }
           elsif filter.respond_to? :route
-            yield filter, filter
+            yield filter, filter, nil
           end
         end
       end
@@ -95,9 +95,9 @@ module Pacer::Routes
 
     def indexed_route(element_type, filters, block)
       element_type = self.element_type(element_type)
-      each_property_filter(filters) do |index_name, index_value|
+      each_property_filter(filters) do |index_name, index_value, extension|
         if index_value.is_a? Module or index_value.is_a? Class
-          return index_value.route(self)
+          return FilterRoute.property_filter(index_value.route(self), filters_without_key(filters, key, extension), block)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
@@ -107,19 +107,20 @@ module Pacer::Routes
             else
               route = IndexedVerticesRoute.new(idx, key, value)
             end
+            route.add_extension extension
             route.graph = self
-            return FilterRoute.property_filter(route, filters_without_key(filters, key), block)
+            return FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
           end
         end
       end
     end
 
-    def filters_without_key(filters, key)
+    def filters_without_key(filters, key, extension)
       fs = filters.map do |f|
         if f.is_a? Hash
           f = Hash[f.reject { |k, v| k.to_s == key.to_s }]
           f unless f.empty?
-        else
+        elsif f != extension
           f
         end
       end.compact
