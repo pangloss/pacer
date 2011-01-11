@@ -1,19 +1,19 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # Basic methods for routes that may contain both vertices and edges. That can
   # happen as the result of a branched route, for example.
-  module MixedRouteModule
+  module MixedRoute
 
     # Pass through only vertices.
     def v
-      route = VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
+      route = Pacer::Routes::VerticesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::VertexMixin)
       route.add_extensions extensions unless route.extensions.any?
       route
     end
 
     # Pass through only edges.
     def e
-      route = EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
+      route = Pacer::Routes::EdgesRoute.pipe_filter(self, Pacer::Pipes::TypeFilterPipe, Pacer::EdgeMixin)
       route.add_extensions extensions unless route.extensions.any?
       route
     end
@@ -25,7 +25,7 @@ module Pacer::Routes
     end
 
     def mixed
-      MixedRoute.pipe_filter(self, nil)
+      Pacer::Routes::MixedRoute.pipe_filter(self, nil)
     end
 
     # Out edges from matching vertices.
@@ -83,7 +83,7 @@ module Pacer::Routes
         loader = proc do
           ids.map { |method, id| graph.send(method, id) }
         end
-        r = MixedElementsRoute.new(loader)
+        r = Pacer::Routes::MixedElementsRoute.new(loader)
         r.graph = graph
         r.pipe_class = nil
         r.info = "#{ name }:#{ids.count}"

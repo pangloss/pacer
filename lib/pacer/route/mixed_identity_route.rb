@@ -2,7 +2,7 @@ module Pacer::Routes
   class MixedIdentityRoute
     include Pacer::Core::Route
     include RouteOperations
-    include MixedRouteModule
+    include Pacer::Core::Graph::MixedRoute
     include IdentityRouteModule
 
     protected

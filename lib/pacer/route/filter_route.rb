@@ -76,7 +76,7 @@ module Pacer::Routes
       elsif @element_type == graph.element_type(:edge)
         extend Pacer::Core::Graph::EdgesRoute
       elsif @element_type == graph.element_type(:mixed)
-        extend MixedRouteModule
+        extend Pacer::Core::Graph::MixedRoute
       else
         @each_method = :each_object
       end

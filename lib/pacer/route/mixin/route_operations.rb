@@ -128,7 +128,7 @@ module Pacer::Routes
 
     # Returns true if this route could contain both vertices and edges.
     def mixed_route?
-      self.is_a? MixedRouteModule
+      self.is_a? Pacer::Core::Graph::MixedRoute
     end
 
     # Returns true if this route countains only vertices.

@@ -177,7 +177,7 @@ for_each_graph(:read_only) do
 
       it 'should not be nil when no matching mixed results' do
         empty = graph.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
-        empty.should be_a(MixedRouteModule)
+        empty.should be_a(Pacer::Core::Graph::MixedRoute)
         empty.count.should == 0
       end
     end
