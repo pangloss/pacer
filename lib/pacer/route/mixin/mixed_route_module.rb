@@ -63,6 +63,10 @@ module Pacer::Routes
       e.labels(&block)
     end
 
+    def element_type
+      graph.element_type(:mixed)
+    end
+
     # Calculate and save result.
     def result(name = nil)
       ids = map do |element|

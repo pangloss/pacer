@@ -14,10 +14,8 @@ module Pacer::Routes
 
     protected
 
-    def iterator
-      super do |pipe|
-        Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
-      end
+    def attach_pipe(pipe)
+      Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
     end
 
     def has_routable_class?

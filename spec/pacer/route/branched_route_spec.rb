@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        '#<IndexedVertices -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX, [{:type=>"project"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>'
+        "#<IndexedVertices -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> V-Property([{:type=>\"project\"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>"
     end
   end
 
@@ -99,6 +99,11 @@ describe BranchedRoute do
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d]]
     end
     it do
+      @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
+      single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
+      pp single.to_a
+      @me = single.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
+
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
       @me.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -112,7 +117,7 @@ describe BranchedRoute do
   describe 'chained branch routes' do
     describe 'once' do
       before do
-        @once = @g.v.branch { |v| v.v }.branch { |v| v.v }.v
+        @once = @g.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.v
       end
 
       it 'should double each vertex' do
@@ -127,11 +132,11 @@ describe BranchedRoute do
     describe 'twice' do
       before do
         # the difference must be with the object that's passed to the branch method
-        single = @g.v.branch { |v| v.v }.branch { |v| v.v }
-        @twice_v = single.v.branch { |v| v.v }.branch { |v| v.v }
-        @twice_m = single.mixed.branch { |v| v.v }.branch { |v| v.v }
-        @twice_v_e = single.exhaustive.v.branch { |v| v.v }.branch { |v| v.v }.exhaustive
-        @twice_m_e = single.exhaustive.mixed.branch { |v| v.v }.branch { |v| v.v }.exhaustive
+        single = @g.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }
+        @twice_v = single.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }
+        @twice_m = single.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} }
+        @twice_v_e = single.exhaustive.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive
+        @twice_m_e = single.exhaustive.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive
       end
 
       it { @twice_v.count.should == @g.v.count * 2 * 2 }
@@ -154,7 +159,7 @@ describe BranchedRoute do
     end
 
     describe 'vertices' do
-      it { @r.v.to_a.should == @r.v.uniq.to_a }
+      specify { @r.v.to_a.should == @r.v.uniq.to_a }
       it 'should have only all person and project vertices' do
         people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
         Set[*@r.v].should == people_and_projects
@@ -162,7 +167,7 @@ describe BranchedRoute do
     end
 
     describe 'edges' do
-      it { @r.e.to_a.should == @r.e.uniq.to_a }
+      specify { @r.e.to_a.should == @r.e.uniq.to_a }
       it 'should have out edges from all vertices except person and project' do
         # TODO: this type of thing should be much easier
         people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
@@ -174,24 +179,47 @@ describe BranchedRoute do
 
     describe 'chained' do
       def add_branch(vertices_path)
+        @person = 0
+        @project = 0
+        @other = 0
         vertices_path.
-          branch { |person| person.out_e.in_v }.
-          branch { |project| project.v }.
-          branch { |other| other.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).v
+          branch { |person| person.v { |x| @person += 1; true }.out_e.in_v }.
+          branch { |project| project.v { |x| @project += 1;true} }.
+          branch { |other| other.v { |x| @other += 1;true}.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).v
       end
 
-      it 'should have 5 unique elements when run once' do
+      it 'should have elements' do
+        @g.v.count.should == 7
+      end
+
+      it 'should work without repeating' do
+        people = @g.v(:type => 'person')
+        projects = @g.v(:type => 'project')
+        other = @g.v.except(people).except(projects)
+        add_branch(@g.v).count.should == people.out_e.in_v.count + projects.count + other.out_e.in_v.count
+        @person.should == 2
+        @project.should == 4
+        @other.should == 1
+      end
+
+      it 'should have 12 elements when run once' do
         @g.v.repeat(1) { |repeater| add_branch(repeater) }.count.should == 12
+      end
+      it 'should have 5 unique elements when run once' do
         @g.v.repeat(1) { |repeater| add_branch(repeater) }.uniq.count.should == 5
       end
 
-      it 'should have 4 unique elements when run twice' do
+      it 'should have 14 elements when run twice' do
         @g.v.repeat(2) { |repeater| add_branch(repeater) }.count.should == 14
+      end
+      it 'should have 4 unique elements when run twice' do
         @g.v.repeat(2) { |repeater| add_branch(repeater) }.uniq.count.should == 4
       end
 
-      it 'should have 4 unique elements when run thrice' do
+      it 'should have 14 elements when run thrice' do
         @g.v.repeat(3) { |repeater| add_branch(repeater) }.count.should == 14
+      end
+      it 'should have 4 unique elements when run thrice' do
         @g.v.repeat(3) { |repeater| add_branch(repeater) }.uniq.count.should == 4
       end
     end

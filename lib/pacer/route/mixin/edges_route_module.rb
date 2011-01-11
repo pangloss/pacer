@@ -4,17 +4,20 @@ module Pacer::Routes
   module EdgesRouteModule
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX)
+      FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX),
+                                  filters, block)
     end
 
     # Extends the route with in vertices from this route's matching edges.
     def in_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX)
+      FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX),
+                                  filters, block)
     end
 
     # Extends the route with both in and oud vertices from this route's matching edges.
     def both_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES)
+      FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES),
+                                  filters, block)
     end
 
     # v is undefined for edge routes.
@@ -24,10 +27,7 @@ module Pacer::Routes
 
     # Extend route with the additional edge label, property and block filters.
     def e(*filters, &block)
-      route = EdgesRoute.new(self, filters, block)
-      route.pipe_class = nil
-      route.add_extensions extensions unless route.extensions.any?
-      route
+      FilterRoute.property_filter(self, filters, block)
     end
 
     def filter(*args, &block)
@@ -68,22 +68,6 @@ module Pacer::Routes
 
     def element_type
       graph.element_type(:edge)
-    end
-
-    protected
-
-    # Specialize filter_pipe for edge labels.
-    def filter_pipe(pipe, filters, block, expand_extensions)
-      pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
-      labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
-      if labels.empty?
-        super
-      else
-        label_pipe = Pacer::Pipes::LabelsFilterPipe.new
-        label_pipe.set_labels labels
-        label_pipe.set_starts pipe
-        super(label_pipe, filters - labels, block, false)
-      end
     end
   end
 end

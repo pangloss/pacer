@@ -116,7 +116,7 @@ def for_neo4j(usage_style = :read_write, &block)
 end
 
 def use_simple_graph_data
-  let(:setup_data) {}
+  let(:setup_data) { e0; e1 }
   let(:v0) { graph.create_vertex :name => 'eliza' }
   let(:v1) { graph.create_vertex :name => 'darrick' }
   let(:e0) { graph.create_edge nil, v0, v1, :links }

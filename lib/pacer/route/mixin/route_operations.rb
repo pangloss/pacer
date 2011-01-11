@@ -29,17 +29,6 @@ module Pacer::Routes
       route
     end
 
-    # Do not return duplicate elements.
-    def uniq(*filters, &block)
-      if filters.any? or block
-        filter(*filters, &block).uniq
-      else
-        route = route_class.pipe_filter(self, Pacer::Pipes::DuplicateFilterPipe)
-        route.add_extensions extensions
-        route
-      end
-    end
-
     def has?(element)
       any? { |e| e == element }
     end
@@ -57,15 +46,9 @@ module Pacer::Routes
         route.set_pipe_args prop_or_subset.to_s
         route
       when Fixnum
-        route = route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset, prop_or_subset + 1)
-        route.add_extensions extensions
-        route
+        range(prop_or_subset, prop_or_subset)
       when Range
-        end_index = prop_or_subset.end
-        end_index += 1 unless prop_or_subset.exclude_end?
-        route = route_class.pipe_filter(self, Pacer::Pipes::RangeFilterPipe, prop_or_subset.begin, end_index)
-        route.add_extensions extensions
-        route
+        range(prop_or_subset.begin, prop_or_subset.end)
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|

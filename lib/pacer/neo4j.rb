@@ -48,20 +48,24 @@ module Pacer
     include Routes::GraphRoute
 
     def element_type(et)
-      case et
-      when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
-        Neo4jVertex
-      when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
-        Neo4jEdge
-      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
-        Neo4jElement
-      when :object
-        Object
+      if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement
+        et
       else
-        if et == Object
+        case et
+        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+          Neo4jVertex
+        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+          Neo4jEdge
+        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+          Neo4jElement
+        when :object
           Object
         else
-          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+          if et == Object
+            Object
+          else
+            raise ArgumentError, 'Element type may be one of :vertex or :edge'
+          end
         end
       end
     end
