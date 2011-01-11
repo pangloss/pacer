@@ -155,7 +155,7 @@ module Pacer
           g = graph
           while item = iter.next
             item.graph ||= g
-            item.extend Pacer::Routes::SingleRoute
+            item.extend Pacer::Extensions::BlockFilterElement
             item.back = self
             yield item
           end
