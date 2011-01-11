@@ -11,5 +11,11 @@ module Pacer::Routes
         br
       end
     end
+
+    def source_branch(&block)
+      br = BranchedRoute.new(self)
+      br.source_branch(&block)
+      br
+    end
   end
 end

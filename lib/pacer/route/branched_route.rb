@@ -19,7 +19,13 @@ module Pacer::Routes
         branch_start = FilterRoute.new(:back => @back, :filter => :empty)
       end
       branch = yield(branch_start)
-      @branches << branch.route if branch and branch != branch_start
+      @branches << [branch.route, true] if branch and branch != branch_start
+      self
+    end
+
+    def source_branch(&block)
+      branch = yield
+      @branches << [branch.route, false] if branch
       self
     end
 
@@ -67,34 +73,32 @@ module Pacer::Routes
 
     def build_pipeline
       first_pipe, source_pipe = pipe_source
-      if source_pipe.is_a? Pacer::Graph
-        branch_pipes = @branches.map { |branch| branch.send :iterator }
-      else
-        split_pipe = @split_pipe.new @branches.count
-        split_pipe.set_starts source_pipe if source_pipe
-        if split_pipe.respond_to? :route=
-          split_pipe.route = self
+      split_pipe = @split_pipe.new @branches.count
+      split_pipe.set_starts source_pipe if source_pipe
+      if split_pipe.respond_to? :route=
+        split_pipe.route = self
+      end
+      @configure_split_pipe.call(split_pipe) if @configure_split_pipe
+      split_idx = 0
+      branch_start_pipes = []
+      branch_pipes = @branches.map do |branch, uses_split_pipe|
+        start_pipe, end_pipe = branch.send(:build_pipeline)
+        branch_start_pipes << start_pipe
+        if uses_split_pipe
+          start_pipe.set_starts(split_pipe.get_split(split_idx))
+          split_idx += 1
         end
-        @configure_split_pipe.call(split_pipe) if @configure_split_pipe
-        idx = 0
-        branch_start_pipes = []
-        branch_pipes = @branches.map do |branch|
-          start_pipe, end_pipe = branch.send(:build_pipeline)
-          branch_start_pipes << start_pipe
-          start_pipe.set_starts(split_pipe.get_split(idx))
-          idx += 1
-          end_pipe
-        end
+        end_pipe
       end
       merge_pipe = @merge_pipe.new
       merge_pipe.set_starts(branch_pipes)
       @configure_merge_pipe.call(merge_pipe) if @configure_merge_pipe
-      Pacer.debug_pipes << (['Split', first_pipe, split_pipe] + branch_start_pipes + [merge_pipe]) if Pacer.debug_pipes
+      Pacer.debug_pipes << (['Split', first_pipe, split_pipe, branch_start_pipes, merge_pipe]) if Pacer.debug_pipes
       [first_pipe || split_pipe || merge_pipe, merge_pipe]
     end
 
     def inspect_class_name
-      "#{super} { #{ @branches.map { |e| e.inspect }.join(' | ') } }"
+      "#{super} { #{ @branches.map { |e, _| e.inspect }.join(' | ') } }"
     end
 
     def route_class
