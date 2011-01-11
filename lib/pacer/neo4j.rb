@@ -45,7 +45,7 @@ module Pacer
     include GraphTransactionsMixin
     include ManagedTransactionsMixin
     include Pacer::Core::Route
-    include Routes::GraphRoute
+    include Pacer::Core::Graph::GraphRoute
 
     def element_type(et)
       if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement

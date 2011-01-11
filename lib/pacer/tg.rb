@@ -21,8 +21,8 @@ module Pacer
     include GraphMixin
     include GraphTransactionsStub
     include ManagedTransactionsMixin
-    include Core::Route
-    include Routes::GraphRoute
+    include Pacer::Core::Route
+    include Pacer::Core::Graph::GraphRoute
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices

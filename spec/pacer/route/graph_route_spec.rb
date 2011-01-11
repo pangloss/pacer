@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 for_each_graph do
-  describe GraphRoute do
+  describe Pacer::Core::Graph::GraphRoute do
     describe '#v' do
       subject { graph.v }
       it { should be_an_instance_of(VerticesRoute) }

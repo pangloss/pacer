@@ -1,19 +1,17 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # This module adds route methods to the basic graph classes returned from the
   # blueprints library.
   module GraphRoute
-    include BranchableRoute
-
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
       route = indexed_route(:vertex, filters, block)
       unless route
-        route = VerticesRoute.new(self)
+        route = Pacer::Routes::VerticesRoute.new(self)
         route.pipe_class = Pacer::Pipes::GraphElementPipe
         route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
         route.graph = self
-        route = FilterRoute.property_filter(route, filters, block)
+        route = Pacer::Routes::FilterRoute.property_filter(route, filters, block)
       end
       route
     end
@@ -22,11 +20,11 @@ module Pacer::Routes
     def e(*filters, &block)
       route = indexed_route(:edge, filters, block)
       unless route
-        route = EdgesRoute.new(self, filters, block)
+        route = Pacer::Routes::EdgesRoute.new(self, filters, block)
         route.pipe_class = Pacer::Pipes::GraphElementPipe
         route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::EDGE
         route.graph = self
-        route = FilterRoute.property_filter(route, filters, block)
+        route = Pacer::Routes::FilterRoute.property_filter(route, filters, block)
       end
       route
     end
@@ -99,15 +97,15 @@ module Pacer::Routes
         if index_value.is_a? Module or index_value.is_a? Class
           route = index_value.route(self)
           route.add_extension extension if extension
-          return FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
+          return Pacer::Routes::FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
             key, value = index_key_value(index_name, index_value)
             if element_type == self.element_type(:edge)
-              route = IndexedEdgesRoute.new(idx, key, value)
+              route = Pacer::Routes::IndexedEdgesRoute.new(idx, key, value)
             else
-              route = IndexedVerticesRoute.new(idx, key, value)
+              route = Pacer::Routes::IndexedVerticesRoute.new(idx, key, value)
             end
             route.add_extension extension
             route.graph = self
