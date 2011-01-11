@@ -13,9 +13,9 @@ module Pacer
         if filters and filters.any? or block
           new(:back => base, :filter => :property, :filters => filters, :block => block)
         elsif Pacer.vertex? base
-          VerticesIdentityRoute.new(base)
+          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
         elsif Pacer.edge? base
-          EdgesIdentityRoute.new(base)
+          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
         else
           base
         end
