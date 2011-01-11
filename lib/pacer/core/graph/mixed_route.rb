@@ -6,7 +6,7 @@ module Pacer::Core::Graph
 
     # Pass through only vertices.
     def v(*args, &block)
-      chain_route :element_type => :vertex,
+      route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
         :pipe_args => Pacer::VertexMixin,
         :extensions => extensions
@@ -26,8 +26,9 @@ module Pacer::Core::Graph
       branch { |b| b.v(*args, &block) }.branch { |b| b.v(*args, &block) }.mixed
     end
 
-    def mixed
-      Pacer::Routes::MixedRoute.pipe_filter(self, nil)
+    def mixed(*args, &block)
+      route = chain_route :pipe_class => Pacer::Pipes::IdentityPipe
+      Pacer::Route.property_filter(route, args, block)
     end
 
     # Out edges from matching vertices.
