@@ -1,4 +1,12 @@
-module Pacer::Core::Route
+[Pacer::Core::Route, Pacer::ElementMixin, Pacer::EdgeWrapper, Pacer::VertexWrapper].each do |klass|
+  klass.class_eval %{
+    def chain_route(args_hash)
+      Pacer::Route.new({ :back => self }.merge(args_hash))
+    end
+  }
+end
+
+module Pacer::ElementMixin
   def chain_route(args_hash)
     Pacer::Route.new({ :back => self }.merge(args_hash))
   end
