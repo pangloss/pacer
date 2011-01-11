@@ -5,25 +5,25 @@ module Pacer::Core::Graph
 
     # Extends the route with out edges from this route's matching vertices.
     def out_e(*filters, &block)
-      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES),
+      Pacer::Route.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES),
                                   filters, block)
     end
 
     # Extends the route with in edges from this route's matching vertices.
     def in_e(*filters, &block)
-      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES),
+      Pacer::Route.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES),
                                   filters, block)
     end
 
     # Extends the route with all edges from this route's matching vertices.
     def both_e(*filters, &block)
-      FilterRoute.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES),
+      Pacer::Route.property_filter(Pacer::Routes::EdgesRoute.new(self, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES),
                                   filters, block)
     end
 
     # Extend route with the additional vertex property and block filters.
     def v(*filters, &block)
-      FilterRoute.property_filter(self, filters, block)
+      Pacer::Route.property_filter(self, filters, block)
     end
 
     def filter(*args, &block)

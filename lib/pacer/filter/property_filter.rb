@@ -1,25 +1,23 @@
 module Pacer
-  module Routes
-    class FilterRoute
-      class << self
-        def property_filter_before(base, filters, block)
-          if filters and filters.any? or block
-            yield new(:back => base, :filter => :property, :filters => filters, :block => block)
-          else
-            yield base
-          end
+  class Route
+    class << self
+      def property_filter_before(base, filters, block)
+        if filters and filters.any? or block
+          yield new(:back => base, :filter => :property, :filters => filters, :block => block)
+        else
+          yield base
         end
+      end
 
-        def property_filter(base, filters, block)
-          if filters and filters.any? or block
-            new(:back => base, :filter => :property, :filters => filters, :block => block)
-          elsif Pacer.vertex? base
-            VerticesIdentityRoute.new(base)
-          elsif Pacer.edge? base
-            EdgesIdentityRoute.new(base)
-          else
-            base
-          end
+      def property_filter(base, filters, block)
+        if filters and filters.any? or block
+          new(:back => base, :filter => :property, :filters => filters, :block => block)
+        elsif Pacer.vertex? base
+          VerticesIdentityRoute.new(base)
+        elsif Pacer.edge? base
+          EdgesIdentityRoute.new(base)
+        else
+          base
         end
       end
     end

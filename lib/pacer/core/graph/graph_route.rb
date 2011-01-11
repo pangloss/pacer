@@ -11,7 +11,7 @@ module Pacer::Core::Graph
         route.pipe_class = Pacer::Pipes::GraphElementPipe
         route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::VERTEX
         route.graph = self
-        route = Pacer::Routes::FilterRoute.property_filter(route, filters, block)
+        route = Pacer::Route.property_filter(route, filters, block)
       end
       route
     end
@@ -24,7 +24,7 @@ module Pacer::Core::Graph
         route.pipe_class = Pacer::Pipes::GraphElementPipe
         route.set_pipe_args Pacer::Pipes::GraphElementPipe::ElementType::EDGE
         route.graph = self
-        route = Pacer::Routes::FilterRoute.property_filter(route, filters, block)
+        route = Pacer::Route.property_filter(route, filters, block)
       end
       route
     end
@@ -97,7 +97,7 @@ module Pacer::Core::Graph
         if index_value.is_a? Module or index_value.is_a? Class
           route = index_value.route(self)
           route.add_extension extension if extension
-          return Pacer::Routes::FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
+          return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
@@ -109,7 +109,7 @@ module Pacer::Core::Graph
             end
             route.add_extension extension
             route.graph = self
-            return FilterRoute.property_filter(route, filters_without_key(filters, key, extension), block)
+            return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
           end
         end
       end

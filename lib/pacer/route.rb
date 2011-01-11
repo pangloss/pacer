@@ -1,16 +1,14 @@
-module Pacer::Core
-  module Route
-    def chain_route(args_hash)
-      FilterRoute.new(args_hash)
-    end
+module Pacer::Core::Route
+  def chain_route(args_hash)
+    Pacer::Route.new(args_hash)
   end
 end
 
-module Pacer::Routes
+module Pacer
   class NoFilterSpecified < RuntimeError
   end
 
-  class FilterRoute
+  class Route
     module Helpers
       class << self
         def filter_map
@@ -38,7 +36,7 @@ module Pacer::Routes
     end
 
     include Pacer::Core::Route
-    include RouteOperations
+    include Pacer::Routes::RouteOperations
 
     def initialize(args = {})
       args = args.dup
@@ -107,7 +105,7 @@ module Pacer::Routes
         else
           case filter
           when Symbol, String
-            mod_names = FilterRoute::Helpers.filter_map[filter.to_sym]
+            mod_names = Route::Helpers.filter_map[filter.to_sym]
             if mod_names
               args.delete :filter
               return Pacer::Filter.const_get(mod_names.first)
@@ -116,7 +114,7 @@ module Pacer::Routes
         end
       else
         args.each_key do |key|
-          mod = FilterRoute::Helpers.trigger_map[key]
+          mod = Route::Helpers.trigger_map[key]
           return mod if mod
         end
       end

@@ -6,9 +6,9 @@ for_tg(:read_only) do
 
     describe '#out_e' do
       it { graph.v.out_e.should be_a(EdgesRoute) }
-      it { graph.v.out_e(:label).should be_a(FilterRoute) }
-      it { graph.v.out_e(:label) { |x| true }.should be_a(FilterRoute) }
-      it { graph.v.out_e { |x| true }.should be_a(FilterRoute) }
+      it { graph.v.out_e(:label).should be_a(Pacer::Route) }
+      it { graph.v.out_e(:label) { |x| true }.should be_a(Pacer::Route) }
+      it { graph.v.out_e { |x| true }.should be_a(Pacer::Route) }
 
       it { Set[*graph.v.out_e].should == Set[*graph.edges] }
 

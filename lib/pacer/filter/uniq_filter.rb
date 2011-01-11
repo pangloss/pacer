@@ -3,7 +3,7 @@ module Pacer
     module RouteOperations
       # Do not return duplicate elements.
       def uniq(*filters, &block)
-        FilterRoute.property_filter_before(self, filters, block) do |r|
+        Pacer::Route.property_filter_before(self, filters, block) do |r|
           chain_route(:back => r, :filter => :uniq)
         end
       end

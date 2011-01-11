@@ -23,6 +23,7 @@ module Pacer
   require 'pacer/pipes'
   require 'pacer/core'
   require 'pacer/routes'
+  require 'pacer/route'
   require 'pacer/wrappers'
   require 'pacer/extensions'
   require 'pacer/neo4j'

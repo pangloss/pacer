@@ -16,7 +16,7 @@ module Pacer::Routes
       if @back.is_a? Pacer::Graph
         branch_start = @back
       else
-        branch_start = FilterRoute.new(:back => @back, :filter => :empty)
+        branch_start = Pacer::Route.new(:back => @back, :filter => :empty)
       end
       branch = yield(branch_start)
       if branch.equal? branch_start

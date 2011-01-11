@@ -7,7 +7,7 @@ describe RouteOperations do
 
   describe '#uniq' do
     it 'should be a route' do
-      @g.v.uniq.should be_an_instance_of(FilterRoute)
+      @g.v.uniq.should be_an_instance_of(Pacer::Route)
     end
 
     it 'results should be unique' do

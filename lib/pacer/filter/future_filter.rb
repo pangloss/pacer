@@ -30,7 +30,7 @@ module Pacer
       end
 
       def lookahead_route
-        empty = Pacer::Routes::FilterRoute.new :filter => :empty, :back => self
+        empty = Pacer::Route.new :filter => :empty, :back => self
         r = @lookahead.call(empty)
         r
       end
