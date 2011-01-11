@@ -3,11 +3,11 @@ require 'pp'
 
 module Pacer
   unless const_defined? :VERSION
-    VERSION = '0.1.0'
+    VERSION = '0.4.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
+    unless require(File.join(PATH, 'vendor/pipes-0.3-SNAPSHOT-standalone.jar'))
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
