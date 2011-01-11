@@ -47,7 +47,8 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Core::Graph::GraphRoute
 
-    def element_type(et)
+    def element_type(et = nil)
+      return nil unless et
       if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement
         et
       else

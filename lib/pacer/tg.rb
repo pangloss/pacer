@@ -38,7 +38,8 @@ module Pacer
       other.class == self.class and other.object_id == self.object_id
     end
 
-    def element_type(et)
+    def element_type(et = nil)
+      return nil unless et
       if et == TinkerVertex or et == TinkerEdge or et == TinkerElement
         et
       else
