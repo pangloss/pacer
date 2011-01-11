@@ -1,40 +1,45 @@
 require 'spec_helper'
 
-describe VerticesRoute do
-  before do
-    @g = Pacer.tg 'spec/data/pacer.graphml'
-  end
+for_tg(:read_only) do
+  describe Pacer::Core::Graph::VerticesRoute do
+    use_pacer_graphml_data(:read_only)
 
-  describe '#out_e' do
-    it { @g.v.out_e.should be_an_instance_of(EdgesRoute) }
-    it { @g.v.out_e(:label).should be_an_instance_of(EdgesRoute) }
-    it { @g.v.out_e(:label) { |x| true }.should be_an_instance_of(EdgesRoute) }
-    it { @g.v.out_e { |x| true }.should be_an_instance_of(EdgesRoute) }
+    describe '#out_e' do
+      it { graph.v.out_e.should be_an_edges_route }
+      it { graph.v.out_e(:label).should be_a(Pacer::Route) }
+      it { graph.v.out_e(:label) { |x| true }.should be_a(Pacer::Route) }
+      it { graph.v.out_e { |x| true }.should be_a(Pacer::Route) }
 
-    it { Set[*@g.v.out_e].should == Set[*@g.edges] }
+      it { Set[*graph.v.out_e].should == Set[*graph.edges] }
 
-    it { @g.v.out_e.count.should >= 1 }
+      it { graph.v.out_e.count.should >= 1 }
 
-    it 'with label filter should work with path generation' do
-      paths = @g.v.out_e.in_v.in_e { |e| e.label == 'wrote' }.out_v.paths.map(&:to_a)
-      @g.v.out_e.in_v.in_e(:wrote).out_v.paths.map(&:to_a).should == paths
-    end
-  end
-
-  describe :add_edges_to do
-    it 'should not add properties with null values'
-
-    context 'from empty route' do
-
-    end
-
-    context 'to empty array' do
-
-    end
-
-    context 'to nil' do
-
+      specify 'with label filter should work with path generation' do
+        r = graph.v.out_e.in_v.in_e { |e| e.label == 'wrote' }.out_v
+        paths = r.paths
+        paths.first.should_not be_nil
+        graph.v.out_e.in_v.in_e(:wrote).out_v.paths.map(&:to_a).should == paths.map(&:to_a)
+      end
     end
   end
 end
 
+for_tg do
+  describe Pacer::Core::Graph::VerticesRoute do
+    describe :add_edges_to do
+      it 'should not add properties with null values'
+
+      context 'from empty route' do
+
+      end
+
+      context 'to empty array' do
+
+      end
+
+      context 'to nil' do
+
+      end
+    end
+  end
+end

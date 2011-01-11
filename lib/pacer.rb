@@ -3,11 +3,11 @@ require 'pp'
 
 module Pacer
   unless const_defined? :VERSION
-    VERSION = '0.1.0'
+    VERSION = '0.4.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
+    unless require(File.join(PATH, 'vendor/pipes-0.3-SNAPSHOT-standalone.jar'))
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
@@ -21,13 +21,16 @@ module Pacer
   require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
+  require 'pacer/core'
   require 'pacer/routes'
   require 'pacer/wrappers'
+  require 'pacer/route'
   require 'pacer/extensions'
   require 'pacer/neo4j'
   require 'pacer/tg'
   require 'pacer/support'
   require 'pacer/utils'
+  require 'pacer/filter'
 
   class << self
     attr_accessor :debug_info
@@ -49,7 +52,7 @@ module Pacer
           load path.to_s
         end
       end
-      clear_wrapper_cache
+      clear_plugin_cache
       @reload_time = Time.now
     end
 
@@ -94,17 +97,22 @@ module Pacer
     end
     alias verbose verbose?
 
-    def clear_wrapper_cache
+    def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
+      Route::Helpers.clear_cache
     end
 
     def vertex?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Vertex
+      element.is_a? com.tinkerpop.blueprints.pgm.Vertex or
+        (element.respond_to? :element and
+         element.element.is_a? com.tinkerpop.blueprints.pgm.Vertex)
     end
 
     def edge?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Edge
+        (element.respond_to? :element and
+         element.element.is_a? com.tinkerpop.blueprints.pgm.Edge)
     end
 
     def manual_index
@@ -114,6 +122,20 @@ module Pacer
     def automatic_index
       com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
     end
+
+    def debug_pipe(pipe)
+      @debug_pipes = []
+      result = pipe.send :iterator
+      [debug_source, debug_pipes, result]
+    end
+
+    def debug_pipe!
+      @debug_pipes = []
+    end
+
+    attr_accessor :debug_source
+    attr_reader :debug_pipes
+
   end
 end
 

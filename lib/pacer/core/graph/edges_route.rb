@@ -1,20 +1,32 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
-  module EdgesRouteModule
+  module EdgesRoute
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
+                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX,
+                                               :route_name => 'outV'),
+                                  filters, block)
     end
 
     # Extends the route with in vertices from this route's matching edges.
     def in_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
+                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX,
+                                               :route_name => 'inV'),
+                                  filters, block)
     end
 
     # Extends the route with both in and oud vertices from this route's matching edges.
     def both_v(*filters, &block)
-      VerticesRoute.new(self, filters, block, Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
+                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES,
+                                               :route_name => 'bothV'),
+                                  filters, block)
     end
 
     # v is undefined for edge routes.
@@ -24,10 +36,7 @@ module Pacer::Routes
 
     # Extend route with the additional edge label, property and block filters.
     def e(*filters, &block)
-      route = EdgesRoute.new(self, filters, block)
-      route.pipe_class = nil
-      route.add_extensions extensions unless route.extensions.any?
-      route
+      Pacer::Route.property_filter(self, filters, block)
     end
 
     def filter(*args, &block)
@@ -48,7 +57,7 @@ module Pacer::Routes
         e.add_extensions extensions
         e
       else
-        r = EdgesRoute.from_edge_ids graph, edge_ids
+        r = self.class.from_edge_ids graph, edge_ids
         r.info = "#{ name }:#{r.info}" if name
         r.add_extensions extensions
         r.graph = graph
@@ -68,22 +77,6 @@ module Pacer::Routes
 
     def element_type
       graph.element_type(:edge)
-    end
-
-    protected
-
-    # Specialize filter_pipe for edge labels.
-    def filter_pipe(pipe, filters, block, expand_extensions)
-      pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
-      labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
-      if labels.empty?
-        super
-      else
-        label_pipe = Pacer::Pipes::LabelsFilterPipe.new
-        label_pipe.set_labels labels
-        label_pipe.set_starts pipe
-        super(label_pipe, filters - labels, block, false)
-      end
     end
   end
 end

@@ -1,6 +1,6 @@
 module Pacer::Routes
   class ContextRoute
-    include Base
+    include Pacer::Core::Route
 
     def initialize(back)
       @back = back

@@ -1,29 +1,38 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
-  module VerticesRouteModule
+  module VerticesRoute
 
     # Extends the route with out edges from this route's matching vertices.
     def out_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES)
+      Pacer::Route.property_filter(chain_route(:element_type => :edge,
+                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES,
+                                               :route_name => 'outE'),
+                                  filters, block)
     end
 
     # Extends the route with in edges from this route's matching vertices.
     def in_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES)
+      Pacer::Route.property_filter(chain_route(:element_type => :edge,
+                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES,
+                                               :route_name => 'inE'),
+                                  filters, block)
     end
 
     # Extends the route with all edges from this route's matching vertices.
     def both_e(*filters, &block)
-      EdgesRoute.new(self, filters, block, Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES)
+      Pacer::Route.property_filter(chain_route(:element_type => :edge,
+                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
+                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES,
+                                               :route_name => 'bothE'),
+                                  filters, block)
     end
 
     # Extend route with the additional vertex property and block filters.
     def v(*filters, &block)
-      route = VerticesRoute.new(self, filters, block)
-      route.pipe_class = nil
-      route.add_extensions extensions unless route.extensions.any?
-      route
+      Pacer::Route.property_filter(self, filters, block)
     end
 
     def filter(*args, &block)
@@ -54,7 +63,7 @@ module Pacer::Routes
         v.add_extensions extensions
         v
       else
-        r = VerticesRoute.from_vertex_ids graph, v_ids
+        r = self.class.from_vertex_ids graph, v_ids
         r.info = "#{ name }:#{r.info}" if name
         r.add_extensions extensions
         r.graph = graph
@@ -68,7 +77,7 @@ module Pacer::Routes
     # to each created edge.
     def add_edges_to(label, to_vertices, props = {})
       case to_vertices
-      when Base, Enumerable, java.util.Iterator
+      when Pacer::Core::Route, Enumerable, java.util.Iterator
       else
         to_vertices = [to_vertices].compact
       end

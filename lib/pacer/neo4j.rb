@@ -44,24 +44,29 @@ module Pacer
     include GraphMixin
     include GraphTransactionsMixin
     include ManagedTransactionsMixin
-    include Routes::Base
-    include Routes::GraphRoute
+    include Pacer::Core::Route
+    include Pacer::Core::Graph::GraphRoute
 
-    def element_type(et)
-      case et
-      when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
-        Neo4jVertex
-      when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
-        Neo4jEdge
-      when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
-        Neo4jElement
-      when :object
-        Object
+    def element_type(et = nil)
+      return nil unless et
+      if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement
+        et
       else
-        if et == Object
+        case et
+        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+          Neo4jVertex
+        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+          Neo4jEdge
+        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+          Neo4jElement
+        when :object
           Object
         else
-          raise ArgumentError, 'Element type may be one of :vertex or :edge'
+          if et == Object
+            Object
+          else
+            raise ArgumentError, 'Element type may be one of :vertex or :edge'
+          end
         end
       end
     end
@@ -93,7 +98,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jVertex
-    include Routes::VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include ElementMixin
     include VertexMixin
   end
@@ -101,7 +106,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jEdge
-    include Routes::EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include ElementMixin
     include EdgeMixin
 

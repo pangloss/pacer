@@ -3,10 +3,7 @@ module Pacer::Routes
   # Adds support to a route to store a variable inline during processing. See
   # Pacer::Routes::RouteOperations#as
   module VariableRouteModule
-    def initialize(back, variable_name)
-      @back = back
-      @variable_name = variable_name
-    end
+    attr_accessor :variable_name
 
     def root?
       false
@@ -14,10 +11,8 @@ module Pacer::Routes
 
     protected
 
-    def iterator
-      super do |pipe|
-        Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
-      end
+    def attach_pipe(pipe)
+      Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
     end
 
     def has_routable_class?

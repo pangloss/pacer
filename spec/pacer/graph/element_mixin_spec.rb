@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples_for Pacer::ElementMixin do
   context 'vertex' do
     subject { v0 }
-    it { should be_a(Pacer::Routes::VerticesRouteModule) }
+    it { should be_a(Pacer::Core::Graph::VerticesRoute) }
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::VertexMixin) }
     it { should_not be_a(Pacer::EdgeMixin) }
@@ -13,25 +13,25 @@ shared_examples_for Pacer::ElementMixin do
       context '()' do
         subject { v0.v }
         its(:to_a) { should == [v0] }
-        it { should be_a(Pacer::Routes::VerticesRoute) }
+        it { should be_a_vertices_route }
       end
 
       context '(:name => "eliza")' do
         subject { v0.v(:name => 'eliza') }
         its(:to_a) { should == [v0] }
-        it { should be_a(Pacer::Routes::VerticesRoute) }
+        it { should be_a_vertices_route }
       end
 
       context '(:name => "other")' do
         subject { v0.v(:name => 'other') }
         its(:to_a) { should == [] }
-        it { should be_a(Pacer::Routes::VerticesRoute) }
+        it { should be_a_vertices_route }
       end
 
       context '(SimpleMixin)' do
         subject { v0.v(Tackle::SimpleMixin) }
         its(:to_a) { should == [v0] }
-        it { should be_a(Pacer::Routes::VerticesRoute) }
+        it { should be_a_vertices_route }
         its(:extensions) { should == Set[Tackle::SimpleMixin] }
       end
     end
@@ -45,7 +45,7 @@ shared_examples_for Pacer::ElementMixin do
 
   context 'edge' do
     subject { e0 }
-    it { should be_a(Pacer::Routes::EdgesRouteModule) }
+    it { should be_a(Pacer::Core::Graph::EdgesRoute) }
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::EdgeMixin) }
     it { should_not be_a(Pacer::VertexMixin) }
@@ -55,25 +55,25 @@ shared_examples_for Pacer::ElementMixin do
       context '()' do
         subject { e0.e }
         its(:to_a) { should == [e0] }
-        it(:a => :b) { should be_a(Pacer::Routes::EdgesRoute) }
+        it(:a => :b) { should be_an_edges_route }
       end
 
       context '(:links)' do
         subject { e0.e(:links) }
         its(:to_a) { should == [e0] }
-        it { should be_a(Pacer::Routes::EdgesRoute) }
+        it { should be_an_edges_route }
       end
 
       context '(:other)' do
         subject { e0.e(:other) }
         its(:to_a) { should == [] }
-        it { should be_a(Pacer::Routes::EdgesRoute) }
+        it { should be_an_edges_route }
       end
 
       context '(SimpleMixin)' do
         subject { e0.e(Tackle::SimpleMixin) }
         its(:to_a) { should == [e0] }
-        it { should be_a(Pacer::Routes::EdgesRoute) }
+        it { should be_an_edges_route }
         its(:extensions) { should == Set[Tackle::SimpleMixin] }
       end
     end

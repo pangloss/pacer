@@ -1,16 +1,117 @@
 require 'spec_helper'
 
-# TODO: hopefully this block can be removed as the test suite is fleshed out
+for_tg do
+  describe Pacer::Core::Route, 'pipe creation internals' do
+    context "graph.v" do
+      describe '#build_pipeline' do
+        subject { graph.v.send(:build_pipeline) }
+        it { should be_a(Array) }
+        its(:count) { should == 2 }
+        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        specify { subject.first.should equal(subject.last) }
+      end
+
+      describe '#pipe_source' do
+        subject { graph.v.send(:pipe_source) }
+        it { should be_nil }
+      end
+
+      describe '#iterator' do
+        use_simple_graph_data
+        before { setup_data }
+        subject { graph.v.send(:iterator) }
+        its(:next) { should_not be_nil }
+      end
+    end
+
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
+      subject { route }
+
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
+      its(:out_v) { should_not be_nil }
+    end
+
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
+      subject { route }
+
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
+      its(:out_v) { should_not be_nil }
+    end
+
+    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+      let(:route) { graph.v.in_e.out_v(Tackle::SimpleMixin) }
+      subject { route }
+
+      its(:in_e) { should_not be_nil }
+      its(:to_a) { should == [] }
+      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+    end
+
+    context "graph.v(:name => 'darrick')" do
+      use_simple_graph_data
+      before { setup_data }
+      subject { graph.v(:name => 'darrick') }
+
+      its(:build_pipeline) { should == [nil, nil] }
+      its(:pipe_source) { should be_nil }
+      its('iterator.next') { should == v1 }
+      its(:to_a) { should == [v1] }
+    end
+
+    context 'graph.v.element_ids' do
+      describe '#build_pipeline' do
+        subject { graph.v.element_ids.send(:build_pipeline) }
+        it { should be_a(Array) }
+        its(:count) { should == 2 }
+        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        its(:last) { should be_a(Pacer::Pipes::IdPipe) }
+      end
+
+      describe '#iterator' do
+        use_simple_graph_data
+        before { setup_data }
+        subject { graph.v.element_ids.send(:iterator) }
+        its(:next) { should_not be_nil }
+        it 'should iterate twice then raise an exception' do
+          2.times {
+            [v0.element_id, v1.element_id].should include(subject.next)
+          }
+          begin
+            subject.next
+            fail 'expected exception to be raised'
+          rescue NativeException => e
+            e.cause.inspect.should == 'java.util.NoSuchElementException'
+          end
+        end
+      end
+
+      describe '#to_a' do
+        use_simple_graph_data
+        before { setup_data }
+        subject { graph.v.element_ids.to_a }
+        its(:sort) { should == [v0.element_id, v1.element_id].sort }
+      end
+    end
+  end
+end
+
 for_each_graph(:read_only) do
-  describe Pacer::Routes::Base do
+  describe Pacer::Core::Route do
     use_pacer_graphml_data(:read_only)
     before { setup_data }
     describe '#inspect' do
       it 'should show the path in the resulting string' do
-        other_projects_by_gremlin_writer = 
-          graph.v(:name => 'gremlin').as(:grem).in_e(:wrote).out_v.out_e(:wrote) { |e| true }.in_v.except(:grem)
-        other_projects_by_gremlin_writer.inspect.should ==
-          '#<IndexedVertices -> :grem -> Edges(IN_EDGES, [:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES, [:wrote], &block) -> Vertices(IN_VERTEX) -> Vertices(&block)>'
+        r = graph.v(:name => 'gremlin')
+        r = r.as(:grem)
+        r = r.in_e(:wrote)
+        r = r.out_v
+        r = r.out_e(:wrote) { |e| true }
+        r = r.in_v
+        r = r.except(:grem)
+        r.inspect.should ==
+          "#<V-Index -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
       end
     end
 
@@ -57,26 +158,26 @@ for_each_graph(:read_only) do
     describe '#result' do
       context 'no matching vertices' do
         subject { graph.v(:name => 'missing').result }
-        it { should be_a(VerticesRouteModule) }
+        it { should be_a(Pacer::Core::Graph::VerticesRoute) }
         its(:count) { should == 0 }
         its(:empty?) { should be_true }
       end
 
       it 'should not be nil when no matching vertices' do
         empty = graph.v(:name => 'missing').result
-        empty.should be_a(VerticesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::VerticesRoute)
         empty.count.should == 0
       end
 
       it 'should not be nil when no matching edges' do
         empty = graph.e(:missing).result
-        empty.should be_a(EdgesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::EdgesRoute)
         empty.count.should == 0
       end
 
       it 'should not be nil when no matching mixed results' do
         empty = graph.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
-        empty.should be_a(MixedRouteModule)
+        empty.should be_a(Pacer::Core::Graph::MixedRoute)
         empty.count.should == 0
       end
     end
@@ -84,7 +185,7 @@ for_each_graph(:read_only) do
 end
 
 # These specs are :read_only
-shared_examples_for Pacer::Routes::Base do
+shared_examples_for Pacer::Core::Route do
   # defaults -- you
   let(:route) { raise 'define a route' }
   let(:number_of_results) { raise 'how many results are expected' }
@@ -95,7 +196,7 @@ shared_examples_for Pacer::Routes::Base do
 
   context 'without data' do
     subject { route }
-    it { should be_a(Pacer::Routes::Base) }
+    it { should be_a(Pacer::Core::Route) }
     its(:graph) { should equal(graph) }
     its(:back) { should equal(back) }
     its(:info) { should == info }
@@ -147,7 +248,7 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#[Fixnum]' do
       subject { route[number_of_results - 1] }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == 1 }
       its(:result) { should be_a(graph.element_type(result_type)) }
       its(:extensions) { should == route.extensions }
@@ -155,7 +256,7 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#result' do
       subject { route.result }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == number_of_results }
     end
 
@@ -217,14 +318,14 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#[Fixnum]' do
       subject { route[0] }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == 0 }
-      its(:result) { should be_a(Pacer::Routes::Base) }
+      its(:result) { should be_a(Pacer::Core::Route) }
     end
 
     describe '#result' do
       subject { route.result }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == number_of_results }
     end
 
@@ -289,7 +390,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:route) { graph.v }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
@@ -299,8 +400,9 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
-    it_uses Pacer::Routes::Base do
-      let(:route) { graph.v(Tackle::SimpleMixin) }
+    it_uses Pacer::Core::Route do
+      let(:back) { graph.v }
+      let(:route) { back.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
       let(:route_extensions) { Set[Tackle::SimpleMixin] }
@@ -310,8 +412,9 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'no vertices' do
-    it_uses Pacer::Routes::Base do
-      let(:route) { graph.v(:something => 'missing') }
+    it_uses Pacer::Core::Route do
+      let(:back) { graph.v }
+      let(:route) { back.filter(:something => 'missing') }
       let(:number_of_results) { 0 }
       let(:result_type) { :vertex }
     end
@@ -320,7 +423,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'edges' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:route) { graph.e }
       let(:number_of_results) { 14 }
       let(:result_type) { :edge }

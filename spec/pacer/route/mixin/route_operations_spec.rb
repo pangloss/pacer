@@ -7,7 +7,7 @@ describe RouteOperations do
 
   describe '#uniq' do
     it 'should be a route' do
-      @g.v.uniq.should be_an_instance_of(VerticesRoute)
+      @g.v.uniq.should be_an_instance_of(Pacer::Route)
     end
 
     it 'results should be unique' do
@@ -34,7 +34,7 @@ describe RouteOperations do
 
     it 'should not break path generation' do
       who_wrote_what = nil
-      @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v| who_wrote_what = [v.vars[:who], v.vars[:wrote], v.vars[:what]] }.paths.each do |path|
+      @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v| who_wrote_what = [@g, v.vars[:who], v.vars[:wrote], v.vars[:what]] }.paths.each do |path|
         path.to_a.should == who_wrote_what
       end
     end
@@ -52,20 +52,19 @@ describe RouteOperations do
     end
 
     describe 'with a range' do
-      before do
-        @start = @g.vertex(0).v
-        @route = @start.repeat(1..3) { |tail| tail.out_e.in_v[0] }
-      end
+      let(:start) { @g.vertex(0).v }
+      subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
 
       it 'should be equivalent to executing each path separately' do
-        @route.to_a.should == [@start.out_e.in_v.first,
-                               @start.out_e.in_v.out_e.in_v.first,
-                               @start.out_e.in_v.out_e.in_v.out_e.in_v.first]
+        subject.to_a.should == [start.out_e.in_v.first,
+                                start.out_e.in_v.out_e.in_v.first,
+                                start.out_e.in_v.out_e.in_v.out_e.in_v.first]
       end
 
-      it { @route.should be_a(BranchedRoute) }
-      it { @route.back.should be_a(VerticesRoute) }
-      it { @route.back.back.should be_nil }
+      it { should be_a(BranchedRoute) }
+      its(:back) { should be_a_vertices_route }
+      its('back.pipe_class') { should == Pacer::Pipes::IdentityPipe }
+      its('back.back') { should be_nil }
     end
   end
 
