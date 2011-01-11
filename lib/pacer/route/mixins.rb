@@ -1,6 +1,4 @@
 require 'pacer/route/mixin/branchable_route'
 require 'pacer/route/mixin/bulk_operations'
 require 'pacer/route/mixin/route_operations'
-require 'pacer/route/mixin/single_route'
 require 'pacer/route/mixin/variable_route_module'
-require 'pacer/route/mixin/indexed_route_module'
