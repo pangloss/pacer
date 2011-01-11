@@ -16,10 +16,11 @@ describe PathsRoute do
 
     it 'should include all elements traversed' do
       @g.v.out_e.in_v.paths.each do |path|
-        path[0].should be_an_instance_of(Pacer::TinkerVertex)
-        path[1].should be_an_instance_of(Pacer::TinkerEdge)
-        path[2].should be_an_instance_of(Pacer::TinkerVertex)
-        path.length.should == 3
+        path[0].should == @g
+        path[1].should be_a(Pacer::TinkerVertex)
+        path[2].should be_a(Pacer::TinkerEdge)
+        path[3].should be_a(Pacer::TinkerVertex)
+        path.length.should == 4
       end
     end
 
