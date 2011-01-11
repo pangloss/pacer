@@ -1,6 +1,6 @@
 module Pacer::Routes
   class VertexVariableRoute
-    include Base
+    include Pacer::Core::Route
     include RouteOperations
     include VerticesRouteModule
     include VariableRouteModule

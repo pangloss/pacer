@@ -1,11 +1,11 @@
 require 'set'
 module Pacer
-  module Routes
+  module Core
 
     # The basic internal logic for routes and core route shared methods are
     # defined here. Many of these methods are designed to be specialized by
-    # other modules included after Base is included.
-    module Base
+    # other modules included after Core::Route is included.
+    module Route
 
       # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
@@ -308,7 +308,7 @@ module Pacer
 
       # Set the previous route in the chain.
       def back=(back)
-        if back.is_a? Base and not back.is_a? GraphMixin
+        if back.is_a? Route and not back.is_a? GraphMixin
           @back = back
         else
           @source = back
@@ -326,7 +326,7 @@ module Pacer
         elsif @back
           if @back == route
             self
-          elsif @back.is_a? Base
+          elsif @back.is_a? Route
             @back.route_after(route)
           end
         end

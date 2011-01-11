@@ -1,10 +1,12 @@
-module Pacer::Routes
-  module Base
+module Pacer::Core
+  module Route
     def chain_route(args_hash)
       FilterRoute.new(args_hash)
     end
   end
+end
 
+module Pacer::Routes
   class NoFilterSpecified < RuntimeError
   end
 
@@ -35,7 +37,7 @@ module Pacer::Routes
       end
     end
 
-    include Base
+    include Pacer::Core::Route
     include RouteOperations
 
     def initialize(args = {})

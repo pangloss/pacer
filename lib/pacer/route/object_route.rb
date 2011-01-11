@@ -1,6 +1,6 @@
 module Pacer::Routes
   class ObjectRoute
-    include Base
+    include Pacer::Core::Route
     # TODO: split RouteOperations into
     # - ElementRouteOperations
     # - ObjectRouteOperations

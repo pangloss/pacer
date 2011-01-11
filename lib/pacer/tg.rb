@@ -21,7 +21,7 @@ module Pacer
     include GraphMixin
     include GraphTransactionsStub
     include ManagedTransactionsMixin
-    include Routes::Base
+    include Core::Route
     include Routes::GraphRoute
 
     # Override to return an enumeration-friendly array of vertices.

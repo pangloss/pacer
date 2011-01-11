@@ -44,7 +44,7 @@ module Pacer
     include GraphMixin
     include GraphTransactionsMixin
     include ManagedTransactionsMixin
-    include Routes::Base
+    include Pacer::Core::Route
     include Routes::GraphRoute
 
     def element_type(et)

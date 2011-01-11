@@ -46,7 +46,7 @@ module Enumerable
   end
 
   def to_route(opts = {})
-    if self.is_a? Pacer::Routes::Base
+    if self.is_a? Pacer::Core::Route
       self
     else
       r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })

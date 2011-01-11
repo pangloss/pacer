@@ -1,6 +1,6 @@
 module Pacer::Routes
   class MixedVariableRoute
-    include Base
+    include Pacer::Core::Route
     include RouteOperations
     include MixedRouteModule
     include VariableRouteModule

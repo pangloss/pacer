@@ -46,7 +46,7 @@ module Pacer::Routes
     end
 
     def graph
-      # This must be defined here to overwrite the #graph method in Base.
+      # This must be defined here to overwrite the #graph method in Route.
       self
     end
 

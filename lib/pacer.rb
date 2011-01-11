@@ -21,6 +21,7 @@ module Pacer
   require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
+  require 'pacer/core'
   require 'pacer/routes'
   require 'pacer/wrappers'
   require 'pacer/extensions'

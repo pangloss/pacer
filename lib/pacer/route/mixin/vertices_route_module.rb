@@ -68,7 +68,7 @@ module Pacer::Routes
     # to each created edge.
     def add_edges_to(label, to_vertices, props = {})
       case to_vertices
-      when Base, Enumerable, java.util.Iterator
+      when Pacer::Core::Route, Enumerable, java.util.Iterator
       else
         to_vertices = [to_vertices].compact
       end

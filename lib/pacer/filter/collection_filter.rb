@@ -1,6 +1,6 @@
 module Pacer
-  module Routes
-    module Base
+  module Core
+    module Route
       def except(excluded)
         if excluded.is_a? Symbol
           chain_route :back => self, :filter => :property, :block => proc { |v| v.vars[excluded] != v }
