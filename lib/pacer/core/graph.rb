@@ -5,5 +5,4 @@ module Pacer
   end
 end
 
-require 'pacer/core/graph/route'
 require 'pacer/core/graph/edges_route'

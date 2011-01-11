@@ -18,7 +18,11 @@ module Pacer
         end
 
         def from_edge_ids(graph, ids)
-          r = new(proc { graph.load_edges ids })
+          begin
+            r = new(proc { graph.load_edges ids })
+          rescue NoMethodError
+            r = Pacer::Routes::EdgesRoute.new(proc { graph.load_edges ids })
+          end
           r.graph = graph
           r.pipe_class = nil
           r.info = ids.count
@@ -26,7 +30,11 @@ module Pacer
         end
 
         def from_vertex_ids(graph, ids)
-          r = new(proc { graph.load_vertices ids })
+          begin
+            r = new(proc { graph.load_vertices ids })
+          rescue NoMethodError
+            r = new(proc { graph.load_vertices ids })
+          end
           r.graph = graph
           r.pipe_class = nil
           r.info = ids.count
