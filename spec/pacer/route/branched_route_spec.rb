@@ -57,18 +57,18 @@ describe BranchedRoute do
 
     it { @single_v.count.should == 4 }
     it { @single_m.count.should == 4 }
-    it { @single_v.group_count { |v| v.id }.should ==  { 'b' => 2, 'c' => 2 } }
-    it { @single_m.group_count { |v| v.id }.should ==  { 'b' => 2, 'c' => 2 } }
+    it { @single_v.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
+    it { @single_m.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
 
     it { @v.count.should ==  8 }
     it { @m.count.should ==  8 }
     it { @ve.count.should == 8 }
     it { @me.count.should == 8 }
 
-    it { @v.group_count { |v| v.id }.should ==  { 'c' => 4, 'd' => 4 } }
-    it { @m.group_count { |v| v.id }.should ==  { 'c' => 4, 'd' => 4 } }
-    it { @ve.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
-    it { @me.group_count { |v| v.id }.should == { 'c' => 4, 'd' => 4 } }
+    it { @v.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
+    it { @m.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
+    it { @ve.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
+    it { @me.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
 
     it do
       @single_v.paths.map(&:to_a).should ==
@@ -99,11 +99,6 @@ describe BranchedRoute do
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d]]
     end
     it do
-      @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
-      single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
-      pp single.to_a
-      @me = single.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
-
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
       @me.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -117,7 +112,8 @@ describe BranchedRoute do
   describe 'chained branch routes' do
     describe 'once' do
       before do
-        @once = @g.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.v
+        pending 'pipe loses last element, enable chain_route(:type => :identity)'
+        @once = @g.v.branch { |v| v }.branch { |v| v }.v
       end
 
       it 'should double each vertex' do
@@ -125,18 +121,19 @@ describe BranchedRoute do
       end
 
       it 'should have 2 of each vertex' do
-        @once.group_count { |v| v.id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
+        @once.group_count { |v| v.element_id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
       end
     end
 
     describe 'twice' do
       before do
+        pending 'pipe loses last element, enable chain_route(:type => :identity)'
         # the difference must be with the object that's passed to the branch method
-        single = @g.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }
-        @twice_v = single.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }
-        @twice_m = single.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} }
-        @twice_v_e = single.exhaustive.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive
-        @twice_m_e = single.exhaustive.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive
+        single = @g.v.branch { |v| v }.branch { |v| v }
+        @twice_v = single.v.branch { |v| v }.branch { |v| v }
+        @twice_m = single.mixed.branch { |v| v }.branch { |v| v }
+        @twice_v_e = single.exhaustive.v.branch { |v| v }.branch { |v| v }.exhaustive
+        @twice_m_e = single.exhaustive.mixed.branch { |v| v }.branch { |v| v }.exhaustive
       end
 
       it { @twice_v.count.should == @g.v.count * 2 * 2 }
@@ -145,16 +142,17 @@ describe BranchedRoute do
       it { @twice_m_e.count.should == @g.v.count * 2 * 2 }
 
       describe 'should have 4 of each' do
-        it { @twice_v.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_m.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_v_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_m_e.group_count { |v| v.id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_v.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_m.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_v_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { @twice_m_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
       end
     end
   end
 
   describe 'route with a custom split pipe' do
     before do
+      pending 'pipe loses last element, enable chain_route(:type => :identity)'
       @r = @g.v.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
     end
 
