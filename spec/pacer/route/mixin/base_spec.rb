@@ -111,7 +111,7 @@ for_each_graph(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<IndexedVertices -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
+          "#<V-Index -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
       end
     end
 

@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        "#<IndexedVertices -> Branched { #<V -> outE -> inV -> V-Property([{:type=>\"project\"}])> | #<V -> outE -> inV -> outE> }>"
+        "#<V-Index -> Branched { #<V -> outE -> inV -> V-Property([{:type=>\"project\"}])> | #<V -> outE -> inV -> outE> }>"
     end
   end
 

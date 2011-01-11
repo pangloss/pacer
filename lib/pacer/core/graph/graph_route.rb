@@ -103,12 +103,10 @@ module Pacer::Core::Graph
           if idx
             key, value = index_key_value(index_name, index_value)
             if element_type == self.element_type(:edge)
-              route = Pacer::Routes::IndexedEdgesRoute.new(idx, key, value)
+              route = chain_route :back => self, :element_type => :edge, :filter => :index, :index => idx, :key => key, :value => value
             else
-              route = Pacer::Routes::IndexedVerticesRoute.new(idx, key, value)
+              route = chain_route :back => self, :element_type => :vertex, :filter => :index, :index => idx, :key => key, :value => value
             end
-            route.add_extension extension
-            route.graph = self
             return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
           end
         end
