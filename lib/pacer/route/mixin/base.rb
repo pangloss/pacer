@@ -363,12 +363,9 @@ module Pacer
       # Return an iterator for a variety of source object types.
       def iterator_from_source(src)
         if src.is_a? Pacer::GraphMixin
-          i = [src].to_enum
-          # NOTE: This is a temporary workaround. I think there is a bug
-          # in pipes that causes this to be required?
-          def i.enablePath; end
-          def i.getPath; []; end
-          i
+          al = java.util.ArrayList.new
+          al << src
+          al.iterator
         elsif src.is_a? Pacer::ElementWrapper
           Pacer::Pipes::EnumerablePipe.new src.element
         elsif src.is_a? Proc
