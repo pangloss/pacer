@@ -82,7 +82,7 @@ for_tg do
             subject.next
             fail 'expected exception to be raised'
           rescue NativeException => e
-            e.cause.should == java.util.NoSuchElementException
+            e.cause.inspect.should == 'java.util.NoSuchElementException'
           end
         end
       end

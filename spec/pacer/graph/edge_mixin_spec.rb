@@ -2,6 +2,15 @@ require 'spec_helper'
 
 shared_examples_for Pacer::EdgeMixin do
   use_simple_graph_data
+
+  describe '#e' do
+    subject { e0.e }
+    it { pp e0.e }
+    it { should be_an_edges_route }
+    it { should_not be_a(graph.element_type(:edge)) }
+    it { should_not be_an_instance_of(graph.element_type(:edge)) }
+  end
+
   describe '#add_extensions' do
     context 'no extensions' do
       subject { e0.add_extensions([]) }
