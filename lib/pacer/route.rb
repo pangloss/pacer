@@ -43,20 +43,22 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
-    def initialize(orig_args = {})
-      args = orig_args.dup
-      et = args.delete(:element_type)
-      mods = args.delete(:modules)
-      self.graph = args.delete(:graph)
-      self.back = args.delete(:back)
+    def initialize(args = {})
+      self.graph = args[:graph]
+      self.back = args[:back]
       include_filter args
-      set_element_type et, args
-      include_other_modules mods
-      args.each do |key, value|
-        send("#{key}=", value)
+      set_element_type args
+      include_other_modules args
+      keys = args.keys - [:element_type, :modules, :graph, :back, :filter]
+      keys.each do |key|
+        send("#{key}=", args[key])
       end
       include_extensions args
       after_initialize
+    rescue => e
+      puts "Exception creating Route with #{ orig_args.inspect }"
+      puts e.message
+      raise
     end
 
     def element_type=(et)
@@ -100,7 +102,6 @@ module Pacer
           when Symbol, String
             mod_names = Route::Helpers.filter_map[filter.to_sym]
             if mod_names
-              args.delete :filter
               @filter = Pacer::Filter.const_get(mod_names.first)
             end
           end
@@ -129,9 +130,9 @@ module Pacer
       end
     end
 
-    def set_element_type(et, args)
-      if et
-        self.element_type = et
+    def set_element_type(args)
+      if args[:element_type]
+        self.element_type = args[:element_type]
       else
         if bet = back_element_type(args)
           self.element_type = bet
@@ -141,8 +142,8 @@ module Pacer
       end
     end
 
-    def include_other_modules(mods)
-      if mods
+    def include_other_modules(args)
+      if mods = args[:modules]
         @modules = [*mods]
         @modules.each do |mod|
           puts "Add module: #{ mod.inspect }"
