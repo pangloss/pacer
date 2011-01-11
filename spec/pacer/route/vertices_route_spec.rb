@@ -5,7 +5,7 @@ for_tg(:read_only) do
     use_pacer_graphml_data(:read_only)
 
     describe '#out_e' do
-      it { graph.v.out_e.should be_a(EdgesRoute) }
+      it { graph.v.out_e.should be_an_edges_route }
       it { graph.v.out_e(:label).should be_a(Pacer::Route) }
       it { graph.v.out_e(:label) { |x| true }.should be_a(Pacer::Route) }
       it { graph.v.out_e { |x| true }.should be_a(Pacer::Route) }
