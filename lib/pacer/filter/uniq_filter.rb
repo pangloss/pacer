@@ -3,21 +3,9 @@ module Pacer
     module RouteOperations
       # Do not return duplicate elements.
       def uniq(*filters, &block)
-        FilterRoute.property_filter_before(self, filters, block) do |r|
-          chain_route(:back => r, :filter => :uniq)
+        Pacer::Route.property_filter_before(self, filters, block) do |r|
+          chain_route :pipe_class => Pacer::Pipes::DuplicateFilterPipe, :route_name => 'uniq'
         end
-      end
-    end
-  end
-
-  module Filter
-    module UniqFilter
-      protected
-
-      def attach_pipe(end_pipe)
-        pipe = Pacer::Pipes::DuplicateFilterPipe.new
-        pipe.set_starts(end_pipe)
-        pipe
       end
     end
   end

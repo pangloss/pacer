@@ -24,9 +24,7 @@ module Pacer::Routes
     # If given an integer (n) > 0, bias is calcualated at 1 / n.
     def random(bias = 0.5)
       bias = 1 / bias.to_f if bias.is_a? Fixnum and bias > 0
-      route = route_class.pipe_filter(self, Pacer::Pipes::RandomFilterPipe, bias)
-      route.add_extensions extensions
-      route
+      chain_route :pipe_class => Pacer::Pipes::RandomFilterPipe, :pipe_args => bias
     end
 
     def has?(element)
@@ -39,12 +37,9 @@ module Pacer::Routes
     def [](prop_or_subset)
       case prop_or_subset
       when String, Symbol
-        # could use PropertyPipe but that would mean supporting objects that I don't think
-        # would have much purpose.
-        route = Pacer::Routes::ObjectRoute.new(self)
-        route.pipe_class = Pacer::Pipes::PropertyPipe
-        route.set_pipe_args prop_or_subset.to_s
-        route
+        chain_route(:element_type => :object,
+                    :pipe_class => Pacer::Pipes::PropertyPipe,
+                    :pipe_args => [prop_or_subset.to_s])
       when Fixnum
         range(prop_or_subset, prop_or_subset)
       when Range
@@ -60,9 +55,7 @@ module Pacer::Routes
 
     # Returns an array of element ids.
     def element_ids
-      route = Pacer::Routes::ObjectRoute.new(self)
-      route.pipe_class = Pacer::Pipes::IdPipe
-      route
+      chain_route :element_type => :object, :pipe_class => Pacer::Pipes::IdPipe
     end
 
     # Creates a hash where the key is the properties and return value of the
@@ -115,30 +108,22 @@ module Pacer::Routes
     # given name so that it is accessible subsequently in the processing of the
     # route.
     def as(name)
-      route = if vertices_route?
-          VertexVariableRoute.new(self, name)
-        elsif edges_route?
-          EdgeVariableRoute.new(self, name)
-        elsif mixed_route?
-          MixedVariableRoute.new(self, name)
-        end
-      route.add_extensions extensions
-      route
+      chain_route :modules => VariableRouteModule, :variable_name => name
     end
 
     # Returns true if this route could contain both vertices and edges.
     def mixed_route?
-      self.is_a? MixedRouteModule
+      self.is_a? Pacer::Core::Graph::MixedRoute
     end
 
     # Returns true if this route countains only vertices.
     def vertices_route?
-      self.is_a? VerticesRouteModule
+      self.is_a? Pacer::Core::Graph::VerticesRoute
     end
 
     # Returns true if this route countains only edges.
     def edges_route?
-      self.is_a? EdgesRouteModule
+      self.is_a? Pacer::Core::Graph::EdgesRoute
     end
 
     # Apply the given path fragment multiple times in succession. If a range is given, the route

@@ -2,7 +2,7 @@ module Pacer
   module Routes
     module RouteOperations
       def range(from, to)
-        args = { :back => self, :filter => :range }
+        args = { :filter => :range }
         args[:begin] = from if from
         args[:end] = to if to
         chain_route args

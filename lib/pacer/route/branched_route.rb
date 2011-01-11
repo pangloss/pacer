@@ -1,8 +1,8 @@
 module Pacer::Routes
   class BranchedRoute
-    include Base
+    include Pacer::Core::Route
     include RouteOperations
-    include MixedRouteModule
+    include Pacer::Core::Graph::MixedRoute
 
     def initialize(back, block = nil)
       @back = back
@@ -16,10 +16,16 @@ module Pacer::Routes
       if @back.is_a? Pacer::Graph
         branch_start = @back
       else
-        branch_start = FilterRoute.new(:back => @back, :filter => :empty)
+        branch_start = Pacer::Route.new(:back => @back, :filter => :empty)
       end
       branch = yield(branch_start)
-      @branches << [branch.route, true] if branch and branch != branch_start
+      if branch.equal? branch_start
+        # TODO: allow chain_route to work this way
+        # branch = branch.chain_route :type => :identity
+        # @branches << [branch.route, true] if branch
+      elsif branch
+        @branches << [branch.route, true]
+      end
       self
     end
 
@@ -38,7 +44,7 @@ module Pacer::Routes
     end
 
     def merge
-      MixedElementsRoute.new(self)
+      chain_route
     end
 
     def robin_split

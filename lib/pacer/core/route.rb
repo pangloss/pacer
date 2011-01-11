@@ -1,36 +1,26 @@
 require 'set'
 module Pacer
-  module Routes
+  module Core
 
     # The basic internal logic for routes and core route shared methods are
     # defined here. Many of these methods are designed to be specialized by
-    # other modules included after Base is included.
-    module Base
+    # other modules included after Core::Route is included.
+    module Route
 
       # Each route object is extended with these class or 'static' methods.
       module RouteClassMethods
-        # An alternate constructor for creating a route that uses the given
-        # pipe class initialized with the given arguments.
-        def pipe_filter(back, pipe_class, *args)
-          f = new(back, *args)
-          f.pipe_class = pipe_class
-          f
-        end
-
         def from_edge_ids(graph, ids)
-          r = new(proc { graph.load_edges ids })
-          r.graph = graph
-          r.pipe_class = nil
-          r.info = ids.count
-          r
+          Pacer::Route.new :element_type => :edge,
+            :graph => graph,
+            :back => proc { graph.load_edges ids },
+            :info => ids.count
         end
 
         def from_vertex_ids(graph, ids)
-          r = new(proc { graph.load_vertices ids })
-          r.graph = graph
-          r.pipe_class = nil
-          r.info = ids.count
-          r
+          Pacer::Route.new :element_type => :vertex,
+            :graph => graph,
+            :back => proc { graph.load_vertices ids },
+            :info => ids.count
         end
       end
 
@@ -39,19 +29,19 @@ module Pacer
         target.extend RouteClassMethods
       end
 
+      # Set these to effect how the route is displayed when inspected.
+      attr_accessor :route_name, :info
+
+      # Specify which pipe class will be instantiated when an iterator is created.
+      attr_accessor :pipe_class
+
+      # Boolean whether the route alone should be returned by inspect. If
+      # false, the the elements that the route matches will also be displayed.
+      attr_accessor :hide_elements
+
       # The previous route in the path
       def back
         @back
-      end
-
-      # Returns the info.
-      def info
-        @info
-      end
-
-      # Store arbitrary info here. Usually a description of the route.
-      def info=(str)
-        @info = str
       end
 
       # Set which graph this route will operate on.
@@ -69,16 +59,12 @@ module Pacer
         graph.equals g
       end
 
-      # TODO protect or remove method
-      # TODO move into constructor?
-      # Specify which pipe class will be instantiated when an iterator is created.
-      def pipe_class=(klass)
-        @pipe_class = klass
-      end
-
-      # TODO move into constructor?
-      def set_pipe_args(*args)
-        @pipe_args = args
+      def pipe_args=(args)
+        if args.is_a? Array
+          @pipe_args = args
+        else
+          @pipe_args = [args]
+        end
       end
 
       # Return true if this route is at the beginning of the route definition.
@@ -91,16 +77,6 @@ module Pacer
       def route
         @hide_elements = true
         self
-      end
-
-      # Boolean whether the route alone should be returned by inspect. If
-      # false, the the elements that the route matches will also be displayed.
-      def hide_elements=(bool)
-        @hide_elements = bool
-      end
-
-      def hide_elements
-        @hide_elements
       end
 
       # Returns the hash of variables used during the previous evaluation of
@@ -124,11 +100,11 @@ module Pacer
       # Yields each matching element or returns an iterator if no block is given.
       def each_element
         iter = iterator
+        g = graph
         if extensions.empty?
           if block_given?
-            g = graph
             while item = iter.next
-              item.graph ||= g
+              item.graph ||= g if g and item.respond_to? :graph=
               yield item
             end
           else
@@ -137,12 +113,12 @@ module Pacer
         else
           if block_given?
             while item = iter.next
-              item.graph ||= graph
+              item.graph ||= g if g and item.respond_to? :graph=
               yield item.add_extensions(extensions)
             end
           else
             iter.extend IteratorExtensionsMixin
-            iter.graph = graph
+            iter.graph = g
             iter.extensions = extensions
             iter
           end
@@ -179,7 +155,7 @@ module Pacer
           g = graph
           while item = iter.next
             item.graph ||= g
-            item.extend Pacer::Routes::SingleRoute
+            item.extend Pacer::Extensions::BlockFilterElement
             item.back = self
             yield item
           end
@@ -268,7 +244,7 @@ module Pacer
 
       def extensions=(exts)
         @extensions ||= Set[]
-        add_extensions exts
+        add_extensions Set[*exts]
       end
 
       def extensions
@@ -308,7 +284,7 @@ module Pacer
 
       # Set the previous route in the chain.
       def back=(back)
-        if back.is_a? Base and not back.is_a? GraphMixin
+        if back.is_a? Route and not back.is_a? GraphMixin
           @back = back
         else
           @source = back
@@ -326,7 +302,7 @@ module Pacer
         elsif @back
           if @back == route
             self
-          elsif @back.is_a? Base
+          elsif @back.is_a? Route
             @back.route_after(route)
           end
         end
@@ -398,7 +374,15 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @pipe_class
-          pipe = @pipe_class.new(*@pipe_args)
+          begin
+            if @pipe_args
+              pipe = @pipe_class.new(*@pipe_args)
+            else
+              pipe = @pipe_class.new
+            end
+          rescue ArgumentError
+            raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }(*#{@pipe_args.inspect})"
+          end
           pipe.set_starts end_pipe if end_pipe
           pipe
         else
@@ -424,6 +408,7 @@ module Pacer
       end
 
       def inspect_string
+        return @route_name if @route_name
         if @pipe_class
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/

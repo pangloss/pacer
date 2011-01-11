@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        "#<IndexedVertices -> Branched { #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> V-Property([{:type=>\"project\"}])> | #<V -> Edges(OUT_EDGES) -> Vertices(IN_VERTEX) -> Edges(OUT_EDGES)> }>"
+        "#<V-Index -> Branched { #<V -> outE -> inV -> V-Property([{:type=>\"project\"}])> | #<V -> outE -> inV -> outE> }>"
     end
   end
 
@@ -43,7 +43,7 @@ describe BranchedRoute do
       @ab = @linear.create_edge nil, @a, @b, 'to'
       @bc = @linear.create_edge nil, @b, @c, 'to'
       @cd = @linear.create_edge nil, @c, @d, 'to'
-      @source = VerticesRoute.from_vertex_ids @linear, ['a', 'b']
+      @source = Pacer::Route.from_vertex_ids @linear, ['a', 'b']
 
       single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
       @single_v = single.v
@@ -55,22 +55,23 @@ describe BranchedRoute do
       @me = single.exhaustive.mixed.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }.exhaustive
     end
 
-    it { @single_v.count.should == 4 }
-    it { @single_m.count.should == 4 }
-    it { @single_v.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
-    it { @single_m.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
+    specify { @source.count.should == 2 }
+    specify { @single_v.count.should == 4 }
+    specify { @single_m.count.should == 4 }
+    specify { @single_v.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
+    specify { @single_m.group_count { |v| v.element_id }.should ==  { 'b' => 2, 'c' => 2 } }
 
-    it { @v.count.should ==  8 }
-    it { @m.count.should ==  8 }
-    it { @ve.count.should == 8 }
-    it { @me.count.should == 8 }
+    specify { @v.count.should ==  8 }
+    specify { @m.count.should ==  8 }
+    specify { @ve.count.should == 8 }
+    specify { @me.count.should == 8 }
 
-    it { @v.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
-    it { @m.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
-    it { @ve.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
-    it { @me.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
+    specify { @v.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
+    specify { @m.group_count { |v| v.element_id }.should ==  { 'c' => 4, 'd' => 4 } }
+    specify { @ve.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
+    specify { @me.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
 
-    it do
+    specify do
       @single_v.paths.map(&:to_a).should ==
         [[@a, @ab, @b],
          [@b, @bc, @c],
@@ -78,19 +79,19 @@ describe BranchedRoute do
          [@b, @bc, @c]]
     end
 
-    it do
+    specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
       @v.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
-    it do
+    specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
       @v.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
-    it do
+    specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
       @ve.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -98,7 +99,7 @@ describe BranchedRoute do
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d]]
     end
-    it do
+    specify do
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
       @me.paths.map(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],

@@ -21,8 +21,10 @@ module Pacer
   require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
+  require 'pacer/core'
   require 'pacer/routes'
   require 'pacer/wrappers'
+  require 'pacer/route'
   require 'pacer/extensions'
   require 'pacer/neo4j'
   require 'pacer/tg'
@@ -50,7 +52,7 @@ module Pacer
           load path.to_s
         end
       end
-      clear_wrapper_cache
+      clear_plugin_cache
       @reload_time = Time.now
     end
 
@@ -95,9 +97,10 @@ module Pacer
     end
     alias verbose verbose?
 
-    def clear_wrapper_cache
+    def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
+      Route::Helpers.clear_cache
     end
 
     def vertex?(element)

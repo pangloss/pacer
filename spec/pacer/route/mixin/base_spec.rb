@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 for_tg do
-  describe Pacer::Routes::Base, 'pipe creation internals' do
+  describe Pacer::Core::Route, 'pipe creation internals' do
     context "graph.v" do
       describe '#build_pipeline' do
         subject { graph.v.send(:build_pipeline) }
@@ -28,7 +28,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -36,7 +36,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<Vertices(VERTEX) -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -98,7 +98,7 @@ for_tg do
 end
 
 for_each_graph(:read_only) do
-  describe Pacer::Routes::Base do
+  describe Pacer::Core::Route do
     use_pacer_graphml_data(:read_only)
     before { setup_data }
     describe '#inspect' do
@@ -111,7 +111,7 @@ for_each_graph(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<IndexedVertices -> :grem -> Edges(IN_EDGES) -> E-Property([:wrote]) -> Vertices(OUT_VERTEX) -> Edges(OUT_EDGES) -> E-Property([:wrote], &block) -> Vertices(IN_VERTEX) -> V-Property(&block)>"
+          "#<V-Index -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
       end
     end
 
@@ -158,26 +158,26 @@ for_each_graph(:read_only) do
     describe '#result' do
       context 'no matching vertices' do
         subject { graph.v(:name => 'missing').result }
-        it { should be_a(VerticesRouteModule) }
+        it { should be_a(Pacer::Core::Graph::VerticesRoute) }
         its(:count) { should == 0 }
         its(:empty?) { should be_true }
       end
 
       it 'should not be nil when no matching vertices' do
         empty = graph.v(:name => 'missing').result
-        empty.should be_a(VerticesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::VerticesRoute)
         empty.count.should == 0
       end
 
       it 'should not be nil when no matching edges' do
         empty = graph.e(:missing).result
-        empty.should be_a(EdgesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::EdgesRoute)
         empty.count.should == 0
       end
 
       it 'should not be nil when no matching mixed results' do
         empty = graph.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
-        empty.should be_a(MixedRouteModule)
+        empty.should be_a(Pacer::Core::Graph::MixedRoute)
         empty.count.should == 0
       end
     end
@@ -185,7 +185,7 @@ for_each_graph(:read_only) do
 end
 
 # These specs are :read_only
-shared_examples_for Pacer::Routes::Base do
+shared_examples_for Pacer::Core::Route do
   # defaults -- you
   let(:route) { raise 'define a route' }
   let(:number_of_results) { raise 'how many results are expected' }
@@ -196,7 +196,7 @@ shared_examples_for Pacer::Routes::Base do
 
   context 'without data' do
     subject { route }
-    it { should be_a(Pacer::Routes::Base) }
+    it { should be_a(Pacer::Core::Route) }
     its(:graph) { should equal(graph) }
     its(:back) { should equal(back) }
     its(:info) { should == info }
@@ -248,7 +248,7 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#[Fixnum]' do
       subject { route[number_of_results - 1] }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == 1 }
       its(:result) { should be_a(graph.element_type(result_type)) }
       its(:extensions) { should == route.extensions }
@@ -256,7 +256,7 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#result' do
       subject { route.result }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == number_of_results }
     end
 
@@ -318,14 +318,14 @@ shared_examples_for Pacer::Routes::Base do
 
     describe '#[Fixnum]' do
       subject { route[0] }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == 0 }
-      its(:result) { should be_a(Pacer::Routes::Base) }
+      its(:result) { should be_a(Pacer::Core::Route) }
     end
 
     describe '#result' do
       subject { route.result }
-      it { should be_a(Pacer::Routes::Base) }
+      it { should be_a(Pacer::Core::Route) }
       its(:count) { should == number_of_results }
     end
 
@@ -390,7 +390,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:route) { graph.v }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
@@ -400,7 +400,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:back) { graph.v }
       let(:route) { back.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
@@ -412,7 +412,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'no vertices' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:back) { graph.v }
       let(:route) { back.filter(:something => 'missing') }
       let(:number_of_results) { 0 }
@@ -423,7 +423,7 @@ end
 for_each_graph(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'edges' do
-    it_uses Pacer::Routes::Base do
+    it_uses Pacer::Core::Route do
       let(:route) { graph.e }
       let(:number_of_results) { 14 }
       let(:result_type) { :edge }

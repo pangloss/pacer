@@ -7,7 +7,7 @@ describe RouteOperations do
 
   describe '#uniq' do
     it 'should be a route' do
-      @g.v.uniq.should be_an_instance_of(FilterRoute)
+      @g.v.uniq.should be_an_instance_of(Pacer::Route)
     end
 
     it 'results should be unique' do
@@ -62,7 +62,8 @@ describe RouteOperations do
       end
 
       it { should be_a(BranchedRoute) }
-      its(:back) { should be_a(VerticesIdentityRoute) }
+      its(:back) { should be_a_vertices_route }
+      its('back.pipe_class') { should == Pacer::Pipes::IdentityPipe }
       its('back.back') { should be_nil }
     end
   end

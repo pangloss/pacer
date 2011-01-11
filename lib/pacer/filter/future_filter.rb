@@ -2,11 +2,11 @@ module Pacer
   module Routes
     module RouteOperations
       def lookahead(&block)
-        chain_route(:back => self, :lookahead => block)
+        chain_route :lookahead => block
       end
 
       def neg_lookahead(&block)
-        chain_route(:back => self, :lookahead => block)
+        chain_route :lookahead => block
       end
     end
   end
@@ -30,7 +30,7 @@ module Pacer
       end
 
       def lookahead_route
-        empty = Pacer::Routes::FilterRoute.new :filter => :empty, :back => self
+        empty = Pacer::Route.new :filter => :empty, :back => self
         r = @lookahead.call(empty)
         r
       end

@@ -21,8 +21,8 @@ module Pacer
     include GraphMixin
     include GraphTransactionsStub
     include ManagedTransactionsMixin
-    include Routes::Base
-    include Routes::GraphRoute
+    include Pacer::Core::Route
+    include Pacer::Core::Graph::GraphRoute
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
@@ -38,7 +38,8 @@ module Pacer
       other.class == self.class and other.object_id == self.object_id
     end
 
-    def element_type(et)
+    def element_type(et = nil)
+      return nil unless et
       if et == TinkerVertex or et == TinkerEdge or et == TinkerElement
         et
       else
@@ -74,7 +75,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class TinkerVertex
-    include Routes::VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include ElementMixin
     include VertexMixin
   end
@@ -82,7 +83,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class TinkerEdge
-    include Routes::EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include ElementMixin
     include EdgeMixin
 

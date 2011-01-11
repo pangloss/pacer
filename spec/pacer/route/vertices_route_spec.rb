@@ -1,14 +1,14 @@
 require 'spec_helper'
 
 for_tg(:read_only) do
-  describe VerticesRoute do
+  describe Pacer::Core::Graph::VerticesRoute do
     use_pacer_graphml_data(:read_only)
 
     describe '#out_e' do
-      it { graph.v.out_e.should be_a(EdgesRoute) }
-      it { graph.v.out_e(:label).should be_a(FilterRoute) }
-      it { graph.v.out_e(:label) { |x| true }.should be_a(FilterRoute) }
-      it { graph.v.out_e { |x| true }.should be_a(FilterRoute) }
+      it { graph.v.out_e.should be_an_edges_route }
+      it { graph.v.out_e(:label).should be_a(Pacer::Route) }
+      it { graph.v.out_e(:label) { |x| true }.should be_a(Pacer::Route) }
+      it { graph.v.out_e { |x| true }.should be_a(Pacer::Route) }
 
       it { Set[*graph.v.out_e].should == Set[*graph.edges] }
 
@@ -25,7 +25,7 @@ for_tg(:read_only) do
 end
 
 for_tg do
-  describe VerticesRoute do
+  describe Pacer::Core::Graph::VerticesRoute do
     describe :add_edges_to do
       it 'should not add properties with null values'
 

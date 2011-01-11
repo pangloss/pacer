@@ -44,10 +44,11 @@ module Pacer
     include GraphMixin
     include GraphTransactionsMixin
     include ManagedTransactionsMixin
-    include Routes::Base
-    include Routes::GraphRoute
+    include Pacer::Core::Route
+    include Pacer::Core::Graph::GraphRoute
 
-    def element_type(et)
+    def element_type(et = nil)
+      return nil unless et
       if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement
         et
       else
@@ -97,7 +98,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jVertex
-    include Routes::VerticesRouteModule
+    include Pacer::Core::Graph::VerticesRoute
     include ElementMixin
     include VertexMixin
   end
@@ -105,7 +106,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class Neo4jEdge
-    include Routes::EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include ElementMixin
     include EdgeMixin
 

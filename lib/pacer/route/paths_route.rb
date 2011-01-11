@@ -1,6 +1,6 @@
 module Pacer::Routes
   class PathsRoute
-    include Base
+    include Pacer::Core::Route
     include BulkOperations
 
     def initialize(back)
