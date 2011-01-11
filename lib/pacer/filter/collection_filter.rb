@@ -3,17 +3,17 @@ module Pacer
     module Route
       def except(excluded)
         if excluded.is_a? Symbol
-          chain_route :back => self, :filter => :property, :block => proc { |v| v.vars[excluded] != v }
+          chain_route :filter => :property, :block => proc { |v| v.vars[excluded] != v }
         else
-          chain_route(:back => self, :filter => :collection, :except => excluded)
+          chain_route :filter => :collection, :except => excluded
         end
       end
 
       def only(included)
         if included.is_a? Symbol
-          chain_route :back => self, :filter => :property, :block => proc { |v| v.vars[included] == v }
+          chain_route :filter => :property, :block => proc { |v| v.vars[included] == v }
         else
-          chain_route(:back => self, :filter => :collection, :only => included)
+          chain_route :filter => :collection, :only => included
         end
       end
     end

@@ -2,11 +2,11 @@ module Pacer
   module Routes
     module RouteOperations
       def lookahead(&block)
-        chain_route(:back => self, :lookahead => block)
+        chain_route :lookahead => block
       end
 
       def neg_lookahead(&block)
-        chain_route(:back => self, :lookahead => block)
+        chain_route :lookahead => block
       end
     end
   end

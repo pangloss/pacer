@@ -4,7 +4,7 @@ module Pacer
       # Do not return duplicate elements.
       def uniq(*filters, &block)
         Pacer::Route.property_filter_before(self, filters, block) do |r|
-          chain_route(:back => r, :filter => :uniq)
+          chain_route :filter => :uniq
         end
       end
     end

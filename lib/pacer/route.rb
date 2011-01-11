@@ -1,6 +1,6 @@
 module Pacer::Core::Route
   def chain_route(args_hash)
-    Pacer::Route.new(args_hash)
+    Pacer::Route.new({ :back => self }.merge(args_hash))
   end
 end
 
