@@ -43,32 +43,19 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
-    def initialize(args = {})
-      args = args.dup
-      element_type = args.delete(:element_type)
-      @filter = module_for_args(args)
-      extend @filter
+    def initialize(orig_args = {})
+      args = orig_args.dup
+      et = args.delete(:element_type)
+      mods = args.delete(:modules)
+      self.graph = args.delete(:graph)
+      self.back = args.delete(:back)
+      include_filter args
+      set_element_type et, args
+      include_other_modules mods
       args.each do |key, value|
         send("#{key}=", value)
       end
-      if back.respond_to? :element_type
-        back_object = back
-        back_element_type = back.element_type
-      elsif args[:back].respond_to? :element_type
-        back_object = args[:back]
-        back_element_type = args[:back].element_type
-      end
-      back_element_type
-      if element_type
-        self.element_type = element_type
-      elsif back_element_type
-        self.element_type = back_element_type
-      else
-        raise NoFilterSpecified, "No element_type specified"
-      end
-      if back_element_type == self.element_type and not args.key? :extensions
-        self.extensions = back_object.extensions if back_object.respond_to? :extensions
-      end
+      include_extensions args
       after_initialize
     end
 
@@ -99,10 +86,11 @@ module Pacer
 
     protected
 
+    # This callback may be overridden. Be sure to call super() though.
     def after_initialize
     end
 
-    def module_for_args(args)
+    def include_filter(args)
       filter = args[:filter]
       if filter
         if filter.is_a? Module
@@ -113,21 +101,65 @@ module Pacer
             mod_names = Route::Helpers.filter_map[filter.to_sym]
             if mod_names
               args.delete :filter
-              return Pacer::Filter.const_get(mod_names.first)
+              @filter = Pacer::Filter.const_get(mod_names.first)
             end
           end
         end
       else
         args.each_key do |key|
           mod = Route::Helpers.trigger_map[key]
-          return mod if mod
+          if mod
+            @filter = mod
+            break
+          end
         end
       end
-      raise NoFilterSpecified, "No module found for #{ args.inspect }"
+      extend @filter if @filter
+    end
+
+    def back_object(args)
+      back || args[:back]
+    end
+
+    def back_element_type(args)
+      if back.respond_to? :element_type
+        back.element_type
+      elsif args[:back].respond_to? :element_type
+        args[:back].element_type rescue nil
+      end
+    end
+
+    def set_element_type(et, args)
+      if et
+        self.element_type = et
+      else
+        if bet = back_element_type(args)
+          self.element_type = bet
+        else
+          raise NoFilterSpecified, "No element_type specified or inferred"
+        end
+      end
+    end
+
+    def include_other_modules(mods)
+      if mods
+        @modules = [*mods]
+        @modules.each do |mod|
+          puts "Add module: #{ mod.inspect }"
+          extend mod
+        end
+      end
+    end
+
+    def include_extensions(args)
+      if back_element_type(args) == self.element_type and not args.key? :extensions
+        self.extensions = back_object(args).extensions if back_object(args).respond_to? :extensions
+      end
     end
 
     def inspect_class_name
-      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}-#{@filter.name.split('::').last.sub(/Filter|Route$/, '')}"
+      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
+      s = "#{s}-#{@filter.name.split('::').last.sub(/Filter|Route$/, '')}" if @filter
       s = "#{s} #{ @info }" if @info
       s
     end
