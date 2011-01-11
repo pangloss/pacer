@@ -6,12 +6,6 @@
   }
 end
 
-module Pacer::ElementMixin
-  def chain_route(args_hash)
-    Pacer::Route.new({ :back => self }.merge(args_hash))
-  end
-end
-
 module Pacer
   class NoFilterSpecified < RuntimeError
   end
@@ -69,14 +63,19 @@ module Pacer
     end
 
     def element_type=(et)
-      @element_type = graph.element_type(et)
-      if @element_type == graph.element_type(:vertex)
-        extend Pacer::Core::Graph::VerticesRoute
-      elsif @element_type == graph.element_type(:edge)
-        extend Pacer::Core::Graph::EdgesRoute
-      elsif @element_type == graph.element_type(:mixed)
-        extend Pacer::Core::Graph::MixedRoute
+      if graph
+        @element_type = graph.element_type(et)
+        if @element_type == graph.element_type(:vertex)
+          extend Pacer::Core::Graph::VerticesRoute
+        elsif @element_type == graph.element_type(:edge)
+          extend Pacer::Core::Graph::EdgesRoute
+        elsif @element_type == graph.element_type(:mixed)
+          extend Pacer::Core::Graph::MixedRoute
+        else
+          @each_method = :each_object
+        end
       else
+        @element_type = Object
         @each_method = :each_object
       end
     end

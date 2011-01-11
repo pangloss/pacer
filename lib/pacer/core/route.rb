@@ -100,11 +100,11 @@ module Pacer
       # Yields each matching element or returns an iterator if no block is given.
       def each_element
         iter = iterator
+        g = graph
         if extensions.empty?
           if block_given?
-            g = graph
             while item = iter.next
-              item.graph ||= g
+              item.graph ||= g if g and item.respond_to? :graph=
               yield item
             end
           else
@@ -113,12 +113,12 @@ module Pacer
         else
           if block_given?
             while item = iter.next
-              item.graph ||= graph
+              item.graph ||= g if g and item.respond_to? :graph=
               yield item.add_extensions(extensions)
             end
           else
             iter.extend IteratorExtensionsMixin
-            iter.graph = graph
+            iter.graph = g
             iter.extensions = extensions
             iter
           end

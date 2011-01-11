@@ -49,17 +49,12 @@ module Enumerable
     if self.is_a? Pacer::Core::Route
       self
     else
-      r = Pacer::Routes::MixedElementsRoute.new(proc { select { |e| e.is_a? Pacer::ElementMixin } })
-      r.pipe_class = nil
       if based_on = opts[:based_on]
-        r.graph = based_on.graph
-        r.add_extensions based_on.extensions
-        r.info = based_on.info if based_on.info
+        Pacer::Route.new(:source => self, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_n.info)
+      else
+        graph = opts[:graph] if opts[:graph]
+        Pacer::Route.new(:source => self, :element_type => :mixed, :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
       end
-      r.add_extensions opts[:extensions] if opts[:extensions]
-      r.graph = opts[:graph] if opts[:graph]
-      r.info = opts[:info]
-      r
     end
   end
 
