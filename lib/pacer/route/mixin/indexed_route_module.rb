@@ -8,8 +8,13 @@ module Pacer::Routes
     end
 
     def count
-      if @index and @key and @value
-        @index.count(@key, @value)
+      if @index and @key and @value and
+        if @index.respond_to? :count
+          @index.count(@key, @value)
+        else
+          puts "Use pangloss/blueprints for fast index counts"
+          super
+        end
       else
         super
       end
