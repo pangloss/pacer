@@ -19,7 +19,13 @@ module Pacer::Routes
         branch_start = FilterRoute.new(:back => @back, :filter => :empty)
       end
       branch = yield(branch_start)
-      @branches << [branch.route, true] if branch and branch != branch_start
+      if branch.equal? branch_start
+        # TODO: allow chain_route to work this way
+        # branch = branch.chain_route :type => :identity
+        # @branches << [branch.route, true] if branch
+      elsif branch
+        @branches << [branch.route, true]
+      end
       self
     end
 
