@@ -56,8 +56,7 @@ module Pacer
       include_extensions args
       after_initialize
     rescue => e
-      puts "Exception creating Route with #{ orig_args.inspect }"
-      puts e.message
+      puts "Exception creating Route with #{ args.inspect }" if Pacer.verbose?
       raise
     end
 
