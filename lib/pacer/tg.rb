@@ -82,7 +82,7 @@ module Pacer
 
   # Extend the java class imported from blueprints.
   class TinkerEdge
-    include Routes::EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include ElementMixin
     include EdgeMixin
 

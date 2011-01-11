@@ -171,7 +171,7 @@ for_each_graph(:read_only) do
 
       it 'should not be nil when no matching edges' do
         empty = graph.e(:missing).result
-        empty.should be_a(EdgesRouteModule)
+        empty.should be_a(Pacer::Core::Graph::EdgesRoute)
         empty.count.should == 0
       end
 

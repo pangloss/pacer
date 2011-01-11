@@ -4,3 +4,4 @@ module Pacer
 end
 
 require 'pacer/core/route'
+require 'pacer/core/graph'

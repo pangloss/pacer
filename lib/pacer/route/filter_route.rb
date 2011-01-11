@@ -74,7 +74,7 @@ module Pacer::Routes
       if @element_type == graph.element_type(:vertex)
         extend VerticesRouteModule
       elsif @element_type == graph.element_type(:edge)
-        extend EdgesRouteModule
+        extend Pacer::Core::Graph::EdgesRoute
       elsif @element_type == graph.element_type(:mixed)
         extend MixedRouteModule
       else

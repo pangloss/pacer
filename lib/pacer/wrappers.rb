@@ -49,7 +49,7 @@ module Pacer
   end
 
   class EdgeWrapper < ElementWrapper
-    include Pacer::Routes::EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include ElementMixin
     include EdgeMixin
     include Comparable

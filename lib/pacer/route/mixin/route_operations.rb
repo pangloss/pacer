@@ -138,7 +138,7 @@ module Pacer::Routes
 
     # Returns true if this route countains only edges.
     def edges_route?
-      self.is_a? EdgesRouteModule
+      self.is_a? Pacer::Core::Graph::EdgesRoute
     end
 
     # Apply the given path fragment multiple times in succession. If a range is given, the route

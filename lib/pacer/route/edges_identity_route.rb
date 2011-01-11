@@ -2,7 +2,7 @@ module Pacer::Routes
   class EdgesIdentityRoute
     include Pacer::Core::Route
     include RouteOperations
-    include EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
     include IdentityRouteModule
 
     protected

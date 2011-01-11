@@ -2,7 +2,7 @@ module Pacer::Routes
   class EdgesRoute
     include Pacer::Core::Route
     include RouteOperations
-    include EdgesRouteModule
+    include Pacer::Core::Graph::EdgesRoute
 
     # TODO: shouldn't this also pass the block to initialize_path?
     def initialize(back, *pipe_args)

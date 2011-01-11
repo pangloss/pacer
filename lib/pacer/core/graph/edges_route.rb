@@ -1,7 +1,7 @@
-module Pacer::Routes
+module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
-  module EdgesRouteModule
+  module EdgesRoute
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
       FilterRoute.property_filter(VerticesRoute.new(self, Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX),
