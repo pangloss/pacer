@@ -65,9 +65,9 @@ module Pacer::Core::Graph
           filter.each { |key, value| yield key, value, nil if key }
         elsif filter.is_a? Module or filter.is_a? Class
           if filter.respond_to? :route_conditions
-            each_property_filter([filter.route_conditions]) { |k, v, _| yield k, v, filter }
+            each_property_filter([filter.route_conditions]) { |k, v, f| yield k, v, (f || filter) }
           elsif filter.respond_to? :route
-            yield filter, filter, nil
+            yield filter, filter, filter
           end
         end
       end
@@ -107,7 +107,9 @@ module Pacer::Core::Graph
             else
               route = chain_route :back => self, :element_type => :vertex, :filter => :index, :index => idx, :key => key, :value => value
             end
-            return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
+            route = Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
+            route.add_extension extension if extension
+            return route
           end
         end
       end
