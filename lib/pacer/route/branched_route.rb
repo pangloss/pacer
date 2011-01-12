@@ -106,9 +106,5 @@ module Pacer::Routes
     def inspect_class_name
       "#{super} { #{ @branches.map { |e, _| e.inspect }.join(' | ') } }"
     end
-
-    def route_class
-      MixedElementsRoute
-    end
   end
 end

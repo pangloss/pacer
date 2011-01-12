@@ -207,11 +207,5 @@ module Pacer::Routes
     def has_routable_class?
       true
     end
-
-    def route_class
-      route = self
-      route = route.back until route.has_routable_class?
-      route.class
-    end
   end
 end
