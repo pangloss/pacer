@@ -99,7 +99,7 @@ module Pacer::Routes
       merge_pipe = @merge_pipe.new
       merge_pipe.set_starts(branch_pipes)
       @configure_merge_pipe.call(merge_pipe) if @configure_merge_pipe
-      Pacer.debug_pipes << (['Split', first_pipe, split_pipe, branch_start_pipes, merge_pipe]) if Pacer.debug_pipes
+      Pacer.debug_pipes << { :name => 'Split', :splits => split_idx, :start => first_pipe, :split => split_pipe, :branch_starts => branch_start_pipes, :branch_ends => branch_pipes, :end => merge_pipe } if Pacer.debug_pipes
       [first_pipe || split_pipe || merge_pipe, merge_pipe]
     end
 
