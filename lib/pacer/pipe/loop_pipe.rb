@@ -1,7 +1,8 @@
 module Pacer::Pipes
   class LoopPipe < RubyPipe
 
-    def initialize(looping_pipe, &control_block)
+    def initialize(looping_pipe, control_block)
+      super()
       @control_block = control_block
 
       empty = java.util.ArrayList.new
@@ -18,10 +19,10 @@ module Pacer::Pipes
       while true
         if @looping_pipe.hasNext
           element = @looping_pipe.next
-          @history[element] = @looping_pipe.getPath if @path_enabled
+          @history[element.object_id] = @looping_pipe.getPath if @path_enabled
         else
           element = @starts.next
-          @history[element] = nil if @path_enabled
+          @history = {} if @path_enabled
         end
         @element = element
         if @control_block.call element
@@ -42,14 +43,11 @@ module Pacer::Pipes
     end
 
     def unravel_history(element)
-      if path = @history[element]
+      if path = @history[element.object_id]
         e = path.first
-        if e == element
-          path
-        else
-          paths = unravel_history(e)
-          paths + path
-        end
+        paths = unravel_history(e)
+        paths.pop
+        paths + path
       else
         []
       end

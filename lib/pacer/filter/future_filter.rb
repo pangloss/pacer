@@ -2,11 +2,11 @@ module Pacer
   module Routes
     module RouteOperations
       def lookahead(&block)
-        chain_route :lookahead => block
+        chain_route :lookahead => block, :has_element => true
       end
 
       def neg_lookahead(&block)
-        chain_route :lookahead => block
+        chain_route :lookahead => block, :has_element => false
       end
     end
   end
@@ -17,14 +17,12 @@ module Pacer
         [:lookahead]
       end
 
-      def lookahead=(block)
-        @lookahead = block
-      end
+      attr_accessor :lookahead, :has_element
 
       protected
 
       def attach_pipe(end_pipe)
-        pipe = Pacer::Pipes::FutureFilterPipe.new(lookahead_pipe)
+        pipe = Pacer::Pipes::FutureFilterPipe.new(lookahead_pipe, has_element)
         pipe.set_starts(end_pipe)
         pipe
       end
