@@ -29,6 +29,10 @@ module Pacer
     import com.tinkerpop.pipes.split.RobinSplitPipe
     import com.tinkerpop.pipes.merge.RobinMergePipe
     import com.tinkerpop.pipes.merge.ExhaustiveMergePipe
+
+    EQUAL = ComparisonFilterPipe::Filter::EQUAL
+    NOT_EQUAL = ComparisonFilterPipe::Filter::NOT_EQUAL
+    #GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL
   end
 end
 
