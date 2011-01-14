@@ -374,14 +374,18 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @pipe_class
-          begin
-            if @pipe_args
+          if @pipe_args
+            begin
               pipe = @pipe_class.new(*@pipe_args)
-            else
-              pipe = @pipe_class.new
+            rescue ArgumentError
+              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new(*#{@pipe_args.inspect})"
             end
-          rescue ArgumentError
-            raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }(*#{@pipe_args.inspect})"
+          else
+            begin
+              pipe = @pipe_class.new
+            rescue ArgumentError
+              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new()"
+            end
           end
           pipe.set_starts end_pipe if end_pipe
           pipe
