@@ -1,6 +1,8 @@
 module Pacer
   module Routes
     module RouteOperations
+      public
+
       def loop(&block)
         chain_route :looping_route => block
       end
@@ -24,17 +26,19 @@ module Pacer
         end
       end
 
-      def while(&block)
+      def while(yield_paths = false, &block)
+        @yield_paths = yield_paths
         @control_block = block
         self
       end
 
-      def until
-        @control_block = proc { |x| ! yield x }
-        self
-      end
-
       protected
+
+      def iterator
+        iter = super
+        iter.enable_path if @yield_paths
+        iter
+      end
 
       def attach_pipe(end_pipe)
         unless @control_block

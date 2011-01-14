@@ -5,52 +5,61 @@ module Pacer::Pipes
       super()
       @control_block = control_block
 
+      @expando = ExpandablePipe.new
       empty = java.util.ArrayList.new
-      @expando = ExpandableIterator.new empty.iterator
+      @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
       @looping_pipe = looping_pipe
+    end
 
-      @history = {}
+    def enablePath
+      @path_enabled = true
+      @looping_pipe.enablePath
+      super
+    end
+    alias enable_path enablePath
+
+    def next
+      super
+    ensure
+      @path = @next_path
     end
 
     protected
 
     def processNextStart
       while true
-        if @looping_pipe.hasNext
+        # FIXME: hasNext shouldn't be raising an exception...
+        has_next = @looping_pipe.hasNext rescue nil
+        if has_next
           element = @looping_pipe.next
-          @history[element.object_id] = @looping_pipe.getPath if @path_enabled
+          depth = (@expando.metadata || 0) + 1
+          @next_path = @looping_pipe.path if @path_enabled
         else
           element = @starts.next
-          @history = {} if @path_enabled
+          @next_path = @starts.path if @path_enabled
+          depth = 0
         end
-        @element = element
-        if @control_block.call element
-          @expando.add element
-        else
+        case @control_block.call element, depth, @next_path
+        when :loop
+          @expando.add element, depth, @next_path
+        when :emit
+          return element
+        when :emit_and_loop
+          @expando.add element, depth, @next_path
           return element
         end
       end
     end
 
     def getPathToHere
-      path = unravel_history @element
-      if @starts.respond_to? :getPath
-        @starts.getPath + path
-      else
-        path
+      path = java.util.ArrayList.new
+      if @path
+        @path.each do |e|
+          path.add e
+        end
       end
-    end
-
-    def unravel_history(element)
-      if path = @history[element.object_id]
-        e = path.first
-        paths = unravel_history(e)
-        paths.pop
-        paths + path
-      else
-        []
-      end
+      path
     end
   end
 end
