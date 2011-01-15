@@ -95,8 +95,12 @@ module Pacer::Routes
       result
     end
 
-    def most_frequent(range = 0)
-      group_count.sort_by { |k, v| -v }.map { |k, v| k }[range]
+    def most_frequent(range = 0, include_counts = false)
+      if include_counts
+        group_count.sort_by { |k, v| -v }[range].map { |k, v| [k, v] }
+      else
+        group_count.sort_by { |k, v| -v }[range].map { |k, v| k }
+      end
     end
 
     def all_but_most_frequent(start_at = 1)
