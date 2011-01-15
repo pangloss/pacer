@@ -32,6 +32,8 @@ module Pacer
   require 'pacer/support'
   require 'pacer/utils'
   require 'pacer/filter'
+  require 'pacer/transform'
+  require 'pacer/side_effect'
 
   class << self
     attr_accessor :debug_info
