@@ -53,6 +53,12 @@ module Pacer::Routes
       end
     end
 
+    def property?(name)
+      chain_route(:element_type => :object,
+                  :pipe_class => Pacer::Pipes::PropertyPipe,
+                  :pipe_args => [name.to_s, true])
+    end
+
     # Returns an array of element ids.
     def element_ids
       chain_route :element_type => :object, :pipe_class => Pacer::Pipes::IdPipe
