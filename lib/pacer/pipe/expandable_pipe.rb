@@ -26,11 +26,14 @@ module Pacer::Pipes
       if @queue.isEmpty
         @next_metadata = nil
         r = @starts.next
-        if @starts.respond_to? :path
-          @next_path = @starts.path
-        else
-          @next_path = java.util.ArrayList.new
+        if @path_enabled
+          if @starts.respond_to? :path
+            @next_path = @starts.path
+          else
+            @next_path = java.util.ArrayList.new
+          end
         end
+        r
       else
         element, @next_metadata, @next_path = @queue.remove
         element
