@@ -45,7 +45,11 @@ module Pacer::Pipes
           @expando.add element, depth, @next_path
         when :emit
           return element
-        when :emit_and_loop
+        when :emit_and_loop, :loop_and_emit
+          @expando.add element, depth, @next_path
+          return element
+        when false, nil
+        else
           @expando.add element, depth, @next_path
           return element
         end

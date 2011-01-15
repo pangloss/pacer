@@ -57,6 +57,10 @@ module Pacer
           Pacer::Pipes::Pipeline.new s, e
         end
       end
+
+      def inspect_string
+        "#{ inspect_class_name }(#{ @looping_route.inspect })"
+      end
     end
   end
 end
