@@ -1,6 +1,5 @@
 module Pacer
   import com.tinkerpop.blueprints.pgm.Graph
-  import com.tinkerpop.blueprints.pgm.util.IndexHelper
 end
 
 require 'pacer/graph/graph_mixin'

@@ -123,11 +123,11 @@ module Pacer
       keys.each { |key| index.add_auto_index_key key } if keys
       if index_class == element_type(:vertex).java_class
         v.bulk_job do |v|
-          Pacer::Utils::IndexHelper.autoIndexElement(index, v)
+          Pacer::Utils::AutomaticIndexHelper.autoIndexElement(index, v)
         end
       else
         e.bulk_job do |e|
-          Pacer::Utils::IndexHelper.autoIndexElement(index, e)
+          Pacer::Utils::AutomaticIndexHelper.autoIndexElement(index, e)
         end
       end
       index
