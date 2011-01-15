@@ -14,7 +14,7 @@ module Pacer::Routes
     end
 
     def transpose
-      map { |arraylist| arraylist.to_a }.transpose
+      collect { |arraylist| arraylist.to_a }.transpose
     end
 
     def subgraph(target_graph = nil)

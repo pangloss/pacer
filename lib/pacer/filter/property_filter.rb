@@ -33,7 +33,7 @@ module Pacer
           if labels.empty?
             super
           else
-            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.map { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
+            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.collect { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
             label_pipe.set_starts pipe
             super(label_pipe, filters - labels, block, false)
           end

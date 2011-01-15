@@ -141,8 +141,8 @@ for_each_graph(:read_only) do
       it { graph.v { |v| v.out_e.none? }[:name].to_a.should == ['blueprints'] }
 
       it 'should work with paths' do
-        paths = graph.v.out_e(:wrote).in_v.paths.map(&:to_a)
-        filtered_paths = graph.v { true }.out_e(:wrote).e { true }.in_v.paths.map(&:to_a)
+        paths = graph.v.out_e(:wrote).in_v.paths.collect(&:to_a)
+        filtered_paths = graph.v { true }.out_e(:wrote).e { true }.in_v.paths.collect(&:to_a)
         filtered_paths.should == paths
       end
     end

@@ -72,7 +72,7 @@ describe BranchedRoute do
     specify { @me.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
 
     specify do
-      @single_v.paths.map(&:to_a).should ==
+      @single_v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b],
          [@b, @bc, @c],
          [@a, @ab, @b],
@@ -81,19 +81,19 @@ describe BranchedRoute do
 
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.map(&:to_a).should ==
+      @v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.map(&:to_a).should ==
+      @v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @ve.paths.map(&:to_a).should ==
+      @ve.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -101,7 +101,7 @@ describe BranchedRoute do
     end
     specify do
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
-      @me.paths.map(&:to_a).should ==
+      @me.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -130,7 +130,7 @@ describe BranchedRoute do
         # TODO: this type of thing should be much easier
         people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
         vertices = @g.v.to_a - people_and_projects.to_a
-        edges = Set[*vertices.map { |v| v.out_e.to_a }.flatten]
+        edges = Set[*vertices.collect { |v| v.out_e.to_a }.flatten]
         Set[*@r.e].should == edges
       end
     end

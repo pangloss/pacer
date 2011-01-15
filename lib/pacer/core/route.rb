@@ -134,7 +134,7 @@ module Pacer
         if block_given?
           g = graph
           while item = iter.next
-            path = iter.path.map do |e|
+            path = iter.path.collect do |e|
               e.graph ||= g rescue nil
               e
             end
@@ -193,13 +193,13 @@ module Pacer
         else
           count = 0
           limit ||= Pacer.inspect_limit
-          results = map do |v|
+          results = collect do |v|
             count += 1
             return route.inspect if count > limit
             v.inspect
           end
           if count > 0
-            lens = results.map { |r| r.length }
+            lens = results.collect { |r| r.length }
             max = lens.max
             cols = (Pacer.columns / (max + 1).to_f).floor
             cols = 1 if cols < 1
@@ -417,7 +417,7 @@ module Pacer
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            pipeargs = @pipe_args.map do |arg|
+            pipeargs = @pipe_args.collect do |arg|
               if arg.is_a? Enumerable and arg.count > 10
                 "[...#{ arg.count } items...]"
               else
