@@ -39,12 +39,11 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
-require 'pacer/pipe/variable_store_iterator_wrapper'
-
-require 'pacer/pipe/enumerable_pipe'
-
 require 'pacer/pipe/block_filter_pipe'
-require 'pacer/pipe/type_filter_pipe'
-require 'pacer/pipe/stream_sort_pipe'
-require 'pacer/pipe/loop_pipe'
+require 'pacer/pipe/enumerable_pipe'
 require 'pacer/pipe/expandable_pipe'
+require 'pacer/pipe/loop_pipe'
+require 'pacer/pipe/map_pipe'
+require 'pacer/pipe/stream_sort_pipe'
+require 'pacer/pipe/type_filter_pipe'
+require 'pacer/pipe/variable_store_iterator_wrapper'
