@@ -78,7 +78,7 @@ module Pacer::Core::Graph
       if index.index_class == element_type.java_class
         key, value, index_specified = index_key_value(index_name, index_value)
         if index.index_type == Pacer.automatic_index
-          keys = index.auto_index_keys_in_use
+          keys = index.getAutoIndexKeys
           return false if keys and not keys.include? key
         end
         index.index_name == index_name or (not index_specified and index.index_type == Pacer.automatic_index)
