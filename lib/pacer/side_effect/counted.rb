@@ -4,6 +4,10 @@ module Pacer
       def counted
         chain_route :side_effect => :counted
       end
+
+      def count
+        counted.count
+      end
     end
   end
 
@@ -11,7 +15,7 @@ module Pacer
   module SideEffect
     module Counted
       def count
-        cap
+        cap.first
       end
 
       protected
