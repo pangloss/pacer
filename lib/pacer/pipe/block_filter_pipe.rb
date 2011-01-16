@@ -11,16 +11,14 @@ module Pacer::Pipes
     end
 
     def processNextStart()
-      raw_element = @starts.next
-      if raw_element.respond_to? :add_extensions
+      while raw_element = @starts.next
         extended_element = raw_element.add_extensions(@extensions)
         extended_element.back = @back
         extended_element.graph = @back.graph if extended_element.respond_to? :graph=
-      else
-        extended_element = raw_element
+        ok = @block.call extended_element
+        return raw_element if ok
       end
-      ok = @block.call extended_element
-      return raw_element if ok
+      raise Pacer::NoSuchElementException.new
     end
   end
 end
