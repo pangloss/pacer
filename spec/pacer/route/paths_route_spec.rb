@@ -46,7 +46,7 @@ describe PathsRoute do
     it { Set[*@sg.v.element_ids].should == Set[*@vertices.collect { |v| v.element_id }] }
     it { Set[*@sg.e.element_ids].should == Set[*@edges.collect { |e| e.element_id }] }
 
-    it { @sg.e.labels.uniq.should == ['wrote'] }
+    it { @sg.e.labels.uniq.to_a.should == ['wrote'] }
     it { Set[*@sg.v.collect { |v| v.properties }].should == Set[*@vertices.collect { |v| v.properties }] }
   end
 end
