@@ -5,7 +5,7 @@ module Pacer::Pipes
       @queue = java.util.LinkedList.new
     end
 
-    def add(element, metadata, path)
+    def add(element, metadata = nil, path = nil)
       @queue.add [element, metadata, path]
     end
 
