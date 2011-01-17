@@ -18,7 +18,7 @@ module Pacer::Pipes
         ok = @block.call extended_element
         return raw_element if ok
       end
-      raise Pacer::NoSuchElementException.new
+      pipe_empty!
     end
   end
 end

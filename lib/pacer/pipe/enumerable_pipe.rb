@@ -18,7 +18,7 @@ module Pacer::Pipes
     def processNextStart()
       @starts.next
     rescue
-      raise Pacer::NoSuchElementException.new
+      pipe_empty!
     end
   end
 end

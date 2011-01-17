@@ -10,7 +10,7 @@ module Pacer::Pipes
         s = @starts.next
         return s if s.is_a? @type
       end
-      raise Pacer::NoSuchElementException.new
+      pipe_empty!
     end
   end
 end

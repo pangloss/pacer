@@ -24,5 +24,11 @@ module Pacer::Pipes
         java.util.ArrayList.new
       end
     end
+
+    # raises the java exception I need. When raised in the normal way,
+    # Java doesn't seem to catch it correctly.
+    def pipe_empty!
+      java.util.ArrayList.new.iterator.next
+    end
   end
 end
