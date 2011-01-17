@@ -113,8 +113,11 @@ module Pacer
         else
           if block_given?
             while item = iter.next
-              item.graph ||= g if g and item.respond_to? :graph=
-              yield item.add_extensions(extensions)
+              if item.respond_to? :graph=
+                item.graph ||= g if g and item.respond_to? :graph=
+                item = item.add_extensions(extensions)
+              end
+              yield item
             end
           else
             iter.extend IteratorExtensionsMixin
