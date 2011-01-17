@@ -17,7 +17,7 @@ module Pacer::Pipes
       @second_silo = []
       @third_silo = []
       @clearing = []
-      @silo_size = 3
+      @silo_size = silo_size
     end
 
     def setSiloSize(n)
