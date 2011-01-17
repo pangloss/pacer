@@ -123,7 +123,7 @@ module Pacer
             iter
           end
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -145,7 +145,7 @@ module Pacer
           iter.graph = graph
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -165,7 +165,7 @@ module Pacer
           iter.context = self
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -178,7 +178,7 @@ module Pacer
         else
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 

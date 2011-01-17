@@ -18,7 +18,13 @@ module Pacer::Pipes
         ok = @block.call extended_element
         return raw_element if ok
       end
-      pipe_empty!
+      raise Pacer::NoSuchElementException
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
   end
 end

@@ -14,6 +14,12 @@ module Pacer::Pipes
 
     def hasNext
       !!@nextKey or super
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
 
     protected
@@ -48,6 +54,12 @@ module Pacer::Pipes
       rescue => e
         puts e.message
         [key, values]
+      end
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
       end
     end
   end

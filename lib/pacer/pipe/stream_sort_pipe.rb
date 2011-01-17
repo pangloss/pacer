@@ -72,7 +72,13 @@ module Pacer::Pipes
         @clearing = @first_silo + @second_silo.sort! + @third_silo.sort!
         return processNextStart if @clearing.any?
       end
-      pipe_empty!
+      raise Pacer::NoSuchElementException
+    rescue NativeException => e
+      if e.cause.getClass == NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
   end
 end

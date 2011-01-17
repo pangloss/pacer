@@ -17,8 +17,14 @@ module Pacer::Pipes
 
     def processNextStart()
       @starts.next
-    rescue
-      pipe_empty!
+    rescue StopIteration
+      raise Pacer::NoSuchElementException
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
   end
 end

@@ -2,7 +2,13 @@ module Pacer
   # Import the Pipes and related objects that we'll be using.
 
   import java.util.Iterator
-  import java.util.NoSuchElementException
+  #import java.util.NoSuchElementException
+  begin
+    java.util.ArrayList.new.iterator.next
+  rescue NativeException => e
+    NoSuchElementException = e.cause
+  end
+
 
   module Pipes
     import com.tinkerpop.pipes.AbstractPipe
