@@ -22,7 +22,7 @@ module Pacer::Routes
       target_graph ||= Pacer.tg
       target_graph.vertex_name ||= graph.vertex_name
       bulk_job(nil, target_graph) do |path|
-        path_route = path.to_route(:graph => graph)
+        path_route = path.to_route(:graph => graph, :element_type => :mixed)
         path_route.v.each do |vertex|
           vertex.clone_into target_graph
         end

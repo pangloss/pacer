@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        "#<V-Index -> Branched { #<V -> outE -> inV -> V-Property([{:type=>\"project\"}])> | #<V -> outE -> inV -> outE> }>"
+        "#<V-Index(type: \"person\") -> Branched { #<V -> outE -> inV -> V-Property(type==\"project\")> | #<V -> outE -> inV -> outE> }>"
     end
   end
 
@@ -112,8 +112,7 @@ describe BranchedRoute do
 
   describe 'route with a custom split pipe' do
     before do
-      pending 'pipe loses last element, enable chain_route(:type => :identity)'
-      @r = @g.v.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
+      @r = @g.v.branch { |person| person.v{true} }.branch { |project| project.v{true} }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
     end
 
     describe 'vertices' do
@@ -216,11 +215,7 @@ for_tg(:read_only) do
 
   describe 'chained branch routes' do
     describe 'once' do
-      before do
-        pending 'pipe loses last element, enable chain_route(:type => :identity)'
-      end
-
-      subject { graph.v.branch { |v| v }.branch { |v| v }.v }
+      subject { graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.v }
 
       its(:count) { should == graph.v.count * 2 }
       it 'should have 2 of each vertex' do
@@ -229,9 +224,6 @@ for_tg(:read_only) do
     end
 
     describe 'twice' do
-      before do
-        #pending 'pipe loses last element, enable chain_route(:type => :identity)'
-      end
         # the difference must be with the object that's passed to the branch method
       let(:single) { graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
       let(:twice_v) { single.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
