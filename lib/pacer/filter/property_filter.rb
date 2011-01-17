@@ -33,8 +33,7 @@ module Pacer
           if labels.empty?
             super
           else
-            label_pipe = Pacer::Pipes::LabelsFilterPipe.new
-            label_pipe.set_labels labels
+            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.collect { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
             label_pipe.set_starts pipe
             super(label_pipe, filters - labels, block, false)
           end
@@ -122,11 +121,17 @@ module Pacer
       end
 
       def inspect_string
-        fs = "#{filters.inspect}" if filters.any?
-        bs = '&block' if @block
+        fs = filters.map do |f|
+          if f.is_a? Hash
+            f.map { |k, v| "#{ k }==#{ v.inspect }" }
+          else
+            f.inspect
+          end
+        end
+        fs << '&block' if @block
         s = inspect_class_name
         if fs or bs
-          s = "#{s}(#{ [fs, bs].compact.join(', ') })"
+          s = "#{s}(#{ fs.join(', ') })"
         end
         s
       end

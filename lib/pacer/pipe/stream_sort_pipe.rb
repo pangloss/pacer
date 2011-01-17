@@ -8,18 +8,20 @@ module Pacer::Pipes
   #
   # Number of silos is 4 by default, a number I pulled out of my ass without any testing.
   class StreamSortPipe < RubyPipe
-    def initialize(queue_length)
+    def initialize(queue_length = 100, silo_size = 10)
       super()
       @queue_length = queue_length
       @rebalancing = []
       @rebal_length = 0
-      @silos = [[], [], [], []]
+      @first_silo = []
+      @second_silo = []
+      @third_silo = []
       @clearing = []
-      @num_silos = 10
+      @silo_size = 3
     end
 
-    def setNumSilos(n)
-      @num_silos = n
+    def setSiloSize(n)
+      @silo_size = n
     end
 
     def processNextStart
@@ -33,11 +35,9 @@ module Pacer::Pipes
       if @rebalancing.any?
         if @starts.hasNext
           @rebalancing.sort!
-          n = @queue_length / @num_silos
-          @silos = []
-          @num_silos.times do |silo|
-            @silos << @rebalancing.slice(silo * n, n).sort
-          end
+          @first_silo = @rebalancing.slice(0, @silo_size)
+          @second_silo = @rebalancing.slice(@silo_size, @silo_size * 2) || []
+          @third_silo = @rebalancing.slice(@silo_size * 2..-1) || []
           @rebalancing = []
         else
           @clearing = @rebalancing.sort
@@ -46,29 +46,39 @@ module Pacer::Pipes
         end
       end
       if @starts.hasNext
-        if @silos.first.any?
+        if @first_silo.any?
           element = @starts.next
-          @silos.each_with_index do |silo, i|
-            if element < silo.last
-              silo << element
-              silo.sort!
-              break
+          begin
+            if @element < @first_silo.last
+              @first_silo << element
+              @first_silo.sort!
+            elsif @second_silo.none? or @element < @second_silo.last
+              @second_silo.unshift element
+            else
+              @third_silo << element
             end
+          rescue
+            @first_silo.unshift @element
           end
-          return @silos.first.shift
+          return @first_silo.shift
         else
-          @clearing = @silos[1]
-          @rebalancing = @silos[2..-1].inject([]) { |all, silo| all + silo }
-          @silos = []
+          @clearing = @second_silo
+          @clearing.sort!
+          @rebalancing = @third_silo
           @rebal_length = @rebalancing.length
           return @rebalancing.shift
         end
       else
-        @clearing = @silos.inject([]) { |all, silo| all + silo }
-        @silos = []
+        @clearing = @first_silo + @second_silo.sort! + @third_silo.sort!
         return processNextStart if @clearing.any?
       end
-      raise Pacer::NoSuchElementException.new
+      raise Pacer::NoSuchElementException
+    rescue NativeException => e
+      if e.cause.getClass == NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
   end
 end

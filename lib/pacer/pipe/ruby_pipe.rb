@@ -1,6 +1,7 @@
 module Pacer::Pipes
   class RubyPipe < AbstractPipe
     attr_accessor :starts
+    attr_accessor :path_enabled
 
     def setStarts(starts)
       @starts = starts
@@ -9,6 +10,7 @@ module Pacer::Pipes
 
     def enablePath
       super()
+      self.path_enabled = true
       starts.enablePath if starts.respond_to? :enablePath
     end
     alias enable_path enablePath

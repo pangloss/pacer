@@ -113,8 +113,11 @@ module Pacer
         else
           if block_given?
             while item = iter.next
-              item.graph ||= g if g and item.respond_to? :graph=
-              yield item.add_extensions(extensions)
+              if item.respond_to? :graph=
+                item.graph ||= g if g and item.respond_to? :graph=
+                item = item.add_extensions(extensions)
+              end
+              yield item
             end
           else
             iter.extend IteratorExtensionsMixin
@@ -123,7 +126,7 @@ module Pacer
             iter
           end
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -134,7 +137,7 @@ module Pacer
         if block_given?
           g = graph
           while item = iter.next
-            path = iter.path.map do |e|
+            path = iter.path.collect do |e|
               e.graph ||= g rescue nil
               e
             end
@@ -145,7 +148,7 @@ module Pacer
           iter.graph = graph
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -165,7 +168,7 @@ module Pacer
           iter.context = self
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -178,7 +181,7 @@ module Pacer
         else
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -193,13 +196,13 @@ module Pacer
         else
           count = 0
           limit ||= Pacer.inspect_limit
-          results = map do |v|
+          results = collect do |v|
             count += 1
             return route.inspect if count > limit
             v.inspect
           end
           if count > 0
-            lens = results.map { |r| r.length }
+            lens = results.collect { |r| r.length }
             max = lens.max
             cols = (Pacer.columns / (max + 1).to_f).floor
             cols = 1 if cols < 1
@@ -417,7 +420,7 @@ module Pacer
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            pipeargs = @pipe_args.map do |arg|
+            pipeargs = @pipe_args.collect do |arg|
               if arg.is_a? Enumerable and arg.count > 10
                 "[...#{ arg.count } items...]"
               else

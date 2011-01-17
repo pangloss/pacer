@@ -50,10 +50,10 @@ module Enumerable
       self
     else
       if based_on = opts[:based_on]
-        Pacer::Route.new(:source => self, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_n.info)
+        Pacer::Route.new(:source => self, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => self, :element_type => :mixed, :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
+        Pacer::Route.new(:source => self, :element_type => (opts[:element_type] || :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
       end
     end
   end

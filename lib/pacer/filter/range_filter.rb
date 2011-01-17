@@ -46,6 +46,10 @@ module Pacer
         pipe.set_starts end_pipe
         pipe
       end
+
+      def inspect_string
+        "#{ inspect_class_name }(#{ range.inspect })"
+      end
     end
   end
 end

@@ -87,7 +87,7 @@ module Pacer::Routes
       @configure_split_pipe.call(split_pipe) if @configure_split_pipe
       split_idx = 0
       branch_start_pipes = []
-      branch_pipes = @branches.map do |branch, uses_split_pipe|
+      branch_pipes = @branches.collect do |branch, uses_split_pipe|
         start_pipe, end_pipe = branch.send(:build_pipeline)
         branch_start_pipes << start_pipe
         if uses_split_pipe
@@ -104,7 +104,7 @@ module Pacer::Routes
     end
 
     def inspect_class_name
-      "#{super} { #{ @branches.map { |e, _| e.inspect }.join(' | ') } }"
+      "#{super} { #{ @branches.collect { |e, _| e.inspect }.join(' | ') } }"
     end
   end
 end

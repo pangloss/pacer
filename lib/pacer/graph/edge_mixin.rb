@@ -42,7 +42,6 @@ module Pacer
       end
     end
 
-
     # Deletes the edge from its graph.
     def delete!
       graph.remove_edge element

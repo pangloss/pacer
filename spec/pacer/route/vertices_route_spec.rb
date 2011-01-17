@@ -18,7 +18,7 @@ for_tg(:read_only) do
         r = graph.v.out_e.in_v.in_e { |e| e.label == 'wrote' }.out_v
         paths = r.paths
         paths.first.should_not be_nil
-        graph.v.out_e.in_v.in_e(:wrote).out_v.paths.map(&:to_a).should == paths.map(&:to_a)
+        graph.v.out_e.in_v.in_e(:wrote).out_v.paths.collect(&:to_a).should == paths.collect(&:to_a)
       end
     end
   end

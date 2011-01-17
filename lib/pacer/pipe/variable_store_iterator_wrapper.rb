@@ -10,6 +10,12 @@ module Pacer::Pipes
 
     def next
       @vars[@variable_name] = @pipe.next
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
+      end
     end
 
     def enablePath

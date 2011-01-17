@@ -28,7 +28,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote)>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -36,7 +36,7 @@ for_tg do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<GraphV -> V-Property([{:name=>\"gremlin\"}]) -> :grem -> inE -> E-Property([:wrote])>" }
+      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote)>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -111,7 +111,7 @@ for_each_graph(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<V-Index -> :grem -> inE -> E-Property([:wrote]) -> outV -> outE -> E-Property([:wrote], &block) -> inV -> V-Property(&block)>"
+          "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote) -> outV -> outE -> E-Property(:wrote, &block) -> inV -> V-Property(&block)>"
       end
     end
 
@@ -141,8 +141,8 @@ for_each_graph(:read_only) do
       it { graph.v { |v| v.out_e.none? }[:name].to_a.should == ['blueprints'] }
 
       it 'should work with paths' do
-        paths = graph.v.out_e(:wrote).in_v.paths.map(&:to_a)
-        filtered_paths = graph.v { true }.out_e(:wrote).e { true }.in_v.paths.map(&:to_a)
+        paths = graph.v.out_e(:wrote).in_v.paths.collect(&:to_a)
+        filtered_paths = graph.v { true }.out_e(:wrote).e { true }.in_v.paths.collect(&:to_a)
         filtered_paths.should == paths
       end
     end

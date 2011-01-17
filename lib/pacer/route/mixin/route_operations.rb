@@ -47,10 +47,16 @@ module Pacer::Routes
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|
-            prop_or_subset.map { |i| element.get_property(i.to_s) }
+            prop_or_subset.collect { |i| element.get_property(i.to_s) }
           end
         end
       end
+    end
+
+    def property?(name)
+      chain_route(:element_type => :object,
+                  :pipe_class => Pacer::Pipes::PropertyPipe,
+                  :pipe_args => [name.to_s, true])
     end
 
     # Returns an array of element ids.
@@ -63,12 +69,12 @@ module Pacer::Routes
     # the results set.
     def group_count(*props)
       result = Hash.new(0)
-      props = props.map { |p| p.to_s }
+      props = props.collect { |p| p.to_s }
       if props.empty? and block_given?
         each { |e| result[yield(e)] += 1 }
       elsif block_given?
         each do |e|
-          key = props.map { |p| e.get_property(p) }
+          key = props.collect { |p| e.get_property(p) }
           key << yield(e)
           result[key] += 1
         end
@@ -79,7 +85,7 @@ module Pacer::Routes
         end
       elsif props.any?
         each do |e|
-          result[props.map { |p| e.get_property(p) }] += 1
+          result[props.collect { |p| e.get_property(p) }] += 1
         end
       else
         each do |e|
@@ -89,12 +95,16 @@ module Pacer::Routes
       result
     end
 
-    def most_frequent(range = 0)
-      group_count.sort_by { |k, v| -v }.map { |k, v| k }[range]
+    def most_frequent(range = 0, include_counts = false)
+      if include_counts
+        group_count.sort_by { |k, v| -v }[range].collect { |k, v| [k, v] }
+      else
+        group_count.sort_by { |k, v| -v }[range].collect { |k, v| k }
+      end
     end
 
     def all_but_most_frequent(start_at = 1)
-      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[start_at..-1]
+      elements = group_count.sort_by { |k, v| -v }.collect { |k, v| k }[start_at..-1]
       elements ||= []
       elements.to_route(:based_on => self)
     end
