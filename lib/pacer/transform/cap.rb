@@ -14,17 +14,29 @@ module Pacer
 
       protected
 
-      def attach_pipe(end_pipe)
+      def pipe_source
+        s, e = super
+        if not s and not e
+          s = e = com.tinkerpop.pipes.IdentityPipe.new
+        end
+        [s, e]
+      end
+
+      def side_effect_pipe(end_pipe)
         old_back = @side_effect.back
         begin
           empty = Pacer::Route.new :filter => :empty, :back => self
           @side_effect.back = empty
           _, side_effect_pipe = @side_effect.send :build_pipeline
+          side_effect_pipe.setStarts end_pipe
+          side_effect_pipe
         ensure
           @side_effect.back = old_back
         end
-        side_effect_pipe.setStarts end_pipe
-        pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new side_effect_pipe
+      end
+
+      def attach_pipe(end_pipe)
+        pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new side_effect_pipe(end_pipe)
         pipe.setStarts end_pipe
         pipe
       end
