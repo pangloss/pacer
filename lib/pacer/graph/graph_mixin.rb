@@ -165,6 +165,14 @@ module Pacer
       element_type(et).java_class.to_java
     end
 
+    def element_type?(et)
+      if [element_type(:vertex), element_type(:edge), element_type(:mixed)].include?  element_type(et)
+        true
+      else
+        false
+      end
+    end
+
     protected
 
     def creating_elements
