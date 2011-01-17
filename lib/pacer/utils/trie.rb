@@ -6,12 +6,12 @@ module Pacer::Utils
         if t
           t
         else
-          graph.create_vertex self, :type => 'Trie Root', :name => name
+          graph.create_vertex self, :type => 'Trie', :name => name
         end
       end
 
       def route_conditions
-        { :type => 'Trie Root' }
+        { :type => 'Trie' }
       end
     end
 
@@ -23,7 +23,7 @@ module Pacer::Utils
       def find(array)
         found = find_partial(array)
         if found.length == array.length
-          result = found.last.in_vertex.add_extensions [Element]
+          result = found.last.in_vertex.add_extensions [Trie]
           result.graph = graph
           result
         end
@@ -57,37 +57,34 @@ module Pacer::Utils
             if edge
               edge.in_vertex
             else
-              new_vertex = vertex.graph.create_vertex
-              vertex.graph.create_edge nil, vertex, new_vertex, part.to_s
+              new_vertex = graph.create_vertex :type => 'Trie'
+              graph.create_edge nil, vertex, new_vertex, part.to_s
               new_vertex
             end
           end
         end
+        result[:end] = true
         result.graph = graph
-        result.add_extensions [Element]
+        result.add_extensions [Trie]
       end
-    end
 
-    module Element
-      module Vertex
-        def path
-          result = []
-          v.in_e.loop { |e| e.out_v.in_e }.while do |e, d|
-            if e.out_vertex[:type] == 'Trie Root'
-              :emit
-            else
-              :loop
-            end
-          end.paths.to_a.first.reverse.to_route(:element_type => :mixed, :graph => graph)
-        end
+      def path
+        result = []
+        v.in_e.loop { |e| e.out_v.in_e }.while do |e, d|
+          if e.out_vertex[:type] == 'Trie'
+            :emit
+          else
+            :loop
+          end
+        end.paths.to_a.first.reverse.to_route(:element_type => :mixed, :graph => graph)
+      end
 
-        def array
-          path.e.labels.to_a
-        end
+      def array
+        path.e.labels.to_a
+      end
 
-        def word
-          array.join
-        end
+      def word
+        array.join
       end
     end
   end
