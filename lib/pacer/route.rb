@@ -7,9 +7,6 @@
 end
 
 module Pacer
-  class NoFilterSpecified < RuntimeError
-  end
-
   class Route
     module Helpers
       class << self
@@ -86,9 +83,11 @@ module Pacer
         else
           @each_method = :each_object
         end
-      else
+      elsif et == :object or et == Object
         @element_type = Object
         @each_method = :each_object
+      else
+        raise "Element type #{ et.inspect } specified, but no graph specified."
       end
     end
 
@@ -169,7 +168,7 @@ module Pacer
         if bet = back_element_type(args)
           self.element_type = bet
         else
-          raise NoFilterSpecified, "No element_type specified or inferred"
+          raise "No element_type specified or inferred"
         end
       end
     end
