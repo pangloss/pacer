@@ -7,6 +7,18 @@ module Pacer
         args[:end] = to if to
         chain_route args
       end
+
+      def limit(max)
+        chain_route :filter => :range, :range => (0...max)
+      end
+
+      def offset(amount)
+        chain_route :filter => :range, :begin => amount
+      end
+
+      def at(pos)
+        chain_route :filter => :range, :index => pos
+      end
     end
   end
 
