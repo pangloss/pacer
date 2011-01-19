@@ -44,6 +44,8 @@ module Pacer
         [:filters]
       end
 
+      attr_accessor :block
+
       def filters=(filter_array)
         case filter_array
         when Array
@@ -57,18 +59,9 @@ module Pacer
         add_extensions @filters
       end
 
-      def block=(block)
-        @block = block
-      end
-
       # Return an array of filter options for the current route.
       def filters
         @filters ||= []
-      end
-
-      # Return the block filter for the current route.
-      def block
-        @block
       end
 
       protected
