@@ -9,11 +9,11 @@ module Pacer
       end
 
       def limit(max)
-        chain_route :filter => :range, :range => (0...max)
+        chain_route :filter => :range, :limit => max
       end
 
       def offset(amount)
-        chain_route :filter => :range, :begin => amount
+        chain_route :filter => :range, :offset => amount
       end
 
       def at(pos)
@@ -26,6 +26,38 @@ module Pacer
     module RangeFilter
       def self.triggers
         [:range]
+      end
+
+      def limit(n = nil)
+        @limit = n
+        if range.begin == -1
+          @range = range.begin...n
+        else
+          @range = range.begin...(range.begin + n)
+        end
+        self
+      end
+
+      def limit=(n)
+        limit n
+        n
+      end
+
+      def offset(n = nil)
+        n += 1 if range.begin == -1
+        if range.end == -1
+          @range = (range.begin + n)..-1
+        elsif range.exclude_end?
+          @range = (range.begin + n)...(range.end + n)
+        else
+          @range = (range.begin + n)..(range.end + n)
+        end
+        self
+      end
+
+      def offset=(n)
+        offset n
+        n
       end
 
       def range=(range)
