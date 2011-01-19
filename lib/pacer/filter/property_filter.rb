@@ -41,7 +41,7 @@ module Pacer
       end
 
       def self.triggers
-        [:filters, :block]
+        [:filters]
       end
 
       def filters=(filter_array)
@@ -97,7 +97,9 @@ module Pacer
           end
         end
         if block
-          pipe = Pacer::Pipes::BlockFilterPipe.new(pipe, self, block)
+          block_pipe = Pacer::Pipes::BlockFilterPipe.new(self, block)
+          block_pipe.set_starts pipe
+          pipe = block_pipe
         end
         pipe
       end

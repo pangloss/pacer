@@ -1,11 +1,11 @@
 module Pacer::Pipes
   class BlockFilterPipe < RubyPipe
-    def initialize(starts, back, block)
+    def initialize(back, block, invert = false)
       super()
-      set_starts(starts)
       @back = back
       @block = block
       @graph = back.graph
+      @invert = invert
 
       @extensions = @back.extensions + [Pacer::Extensions::BlockFilterElement]
       @is_element = @graph.element_type?(back.element_type)
@@ -21,6 +21,7 @@ module Pacer::Pipes
         else
           ok = @block.call raw_element
         end
+        ok = !ok if @invert
         return raw_element if ok
       end
       raise Pacer::NoSuchElementException
