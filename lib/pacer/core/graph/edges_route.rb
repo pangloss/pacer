@@ -48,6 +48,10 @@ module Pacer::Core::Graph
       chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe, :route_name => 'labels')
     end
 
+    def properties
+      map { |e| e.properties }
+    end
+
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)

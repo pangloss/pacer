@@ -48,6 +48,10 @@ module Pacer::Core::Graph
       raise Pacer::UnsupportedOperation, "Can't call edges for VerticesRoute."
     end
 
+    def properties
+      map { |v| v.properties }
+    end
+
     # Delete all matching elements.
     def delete!
       uniq.both_e.uniq.bulk_job { |e| e.delete! }

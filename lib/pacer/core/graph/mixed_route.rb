@@ -70,6 +70,10 @@ module Pacer::Core::Graph
       graph.element_type(:mixed)
     end
 
+    def properties
+      map { |e| e.properties }
+    end
+
     # Calculate and save result.
     def result(name = nil)
       ids = collect do |element|
