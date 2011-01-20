@@ -7,6 +7,7 @@ module Pacer
     java.util.ArrayList.new.iterator.next
   rescue NativeException => e
     NoSuchElementException = e.cause
+    Pipes::NoSuchElementException = e.cause
   end
 
 
@@ -52,6 +53,7 @@ require 'pacer/pipe/group_pipe'
 require 'pacer/pipe/loop_pipe'
 require 'pacer/pipe/map_pipe'
 require 'pacer/pipe/stream_sort_pipe'
+require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
 require 'pacer/pipe/label_prefix_pipe'
 require 'pacer/pipe/variable_store_iterator_wrapper'
