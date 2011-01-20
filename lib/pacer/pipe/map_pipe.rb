@@ -4,20 +4,28 @@ module Pacer::Pipes
       super()
       @block = block
       @back = back
-      @graph = back.graph
+      @graph = back.graph if back
       @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
-      @is_element = @graph.element_type?(back.element_type)
+      if @graph
+        @is_element = @graph.element_type?(back.element_type)
+      else
+        @is_element = false
+      end
     end
 
     def processNextStart
       while true
         obj = @starts.next
-        if @is_element
-          obj = obj.add_extensions(@extensions)
-          obj.back = @back
-          obj.graph = @back.graph
+        begin
+          if @is_element
+            obj = obj.add_extensions(@extensions)
+            obj.back = @back
+            obj.graph = @back.graph
+          end
+        rescue
         end
-        return @block.call(obj)
+        result = @block.call(obj)
+        return result if result
       end
     rescue NativeException => e
       if e.cause.getClass == Pacer::NoSuchElementException.getClass
