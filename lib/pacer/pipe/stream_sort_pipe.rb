@@ -49,16 +49,16 @@ module Pacer::Pipes
         if @first_silo.any?
           element = @starts.next
           begin
-            if @element < @first_silo.last
+            if element < @first_silo.last
               @first_silo << element
               @first_silo.sort!
-            elsif @second_silo.none? or @element < @second_silo.last
+            elsif @second_silo.none? or element < @second_silo.last
               @second_silo.unshift element
             else
               @third_silo << element
             end
-          rescue
-            @first_silo.unshift @element
+          rescue => e
+            @first_silo.unshift element
           end
           return @first_silo.shift
         else
