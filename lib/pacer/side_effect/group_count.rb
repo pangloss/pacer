@@ -11,11 +11,19 @@ module Pacer
         @hash_map = hash_map
       end
 
+      def at_least(n)
+        @min = n
+        self
+      end
+
       def to_h
-        each { }
+        c = 0
+        each { c = c + 1 }
+        puts c
         h = {}
+        min = @min || 0
         side_effect.each do |k,v|
-          h[k] = v
+          h[k] = v if v >= min
         end
         h
       end
