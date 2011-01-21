@@ -1,15 +1,27 @@
 module Pacer::Pipes
   class GroupPipe < RubyPipe
-    def initialize(grouped_pipe_start, grouped_pipe, unique = false)
+    def initialize
       super()
+      @next_key = nil
+    end
+
+    def setUnique(bool)
       @unique = unique
-      @grouped_pipe = grouped_pipe
-      @expando = ExpandablePipe.new
-      @expando.setStarts java.util.ArrayList.new.iterator
-      grouped_pipe_start.setStarts(@expando)
-      @grouped_pipe_start = grouped_pipe_start
-      @next_group = nil
       @groups = {}
+    end
+
+    def setKeyPipe(from_pipe, to_pipe)
+      @from_key_expando = ExpandablePipe.new
+      @from_key_expando.setStarts java.util.ArrayList.new.iterator
+      from_pipe.setStarts(@from_key_expando)
+      @to_key_pipe = to_pipe
+    end
+
+    def setValuesPipe(from_pipe, to_pipe)
+      @from_values_expando = ExpandablePipe.new
+      @from_values_expando.setStarts java.util.ArrayList.new.iterator
+      from_pipe.setStarts(@from_values_expando)
+      @to_values_pipe = to_pipe
     end
 
     def hasNext
@@ -25,41 +37,49 @@ module Pacer::Pipes
     protected
 
     def processNextStart
-      key = @next_key
-      values = []
-      @next_key = nil
-      key ||= @starts.next
-      begin
-        @expando.add key, java.util.ArrayList.new, nil
-        loop_values = []
-        begin
-          while true
-            print '+'
-            loop_values << @grouped_pipe.next
-          end
-        rescue => e
-          puts e.message
-          values += loop_values
-        end
-        while true
-          k = @starts.next
-          if k != key
-            @next_key = k
-            return [key, values]
-          else
-            print 'x'
-            values += loop_values
-          end
-        end
-      rescue => e
-        puts e.message
-        [key, values]
+      while true
+        element = next_element
+        return [get_keys(element), get_values(element)]
       end
     rescue NativeException => e
       if e.cause.getClass == Pacer::NoSuchElementException.getClass
         raise e.cause
       else
         raise e
+      end
+    end
+
+    def get_keys(element)
+      next_results(@from_key_expando, @to_key_pipe, element)
+    end
+
+    def get_values(element)
+      next_results(@from_values_expando, @to_values_pipe, element)
+    end
+
+    def next_results(expando, pipe, element)
+      expando.add element, java.util.ArrayList.new, nil
+      pipe.reset
+      results = []
+      begin
+        while pipe.hasNext
+          results << pipe.next
+        end
+      rescue java.util.NoSuchElementException, NoSuchElementException
+      rescue Exception => e
+        puts e.message
+        pp e.backtrace
+      end
+      results
+    end
+
+    def next_element
+      if @next_element
+        element = @next_element
+        @next_element = nil
+        element
+      else
+        @starts.next
       end
     end
   end

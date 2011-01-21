@@ -51,6 +51,12 @@ module Pacer
       end
     end
 
+    class << self
+      def empty(back)
+        Pacer::Route.new :filter => :empty, :back => back
+      end
+    end
+
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
