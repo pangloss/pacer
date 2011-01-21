@@ -1,16 +1,5 @@
 module Pacer
   # Import the Pipes and related objects that we'll be using.
-
-  import java.util.Iterator
-  #import java.util.NoSuchElementException
-  begin
-    java.util.ArrayList.new.iterator.next
-  rescue NativeException => e
-    NoSuchElementException = e.cause
-    Pipes::NoSuchElementException = e.cause
-  end
-
-
   module Pipes
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.IdentityPipe
@@ -41,6 +30,14 @@ module Pacer
     EQUAL = ComparisonFilterPipe::Filter::EQUAL
     NOT_EQUAL = ComparisonFilterPipe::Filter::NOT_EQUAL
     #GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL
+  end
+
+  import java.util.Iterator
+  begin
+    java.util.ArrayList.new.iterator.next
+  rescue NativeException => e
+    NoSuchElementException = e.cause
+    Pipes::NoSuchElementException = e.cause
   end
 end
 
