@@ -121,13 +121,15 @@ module Pacer
       drop_index name
       index = create_index name, index_class, Pacer.automatic_index
       keys.each { |key| index.addAutoIndexKey key } if keys
-      if index_class == element_type(:vertex).java_class
-        v.bulk_job do |v|
-          Pacer::Utils::AutomaticIndexHelper.indexElement(index, v)
-        end
-      else
-        e.bulk_job do |e|
-          Pacer::Utils::AutomaticIndexHelper.indexElement(index, e)
+      Thread.new do
+        if index_class == element_type(:vertex).java_class
+          v.bulk_job do |v|
+            Pacer::Utils::AutomaticIndexHelper.indexElement(index, v)
+          end
+        else
+          e.bulk_job do |e|
+            Pacer::Utils::AutomaticIndexHelper.indexElement(index, e)
+          end
         end
       end
       index
