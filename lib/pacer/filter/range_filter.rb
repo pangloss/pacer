@@ -44,13 +44,14 @@ module Pacer
       end
 
       def offset(n = nil)
-        n += 1 if range.begin == -1
+        s = n
+        s += 1 if range.begin == -1
         if range.end == -1
-          @range = (range.begin + n)..-1
+          @range = (range.begin + s)..-1
         elsif range.exclude_end?
-          @range = (range.begin + n)...(range.end + n)
+          @range = (range.begin + s)...(range.end + n)
         else
-          @range = (range.begin + n)..(range.end + n)
+          @range = (range.begin + s)..(range.end + n)
         end
         self
       end
