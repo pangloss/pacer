@@ -35,7 +35,7 @@ module Pacer::Utils
         max_depth = array.length - 1
         found = []
         v.out_e(strings.first).loop { |e| e.in_v.out_e }.while do |e, depth|
-          if e.label == strings[depth] and depth <= max_depth
+          if e.label == "trie:#{strings[depth]}" and depth <= max_depth
             found << e
             :loop
           end
@@ -58,7 +58,7 @@ module Pacer::Utils
               edge.in_vertex
             else
               new_vertex = graph.create_vertex :type => 'Trie'
-              graph.create_edge nil, vertex, new_vertex, part.to_s
+              graph.create_edge nil, vertex, new_vertex, "trie:#{part.to_s}"
               new_vertex
             end
           end
@@ -70,7 +70,9 @@ module Pacer::Utils
 
       def path
         result = []
-        v.in_e.loop { |e| e.out_v.in_e }.while do |e, d|
+        v.in_e.chain_route(:pipe_class => Pacer::Pipes::LabelPrefixPipe, :pipe_args => 'trie:').loop do |e|
+          e.out_v.in_e.chain_route(:pipe_class => Pacer::Pipes::LabelPrefixPipe, :pipe_args => 'trie:')
+        end.while do |e, d|
           if e.out_vertex[:type] == 'Trie'
             :emit
           else
@@ -80,7 +82,7 @@ module Pacer::Utils
       end
 
       def array
-        path.e.labels.to_a
+        path.e.labels.map { |label| label[/^trie:(.*)$/, 1] }.to_a
       end
 
       def word
