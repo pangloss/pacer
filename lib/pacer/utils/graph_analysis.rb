@@ -16,10 +16,10 @@ module Pacer
               "properties #{v[:number]} keys (#{v[:count]})"
             end
           end
-          graph.v.group_count(type_field).each do |type, count|
+          graph.v[type_field].fast_group_count.to_h.each do |type, count|
             result.create_vertex :element_type => 'vertex', :type_field => type_field, :type => type, :count => count
           end
-          graph.e.group_count(&:label).each do |label, count|
+          graph.e.labels.fast_group_count.to_h.each do |label, count|
             result.create_vertex :element_type => 'edge', :label => label, :count => count
           end
           result.v(:element_type => 'vertex').each do |type_node|
