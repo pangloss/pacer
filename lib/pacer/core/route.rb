@@ -103,7 +103,8 @@ module Pacer
         g = graph
         if extensions.empty?
           if block_given?
-            while item = iter.next
+            while true
+              item = iter.next
               item.graph ||= g if g and item.respond_to? :graph=
               yield item
             end
@@ -112,7 +113,8 @@ module Pacer
           end
         else
           if block_given?
-            while item = iter.next
+            while true
+              item = iter.next
               if item.respond_to? :graph=
                 item.graph ||= g if g and item.respond_to? :graph=
                 item = item.add_extensions(extensions)
@@ -136,7 +138,8 @@ module Pacer
         iter.enable_path
         if block_given?
           g = graph
-          while item = iter.next
+          while true
+            item = iter.next
             path = iter.path.collect do |e|
               e.graph ||= g rescue nil
               e
@@ -156,7 +159,8 @@ module Pacer
         iter = iterator
         if block_given?
           g = graph
-          while item = iter.next
+          while true
+            item = iter.next
             item.graph ||= g
             item.extend Pacer::Extensions::BlockFilterElement
             item.back = self
@@ -175,7 +179,8 @@ module Pacer
       def each_object
         iter = iterator
         if block_given?
-          while item = iter.next
+          while true
+            item = iter.next
             yield item
           end
         else
