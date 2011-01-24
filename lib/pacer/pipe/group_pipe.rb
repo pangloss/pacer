@@ -14,14 +14,22 @@ module Pacer::Pipes
       @from_key_expando = ExpandablePipe.new
       @from_key_expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(@from_key_expando)
-      @to_key_pipe = to_pipe
+      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
+      cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
+      agg_pipe.setStarts to_pipe
+      cap_pipe.setStarts to_pipe
+      @to_key_pipe = cap_pipe
     end
 
     def setValuesPipe(from_pipe, to_pipe)
       @from_values_expando = ExpandablePipe.new
       @from_values_expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(@from_values_expando)
-      @to_values_pipe = to_pipe
+      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
+      cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
+      agg_pipe.setStarts to_pipe
+      cap_pipe.setStarts to_pipe
+      @to_values_pipe = cap_pipe
     end
 
     def hasNext
@@ -60,17 +68,7 @@ module Pacer::Pipes
     def next_results(expando, pipe, element)
       expando.add element, java.util.ArrayList.new, nil
       pipe.reset
-      results = []
-      begin
-        while pipe.hasNext
-          results << pipe.next
-        end
-      rescue java.util.NoSuchElementException, NoSuchElementException
-      rescue Exception => e
-        puts e.message
-        pp e.backtrace
-      end
-      results
+      pipe.next
     end
 
     def next_element
