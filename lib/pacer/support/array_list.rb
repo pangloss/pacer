@@ -5,6 +5,13 @@ class Java::JavaUtil::ArrayList
   end
 end
 
+java.util.LinkedList
+class Java::JavaUtil::LinkedList
+  def inspect
+    to_a.inspect
+  end
+end
+
 require 'set'
 java.util.HashSet
 class Java::JavaUtil::HashSet
