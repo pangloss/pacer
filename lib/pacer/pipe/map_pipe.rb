@@ -25,7 +25,7 @@ module Pacer::Pipes
         rescue
         end
         result = @block.call(obj)
-        return result if result
+        return result
       end
     rescue NativeException => e
       if e.cause.getClass == Pacer::NoSuchElementException.getClass
