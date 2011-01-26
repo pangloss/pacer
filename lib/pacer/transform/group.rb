@@ -34,6 +34,19 @@ module Pacer
         self
       end
 
+      def combine
+        hash = {}
+        each do |key, value_sets|
+          a = hash[key] ||= [[]] * value_sets.count
+          value_sets.each_with_index do |values, idx|
+            values.each do |value|
+              a[idx] << value
+            end
+          end
+        end
+        hash
+      end
+
       protected
 
       def after_initialize
