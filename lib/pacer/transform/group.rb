@@ -97,7 +97,7 @@ module Pacer
       def attach_pipe(end_pipe)
         key_route, values_routes = ensure_routes
         pipe = Pacer::Pipes::GroupPipe.new
-        pipe.setKeyPipe *key_route.send(:build_pipeline)
+        pipe.addKeyPipe *key_route.send(:build_pipeline)
         values_routes.each do |route|
           pipe.addValuesPipe *route.send(:build_pipeline)
         end
