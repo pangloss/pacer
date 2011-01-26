@@ -37,7 +37,12 @@ module Pacer
       def combine
         hash = {}
         each do |key, value_sets|
-          a = hash[key] ||= [[]] * value_sets.count
+          a = hash[key]
+          unless a
+            a = []
+            hash[key] = a
+            value_sets.each { a << [] }
+          end
           value_sets.each_with_index do |values, idx|
             values.each do |value|
               a[idx] << value
