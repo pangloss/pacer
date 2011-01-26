@@ -47,6 +47,22 @@ module Pacer
         hash
       end
 
+      def reduce(start)
+        if start.is_a? Proc
+          hash = Hash.new(&start)
+        else
+          hash = Hash.new(start)
+        end
+        each do |key, value_sets|
+          value_sets.each_with_index do |values, idx|
+            values.each do |value|
+              hash[key] = yield hash[key], key, value
+            end
+          end
+        end
+        hash
+      end
+
       protected
 
       def after_initialize
