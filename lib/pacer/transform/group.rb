@@ -12,7 +12,7 @@ module Pacer
 
   module Transform
     module Group
-      attr_accessor :key_route, :values_route
+      attr_accessor :key_route, :values_routes
 
       def key(&block)
         @key_route = map_route block
@@ -20,7 +20,7 @@ module Pacer
       end
 
       def values(&block)
-        @values_route = map_route block
+        @values_routes << map_route(block)
         self
       end
 
@@ -30,11 +30,15 @@ module Pacer
       end
 
       def values_route(&block)
-        @values_route = block_route(block)
+        @values_routes << block_route(block)
         self
       end
 
       protected
+
+      def after_initialize
+        @values_routes = []
+      end
 
       def map_route(block)
         Pacer::Route.empty(self).
@@ -52,24 +56,29 @@ module Pacer
       end
 
       def ensure_routes
-        @key_route ||= identity_route
-        @values_route ||= identity_route
-        @key_route.route
-        @values_route.route
+        key_route = @key_route
+        values_routes = @values_routes
+        key_route ||= identity_route
+        values_routes = [identity_route] if values_routes.empty?
+        key_route.route
+        values_routes.each { |r| r.route }
+        [key_route, values_routes]
       end
 
       def attach_pipe(end_pipe)
-        ensure_routes
+        key_route, values_routes = ensure_routes
         pipe = Pacer::Pipes::GroupPipe.new
-        pipe.setKeyPipe *@key_route.send(:build_pipeline)
-        pipe.setValuesPipe *@values_route.send(:build_pipeline)
+        pipe.setKeyPipe *key_route.send(:build_pipeline)
+        values_routes.each do |route|
+          pipe.addValuesPipe *route.send(:build_pipeline)
+        end
         pipe.setStarts end_pipe
         pipe
       end
 
       def inspect_string
-        ensure_routes
-        "#{ inspect_class_name }([#{ @key_route.inspect }, #{ @values_route.inspect }])"
+        key_route, values_routes = ensure_routes
+        "#{ inspect_class_name }(#{ key_route.inspect }, #{ values_routes.inspect })"
       end
     end
   end

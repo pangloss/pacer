@@ -3,6 +3,7 @@ module Pacer::Pipes
     def initialize
       super()
       @next_key = nil
+      @values_pipes = []
     end
 
     def setUnique(bool)
@@ -14,22 +15,18 @@ module Pacer::Pipes
       @from_key_expando = ExpandablePipe.new
       @from_key_expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(@from_key_expando)
-      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
-      cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
-      agg_pipe.setStarts to_pipe
-      cap_pipe.setStarts to_pipe
-      @to_key_pipe = cap_pipe
+      @to_key_pipe = to_pipe
     end
 
-    def setValuesPipe(from_pipe, to_pipe)
-      @from_values_expando = ExpandablePipe.new
-      @from_values_expando.setStarts java.util.ArrayList.new.iterator
-      from_pipe.setStarts(@from_values_expando)
+    def addValuesPipe(from_pipe, to_pipe)
+      expando = ExpandablePipe.new
+      expando.setStarts java.util.ArrayList.new.iterator
+      from_pipe.setStarts(expando)
       agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
       cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
       agg_pipe.setStarts to_pipe
       cap_pipe.setStarts to_pipe
-      @to_values_pipe = cap_pipe
+      @values_pipes << [expando, cap_pipe]
     end
 
     def hasNext
@@ -62,7 +59,9 @@ module Pacer::Pipes
     end
 
     def get_values(element)
-      next_results(@from_values_expando, @to_values_pipe, element)
+      @values_pipes.map do |expando, to_pipe|
+        next_results(expando, to_pipe, element)
+      end
     end
 
     def next_results(expando, pipe, element)
