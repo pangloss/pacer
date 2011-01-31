@@ -113,10 +113,12 @@ module Pacer
     end
     alias verbose verbose?
 
+    # TODO make things register for these callbacks.
     def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
       Route::Helpers.clear_cache
+      Filter::ExpressionFilter::Parser.reset
     end
 
     def vertex?(element)

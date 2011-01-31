@@ -11,19 +11,32 @@ module Pacer
 
   module Filter
     module ExpressionFilter
-      attr_reader :exp
+      attr_reader :exp, :parsed
       attr_accessor :args
 
       def exp=(str)
+        @exp = str
+        @parsed = Parser.parse str
       end
 
       protected
 
       def attach_pipe(end_pipe)
-        
+        end_pipe
       end
 
       class Parser < Parslet::Parser
+        class << self
+          def reset
+            @parser = nil
+          end
+
+          def parse(str)
+            @parser ||= new
+            @parser.parse str
+          end
+        end
+
         rule(:lparen)     { str('(') >> space? }
         rule(:rparen)     { str(')') >> space? }
         rule(:space)      { match('\s').repeat(1) }
@@ -31,23 +44,23 @@ module Pacer
 
         rule(:integer)    { match('[0-9]').repeat(1).as(:int) >> space? }
         rule(:float)      { (match('[0-9]').repeat(1) >> str('.') >> match('[0-9]').repeat(1) ).as(:float) >> space? }
-        rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any ).repeat.as(:string) >> str('"')) >> space? }
-        rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any ).repeat.as(:string) >> str("'")) >> space? }
+        rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any ).repeat.as(:str) >> str('"')) >> space? }
+        rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any ).repeat.as(:str) >> str("'")) >> space? }
         rule(:string)    { dq_string | sq_string }
 
-        rule(:property_string) { (str("{") >> ( str('\\') >> any | str("}").absnt? >> any ).repeat.as(:property) >> str("}")) >> space? }
+        rule(:property_string) { (str("{") >> ( str('\\') >> any | str("}").absnt? >> any ).repeat.as(:prop) >> str("}")) >> space? }
 
         rule(:identifier) { match['[a-zA-Z]'] >> match('[a-zA-Z0-9_]').repeat }
-        rule(:variable) { str(':') >> identifier.as(:variable) >> space? }
-        rule(:arguments) { lparen >> (identifier.as(:argument) >> space? >> (str(',') >> space? >> identifier.as(:argument) >> space?).repeat).maybe >> rparen }
+        rule(:variable) { str(':') >> identifier.as(:var) >> space? }
+        rule(:arguments) { lparen >> (identifier.as(:arg) >> space? >> (str(',') >> space? >> identifier.as(:arg) >> space?).repeat).maybe >> rparen }
         rule(:proc_variable) { str('&') >> identifier.as(:proc) >> arguments.maybe >> space? }
 
-        rule(:property) { identifier.as(:property) >> space? }
+        rule(:property) { identifier.as(:prop) >> space? }
 
         rule(:comparison) { (str('!=') | str('>=') | str('<=') | match("[=><]")).as(:op) >> space? }
         rule(:bool_and) { str('and') >> space? }
         rule(:bool_or) { str('or') >> space? }
-        rule(:data) { variable | proc_variable | property | property_string | integer | float | string }
+        rule(:data) { variable | proc_variable | property | property_string | float | integer | string }
         rule(:negate) { (str('not') | str('!')).as(:negate).maybe >> space? }
 
         rule(:statement) { (negate >> ( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) >> space? }
