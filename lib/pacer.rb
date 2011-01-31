@@ -66,7 +66,20 @@ module Pacer
     end
 
     def hide_route_elements
-      @hide_route_elements
+      if block_given?
+        if @hide_route_elements
+          yield
+        else
+          begin
+            @hide_route_elements = true
+            yield
+          ensure
+            @hide_route_elements = false
+          end
+        end
+      else
+        @hide_route_elements
+      end
     end
 
     # Returns how many terminal columns we have.
