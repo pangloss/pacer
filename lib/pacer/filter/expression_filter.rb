@@ -25,6 +25,75 @@ module Pacer
         end_pipe
       end
 
+      remove_const 'Builder' if const_defined? 'Builder'
+
+      class Builder < Parslet::Transform
+        Filters = {
+          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
+          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
+          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL
+        }
+        ReverseFilters = {
+          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
+          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
+          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL
+        }
+        rule(:str => simple(:x)) { x }
+        rule(:int => simple(:x)) { Integer(x) }
+        rule(:float => simple(:x)) { Float(x) }
+        rule(:bool => simple(:x)) { x == 'true' }
+
+        rule(:statement => { :left => { :prop => simple(:property) },
+                             :op => simple(:op),
+                             :right => simple(:value) }
+        ) do |h|
+          prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
+          filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], Filters[h[:op]])
+          filter_pipe.setStarts(prop_pipe)
+          [prop_pipe, filter_pipe]
+        end
+
+        rule(:statement => { :left => simple(:value),
+                             :op => simple(:op),
+                             :right => { :prop => simple(:property) } }
+        ) do |h|
+          prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
+          filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], ReverseFilters[h[:op]])
+          filter_pipe.setStarts(prop_pipe)
+          [prop_pipe, filter_pipe]
+        end
+
+        rule(:statement => { :left => simple(:left),
+                             :op => simple(:op),
+                             :right => simple(:right) }
+        ) do
+          result = case op
+          when '=', '==' ; left == right
+          when '>'       ; left > right
+          when '>='      ; left >= right
+          when '<'       ; left < right
+          when '<='      ; left <= right
+          when '!='      ; left != right
+          else
+            raise "Unrecognized operator #{ op }"
+          end
+          if result
+            pipe = Pacer::Pipes::TruePipe.new
+          else
+            pipe = Pacer::Pipes::FalsePipe.new
+          end
+          [pipe, pipe]
+        end
+      end
+
       class Parser < Parslet::Parser
         class << self
           def reset
