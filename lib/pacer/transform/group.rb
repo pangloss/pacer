@@ -8,7 +8,17 @@ module Pacer
   end
 
   # Here's an example of the syntax I want:
-  # trims.limit(10).group.key { |t| t[:id] }.values { |t| t.out_e.counted.cap }
+  # trims.limit(10).
+  #   group.key { |t| t[:id] }.values { |t| t.out_e.counted.cap }.
+  #   reduce.key_start { |k| 0 }.value { |start, k, v| start + v  }.
+  #   reduce(0).value { |start, k, v| start + v }.buffer(100).
+  #   group.key { |k, v| v % 100 }.values { |k, v| k }.
+  #
+  # trims.limit(10).
+  #   map.key { |t| t[:id] }.values { |t| t.out_e.counted.cap }.to_redis
+  #
+  # Pacer.source { |callback| callback.yield 1 }
+  #
 
   module Transform
     module Group
