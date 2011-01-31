@@ -37,18 +37,22 @@ module Pacer
         rule(:variable) { str('?') }
 
         rule(:comparison) { match("=|!=|/=|>|<|>=|<=") >> space? }
-        rule(:boolean) { (str('and') | str('or')).as(:boolean) >> space? }
+        #rule(:boolean) { (str('and') | str('or')).as(:boolean) >> space? }
+        rule(:bool_and) { str('and') >> space? }
+        rule(:bool_or) { str('or') >> space? }
         rule(:data) { property | variable }
         rule(:negate) { str('not').as(:negate).maybe >> space? }
 
         rule(:statement) { (negate >> data.as(:left) >> comparison.as(:op) >> data.as(:right)).as(:statement) >> space? }
         rule(:group) { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
-        rule(:bool_statement) { (statement | group) >> (boolean >> expression).as(:next) }
-        rule(:expression) { group | bool_statement | statement }
+        rule(:and_group) { ((statement | group) >> (bool_and >> (statement | group)).repeat(1) >> or_group.maybe).as(:and) }
+        rule(:or_group) { ((bool_or >> (group | and_group | statement)).repeat(1)).as(:or) >> space? }
+        rule(:expression) { (group | and_group | statement) >> or_group.maybe }
         #rule(:expression) { (group | statement) >> (boolean >> (group | statement)).repeat }
 
         root :expression
 
+        #a = b or (c = d and e = f)
       end
     end
   end
