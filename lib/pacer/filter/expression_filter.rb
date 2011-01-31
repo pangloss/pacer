@@ -44,6 +44,7 @@ module Pacer
 
         rule(:integer)    { match('[0-9]').repeat(1).as(:int) >> space? }
         rule(:float)      { (match('[0-9]').repeat(1) >> str('.') >> match('[0-9]').repeat(1) ).as(:float) >> space? }
+        rule(:boolean)   { ( match('true') | match('false') ).as(:bool) >> space? }
         rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any ).repeat.as(:str) >> str('"')) >> space? }
         rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any ).repeat.as(:str) >> str("'")) >> space? }
         rule(:string)    { dq_string | sq_string }
@@ -62,6 +63,7 @@ module Pacer
         rule(:bool_or) { str('or') >> space? }
         rule(:data) { variable | proc_variable | property | property_string | float | integer | string }
         rule(:negate) { (str('not') | str('!')).as(:negate).maybe >> space? }
+        rule(:data)       { boolean | variable | proc_variable | property | property_string | float | integer | string }
 
         rule(:statement) { (negate >> ( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) >> space? }
         rule(:group) { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
