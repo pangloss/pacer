@@ -35,9 +35,10 @@ module Pacer
         rule(:comparison) { match("=|!=|/=|>|<|>=|<=") >> space? }
         rule(:boolean) { (str('and') | str('or')).as(:boolean) >> space? }
         rule(:data) { property | variable }
+        rule(:negate) { str('not').as(:negate).maybe >> space? }
 
-        rule(:statement) { (data.as(:left) >> comparison.as(:op) >> data.as(:right)).as(:statement) >> space? }
-        rule(:group) { (lparen >> expression >> rparen).as(:group) >> space? }
+        rule(:statement) { (negate >> data.as(:left) >> comparison.as(:op) >> data.as(:right)).as(:statement) >> space? }
+        rule(:group) { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
         rule(:expression) { (group | statement) >> (boolean >> (group | statement)).repeat }
 
         root :expression
