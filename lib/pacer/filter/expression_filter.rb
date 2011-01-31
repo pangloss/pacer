@@ -29,6 +29,10 @@ module Pacer
         rule(:space)      { match('\s').repeat(1) }
         rule(:space?)     { space.maybe }
 
+        rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any).repeat.as(:string) >> str('"')).as(:string) >> space? }
+        rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any).repeat.as(:string) >> str("'")).as(:string) >> space? }
+        rule(:property_string)    { dq_string | sq_string }
+
         rule(:property) { match['[a-zA-Z]'] >> match('[a-zA-Z0-9_]').repeat >> space? }
         rule(:variable) { str('?') }
 
@@ -39,9 +43,12 @@ module Pacer
 
         rule(:statement) { (negate >> data.as(:left) >> comparison.as(:op) >> data.as(:right)).as(:statement) >> space? }
         rule(:group) { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
-        rule(:expression) { (group | statement) >> (boolean >> (group | statement)).repeat }
+        rule(:bool_statement) { (statement | group) >> (boolean >> expression).as(:next) }
+        rule(:expression) { group | bool_statement | statement }
+        #rule(:expression) { (group | statement) >> (boolean >> (group | statement)).repeat }
 
         root :expression
+
       end
     end
   end
