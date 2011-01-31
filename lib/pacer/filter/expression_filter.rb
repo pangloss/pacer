@@ -48,7 +48,7 @@ module Pacer
         rule(:bool_and) { str('and') >> space? }
         rule(:bool_or) { str('or') >> space? }
         rule(:data) { variable | proc_variable | property | property_string | integer | float | string }
-        rule(:negate) { str('not').as(:negate).maybe >> space? }
+        rule(:negate) { (str('not') | str('!')).as(:negate).maybe >> space? }
 
         rule(:statement) { (negate >> ( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) >> space? }
         rule(:group) { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
