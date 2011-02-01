@@ -47,14 +47,39 @@ module Pacer
         }
 
         class << self
-          def build(tree, vars)
+          def build(tree, route, vars)
             @builder ||= new
-            @builder.apply(tree, vars)
+            @builder.apply(tree, route, vars)
           end
         end
 
         def initialize(vars = {})
           @vars = vars
+          build_transform
+        end
+
+        def apply(tree, route, vars = nil)
+          @vars = vars if vars
+          @route = route
+          @transform.apply tree
+        end
+
+        protected
+
+        def pipeline(name, *pipes)
+          pipes.push com.tinkerpop.pipes.util.HasNextPipe.new
+          pipe = com.tinkerpop.pipes.Pipeline.new *pipes
+          if Pacer.debug_pipes
+            if name.is_a? Hash
+              Pacer.debug_pipes << name.merge(:pipeline => pipes, :end => pipe)
+            else
+              Pacer.debug_pipes << { :name => name, :pipeline => pipes, :end => pipe }
+            end
+          end
+          pipe
+        end
+
+        def build_transform
           @transform = t = Parslet::Transform.new
           t.rule(:var => t.simple(:x)) { |h| @vars[h[:x]] }
 
@@ -63,34 +88,37 @@ module Pacer
           t.rule(:float => t.simple(:x)) { Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
 
-          t.rule(:statement => { :left => { :prop => t.simple(:property) },
-                                 :op => t.simple(:op),
-                                 :right => t.simple(:value) }
-          ) do |h|
+          t.rule(:statement => true) do
+            pipe = Pacer::Pipes::TruePipe.new
+            Pacer.debug_pipes << { :name => 'true', :filter => pipe } if Pacer.debug_pipes
+            pipe
+          end
+          t.rule(:statement => false) do
+            pipe = Pacer::Pipes::FalsePipe.new
+            Pacer.debug_pipes << { :name => 'false', :filter => pipe } if Pacer.debug_pipes
+            pipe
+          end
+          t.rule(:statement => { :proc => t.simple(:name) }) do |h|
+            pipeline h.inspect, Pacer::Pipes::BlockFilterPipe.new(@route, @vars[h[:name]])
+          end
+
+          t.rule(:statement => { :left => { :prop => t.simple(:property) }, :op => t.simple(:op), :right => t.simple(:value) }) do |h|
             prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
             filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], Filters[h[:op]])
-            com.tinkerpop.pipes.Pipeline.new prop_pipe, filter_pipe
+            pipeline h.inspect, prop_pipe, filter_pipe
           end
 
-          t.rule(:statement => { :left => { :prop => t.simple(:left) },
-                                 :op => t.simple(:op),
-                                 :right => { :prop => t.simple(:right) } }
-          ) do |h|
-            Pacer::Pipes::PropertyComparisonFilterPipe.new(h[:left], h[:right], Filters[h[:op]])
+          t.rule(:statement => { :left => { :prop => t.simple(:left) }, :op => t.simple(:op), :right => { :prop => t.simple(:right) } }) do |h|
+            pipeline h.inspect, Pacer::Pipes::PropertyComparisonFilterPipe.new(h[:left], h[:right], Filters[h[:op]])
           end
-          t.rule(:statement => { :left => t.simple(:value),
-                                 :op => t.simple(:op),
-                                 :right => { :prop => t.simple(:property) } }
-          ) do |h|
+
+          t.rule(:statement => { :left => t.simple(:value), :op => t.simple(:op), :right => { :prop => t.simple(:property) } }) do |h|
             prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
             filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], ReverseFilters[h[:op]])
-            com.tinkerpop.pipes.Pipeline.new prop_pipe, filter_pipe
+            pipeline h.inspect, prop_pipe, filter_pipe
           end
 
-          t.rule(:statement => { :left => t.simple(:left),
-                                 :op => t.simple(:op),
-                                 :right => t.simple(:right) }
-          ) do
+          t.rule(:statement => { :left => t.simple(:left), :op => t.simple(:op), :right => t.simple(:right) }) do
             result = case op
             when '=', '==' ; left == right
             when '>'       ; left > right
@@ -102,38 +130,29 @@ module Pacer
               raise "Unrecognized operator #{ op }"
             end
             if result
-              Pacer::Pipes::TruePipe.new
+              pipe = Pacer::Pipes::TruePipe.new
             else
-              Pacer::Pipes::FalsePipe.new
+              pipe = Pacer::Pipes::FalsePipe.new
             end
+            Pacer.debug_pipes << { :name => h.inspect, :filter => pipe } if Pacer.debug_pipes
+            pipe
           end
 
           t.rule(:group => t.simple(:x)) { x }
-          t.rule(:group => t.simple(:group), :or => t.sequence(:or_pipes)) do |h|
-            g = OrGroup.new h[:or_pipes]
-            g.prepend h[:group]
-            g.pipe
-          end
 
           t.rule(:or => t.sequence(:pipes)) do |h|
-            OrGroup.new h[:pipes]
+            pipeline({ :name => 'or', :or => h[:pipes] }, com.tinkerpop.pipes.filter.OrFilterPipe.new(*h[:pipes]))
           end
 
           t.rule(:and => t.sequence(:pipes)) do |h|
-            or_group = h[:pipes].pop if h[:pipes].last.is_a? OrGroup
-            and_pipe = com.tinkerpop.pipes.filter.AndFilterPipe.new *h[:pipes]
-            if or_group
-              or_group.prepend and_pipe
-              or_group.pipe
-            else
-              and_pipe
-            end
+            pipeline({ :name => 'and', :and => h[:pipes] }, com.tinkerpop.pipes.filter.AndFilterPipe.new(*h[:pipes]))
           end
-        end
 
-        def apply(tree, vars = nil)
-          @vars = vars if vars
-          @transform.apply tree
+          t.rule(:not => t.simple(:pipe)) do |h|
+            # TODO: negate incoming pipe
+            Pacer.debug_pipes << { :name => '(not implemented)', :pipes => h[:pipe] } if Pacer.debug_pipes
+            pipe
+          end
         end
       end
     end

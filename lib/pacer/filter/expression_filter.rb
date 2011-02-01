@@ -27,13 +27,13 @@ module Pacer
       end
 
       def build!
-        Builder.build(parsed, vars)
+        Builder.build(parsed, self, vars)
       end
 
       protected
 
       def attach_pipe(end_pipe)
-        pipe = build!
+        pipe = com.tinkerpop.pipes.filter.AndFilterPipe.new build!
         pipe.setStarts end_pipe
         pipe
       end
