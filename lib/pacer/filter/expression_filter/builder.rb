@@ -133,16 +133,16 @@ module Pacer
             pipeline h.inspect, prop_pipe, filter_pipe
           end
 
-          t.rule(:statement => { :left => t.simple(:left), :op => t.simple(:op), :right => t.simple(:right) }) do
-            result = case op
-            when '=', '==' ; left == right
-            when '>'       ; left > right
-            when '>='      ; left >= right
-            when '<'       ; left < right
-            when '<='      ; left <= right
-            when '!='      ; left != right
+          t.rule(:statement => { :left => t.simple(:left), :op => t.simple(:op), :right => t.simple(:right) }) do |h|
+            result = case h[:op]
+            when '=', '==' ; h[:left] == h[:right]
+            when '>'       ; h[:left] > h[:right]
+            when '>='      ; h[:left] >= h[:right]
+            when '<'       ; h[:left] < h[:right]
+            when '<='      ; h[:left] <= h[:right]
+            when '!='      ; h[:left] != h[:right]
             else
-              raise "Unrecognized operator #{ op }"
+              raise "Unrecognized operator #{ h[:op] }"
             end
             if result
               pipeline h.inspect, Pacer::Pipes::AlwaysPipe.new
