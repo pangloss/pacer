@@ -1,12 +1,6 @@
 require 'pacer/filter/expression_filter/parser'
 require 'pacer/filter/expression_filter/builder'
 
-module Parslet
-  class Transform
-    public :simple, :sequence
-  end
-end
-
 module Pacer
   module Routes
     module RouteOperations

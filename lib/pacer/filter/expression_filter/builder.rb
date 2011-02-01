@@ -1,5 +1,11 @@
 require 'parslet'
 
+module Parslet
+  class Transform
+    public :simple, :sequence
+  end
+end
+
 module Pacer
   module Filter
     module ExpressionFilter
