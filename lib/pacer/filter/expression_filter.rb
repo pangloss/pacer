@@ -9,8 +9,8 @@ end
 module Pacer
   module Routes
     module RouteOperations
-      def exp(str, *args)
-        chain_route :filter => :expression, :exp => str, :args => args
+      def exp(str, vars = {})
+        chain_route :filter => :expression, :exp => str, :vars => vars
       end
     end
   end
@@ -18,7 +18,7 @@ module Pacer
   module Filter
     module ExpressionFilter
       attr_reader :exp, :parsed
-      attr_accessor :args
+      attr_accessor :vars
 
       def exp=(str)
         @exp = str
@@ -28,7 +28,9 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        end_pipe
+        pipe = Builder.build(parsed, vars)
+        pipe.setStarts end_pipe
+        pipe
       end
 
       remove_const 'Builder' if const_defined? 'Builder'
@@ -54,6 +56,10 @@ module Pacer
         }
 
         class << self
+          def build(tree, vars)
+            @builder ||= new
+            @builder.apply(tree, vars)
+          end
         end
 
         def initialize(vars = {})
