@@ -49,7 +49,14 @@ module Pacer
         class << self
           def build(tree, route, vars)
             @builder ||= new
-            @builder.apply(tree, route, vars)
+            pipe = @builder.apply(tree, route, vars)
+            case pipe
+            when com.tinkerpop.pipes.filter.AndFilterPipe, com.tinkerpop.pipes.filter.OrFilterPipe
+              pipe
+            else
+              pipe = com.tinkerpop.pipes.util.HasNextPipe.new(pipe)
+              com.tinkerpop.pipes.filter.AndFilterPipe.new(pipe)
+            end
           end
         end
 
@@ -83,7 +90,7 @@ module Pacer
           t.rule(:var => t.simple(:x)) { |h| @vars[h[:x]] }
 
           t.rule(:str => t.simple(:x)) { x }
-          t.rule(:int => t.simple(:x)) { Integer(x) }
+          t.rule(:int => t.simple(:x)) { Integer(x).to_java(:int) }
           t.rule(:float => t.simple(:x)) { Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
 
