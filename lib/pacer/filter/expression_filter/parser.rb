@@ -41,12 +41,12 @@ module Pacer
         rule(:data)       { boolean | variable | proc_variable | property | property_string | float | integer | string }
         rule(:negate)     { (str('not') | str('!')) >> space? }
 
-        rule(:statement)  { (( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) }
+        rule(:statement)  { ( data.as(:left) >> comparison >> data.as(:right) | proc_variable | boolean ).as(:statement) }
 
         rule(:group)      { (lparen >> expression >> rparen).as(:group) >> space? }
 
-        rule(:neg_expression)    { (negate >> (group | statement | boolean )).as(:not) }
-        rule(:pos_expression)    {             group | statement | boolean }
+        rule(:neg_expression)    { (negate >> (group | statement )).as(:not) }
+        rule(:pos_expression)    {             group | statement }
 
         rule(:and_group)         { ((neg_expression | pos_expression) >> (bool_and >> (neg_expression | pos_expression)).repeat(1)).as(:and) }
         rule(:or_expression)     { (simple_expression                 >> (bool_or  >> simple_expression                ).repeat(1)).as(:or) }
