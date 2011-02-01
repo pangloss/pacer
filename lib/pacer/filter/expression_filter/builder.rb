@@ -66,7 +66,7 @@ module Pacer
         end
 
         def apply(tree, route, vars = nil)
-          @vars = vars if vars
+          @vars = Hash[vars.map { |k, v| [k.to_s, v] }] if vars
           @route = route
           @transform.apply tree
         end
