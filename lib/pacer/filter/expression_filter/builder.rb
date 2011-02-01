@@ -87,10 +87,23 @@ module Pacer
 
         def build_transform
           @transform = t = Parslet::Transform.new
-          t.rule(:var => t.simple(:x)) { |h| @vars[h[:x]] }
+          t.rule(:var => t.simple(:x)) do |h|
+            var = @vars[h[:x]]
+            if var.is_a? Fixnum and var < java.lang.Integer::MAX_VALUE
+              var.to_java(:int)
+            else
+              var
+            end
+          end
 
           t.rule(:str => t.simple(:x)) { x }
-          t.rule(:int => t.simple(:x)) { Integer(x).to_java(:int) }
+          t.rule(:int => t.simple(:x)) do
+            if var < java.lang.Integer::MAX_VALUE
+              Integer(x).to_java(:int)
+            else
+              Integer(x)
+            end
+          end
           t.rule(:float => t.simple(:x)) { Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
 
