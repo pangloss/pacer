@@ -8,12 +8,10 @@ module Pacer::Pipes
 
     protected
 
-    def processNextStarts
+    def processNextStart
       while true
         obj = @starts.next
-        # FIXME: is this consistent with the way other pipes work?
-        #        I think they usually work like reject, but this is like select...
-        if compareObjects(obj.getProperty(@left), obj.getProperty(@right))
+        unless compareObjects(obj.getProperty(@left), obj.getProperty(@right))
           return obj
         end
       end
