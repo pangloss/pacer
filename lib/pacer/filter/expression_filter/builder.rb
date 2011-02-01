@@ -165,9 +165,12 @@ module Pacer
           end
 
           t.rule(:not => t.simple(:pipe)) do |h|
-            # TODO: negate incoming pipe
-            Pacer.debug_pipes << { :name => '(not implemented)', :pipes => h[:pipe] } if Pacer.debug_pipes
-            pipe
+            # TODO: this only negates matches, it doesn't negate non-matches because a non-match leaves nothing to negate!
+            #       It must rather be done in the same way an AndFilterPipe is, where it controls the incoming element and tests the other pipe.
+            pipes = []
+            pipes << com.tinkerpop.pipes.util.HasNextPipe.new
+            pipes << com.tinkerpop.pipes.filter.ObjectFilterPipe.new(true, Filters['!='])
+            pipeline 'not', *pipes
           end
         end
       end
