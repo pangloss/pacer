@@ -22,7 +22,7 @@ module Pacer
 
         rule(:integer)   { match('[0-9]').repeat(1).as(:int) >> space? }
         rule(:float)     { (match('[0-9]').repeat(1) >> str('.') >> match('[0-9]').repeat(1) ).as(:float) >> space? }
-        rule(:boolean)   { ( match('true') | match('false') ).as(:bool) >> space? }
+        rule(:boolean)   { ( str('true') | str('false') ).as(:bool) >> space? }
         rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any ).repeat.as(:str) >> str('"')) >> space? }
         rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any ).repeat.as(:str) >> str("'")) >> space? }
         rule(:string)    { dq_string | sq_string }
@@ -39,13 +39,20 @@ module Pacer
         rule(:bool_and)   { str('and') >> space? }
         rule(:bool_or)    { str('or') >> space? }
         rule(:data)       { boolean | variable | proc_variable | property | property_string | float | integer | string }
-        rule(:negate)     { (str('not') | str('!')).as(:negate).maybe >> space? }
+        rule(:negate)     { (str('not') | str('!')) >> space? }
 
-        rule(:statement)  { (negate >> ( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) >> space? }
-        rule(:group)      { (negate >> lparen >> expression >> rparen).as(:group) >> space? }
-        rule(:and_group)  { ((statement | group) >> (bool_and >> (statement | group)).repeat(1) >> or_group.maybe).as(:and) }
-        rule(:or_group)   { ((bool_or >> (and_group | group | statement)).repeat(1)).as(:or) >> space? }
-        rule(:expression) { (and_group | group | statement) >> or_group.maybe }
+        rule(:statement)  { (( data.as(:left) >> comparison >> data.as(:right) | proc_variable )).as(:statement) }
+
+        rule(:group)      { (lparen >> expression >> rparen).as(:group) >> space? }
+
+        rule(:neg_expression)    { (negate >> (group | statement | boolean )).as(:not) }
+        rule(:pos_expression)    {             group | statement | boolean }
+
+        rule(:and_group)         { ((neg_expression | pos_expression) >> (bool_and >> (neg_expression | pos_expression)).repeat(1)).as(:and) }
+        rule(:or_expression)     { (simple_expression                 >> (bool_or  >> simple_expression                ).repeat(1)).as(:or) }
+
+        rule(:simple_expression) { and_group | neg_expression | pos_expression }
+        rule(:expression)        { or_expression | simple_expression }
 
         root :expression
       end
