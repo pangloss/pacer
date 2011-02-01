@@ -38,7 +38,7 @@ module Pacer
         rule(:comparison) { (str('!=') | str('>=') | str('<=') | str('==') | match("[=><]")).as(:op) >> space? }
         rule(:bool_and)   { str('and') >> space? }
         rule(:bool_or)    { str('or') >> space? }
-        rule(:data)       { boolean | variable | proc_variable | property | property_string | float | integer | string }
+        rule(:data)       { boolean | variable | property | property_string | float | integer | string }
         rule(:negate)     { (str('not') | str('!')) >> space? }
 
         rule(:statement)  { ( data.as(:left) >> comparison >> data.as(:right) | proc_variable | boolean ).as(:statement) }
@@ -52,7 +52,7 @@ module Pacer
         rule(:or_expression)     { (simple_expression                 >> (bool_or  >> simple_expression                ).repeat(1)).as(:or) }
 
         rule(:simple_expression) { and_group | neg_expression | pos_expression }
-        rule(:expression)        { or_expression | simple_expression }
+        rule(:expression)        { space? >> (or_expression | simple_expression) }
 
         root :expression
       end
