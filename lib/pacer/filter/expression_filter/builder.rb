@@ -97,11 +97,12 @@ module Pacer
           end
 
           t.rule(:str => t.simple(:x)) { x }
-          t.rule(:int => t.simple(:x)) do
-            if var < java.lang.Integer::MAX_VALUE
-              Integer(x).to_java(:int)
+          t.rule(:int => t.simple(:x)) do |h|
+            int = Integer(h[:x])
+            if int < java.lang.Integer::MAX_VALUE
+              int.to_java(:int)
             else
-              Integer(x)
+              int
             end
           end
           t.rule(:float => t.simple(:x)) { Float(x) }
