@@ -35,6 +35,24 @@ module Pacer
 
       remove_const 'Builder' if const_defined? 'Builder'
 
+      class OrGroup
+        def initialize(pipes = [])
+          @pipes = pipes
+        end
+
+        def append(pipe)
+          @pipes.push pipe
+        end
+
+        def prepend(pipe)
+          @pipes.unshift pipe
+        end
+
+        def pipe
+          com.tinkerpop.pipes.filter.OrFilterPipe.new(*@pipes)
+        end
+      end
+
       class Builder
         Filters = {
           '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
