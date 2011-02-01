@@ -152,7 +152,7 @@ module Pacer
               raise "Unrecognized operator #{ h[:op] }"
             end
             if result
-              pipeline h.inspect, Pacer::Pipes::AlwaysPipe.new
+              pipeline h.inspect, Pacer::Pipes::IdentityPipe.new
             else
               pipeline h.inspect, Pacer::Pipes::NeverPipe.new
             end
