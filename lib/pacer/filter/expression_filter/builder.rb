@@ -24,23 +24,26 @@ module Pacer
       end
 
       class Builder
+        # These are defined with counterintuitive meanings so all meanings must be reversed.
         Filters = {
-          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
-          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
-          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL
+          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
+          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
+          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN
         }
+
+        # Further adjust to swap the order of the parameters.
         ReverseFilters = {
-          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
-          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
-          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL
+          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
+          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
+          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
+          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN
         }
 
         class << self
