@@ -67,7 +67,6 @@ module Pacer
         protected
 
         def pipeline(name, *pipes)
-          pipes.push com.tinkerpop.pipes.util.HasNextPipe.new
           pipe = com.tinkerpop.pipes.Pipeline.new *pipes
           if Pacer.debug_pipes
             if name.is_a? Hash
@@ -88,15 +87,11 @@ module Pacer
           t.rule(:float => t.simple(:x)) { Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
 
-          t.rule(:statement => true) do
-            pipe = Pacer::Pipes::TruePipe.new
-            Pacer.debug_pipes << { :name => 'true', :filter => pipe } if Pacer.debug_pipes
-            pipe
+          t.rule(:statement => true) do |h|
+            pipeline 'true', Pacer::Pipes::IdentityPipe.new
           end
-          t.rule(:statement => false) do
-            pipe = Pacer::Pipes::FalsePipe.new
-            Pacer.debug_pipes << { :name => 'false', :filter => pipe } if Pacer.debug_pipes
-            pipe
+          t.rule(:statement => false) do |h|
+            pipeline 'false', Pacer::Pipes::NeverPipe.new
           end
           t.rule(:statement => { :proc => t.simple(:name) }) do |h|
             pipeline h.inspect, Pacer::Pipes::BlockFilterPipe.new(@route, @vars[h[:name]])
@@ -130,22 +125,22 @@ module Pacer
               raise "Unrecognized operator #{ op }"
             end
             if result
-              pipe = Pacer::Pipes::TruePipe.new
+              pipeline h.inspect, Pacer::Pipes::AlwaysPipe.new
             else
-              pipe = Pacer::Pipes::FalsePipe.new
+              pipeline h.inspect, Pacer::Pipes::NeverPipe.new
             end
-            Pacer.debug_pipes << { :name => h.inspect, :filter => pipe } if Pacer.debug_pipes
-            pipe
           end
 
           t.rule(:group => t.simple(:x)) { x }
 
           t.rule(:or => t.sequence(:pipes)) do |h|
-            pipeline({ :name => 'or', :or => h[:pipes] }, com.tinkerpop.pipes.filter.OrFilterPipe.new(*h[:pipes]))
+            pipes = h[:pipes].map { |p| com.tinkerpop.pipes.util.HasNextPipe.new(p) }
+            pipeline({ :name => 'or', :or => h[:pipes], :or_ends => pipes }, com.tinkerpop.pipes.filter.OrFilterPipe.new(*pipes))
           end
 
           t.rule(:and => t.sequence(:pipes)) do |h|
-            pipeline({ :name => 'and', :and => h[:pipes] }, com.tinkerpop.pipes.filter.AndFilterPipe.new(*h[:pipes]))
+            pipes = h[:pipes].map { |p| com.tinkerpop.pipes.util.HasNextPipe.new(p) }
+            pipeline({ :name => 'and', :and => h[:pipes], :and_ends => pipes }, com.tinkerpop.pipes.filter.AndFilterPipe.new(*pipes))
           end
 
           t.rule(:not => t.simple(:pipe)) do |h|

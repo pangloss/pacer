@@ -10,19 +10,19 @@ end
 module Pacer
   module Routes
     module RouteOperations
-      def exp(str, vars = {})
-        chain_route :filter => :expression, :exp => str, :vars => vars
+      def where(str, vars = {})
+        chain_route :filter => :expression, :where => str, :vars => vars
       end
     end
   end
 
   module Filter
     module ExpressionFilter
-      attr_reader :exp, :parsed
+      attr_reader :where, :parsed
       attr_accessor :vars
 
-      def exp=(str)
-        @exp = str
+      def where=(str)
+        @where = str
         @parsed = Parser.parse str
       end
 
@@ -33,7 +33,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = com.tinkerpop.pipes.filter.AndFilterPipe.new build!
+        pipe = build!
         pipe.setStarts end_pipe
         pipe
       end
