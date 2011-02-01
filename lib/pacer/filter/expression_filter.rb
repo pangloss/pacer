@@ -25,10 +25,14 @@ module Pacer
         @parsed = Parser.parse str
       end
 
+      def build!
+        Builder.build(parsed, vars)
+      end
+
       protected
 
       def attach_pipe(end_pipe)
-        pipe = Builder.build(parsed, vars)
+        pipe = build!
         pipe.setStarts end_pipe
         pipe
       end
