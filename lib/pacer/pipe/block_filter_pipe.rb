@@ -8,7 +8,7 @@ module Pacer::Pipes
       @invert = invert
 
       @extensions = @back.extensions + [Pacer::Extensions::BlockFilterElement]
-      @is_element = @graph.element_type?(back.element_type)
+      @is_element = @graph.element_type?(back.element_type) if @graph
     end
 
     def processNextStart()
