@@ -78,6 +78,10 @@ module Pacer
         hash
       end
 
+      def value_count
+        reduce(0) { |t, k, v| t + 1 }
+      end
+
       protected
 
       def after_initialize
