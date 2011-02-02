@@ -6,6 +6,7 @@ module Pacer
     import com.tinkerpop.pipes.Pipeline
     import com.tinkerpop.pipes.ExpandableIterator;
 
+    import com.tinkerpop.pipes.filter.AbstractComparisonFilterPipe
     import com.tinkerpop.pipes.filter.RandomFilterPipe
     import com.tinkerpop.pipes.filter.DuplicateFilterPipe
     import com.tinkerpop.pipes.filter.RangeFilterPipe
@@ -44,6 +45,7 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
+require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/block_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
 require 'pacer/pipe/expandable_pipe'
@@ -55,3 +57,6 @@ require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
 require 'pacer/pipe/label_prefix_pipe'
 require 'pacer/pipe/variable_store_iterator_wrapper'
+
+require 'pacer/pipe/ruby_comparison_filter_pipe'
+require 'pacer/pipe/property_comparison_pipe'
