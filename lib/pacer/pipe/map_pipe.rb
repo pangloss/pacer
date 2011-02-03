@@ -1,21 +1,19 @@
 module Pacer::Pipes
-  class MapPipe < RubyPipe
+  class MapPipe < AbstractPipe
+    field_reader :starts
+
     def initialize(back, block)
       super()
       @block = block
       @back = back
       @graph = back.graph if back
       @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
-      if @graph
-        @is_element = @graph.element_type?(back.element_type)
-      else
-        @is_element = false
-      end
+      @is_element = @graph.element_type?(back.element_type) if @graph
     end
 
     def processNextStart
       while true
-        obj = @starts.next
+        obj = starts.next
         begin
           if @is_element
             obj = obj.add_extensions(@extensions)

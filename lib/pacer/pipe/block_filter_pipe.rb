@@ -1,5 +1,7 @@
 module Pacer::Pipes
-  class BlockFilterPipe < RubyPipe
+  class BlockFilterPipe < AbstractPipe
+    field_reader :starts
+
     def initialize(back, block, invert = false)
       super()
       @back = back
@@ -12,7 +14,7 @@ module Pacer::Pipes
     end
 
     def processNextStart()
-      while raw_element = @starts.next
+      while raw_element = starts.next
         if @is_element
           extended_element = raw_element.add_extensions(@extensions)
           extended_element.back = @back
