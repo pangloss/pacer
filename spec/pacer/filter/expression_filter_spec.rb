@@ -4,7 +4,7 @@ require 'spec_helper'
 for_tg(:read_only) do
   use_pacer_graphml_data(:read_only)
 
-  describe Pacer::Filter::ExpressionFilter, :focus => true do
+  describe Pacer::Filter::ExpressionFilter do
     context "name = 'blueprints'" do
       subject { graph.v.where("name = 'blueprints'")[:name] }
       its(:count) { should == 1 }

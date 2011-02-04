@@ -101,15 +101,19 @@ module Pacer
         modules = args_array.select { |obj| obj.is_a? Module or obj.is_a? Class }
         pipe = modules.inject(pipe) do |p, mod|
           if mod.respond_to? :route_conditions
-            args_array = args_array + [*mod.route_conditions]
+            if mod.route_conditions.is_a? Array
+              args_array = args_array + mod.route_conditions
+            else
+              args_array = args_array + [mod.route_conditions]
+            end
             p
           elsif mod.respond_to? :route
-            route = mod.route(self)
-            beginning_of_condition = route.send :route_after, self
-            beginning_of_condition.send :source=, pipe if pipe
-            route.send :iterator
+            route = mod.route(Pacer::Route.empty(self))
+            s, e = route.send :build_pipeline
+            s.setStarts(p)
+            e
           else
-            pipe
+            p
           end
         end
         [pipe, args_array]
