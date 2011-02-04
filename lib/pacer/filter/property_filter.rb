@@ -83,7 +83,14 @@ module Pacer
           pipe, args_array = expand_extension_conditions(pipe, args_array) if expand_extensions
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
             hash.inject(p) do |p2, (key, value)|
-              new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, value.to_java, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+              if value.respond_to? :to_java
+                jvalue = value.to_java
+              elsif value.respond_to? :to_java_string
+                jvalue = value.to_java_string
+              else
+                jvalue = value
+              end
+              new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, jvalue, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
               new_pipe.set_starts p2 if p2
               new_pipe
             end
