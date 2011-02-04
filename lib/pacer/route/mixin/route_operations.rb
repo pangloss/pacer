@@ -196,11 +196,16 @@ module Pacer::Routes
       unless index.is_a? com.tinkerpop.blueprints.pgm.Index
         index = graph.indices.find { |i| i.index_name == index.to_s }
       end
+      sample_element = first
       unless index
-        if create
-          index = graph.create_index index_name, graph.element_type(first), Pacer.manual_index
+        if sample_element
+          if create
+            index = graph.create_index index_name, graph.element_type(sample_element), Pacer.manual_index
+          else
+            raise "No index found for #{ index } on #{ graph }" unless index
+          end
         else
-          raise "No index found for #{ index } on #{ graph }" unless index
+          return nil
         end
       end
       index_key ||= index.index_name
@@ -208,14 +213,15 @@ module Pacer::Routes
       if block_given?
         bulk_job do |element|
           value = yield(element)
-          index.put(index_key, value, element) if value
+          index.put(index_key, value, element.element) if value
         end
       else
         bulk_job do |element|
           value = element[property]
-          index.put(index_key, value, element) if value
+          index.put(index_key, value, element.element) if value
         end
       end
+      index
     end
 
     protected

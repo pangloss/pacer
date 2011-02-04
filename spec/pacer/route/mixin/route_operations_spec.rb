@@ -44,6 +44,44 @@ for_tg(:read_only) do
   end
 end
 
+for_tg do
+  use_pacer_graphml_data
+
+  describe RouteOperations do
+    before do
+      setup_data
+    end
+
+    describe '#build_index' do
+      context "('new_index', 'k') { count += 1 }", :transactions => true do
+        it 'should build the index with raw elements' do
+          count = 0
+          index = graph.v.build_index('new_index', 'k', 'name')
+          index.should_not be_nil
+          index.get('k', 'pangloss').count.should == 1
+        end
+
+        it 'should build the index with wrapped elements' do
+          count = 0
+          index = graph.v(TP::Person).build_index('new_index', 'k', 'name')
+          index.should_not be_nil
+          index.get('k', 'pangloss').count.should == 1
+        end
+
+        it 'should do nothing if there are no elements' do
+          count = 0
+          index = graph.v.limit(0).build_index('new_index', 'k', 'name')
+          index.should be_nil
+        end
+
+        after do
+          graph.dropIndex 'new_index'
+        end
+      end
+    end
+  end
+end
+
 
 # Modernize these old tests:
 describe RouteOperations do
