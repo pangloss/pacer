@@ -115,12 +115,6 @@ module Pacer::Routes
       end
     end
 
-    def all_but_most_frequent(start_at = 1)
-      elements = group_count.sort_by { |k, v| -v }.collect { |k, v| k }[start_at..-1]
-      elements ||= []
-      elements.to_route(:based_on => self)
-    end
-
     # Delete all matching elements.
     def delete!
       uniq.bulk_job { |e| e.delete! }
