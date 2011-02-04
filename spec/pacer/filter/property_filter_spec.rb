@@ -61,16 +61,20 @@ for_tg(:read_only) do
       its(:extensions) { should == Set[Tackle::SimpleMixin] }
     end
 
-    context 'v(:Tackle::SimpleMixin)' do
+    context 'v(:Tackle::SimpleMixin, :name => "pangloss")' do
       subject { graph.v(Tackle::SimpleMixin, :name => 'pangloss') }
       its(:count) { should == 1 }
       its(:extensions) { should == Set[Tackle::SimpleMixin] }
     end
 
-    context 'v(:Tackle::SimpleMixin)' do
-      subject { graph.v(Tackle::SimpleMixin, :name => 'pangloss') }
+    context 'reversed params' do
+      subject { graph.v.v(TP::Pangloss, Tackle::SimpleMixin) }
       its(:count) { should == 1 }
-      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+    end
+
+    context 'reversed params' do
+      subject { graph.v.v(TP::Pangloss) }
+      its(:count) { should == 1 }
     end
   end
 end
