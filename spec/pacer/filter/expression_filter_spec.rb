@@ -11,6 +11,16 @@ for_tg(:read_only) do
       its(:first) { should == 'blueprints' }
     end
 
+    context "name != nil" do
+      subject { graph.v.where("name != nil") }
+      its(:count) { should == 7 }
+    end
+
+    context "name = nil" do
+      subject { graph.v.where("name = nil") }
+      its(:count) { should == 0 }
+    end
+
     context "name = 'blueprints' or name = 'pipes'" do
       subject { graph.v.where("name = 'blueprints' or name = 'pipes'")[:name] }
       its(:count) { should == 2 }
@@ -119,6 +129,11 @@ for_tg(:read_only) do
       context "false" do
         subject { graph.v.where "false" }
         its(:parsed) { should == { :statement => { :bool => 'false' } } }
+      end
+
+      context "nil = nil" do
+        subject { graph.v.where "nil = nil" }
+        its(:parsed) { should == { :statement => { :left => { :null => 'nil' }, :op => '=', :right => { :null => 'nil' } } } }
       end
 
       context '(1=1)' do

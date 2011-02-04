@@ -23,6 +23,7 @@ module Pacer
         rule(:integer)   { match('[0-9]').repeat(1).as(:int) >> space? }
         rule(:float)     { (match('[0-9]').repeat(1) >> str('.') >> match('[0-9]').repeat(1) ).as(:float) >> space? }
         rule(:boolean)   { ( str('true') | str('false') ).as(:bool) >> space? }
+        rule(:null)      { str('nil').as(:null) >> space? }
         rule(:dq_string) { (str('"') >> ( str('\\') >> any | str('"').absnt? >> any ).repeat.as(:str) >> str('"')) >> space? }
         rule(:sq_string) { (str("'") >> ( str('\\') >> any | str("'").absnt? >> any ).repeat.as(:str) >> str("'")) >> space? }
         rule(:string)    { dq_string | sq_string }
@@ -38,7 +39,7 @@ module Pacer
         rule(:comparison) { (str('!=') | str('>=') | str('<=') | str('==') | match("[=><]")).as(:op) >> space? }
         rule(:bool_and)   { str('and') >> space? }
         rule(:bool_or)    { str('or') >> space? }
-        rule(:data)       { boolean | variable | property | property_string | float | integer | string }
+        rule(:data)       { null | boolean | variable | property | property_string | float | integer | string }
         rule(:negate)     { (str('not') | str('!')) >> space? }
 
         rule(:statement)  { ( data.as(:left) >> comparison >> data.as(:right) | proc_variable | boolean ).as(:statement) }

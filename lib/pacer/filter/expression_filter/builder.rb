@@ -113,6 +113,7 @@ module Pacer
           end
           t.rule(:float => t.simple(:x)) { Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
+          t.rule(:null => t.simple(:x)) { nil }
 
           t.rule(:statement => true) do |h|
             pipeline 'true', Pacer::Pipes::IdentityPipe.new
