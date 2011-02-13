@@ -46,7 +46,7 @@ module Pacer
         end
 
         def symbolize_module_name(name)
-          name.sub(/(Filter|SideEffect|Transform)$/, '').gsub(/([a-z])([A-Z])/, "\\1_\\2").downcase.to_sym
+          name.to_s.sub(/(Filter|SideEffect|Transform)$/, '').gsub(/([a-z])([A-Z])/, "\\1_\\2").downcase.to_sym
         end
       end
     end
