@@ -61,14 +61,19 @@ module Pacer::Core::Graph
 
     def each_property_filter(filters)
       filters.each do |filter|
-        if filter.is_a? Hash
+        case filter
+        when Hash
           filter.each { |key, value| yield key, value, nil if key }
-        elsif filter.is_a? Module or filter.is_a? Class
+        when Array
+          each_property_filter(filter) { |k, v, f| yield k, v, f }
+        when Module, Class
           if filter.respond_to? :route_conditions
             each_property_filter([filter.route_conditions]) { |k, v, f| yield k, v, (f || filter) }
           elsif filter.respond_to? :route
             yield filter, filter, filter
           end
+        when Symbol, String
+          yield 'label', filter, nil
         end
       end
       nil
