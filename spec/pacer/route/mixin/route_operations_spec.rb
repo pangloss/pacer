@@ -113,7 +113,7 @@ describe RouteOperations do
     it 'should set the variable to the correct node' do
       vars = Set[]
       @g.v.as(:a_vertex).in_e(:wrote) { |edge| vars << edge.vars[:a_vertex] }.count
-      vars.should == Set[*@g.e(:wrote).in_v]
+      vars.should == Set[*@g.e.e(:wrote).in_v]
     end
 
     it 'should not break path generation' do
