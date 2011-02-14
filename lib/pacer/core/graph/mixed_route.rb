@@ -78,9 +78,9 @@ module Pacer::Core::Graph
     def result(name = nil)
       ids = collect do |element|
         if element.is_a? Pacer::VertexMixin
-          [:vertex, element.id]
+          [:vertex, element.element_id]
         else
-          [:edge, element.id]
+          [:edge, element.element_id]
         end
       end
       if ids.count == 1
