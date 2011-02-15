@@ -7,7 +7,6 @@ shared_examples_for Pacer::ElementMixin do
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::VertexMixin) }
     it { should_not be_a(Pacer::EdgeMixin) }
-    it { should_not be_a(Pacer::ElementWrapper) }
 
     describe '#v' do
       context '()' do
@@ -70,7 +69,6 @@ shared_examples_for Pacer::ElementMixin do
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::EdgeMixin) }
     it { should_not be_a(Pacer::VertexMixin) }
-    it { should_not be_a(Pacer::ElementWrapper) }
 
     describe '#e', :transactions => false do
       context '()' do
@@ -251,7 +249,6 @@ shared_examples_for Pacer::ElementMixin do
     end
 
     subject { element }
-    its(:extensions) { should == Set[] }
     its(:element_id) { should_not be_nil }
     context '', :transactions => false do
       # FIXME: Neo4j edges are flaky sometimes when inside a
@@ -268,5 +265,17 @@ for_each_graph do
     let(:v1) { graph.create_vertex :name => 'darrick' }
     let(:e0) { graph.create_edge nil, v0, v1, :links }
     let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+  end
+
+  context 'vertex' do
+    let(:v0) { graph.create_vertex :name => 'eliza' }
+    subject { v0 }
+    it { should_not be_a(Pacer::ElementWrapper) }
+  end
+
+  context 'edge' do
+    let(:e0) { graph.create_edge nil, v0, v1, :links }
+    subject { e0 }
+    it { should_not be_a(Pacer::ElementWrapper) }
   end
 end
