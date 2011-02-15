@@ -21,6 +21,26 @@ for_tg(:read_only) do
       its(:count) { should == 0 }
     end
 
+    context 'with number' do
+      context "number = 1" do
+        before do
+          n = 0
+          graph.v(:type => 'person').each { |v| v[:number] = n += 1 }
+        end
+        subject { graph.v.where("number = 1") }
+        its(:count) { should == 1 }
+      end
+
+      context "number >= 1" do
+        before do
+          n = 0
+          graph.v(:type => 'person').each { |v| v[:number] = n += 1 }
+        end
+        subject { graph.v.where("number >= 1") }
+        its(:count) { should == 2 }
+      end
+    end
+
     context "name = 'blueprints' or name = 'pipes'" do
       subject { graph.v.where("name = 'blueprints' or name = 'pipes'")[:name] }
       its(:count) { should == 2 }
@@ -62,6 +82,8 @@ for_tg(:read_only) do
                               :type => 'project', :fun => proc { |v| v[:name] == 'blueprints' }, :name2 => 'pipes') }
       its(:count) { should == 2 }
     end
+
+
 
 
     describe 'Parser' do

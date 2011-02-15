@@ -95,8 +95,10 @@ module Pacer
           @transform = t = Parslet::Transform.new
           t.rule(:var => t.simple(:x)) do |h|
             var = @vars[h[:x]]
-            if var.is_a? Fixnum and var < java.lang.Integer::MAX_VALUE
-              var.to_java(:int)
+            if var.is_a? Fixnum
+              java.lang.Long.new var
+            elsif var.is_a? Numeric
+              java.lang.Double.new var
             else
               var
             end
@@ -104,14 +106,9 @@ module Pacer
 
           t.rule(:str => t.simple(:x)) { x }
           t.rule(:int => t.simple(:x)) do |h|
-            int = Integer(h[:x])
-            if int < java.lang.Integer::MAX_VALUE
-              int.to_java(:int)
-            else
-              int
-            end
+            java.lang.Long.new Integer(h[:x])
           end
-          t.rule(:float => t.simple(:x)) { Float(x) }
+          t.rule(:float => t.simple(:x)) { java.lang.Double.new Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
           t.rule(:null => t.simple(:x)) { nil }
 
