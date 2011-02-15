@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+unless defined? ElementMixinSpec
+ElementMixinSpec = true
+
 shared_examples_for Pacer::ElementMixin do
   context 'vertex' do
     subject { v0 }
@@ -258,6 +261,7 @@ shared_examples_for Pacer::ElementMixin do
     end
   end
 end
+end
 
 for_each_graph do
   it_uses Pacer::ElementMixin do
@@ -274,6 +278,8 @@ for_each_graph do
   end
 
   context 'edge' do
+    let(:v0) { graph.create_vertex :name => 'eliza' }
+    let(:v1) { graph.create_vertex :name => 'darrick' }
     let(:e0) { graph.create_edge nil, v0, v1, :links }
     subject { e0 }
     it { should_not be_a(Pacer::ElementWrapper) }
