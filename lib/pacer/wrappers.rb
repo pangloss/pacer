@@ -43,6 +43,14 @@ module Pacer
       @element.get_id
     end
 
+    def hash
+      @element.hash
+    end
+
+    def eql?(other)
+      @element.eql?(other)
+    end
+
     def initialize(element)
       @element = element
     end

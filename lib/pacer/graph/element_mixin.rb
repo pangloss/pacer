@@ -87,6 +87,14 @@ module Pacer
       display_name.to_s <=> other.display_name.to_s
     end
 
+    def eql?(other)
+      if other.respond_to? :element
+        super(other.element)
+      else
+        super
+      end
+    end
+
     # Yields the element once or returns an enumerator containing self if no
     # block is given. Follows Ruby conventions and is meant to be used along
     # with the Enumerable mixin.

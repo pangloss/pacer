@@ -41,6 +41,27 @@ shared_examples_for Pacer::ElementMixin do
         expect { v0.e }.to raise_error(Pacer::UnsupportedOperation)
       end
     end
+
+    describe '#eql?' do
+      subject { Hash.new(0) }
+      before do
+        subject[v0] += 1
+        subject[graph.v.first] += 1
+      end
+
+      its(:keys) { should == [v0] }
+      its(:values) { should == [2] }
+
+      it 'should put wrapped vertices in the same key' do
+        subject[v0.v(Tackle::SimpleMixin).first] += 1
+        subject.values.should == [3]
+      end
+
+      it 'should put other vertices in a different key' do
+        subject[v1].should == 0
+        subject[v0].should == 2
+      end
+    end
   end
 
   context 'edge' do
@@ -81,6 +102,27 @@ shared_examples_for Pacer::ElementMixin do
     describe '#v' do
       it 'is unsupported' do
         expect { e0.v }.to raise_error(Pacer::UnsupportedOperation)
+      end
+    end
+
+    describe '#eql?', :transactions => false do
+      subject { Hash.new(0) }
+      before do
+        subject[e0] += 1
+        subject[graph.e.first] += 1
+      end
+
+      its(:keys) { should == [e0] }
+      its(:values) { should == [2] }
+
+      it 'should put wrapped edges in the same key' do
+        subject[e0.e(Tackle::SimpleMixin).first] += 1
+        subject.values.should == [3]
+      end
+
+      it 'should put other edges in a different key' do
+        subject[e1].should == 0
+        subject[e0].should == 2
       end
     end
   end
