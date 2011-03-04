@@ -14,6 +14,7 @@ begin
     gem.license = "MIT"
     gem.add_dependency "nokogiri", "~> 1.4"
     gem.add_dependency "parslet", "~> 1.0"
+    gem.add_dependency 'fastercsv', '~> 1.5.4'
     gem.add_development_dependency "rspec", "~> 2.1"
     gem.add_development_dependency "rr", "~> 1.0"
     gem.files = FileList['lib/**/*.rb', 'script/*', '[A-Z]*', 'spec/**/*', 'vendor/*'].to_a
