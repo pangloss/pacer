@@ -53,6 +53,12 @@ module Pacer
 
     def initialize(element)
       @element = element
+      after_initialize
+    end
+
+    protected
+
+    def after_initialize
     end
   end
 
