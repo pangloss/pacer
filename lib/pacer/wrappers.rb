@@ -1,6 +1,14 @@
 require 'forwardable'
 
 module Pacer
+  def self.vertex_wrapper(*exts)
+    VertexWrapper.wrapper_for(exts)
+  end
+
+  def self.edge_wrapper(*exts)
+    EdgeWrapper.wrapper_for(exts)
+  end
+
   class ElementWrapper
     extend Forwardable
 
@@ -75,15 +83,15 @@ module Pacer
       :graph, :graph=, :<=>, :==
 
     class << self
+      def wrapper_for(exts)
+        @wrappers ||= {}
+        @wrappers[exts] ||= build_edge_wrapper(exts)
+      end
+
       protected
 
       def build_edge_wrapper(exts)
         build_extension_wrapper(exts, [:Route, :Edge], EdgeWrapper)
-      end
-
-      def wrapper_for(exts)
-        @wrappers ||= {}
-        @wrappers[exts] ||= build_edge_wrapper(exts)
       end
     end
 
@@ -109,15 +117,15 @@ module Pacer
       :graph, :graph=, :<=>, :==
 
     class << self
+      def wrapper_for(exts)
+        @wrappers ||= {}
+        @wrappers[exts] ||= build_vertex_wrapper(exts)
+      end
+
       protected
 
       def build_vertex_wrapper(exts)
         build_extension_wrapper(exts, [:Route, :Vertex], VertexWrapper)
-      end
-
-      def wrapper_for(exts)
-        @wrappers ||= {}
-        @wrappers[exts] ||= build_vertex_wrapper(exts)
       end
     end
 
