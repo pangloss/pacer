@@ -9,14 +9,14 @@ module Pacer::Pipes
       @graph = back.graph
       @invert = invert
 
-      @extensions = @back.extensions + [Pacer::Extensions::BlockFilterElement]
+      @exts = @back.extensions + [Pacer::Extensions::BlockFilterElement]
       @is_element = @graph.element_type?(back.element_type) if @graph
     end
 
     def processNextStart()
       while raw_element = starts.next
         if @is_element
-          extended_element = raw_element.add_extensions(@extensions)
+          extended_element = raw_element.add_extensions(@exts)
           extended_element.back = @back
           extended_element.graph = @back.graph
           ok = @block.call extended_element
