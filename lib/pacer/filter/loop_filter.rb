@@ -45,7 +45,7 @@ module Pacer
           raise 'No loop control block specified. Use either #while or #until after #loop.'
         end
         pipe = Pacer::Pipes::LoopPipe.new(looping_pipe, @control_block)
-        pipe.setStarts(end_pipe)
+        pipe.setStarts(end_pipe) if end_pipe
         pipe
       end
 

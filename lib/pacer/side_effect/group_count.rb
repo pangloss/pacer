@@ -36,7 +36,7 @@ module Pacer
         else
           @pipe = com.tinkerpop.pipes.sideeffect.GroupCountPipe.new
         end
-        @pipe.set_starts(end_pipe)
+        @pipe.set_starts(end_pipe) if end_pipe
         @pipe
       end
     end

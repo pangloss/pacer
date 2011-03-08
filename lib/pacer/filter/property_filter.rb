@@ -34,7 +34,7 @@ module Pacer
             super
           else
             label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.collect { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
-            label_pipe.set_starts pipe
+            label_pipe.set_starts pipe if pipe
             super(label_pipe, filters - labels, block, false)
           end
         end
@@ -98,7 +98,7 @@ module Pacer
         end
         if block
           block_pipe = Pacer::Pipes::BlockFilterPipe.new(self, block)
-          block_pipe.set_starts pipe
+          block_pipe.set_starts pipe if pipe
           pipe = block_pipe
         end
         pipe
@@ -117,7 +117,7 @@ module Pacer
           elsif mod.respond_to? :route
             route = mod.route(Pacer::Route.empty(self))
             s, e = route.send :build_pipeline
-            s.setStarts(p)
+            s.setStarts(p) if p
             e
           else
             p

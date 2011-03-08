@@ -50,7 +50,7 @@ module Pacer
         else
           pipe = Pacer::Pipes::FutureFilterPipe.new(lookahead_pipes.first, has_elements.first)
         end
-        pipe.set_starts(end_pipe)
+        pipe.set_starts(end_pipe) if end_pipe
         pipe
       end
 

@@ -22,7 +22,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         @pipe = com.tinkerpop.pipes.sideeffect.CountPipe.new
-        @pipe.setStarts(end_pipe)
+        @pipe.setStarts(end_pipe) if end_pipe
         @pipe
       end
     end

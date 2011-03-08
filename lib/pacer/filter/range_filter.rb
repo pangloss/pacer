@@ -88,7 +88,7 @@ module Pacer
         to = @range.end
         to += 1 unless @range.exclude_end? if to >= 0
         pipe = Pacer::Pipes::RangeFilterPipe.new from, to
-        pipe.set_starts end_pipe
+        pipe.set_starts end_pipe if end_pipe
         pipe
       end
 

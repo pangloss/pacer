@@ -61,7 +61,7 @@ module Pacer
         else
           pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
         end
-        pipe.set_starts(end_pipe)
+        pipe.set_starts(end_pipe) if end_pipe
         pipe
       end
 

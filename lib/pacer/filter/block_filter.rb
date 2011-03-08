@@ -23,7 +23,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         pipe = Pacer::Pipes::BlockFilterPipe.new(self, block, invert)
-        pipe.set_starts end_pipe
+        pipe.set_starts end_pipe if end_pipe
         pipe
       end
     end

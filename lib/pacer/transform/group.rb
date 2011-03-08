@@ -120,7 +120,7 @@ module Pacer
         values_routes.each do |route|
           pipe.addValuesPipe *route.send(:build_pipeline)
         end
-        pipe.setStarts end_pipe
+        pipe.setStarts end_pipe if end_pipe
         pipe
       end
 
