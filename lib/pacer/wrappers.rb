@@ -122,6 +122,10 @@ module Pacer
 
     protected
 
+    def _swap_element!(element)
+      @element = element
+    end
+
     def after_initialize
     end
   end
