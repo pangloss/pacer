@@ -32,12 +32,10 @@ module Pacer::Pipes
       if @queue.isEmpty
         @next_metadata = nil
         r = @starts.next
-        if @path_enabled
-          if @starts.respond_to? :path
-            @next_path = @starts.path
-          else
-            @next_path = java.util.ArrayList.new
-          end
+        if @starts.respond_to? :path
+          @next_path = @starts.path
+        else
+          @next_path = java.util.ArrayList.new
         end
         r
       else
