@@ -1,3 +1,4 @@
+require 'rspec'
 require 'pacer'
 require 'set'
 
@@ -45,7 +46,8 @@ module RSpec
         end
       end
 
-      if RSpec::Core::Version::STRING >= '2.5.0'
+      if not defined? Procsy or Procsy.class == Module
+        # RSpec version >= '2.5.0'
         module Procsy
           include ProcsyTransactions
         end
