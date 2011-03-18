@@ -75,5 +75,12 @@ for_tg do
         end
       end
     end
+
+    describe '#sanitize_properties' do
+      specify 'returns its argument' do
+        arg = { :a => 1 }
+        graph.sanitize_properties(arg).should equal(arg)
+      end
+    end
   end
 end

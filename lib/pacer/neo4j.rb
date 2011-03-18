@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Pacer
   Neo4jGraph = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
   Neo4jVertex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
@@ -76,10 +78,8 @@ module Pacer
     end
 
     def sanitize_properties(props)
-      props.inject({}) do |result, (name, value)|
+      pairs = props.map do |name, value|
         case value
-        when Date, Time, Symbol
-          value = value.to_s
         when ''
           value = nil
         when String
@@ -87,11 +87,11 @@ module Pacer
           value = nil if value == ''
         when Numeric
         else
-          value = value.to_s
+          value = YAML.dump(value)
         end
-        result[name] = value if value
-        result
+        [name, value]
       end
+      Hash[pairs]
     end
   end
 
