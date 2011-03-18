@@ -55,6 +55,10 @@ module Pacer
         else
           if et == Object
             Object
+          elsif TinkerVertex.java_class.to_java.name
+            TinkerVertex
+          elsif TinkerEdge.java_class.to_java.name
+            TinkerEdge
           else
             raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object'
           end

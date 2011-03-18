@@ -64,6 +64,10 @@ module Pacer
         else
           if et == Object
             Object
+          elsif Neo4jVertex.java_class.to_java.name
+            Neo4jVertex
+          elsif Neo4jEdge.java_class.to_java.name
+            Neo4jEdge
           else
             raise ArgumentError, 'Element type may be one of :vertex or :edge'
           end
