@@ -49,6 +49,16 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Core::Graph::GraphRoute
 
+    # Override to return an enumeration-friendly array of vertices.
+    def get_vertices
+      getVertices.to_route(:graph => self, :element_type => :vertex)
+    end
+
+    # Override to return an enumeration-friendly array of edges.
+    def get_edges
+      getEdges.to_route(:graph => self, :element_type => :edge)
+    end
+
     def element_type(et = nil)
       return nil unless et
       if et == Neo4jVertex or et == Neo4jEdge or et == Neo4jElement

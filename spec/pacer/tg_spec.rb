@@ -82,5 +82,47 @@ for_tg do
         graph.sanitize_properties(arg).should equal(arg)
       end
     end
+
+    describe '#in_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.in_vertex(Tackle::SimpleMixin)
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.in_vertex([Tackle::SimpleMixin])
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
+    describe '#out_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.out_vertex(Tackle::SimpleMixin)
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.out_vertex([Tackle::SimpleMixin])
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
+    describe '#get_vertices' do
+      before { e0 }
+      subject { graph.get_vertices }
+      it { should be_a(Pacer::Core::Route) }
+      its(:count) { should == 2 }
+    end
+
+    describe '#get_edges' do
+      before { e0 }
+      subject { graph.get_edges }
+      it { should be_a(Pacer::Core::Route) }
+      its(:count) { should == 1 }
+    end
   end
 end
