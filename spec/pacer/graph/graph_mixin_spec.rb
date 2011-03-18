@@ -331,11 +331,12 @@ end
 
 
 for_each_graph :read_only, false do
+  let(:v0) { graph.create_vertex }
+  let(:v1) { graph.create_vertex }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+
   describe Pacer::GraphMixin do
-    let(:v0) { graph.create_vertex }
-    let(:v1) { graph.create_vertex }
-    let(:e0) { graph.create_edge nil, v0, v1, :links }
-    let(:e1) { graph.create_edge nil, v0, v1, :relinks }
     before do
       e0 # force edge and vertices to be created.
     end
@@ -351,6 +352,7 @@ for_each_graph :read_only, false do
 
         after do
           graph.drop_index :vertices
+          graph.v.delete!
         end
 
         let(:orig_idx) { @orig_idx }
@@ -380,7 +382,9 @@ for_each_graph :read_only, false do
 
         after do
           graph.drop_index :edges
+          graph.v.delete!
         end
+
 
         let(:orig_idx) { @orig_idx }
         subject { @new_idx }
@@ -396,6 +400,31 @@ for_each_graph :read_only, false do
           subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
         end
       end
+    end
+  end
+
+  describe 'edges can be indexed', :transactions => false do
+    after do
+      graph.drop_index 'edges'
+      graph.v.delete!
+    end
+
+    specify 'in an auto index' do
+      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+      graph.edges.count.should == 0
+      label = e0.label
+      graph.edges.count.should == 1
+      index.get('label', label).count.should == 1
+    end
+
+    specify 'by adding them to a new auto index' do
+      graph.edges.count.should == 0
+      label = e0.label
+      graph.edges.count.should == 1
+      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+      index.get('label', label).count.should == 0
+      Pacer::Utils::AutomaticIndexHelper.addElement(index, e0)
+      index.get('label', label).count.should == 1
     end
   end
 end

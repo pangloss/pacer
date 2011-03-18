@@ -41,7 +41,7 @@ for_neo4j do
         it { should == Object }
       end
 
-      context 'from result' do
+      context 'from element_type' do
         context ':vertex' do
           subject { graph.element_type(graph.element_type :vertex) }
           it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex }
@@ -60,6 +60,18 @@ for_neo4j do
         context ':object' do
           subject { graph.element_type(graph.element_type :object) }
           it { should == Object }
+        end
+      end
+
+      context 'from index_class' do
+        context ':vertex' do
+          subject { graph.element_type(graph.index_class :vertex) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex }
+        end
+
+        context ':edge' do
+          subject { graph.element_type(graph.index_class :edge) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jEdge }
         end
       end
     end

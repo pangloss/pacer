@@ -62,6 +62,18 @@ for_tg do
           it { should == Object }
         end
       end
+
+      context 'from index_class' do
+        context ':vertex' do
+          subject { graph.element_type(graph.index_class :vertex) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+        end
+
+        context ':edge' do
+          subject { graph.element_type(graph.index_class :edge) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+        end
+      end
     end
   end
 end
