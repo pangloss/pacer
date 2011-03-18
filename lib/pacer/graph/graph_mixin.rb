@@ -105,7 +105,7 @@ module Pacer
       if type
         idx = indices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
         if idx.nil? and opts[:create]
-          idx = create_index name, element_type(type), Pacer.manual_index
+          idx = createManualIndex name, element_type(type)
         end
       else
         idx = indices.detect { |i| i.index_name == name }
@@ -119,17 +119,14 @@ module Pacer
       index_class = old_index.getIndexClass
       keys = old_index.getAutoIndexKeys
       drop_index name
-      index = create_index name, index_class, Pacer.automatic_index
-      keys.each { |key| index.addAutoIndexKey key } if keys
-      Thread.new do
-        if index_class == element_type(:vertex).java_class
-          v.bulk_job do |v|
-            Pacer::Utils::AutomaticIndexHelper.indexElement(index, v)
-          end
-        else
-          e.bulk_job do |e|
-            Pacer::Utils::AutomaticIndexHelper.indexElement(index, e)
-          end
+      index = createAutomaticIndex name, index_class, keys
+      if index_class == element_type(:vertex).java_class
+        v.bulk_job do |v|
+          Pacer::Utils::AutomaticIndexHelper.addElement(index, v)
+        end
+      else
+        e.bulk_job do |e|
+          Pacer::Utils::AutomaticIndexHelper.addElement(index, e)
         end
       end
       index

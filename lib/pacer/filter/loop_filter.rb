@@ -34,12 +34,6 @@ module Pacer
 
       protected
 
-      def iterator
-        iter = super
-        iter.enable_path if @yield_paths
-        iter
-      end
-
       def attach_pipe(end_pipe)
         unless @control_block
           raise 'No loop control block specified. Use either #while or #until after #loop.'

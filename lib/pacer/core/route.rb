@@ -135,7 +135,6 @@ module Pacer
       # Yields each matching path or returns an iterator if no block is given.
       def each_path
         iter = iterator
-        iter.enable_path
         if block_given?
           g = graph
           while true
