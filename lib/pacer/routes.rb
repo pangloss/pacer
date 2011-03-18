@@ -5,5 +5,4 @@ module Pacer
 end
 require 'pacer/route/mixins'
 require 'pacer/route/paths_route'
-require 'pacer/route/branched_route'
 require 'pacer/route/context_route'

@@ -12,13 +12,6 @@ module Pacer::Pipes
       @looping_pipe = looping_pipe
     end
 
-    def enablePath
-      @path_enabled = true
-      @looping_pipe.enablePath
-      super
-    end
-    alias enable_path enablePath
-
     def next
       super
     rescue NativeException => e
@@ -40,10 +33,10 @@ module Pacer::Pipes
         if has_next
           element = @looping_pipe.next
           depth = (@expando.metadata || 0) + 1
-          @next_path = @looping_pipe.path if @path_enabled
+          @next_path = @looping_pipe.path
         else
           element = @starts.next
-          @next_path = @starts.path if @path_enabled
+          @next_path = @starts.path
           depth = 0
         end
         case @control_block.call element, depth, @next_path

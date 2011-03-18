@@ -176,7 +176,7 @@ for_each_graph(:read_only) do
       end
 
       it 'should not be nil when no matching mixed results' do
-        empty = graph.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
+        empty = [].to_route(:graph => graph, :element_type => :mixed)
         empty.should be_a(Pacer::Core::Graph::MixedRoute)
         empty.count.should == 0
       end
