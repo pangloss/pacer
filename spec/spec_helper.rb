@@ -17,6 +17,7 @@ module RSpec
       def fail_with(message)
         raise_error(::RSpec::Expectations::ExpectationNotMetError, message)
       end
+
     end
 
     module SharedExampleGroup
@@ -71,26 +72,37 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-def for_each_graph(usage_style = :read_write, &block)
-  for_tg(usage_style, &block)
-  for_neo4j(usage_style, &block)
+def for_each_graph(usage_style = :read_write, indices = true, &block)
+  for_tg(usage_style, indices, &block)
+  for_neo4j(usage_style, indices, &block)
 end
 
-def for_tg(usage_style = :read_write, &block)
+def for_tg(usage_style = :read_write, indices = true, &block)
   describe 'tg' do
     let(:supports_custom_id) { true }
-    let(:graph) { Pacer.tg }
+    let(:graph) do
+      g = Pacer.tg
+      unless indices
+        g.drop_index :vertices
+        g.drop_index :edges
+      end
+      g
+    end
     let(:graph2) { Pacer.tg }
     instance_eval(&block)
   end
 end
 
 
-def for_neo4j(usage_style = :read_write, &block)
+def for_neo4j(usage_style = :read_write, indices = true, &block)
   describe 'neo4j' do
     let(:supports_custom_id) { false }
     let(:graph) do
-      $neo_graph
+      if indices
+        $neo_graph
+      else
+        $neo_graph_no_indices
+      end
     end
     let(:graph2) do
       $neo_graph2
@@ -135,7 +147,7 @@ def use_simple_graph_data
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 end
 
-def use_pacer_graphml_data(usage_style = :read_write)
+def use_pacer_graphml_data(usage_style = :read_write, version = '')
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
@@ -170,6 +182,14 @@ RSpec.configure do |c|
     dir = Pathname.new(path2)
     dir.rmtree if dir.exist?
     $neo_graph2 = Pacer.neo4j(path2)
+
+    path3 = File.expand_path('tmp/spec_no_indices.neo4j')
+    dir = Pathname.new(path3)
+    dir.rmtree if dir.exist?
+    $neo_graph_no_indices = Pacer.neo4j(path3)
+    $neo_graph_no_indices.drop_index :vertices
+    $neo_graph_no_indices.drop_index :edges
+
   end
 
 

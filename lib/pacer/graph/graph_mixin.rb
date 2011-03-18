@@ -119,8 +119,17 @@ module Pacer
       index_class = old_index.getIndexClass
       keys = old_index.getAutoIndexKeys
       drop_index name
-      index = createAutomaticIndex name, index_class, keys
-      if index_class == element_type(:vertex).java_class
+      build_automatic_index(name, index_class, keys)
+    end
+
+    def build_automatic_index(name, et, keys = nil)
+      if keys and not keys.is_a? java.util.Set
+        set = java.util.HashSet.new
+        keys.each { |k| set.add k.to_s }
+        keys = set
+      end
+      index = createAutomaticIndex name.to_s, index_class(et), keys
+      if index_class(et) == element_type(:vertex).java_class
         v.bulk_job do |v|
           Pacer::Utils::AutomaticIndexHelper.addElement(index, v)
         end
