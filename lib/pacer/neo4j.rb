@@ -128,8 +128,10 @@ module Pacer
     def in_vertex(extensions = nil)
       v = inVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end
@@ -138,8 +140,10 @@ module Pacer
     def out_vertex(extensions = nil)
       v = outVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end

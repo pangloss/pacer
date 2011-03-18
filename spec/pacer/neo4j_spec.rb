@@ -132,6 +132,34 @@ for_neo4j do
       its(:keys) { should == original.keys }
     end
 
+    describe '#in_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.in_vertex(Tackle::SimpleMixin)
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.in_vertex([Tackle::SimpleMixin])
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
+    describe '#out_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.out_vertex(Tackle::SimpleMixin)
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.out_vertex([Tackle::SimpleMixin])
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
     describe '#get_vertices' do
       before { e0 }
       subject { graph.get_vertices }
