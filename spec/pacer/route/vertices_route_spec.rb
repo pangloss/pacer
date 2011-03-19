@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 for_tg(:read_only) do
-  describe Pacer::Core::Graph::VerticesRoute do
+  context Pacer::Core::Graph::VerticesRoute do
     use_pacer_graphml_data(:read_only)
 
     describe '#out_e' do
@@ -25,9 +25,34 @@ for_tg(:read_only) do
 end
 
 for_tg do
-  describe Pacer::Core::Graph::VerticesRoute do
+  use_pacer_graphml_data
+
+  context Pacer::Core::Graph::VerticesRoute do
     describe :add_edges_to do
-      it 'should not add properties with null values'
+      let(:pangloss) { graph.v(:name => 'pangloss') }
+      let(:pacer) { graph.v(:name => 'pacer') }
+
+      context '1 to 1' do
+        before do
+          setup_data
+          @result = pangloss.add_edges_to(:likes, pacer, :pros => "it's fast", :cons => nil)
+        end
+
+        subject { graph.edge(@result) }
+
+        it { should_not be_nil }
+        its(:out_vertex) { should == pangloss.first }
+        its(:in_vertex) { should == pacer.first }
+        its(:label) { should == 'likes' }
+
+        it 'should store properties' do
+          subject[:pros].should == "it's fast"
+        end
+
+        it 'should not add properties with null values' do
+          subject.getPropertyKeys.should_not include('cons')
+        end
+      end
 
       context 'from empty route' do
 

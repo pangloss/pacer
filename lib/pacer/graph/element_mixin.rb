@@ -38,15 +38,22 @@ module Pacer
 
     # Convenience method to retrieve a property by name.
     def [](key)
-      get_property(key.to_s)
+      value = get_property(key.to_s)
+      if graph
+        graph.decode_property(value)
+      else
+        value
+      end
     end
 
     # Convenience method to set a property by name to the given value.
     def []=(key, value)
-      if value and value != ''
-        set_property(key.to_s, value) if value != get_property(key.to_s)
+      value = graph.encode_property(value) if graph
+      key = key.to_s
+      if value
+        set_property(key, value) if value != get_property(key)
       else
-        remove_property(key.to_s)
+        remove_property(key)
       end
     end
 
@@ -66,7 +73,6 @@ module Pacer
     end
 
     def properties=(props)
-      props = graph.sanitize_properties(props) if graph
       (property_keys - props.keys.collect { |k| k.to_s }).each do |key|
         remove_property key
       end

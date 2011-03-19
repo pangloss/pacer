@@ -69,6 +69,19 @@ module Pacer
     def sanitize_properties(props)
       props
     end
+
+    def encode_property(value)
+      if value.is_a? String
+        value = value.strip
+        value unless value == ''
+      else
+        value
+      end
+    end
+
+    def decode_property(value)
+      value
+    end
   end
 
 

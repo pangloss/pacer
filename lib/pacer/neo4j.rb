@@ -89,19 +89,32 @@ module Pacer
 
     def sanitize_properties(props)
       pairs = props.map do |name, value|
-        case value
-        when ''
-          value = nil
-        when String
-          value = value.strip
-          value = nil if value == ''
-        when Numeric
-        else
-          value = YAML.dump(value)
-        end
-        [name, value]
+        [name, encode_property(value)]
       end
       Hash[pairs]
+    end
+
+    def encode_property(value)
+      case value
+      when nil
+        nil
+      when String
+        value = value.strip
+        value = nil if value == ''
+        value
+      when Numeric
+        value
+      else
+        value.to_yaml
+      end
+    end
+
+    def decode_property(value)
+      if value.is_a? String and value[0, 3] == '---'
+        YAML.load(value)
+      else
+        value
+      end
     end
   end
 
