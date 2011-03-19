@@ -23,16 +23,7 @@ module Pacer::Core::Graph
     # Stores the result of the current route in a new route so it will not need
     # to be recalculated.
     def result(name = nil)
-      ids = element_ids.to_a
-      r = ids.to_route(:info => "#{ ids.count } ids")
-      r = r.chain_route(:graph => graph,
-                        :element_type => element_type,
-                        :pipe_class => id_pipe_class,
-                        :pipe_args => [graph],
-                        :route_name => 'lookup',
-                        :extensions => extensions,
-                        :info => [name, info].compact.join(':'))
+      element_ids.to_a.id_to_element_route(:based_on => self, :name => name)
     end
-
   end
 end

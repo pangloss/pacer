@@ -90,16 +90,13 @@ module Pacer::Core::Graph
         end
       end
       if first_edge_id
-        if last_edge_id != first_edge_id
-          (first_edge_id..last_edge_id)
-        else
-          first_edge_id
-        end
+        (first_edge_id..last_edge_id).id_to_element_route(:based_on => graph.e)
       end
     end
 
     protected
 
+    # TODO: move id_pipe_class into the element_type object
     def id_pipe_class
       com.tinkerpop.pipes.pgm.IdVertexPipe
     end

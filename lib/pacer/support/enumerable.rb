@@ -71,6 +71,21 @@ module Enumerable
     end
   end
 
+  def id_to_element_route(args = {})
+    based_on = args[:based_on]
+    raise 'Must supply :based_on option' unless based_on
+    raise 'Graph routes do not contain element ids to look up' if self.is_a? Pacer::Core::Route and graph
+    raise 'Based on route must be a graph route' unless based_on.graph
+    r = to_route(:info => "#{ count } ids")
+    r.chain_route(:graph => based_on.graph,
+                  :element_type => based_on.element_type,
+                  :pipe_class => based_on.send(:id_pipe_class),
+                  :pipe_args => [based_on.graph],
+                  :route_name => 'lookup',
+                  :extensions => based_on.extensions,
+                  :info => [args[:name], based_on.info].compact.join(':'))
+  end
+
   def group_count
     result = Hash.new(0)
     if block_given?

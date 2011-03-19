@@ -41,7 +41,7 @@ for_tg do
           @result = pangloss.add_edges_to(:likes, pacer, :pros => "it's fast", :cons => nil)
         end
 
-        subject { graph.edge(@result) }
+        subject { @result.first }
 
         it { should_not be_nil }
         its(:out_vertex) { should == pangloss.first }
@@ -61,18 +61,16 @@ for_tg do
         let(:people) { graph.v(:type => 'person') }
         let(:projects) { graph.v :type => 'project' }
 
-        before do
-          @result = people.add_edges_to(:uses, projects)
-        end
+        subject { people.add_edges_to(:uses, projects) }
 
-        specify 'edge id range should be 2 people * 4 projects' do
-          @result.should be_a(Range)
-          @result.to_a.count.should == 8
-        end
+        it { should be_a(Pacer::Core::Route) }
+        its(:element_type) { should == graph.element_type(:edge) }
+        its(:count) { should == 8 }
+        its('back.element_type') { should == Object }
+        its('back.count') { should == 8 }
 
         specify 'all edges in rasge should exist' do
-          @result.each do |id|
-            edge = graph.edge(id)
+          subject.each do |edge|
             edge.should_not be_nil
             edge.label.should == 'uses'
           end
@@ -92,7 +90,7 @@ for_tg do
 
         it 'should associate to a single element' do
           result = pangloss.add_edges_to(:likes, pacer.first)
-          edge = graph.edge(result)
+          edge = result.first
           edge.should_not be_nil
         end
 
