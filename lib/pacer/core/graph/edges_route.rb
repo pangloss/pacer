@@ -2,6 +2,8 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
   module EdgesRoute
+    include ElementRoute
+
     # Extends the route with out vertices from this route's matching edges.
     def out_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -29,44 +31,14 @@ module Pacer::Core::Graph
                                   filters, block)
     end
 
-    # v is undefined for edge routes.
-    def v(*filters)
-      raise Pacer::UnsupportedOperation, "Can't call vertices for EdgesRoute."
-    end
-
     # Extend route with the additional edge label, property and block filters.
     def e(*filters, &block)
-      Pacer::Route.property_filter(self, filters, block)
-    end
-
-    def filter(*args, &block)
-      e(*args, &block)
+      filter(*filters, &block)
     end
 
     # Return an iterator of or yield all labels
     def labels
       chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe, :route_name => 'labels')
-    end
-
-    def properties
-      map { |e| e.properties }
-    end
-
-    # Stores the result of the current route in a new route so it will not need
-    # to be recalculated.
-    def result(name = nil)
-      edge_ids = element_ids.to_a
-      if edge_ids.count == 1
-        e = graph.edge edge_ids.first
-        e.add_extensions extensions
-        e
-      else
-        r = self.class.from_edge_ids graph, edge_ids
-        r.info = "#{ name }:#{r.info}" if name
-        r.add_extensions extensions
-        r.graph = graph
-        r
-      end
     end
 
     # Returns a hash of in vertices with an array of associated out vertices.
@@ -81,6 +53,12 @@ module Pacer::Core::Graph
 
     def element_type
       graph.element_type(:edge)
+    end
+
+    protected
+
+    def id_pipe_class
+      com.tinkerpop.pipes.pgm.IdEdgePipe
     end
   end
 end

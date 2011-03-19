@@ -6,27 +6,8 @@ module Pacer
     # defined here. Many of these methods are designed to be specialized by
     # other modules included after Core::Route is included.
     module Route
-
-      # Each route object is extended with these class or 'static' methods.
-      module RouteClassMethods
-        def from_edge_ids(graph, ids)
-          Pacer::Route.new :element_type => :edge,
-            :graph => graph,
-            :back => proc { graph.load_edges ids },
-            :info => ids.count
-        end
-
-        def from_vertex_ids(graph, ids)
-          Pacer::Route.new :element_type => :vertex,
-            :graph => graph,
-            :back => proc { graph.load_vertices ids },
-            :info => ids.count
-        end
-      end
-
       def self.included(target)
         target.send :include, Enumerable
-        target.extend RouteClassMethods
       end
 
       # Set these to effect how the route is displayed when inspected.
@@ -298,10 +279,6 @@ module Pacer
         else
           @source = back
         end
-      end
-
-      def source=(source)
-        self.back = source
       end
 
       # Return the route which is attached to the given route.
