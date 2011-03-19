@@ -29,12 +29,15 @@ for_tg do
 
   context Pacer::Core::Graph::VerticesRoute do
     describe :add_edges_to do
+      before do
+        setup_data
+      end
+
       let(:pangloss) { graph.v(:name => 'pangloss') }
       let(:pacer) { graph.v(:name => 'pacer') }
 
       context '1 to 1' do
         before do
-          setup_data
           @result = pangloss.add_edges_to(:likes, pacer, :pros => "it's fast", :cons => nil)
         end
 
@@ -54,16 +57,49 @@ for_tg do
         end
       end
 
-      context 'from empty route' do
+      context 'many to many' do
+        let(:people) { graph.v(:type => 'person') }
+        let(:projects) { graph.v :type => 'project' }
 
+        before do
+          @result = people.add_edges_to(:uses, projects)
+        end
+
+        specify 'edge id range should be 2 people * 4 projects' do
+          @result.should be_a(Range)
+          @result.to_a.count.should == 8
+        end
+
+        specify 'all edges in rasge should exist' do
+          @result.each do |id|
+            edge = graph.edge(id)
+            edge.should_not be_nil
+            edge.label.should == 'uses'
+          end
+        end
       end
 
-      context 'to empty array' do
+      context 'edge cases' do
+        it 'should do nothing if there are no source vertices' do
+          result = graph.v(:name => 'no match').add_edges_to(:likes, pacer, :pros => "it's fast", :cons => nil)
+          result.should be_nil
+        end
 
-      end
+        it 'should do nothing if there are no target vertices' do
+          result = pangloss.add_edges_to(:likes, graph.v(:name => 'I hate everytihng'))
+          result.should be_nil
+        end
 
-      context 'to nil' do
+        it 'should associate to a single element' do
+          result = pangloss.add_edges_to(:likes, pacer.first)
+          edge = graph.edge(result)
+          edge.should_not be_nil
+        end
 
+        it 'should do nothing if target is nil' do
+          result = pangloss.add_edges_to(:likes, nil)
+          result.should be_nil
+        end
       end
     end
   end

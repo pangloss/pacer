@@ -57,14 +57,20 @@ module Pacer::Core::Graph
         to_vertices = [to_vertices].compact
       end
       graph = self.graph
-      unless graph
-        v = (detect { |v| v.graph } || to_vertices.detect { |v| v.graph })
-        graph = v.graph if v
-        unless graph
-          Pacer.debug_info << { :error => 'No graph found', :from => self, :to => to_vertices, :graph => graph }
-          raise "No graph found"
-        end
-      end
+
+      # NOTE: this originally gave me a lot of problems but I think the issues
+      # that caused routes to sometimes not have graphs are fixed. If the error
+      # comes back, uncomment the fix below. Hopefully this can be removed
+      # soon. (dw 2011-03-19)
+      #unless graph
+      #  v = (detect { |v| v.graph } || to_vertices.detect { |v| v.graph })
+      #  graph = v.graph if v
+      #  unless graph
+      #    Pacer.debug_info << { :error => 'No graph found', :from => self, :to => to_vertices, :graph => graph }
+      #    raise "No graph found"
+      #  end
+      #end
+
       has_props = !props.empty?
       first_edge_id = last_edge_id = nil
       counter = 0
