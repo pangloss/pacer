@@ -36,9 +36,11 @@ module Pacer::Core::Graph
       filter(*filters, &block)
     end
 
-    # Return an iterator of or yield all labels
+    # Return an route to all labels
     def labels
-      chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe, :route_name => 'labels')
+      chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe,
+                  :route_name => 'labels',
+                  :element_type => :object)
     end
 
     # Returns a hash of in vertices with an array of associated out vertices.
