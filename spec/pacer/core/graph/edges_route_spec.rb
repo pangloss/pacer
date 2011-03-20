@@ -47,7 +47,6 @@ for_each_graph(:read_only) do
       specify 'okram key has all outward related vertices in an array as the value' do
         subject[okram].sort_by { |v| v.element_id }.should == okram.out_e.in_v.to_a.sort_by { |v| v.element_id }
       end
-
     end
   end
 end
