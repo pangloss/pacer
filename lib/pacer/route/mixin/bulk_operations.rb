@@ -37,6 +37,7 @@ module Pacer::Routes
             end
           end
         ensure
+          puts '!' if Pacer.verbose?
           target_graph.in_bulk_job = false
         end
       elsif target_graph

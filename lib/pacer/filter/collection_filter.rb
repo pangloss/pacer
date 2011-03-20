@@ -9,6 +9,10 @@ module Pacer
         end
       end
 
+      def -(other)
+        chain_route :filter => :collection, :except => other
+      end
+
       def only(included)
         if included.is_a? Symbol
           chain_route :filter => :property, :block => proc { |v| v.vars[included] == v }
@@ -57,7 +61,7 @@ module Pacer
         else
           pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
         end
-        pipe.set_starts(end_pipe)
+        pipe.set_starts(end_pipe) if end_pipe
         pipe
       end
 

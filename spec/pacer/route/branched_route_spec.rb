@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        "#<V-Index -> Branched { #<V -> outE -> inV -> V-Property([{:type=>\"project\"}])> | #<V -> outE -> inV -> outE> }>"
+        "#<V-Index(type: \"person\") -> Branched { #<V -> outE -> inV -> V-Property(type==\"project\")> | #<V -> outE -> inV -> outE> }>"
     end
   end
 
@@ -72,7 +72,7 @@ describe BranchedRoute do
     specify { @me.group_count { |v| v.element_id }.should == { 'c' => 4, 'd' => 4 } }
 
     specify do
-      @single_v.paths.map(&:to_a).should ==
+      @single_v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b],
          [@b, @bc, @c],
          [@a, @ab, @b],
@@ -81,19 +81,19 @@ describe BranchedRoute do
 
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.map(&:to_a).should ==
+      @v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @v.paths.map(&:to_a).should ==
+      @v.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d], [@b, @bc, @c, @cd, @d]]
     end
     specify do
       @v.to_a.should == [@c, @c, @d, @d, @c, @c, @d, @d]
-      @ve.paths.map(&:to_a).should ==
+      @ve.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -101,7 +101,7 @@ describe BranchedRoute do
     end
     specify do
       @me.to_a.should == [@c, @d, @c, @d, @c, @d, @c, @d]
-      @me.paths.map(&:to_a).should ==
+      @me.paths.collect(&:to_a).should ==
         [[@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
          [@a, @ab, @b, @bc, @c], [@b, @bc, @c, @cd, @d],
@@ -110,51 +110,9 @@ describe BranchedRoute do
 
   end
 
-  describe 'chained branch routes' do
-    describe 'once' do
-      before do
-        pending 'pipe loses last element, enable chain_route(:type => :identity)'
-        @once = @g.v.branch { |v| v }.branch { |v| v }.v
-      end
-
-      it 'should double each vertex' do
-        @once.count.should == @g.v.count * 2
-      end
-
-      it 'should have 2 of each vertex' do
-        @once.group_count { |v| v.element_id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
-      end
-    end
-
-    describe 'twice' do
-      before do
-        pending 'pipe loses last element, enable chain_route(:type => :identity)'
-        # the difference must be with the object that's passed to the branch method
-        single = @g.v.branch { |v| v }.branch { |v| v }
-        @twice_v = single.v.branch { |v| v }.branch { |v| v }
-        @twice_m = single.mixed.branch { |v| v }.branch { |v| v }
-        @twice_v_e = single.exhaustive.v.branch { |v| v }.branch { |v| v }.exhaustive
-        @twice_m_e = single.exhaustive.mixed.branch { |v| v }.branch { |v| v }.exhaustive
-      end
-
-      it { @twice_v.count.should == @g.v.count * 2 * 2 }
-      it { @twice_m.count.should == @g.v.count * 2 * 2 }
-      it { @twice_v_e.count.should == @g.v.count * 2 * 2 }
-      it { @twice_m_e.count.should == @g.v.count * 2 * 2 }
-
-      describe 'should have 4 of each' do
-        it { @twice_v.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_m.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_v_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-        it { @twice_m_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
-      end
-    end
-  end
-
   describe 'route with a custom split pipe' do
     before do
-      pending 'pipe loses last element, enable chain_route(:type => :identity)'
-      @r = @g.v.branch { |person| person.v }.branch { |project| project.v }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
+      @r = @g.v.branch { |person| person.v{true} }.branch { |project| project.v{true} }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
     end
 
     describe 'vertices' do
@@ -171,7 +129,7 @@ describe BranchedRoute do
         # TODO: this type of thing should be much easier
         people_and_projects = Set[*@g.v(:type => 'person')] + Set[*@g.v(:type => 'project')]
         vertices = @g.v.to_a - people_and_projects.to_a
-        edges = Set[*vertices.map { |v| v.out_e.to_a }.flatten]
+        edges = Set[*vertices.collect { |v| v.out_e.to_a }.flatten]
         Set[*@r.e].should == edges
       end
     end
@@ -250,4 +208,56 @@ describe BranchedRoute do
       #=> #<Vertices([{:type=>"nt"}]) -> Edges(OUT_EDGES, &block) -> Branched { #<E -> Vertices(OUT_VERTEX)> | #<E -> Vertices(IN_VERTEX) -> Edges(IN_EDGES)> }>
     end
   end
+end
+
+for_tg(:read_only) do
+  use_pacer_graphml_data(:read_only)
+
+  describe 'chained branch routes' do
+    describe 'once' do
+      subject { graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.v }
+
+      its(:count) { should == graph.v.count * 2 }
+      it 'should have 2 of each vertex' do
+        subject.group_count { |v| v.element_id.to_i }.should == { 0 => 2, 1 => 2, 2 => 2, 3 => 2, 4 => 2, 5 => 2, 6 => 2 }
+      end
+    end
+
+    describe 'twice' do
+        # the difference must be with the object that's passed to the branch method
+      let(:single) { graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
+      let(:twice_v) { single.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
+      let(:twice_m) { single.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
+      let(:twice_v_e) { single.exhaustive.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive }
+      let(:twice_m_e) { single.exhaustive.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive }
+
+      it 'should have 7 vertices' do
+        graph.v.count.should == 7
+      end
+
+      context 'branched once' do
+        subject { single }
+        its(:count) { should == graph.v.count * 2 }
+        context 'merged with vertices and branched again' do
+          subject { twice_v }
+          its(:count) { should == graph.v.count * 2 * 2 }
+          context 'grouped' do
+            subject { twice_v.group_count { |v| v.element_id.to_i }.sort }
+            it { should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+          end
+        end
+      end
+
+      it { twice_m.count.should == graph.v.count * 2 * 2 }
+      it { twice_v_e.count.should == graph.v.count * 2 * 2 }
+      it { twice_m_e.count.should == graph.v.count * 2 * 2 }
+
+      describe 'should have 4 of each' do
+        it { twice_m.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { twice_v_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+        it { twice_m_e.group_count { |v| v.element_id.to_i }.sort.should == { 0 => 4, 1 => 4, 2 => 4, 3 => 4, 4 => 4, 5 => 4, 6 => 4 }.sort }
+      end
+    end
+  end
+
 end

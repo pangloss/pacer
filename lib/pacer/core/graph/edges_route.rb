@@ -45,7 +45,11 @@ module Pacer::Core::Graph
 
     # Return an iterator of or yield all labels
     def labels
-      map { |e| e.get_label }
+      chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe, :route_name => 'labels')
+    end
+
+    def properties
+      map { |e| e.properties }
     end
 
     # Stores the result of the current route in a new route so it will not need

@@ -87,7 +87,7 @@ module Pacer::Routes
       @configure_split_pipe.call(split_pipe) if @configure_split_pipe
       split_idx = 0
       branch_start_pipes = []
-      branch_pipes = @branches.map do |branch, uses_split_pipe|
+      branch_pipes = @branches.collect do |branch, uses_split_pipe|
         start_pipe, end_pipe = branch.send(:build_pipeline)
         branch_start_pipes << start_pipe
         if uses_split_pipe
@@ -99,16 +99,12 @@ module Pacer::Routes
       merge_pipe = @merge_pipe.new
       merge_pipe.set_starts(branch_pipes)
       @configure_merge_pipe.call(merge_pipe) if @configure_merge_pipe
-      Pacer.debug_pipes << (['Split', first_pipe, split_pipe, branch_start_pipes, merge_pipe]) if Pacer.debug_pipes
+      Pacer.debug_pipes << { :name => 'Split', :splits => split_idx, :start => first_pipe, :split => split_pipe, :branch_starts => branch_start_pipes, :branch_ends => branch_pipes, :end => merge_pipe } if Pacer.debug_pipes
       [first_pipe || split_pipe || merge_pipe, merge_pipe]
     end
 
     def inspect_class_name
-      "#{super} { #{ @branches.map { |e, _| e.inspect }.join(' | ') } }"
-    end
-
-    def route_class
-      MixedElementsRoute
+      "#{super} { #{ @branches.collect { |e, _| e.inspect }.join(' | ') } }"
     end
   end
 end

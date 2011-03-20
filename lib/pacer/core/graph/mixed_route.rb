@@ -70,13 +70,17 @@ module Pacer::Core::Graph
       graph.element_type(:mixed)
     end
 
+    def properties
+      map { |e| e.properties }
+    end
+
     # Calculate and save result.
     def result(name = nil)
-      ids = map do |element|
+      ids = collect do |element|
         if element.is_a? Pacer::VertexMixin
-          [:vertex, element.id]
+          [:vertex, element.element_id]
         else
-          [:edge, element.id]
+          [:edge, element.element_id]
         end
       end
       if ids.count == 1
@@ -84,7 +88,7 @@ module Pacer::Core::Graph
         graph.send method, id
       else
         loader = proc do
-          ids.map { |method, id| graph.send(method, id) }
+          ids.collect { |method, id| graph.send(method, id) }
         end
         chain_route :back => loader, :graph => graph, :element_type => :mixed, :info => "#{ name }:#{ids.count}", :extensions => extensions
       end

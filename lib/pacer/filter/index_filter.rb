@@ -25,6 +25,10 @@ module Pacer
         src = index.get(key, value) || java.util.ArrayList.new
         src.iterator
       end
+
+      def inspect_string
+        "#{ inspect_class_name }(#{ key }: #{value.inspect})"
+      end
     end
   end
 end

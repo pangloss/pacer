@@ -48,6 +48,10 @@ module Pacer::Core::Graph
       raise Pacer::UnsupportedOperation, "Can't call edges for VerticesRoute."
     end
 
+    def properties
+      map { |v| v.properties }
+    end
+
     # Delete all matching elements.
     def delete!
       uniq.both_e.uniq.bulk_job { |e| e.delete! }
@@ -96,7 +100,7 @@ module Pacer::Core::Graph
       graph.managed_transactions do
         graph.managed_transaction do
           each do |from_v|
-            to_vertices.to_route.each do |to_v|
+            to_vertices.each do |to_v|
               counter += 1
               graph.managed_checkpoint if counter % graph.bulk_job_size == 0
               begin

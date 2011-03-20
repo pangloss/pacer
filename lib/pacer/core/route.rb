@@ -103,7 +103,8 @@ module Pacer
         g = graph
         if extensions.empty?
           if block_given?
-            while item = iter.next
+            while true
+              item = iter.next
               item.graph ||= g if g and item.respond_to? :graph=
               yield item
             end
@@ -112,9 +113,13 @@ module Pacer
           end
         else
           if block_given?
-            while item = iter.next
-              item.graph ||= g if g and item.respond_to? :graph=
-              yield item.add_extensions(extensions)
+            while true
+              item = iter.next
+              if item.respond_to? :graph=
+                item.graph ||= g if g and item.respond_to? :graph=
+                item = item.add_extensions(extensions)
+              end
+              yield item
             end
           else
             iter.extend IteratorExtensionsMixin
@@ -123,7 +128,7 @@ module Pacer
             iter
           end
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -133,8 +138,9 @@ module Pacer
         iter.enable_path
         if block_given?
           g = graph
-          while item = iter.next
-            path = iter.path.map do |e|
+          while true
+            item = iter.next
+            path = iter.path.collect do |e|
               e.graph ||= g rescue nil
               e
             end
@@ -145,7 +151,7 @@ module Pacer
           iter.graph = graph
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -153,7 +159,8 @@ module Pacer
         iter = iterator
         if block_given?
           g = graph
-          while item = iter.next
+          while true
+            item = iter.next
             item.graph ||= g
             item.extend Pacer::Extensions::BlockFilterElement
             item.back = self
@@ -165,20 +172,21 @@ module Pacer
           iter.context = self
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
       def each_object
         iter = iterator
         if block_given?
-          while item = iter.next
+          while true
+            item = iter.next
             yield item
           end
         else
           iter
         end
-      rescue NoSuchElementException
+      rescue java.util.NoSuchElementException
         self
       end
 
@@ -191,27 +199,29 @@ module Pacer
         if Pacer.hide_route_elements or hide_elements or source.nil?
           "#<#{inspect_strings.join(' -> ')}>"
         else
-          count = 0
-          limit ||= Pacer.inspect_limit
-          results = map do |v|
-            count += 1
-            return route.inspect if count > limit
-            v.inspect
-          end
-          if count > 0
-            lens = results.map { |r| r.length }
-            max = lens.max
-            cols = (Pacer.columns / (max + 1).to_f).floor
-            cols = 1 if cols < 1
-            template_part = ["%-#{max}s"]
-            template = (template_part * cols).join(' ')
-            results.each_slice(cols) do |row|
-              template = (template_part * row.count).join(' ') if row.count < cols
-              puts template % row
+          Pacer.hide_route_elements do
+            count = 0
+            limit ||= Pacer.inspect_limit
+            results = collect do |v|
+              count += 1
+              return route.inspect if count > limit
+              v.inspect
             end
+            if count > 0
+              lens = results.collect { |r| r.length }
+              max = lens.max
+              cols = (Pacer.columns / (max + 1).to_f).floor
+              cols = 1 if cols < 1
+              template_part = ["%-#{max}s"]
+              template = (template_part * cols).join(' ')
+              results.each_slice(cols) do |row|
+                template = (template_part * row.count).join(' ') if row.count < cols
+                puts template % row
+              end
+            end
+            puts "Total: #{ count }"
+            "#<#{inspect_strings.join(' -> ')}>"
           end
-          puts "Total: #{ count }"
-          "#<#{inspect_strings.join(' -> ')}>"
         end
       end
 
@@ -374,14 +384,18 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @pipe_class
-          begin
-            if @pipe_args
+          if @pipe_args
+            begin
               pipe = @pipe_class.new(*@pipe_args)
-            else
-              pipe = @pipe_class.new
+            rescue ArgumentError
+              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new(*#{@pipe_args.inspect})"
             end
-          rescue ArgumentError
-            raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }(*#{@pipe_args.inspect})"
+          else
+            begin
+              pipe = @pipe_class.new
+            rescue ArgumentError
+              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new()"
+            end
           end
           pipe.set_starts end_pipe if end_pipe
           pipe
@@ -393,7 +407,7 @@ module Pacer
       def build_pipeline
         start, end_pipe = pipe_source
         pipe = attach_pipe(end_pipe)
-        Pacer.debug_pipes << [inspect_class_name, start, pipe] if Pacer.debug_pipes
+        Pacer.debug_pipes << { :name => inspect_class_name, :start => start, :end => pipe } if Pacer.debug_pipes
         [start || pipe, pipe]
       end
 
@@ -413,7 +427,7 @@ module Pacer
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            pipeargs = @pipe_args.map do |arg|
+            pipeargs = @pipe_args.collect do |arg|
               if arg.is_a? Enumerable and arg.count > 10
                 "[...#{ arg.count } items...]"
               else

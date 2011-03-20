@@ -1,4 +1,4 @@
-module Pacer::Routes
+module Pacer::Core::Route
   # This mixin allows an iterator to be returned from methods that perform a
   # transformation on the elements in their collection. Set the block property
   # to the proc that does the transformation.

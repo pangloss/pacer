@@ -1,6 +1,70 @@
 require 'forwardable'
 
 module Pacer
+  def self.vertex_wrapper(*exts)
+    VertexWrapper.wrapper_for(exts)
+  end
+
+  def self.edge_wrapper(*exts)
+    EdgeWrapper.wrapper_for(exts)
+  end
+
+  class NewElement
+    def initialize
+      @properties = {}
+      @out_edges = []
+      @in_edges = []
+    end
+
+    def get_id
+      nil
+    end
+
+    def property_keys
+      @properties.keys
+    end
+
+    def get_property(prop)
+      @properties[prop]
+    end
+
+    def set_property(prop, value)
+      @properties[prop] = value
+    end
+
+    def remove_property(prop)
+      @properties.delete prop
+    end
+
+    def out_edges
+      @out_edges
+    end
+
+    def in_edges
+      @in_edges
+    end
+
+    def raw_vertex
+      self
+    end
+
+    def graph
+      @graph
+    end
+
+    def graph=(graph)
+      @graph = graph
+    end
+
+    def <=>(other)
+      -1
+    end
+
+    def ==(other)
+      equal? other
+    end
+  end
+
   class ElementWrapper
     extend Forwardable
 
@@ -14,17 +78,17 @@ module Pacer
       end
 
       def clear_cache
+        Pacer.send :remove_const, :Wrappers if Pacer.const_defined? :Wrappers
         @wrappers = nil
       end
 
       protected
 
-      def build_extension_wrapper(exts, mod_names)
-        if block_given?
-          wrapper = yield
-        else
-          wrapper = Class.new(ExtensionWrapper)
-        end
+      def build_extension_wrapper(exts, mod_names, superclass)
+        sc_name = superclass.to_s.split(/::/).last
+        classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
+        eval "module ::Pacer; module Wrappers; class #{classname.to_s} < #{sc_name}; end; end; end"
+        wrapper = Pacer::Wrappers.const_get classname
         exts.each do |obj|
           if obj.is_a? Module or obj.is_a? Class
             mod_names.each do |mod_name|
@@ -43,8 +107,26 @@ module Pacer
       @element.get_id
     end
 
-    def initialize(element)
+    def hash
+      @element.hash
+    end
+
+    def eql?(other)
+      @element.eql?(other)
+    end
+
+    def initialize(element = nil)
+      @element = element || NewElement.new
+      after_initialize
+    end
+
+    protected
+
+    def _swap_element!(element)
       @element = element
+    end
+
+    def after_initialize
     end
   end
 
@@ -61,17 +143,15 @@ module Pacer
       :graph, :graph=, :<=>, :==
 
     class << self
-      protected
-
-      def build_edge_wrapper(exts)
-        wrapper = build_extension_wrapper(exts, [:Route, :Edge]) do
-          Class.new EdgeWrapper
-        end
-      end
-
       def wrapper_for(exts)
         @wrappers ||= {}
         @wrappers[exts] ||= build_edge_wrapper(exts)
+      end
+
+      protected
+
+      def build_edge_wrapper(exts)
+        build_extension_wrapper(exts, [:Route, :Edge], EdgeWrapper)
       end
     end
 
@@ -97,17 +177,15 @@ module Pacer
       :graph, :graph=, :<=>, :==
 
     class << self
-      protected
-
-      def build_vertex_wrapper(exts)
-        wrapper = build_extension_wrapper(exts, [:Route, :Vertex]) do
-          Class.new VertexWrapper
-        end
-      end
-
       def wrapper_for(exts)
         @wrappers ||= {}
         @wrappers[exts] ||= build_vertex_wrapper(exts)
+      end
+
+      protected
+
+      def build_vertex_wrapper(exts)
+        build_extension_wrapper(exts, [:Route, :Vertex], VertexWrapper)
       end
     end
 

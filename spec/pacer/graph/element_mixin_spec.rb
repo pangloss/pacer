@@ -1,5 +1,8 @@
 require 'spec_helper'
 
+unless defined? ElementMixinSpec
+ElementMixinSpec = true
+
 shared_examples_for Pacer::ElementMixin do
   context 'vertex' do
     subject { v0 }
@@ -7,7 +10,6 @@ shared_examples_for Pacer::ElementMixin do
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::VertexMixin) }
     it { should_not be_a(Pacer::EdgeMixin) }
-    it { should_not be_a(Pacer::ElementWrapper) }
 
     describe '#v' do
       context '()' do
@@ -41,6 +43,27 @@ shared_examples_for Pacer::ElementMixin do
         expect { v0.e }.to raise_error(Pacer::UnsupportedOperation)
       end
     end
+
+    describe '#eql?' do
+      subject { Hash.new(0) }
+      before do
+        subject[v0] += 1
+        subject[graph.v.first] += 1
+      end
+
+      its(:keys) { should == [v0] }
+      its(:values) { should == [2] }
+
+      it 'should put wrapped vertices in the same key' do
+        subject[v0.v(Tackle::SimpleMixin).first] += 1
+        subject.values.should == [3]
+      end
+
+      it 'should put other vertices in a different key' do
+        subject[v1].should == 0
+        subject[v0].should == 2
+      end
+    end
   end
 
   context 'edge' do
@@ -49,7 +72,6 @@ shared_examples_for Pacer::ElementMixin do
     it { should be_a(Pacer::ElementMixin) }
     it { should be_a(Pacer::EdgeMixin) }
     it { should_not be_a(Pacer::VertexMixin) }
-    it { should_not be_a(Pacer::ElementWrapper) }
 
     describe '#e', :transactions => false do
       context '()' do
@@ -81,6 +103,27 @@ shared_examples_for Pacer::ElementMixin do
     describe '#v' do
       it 'is unsupported' do
         expect { e0.v }.to raise_error(Pacer::UnsupportedOperation)
+      end
+    end
+
+    describe '#eql?', :transactions => false do
+      subject { Hash.new(0) }
+      before do
+        subject[e0] += 1
+        subject[graph.e.first] += 1
+      end
+
+      its(:keys) { should == [e0] }
+      its(:values) { should == [2] }
+
+      it 'should put wrapped edges in the same key' do
+        subject[e0.e(Tackle::SimpleMixin).first] += 1
+        subject.values.should == [3]
+      end
+
+      it 'should put other edges in a different key' do
+        subject[e1].should == 0
+        subject[e0].should == 2
       end
     end
   end
@@ -209,7 +252,6 @@ shared_examples_for Pacer::ElementMixin do
     end
 
     subject { element }
-    its(:extensions) { should == Set[] }
     its(:element_id) { should_not be_nil }
     context '', :transactions => false do
       # FIXME: Neo4j edges are flaky sometimes when inside a
@@ -219,6 +261,7 @@ shared_examples_for Pacer::ElementMixin do
     end
   end
 end
+end
 
 for_each_graph do
   it_uses Pacer::ElementMixin do
@@ -226,5 +269,19 @@ for_each_graph do
     let(:v1) { graph.create_vertex :name => 'darrick' }
     let(:e0) { graph.create_edge nil, v0, v1, :links }
     let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+  end
+
+  context 'vertex' do
+    let(:v0) { graph.create_vertex :name => 'eliza' }
+    subject { v0 }
+    it { should_not be_a(Pacer::ElementWrapper) }
+  end
+
+  context 'edge' do
+    let(:v0) { graph.create_vertex :name => 'eliza' }
+    let(:v1) { graph.create_vertex :name => 'darrick' }
+    let(:e0) { graph.create_edge nil, v0, v1, :links }
+    subject { e0 }
+    it { should_not be_a(Pacer::ElementWrapper) }
   end
 end

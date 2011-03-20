@@ -61,14 +61,19 @@ module Pacer::Core::Graph
 
     def each_property_filter(filters)
       filters.each do |filter|
-        if filter.is_a? Hash
+        case filter
+        when Hash
           filter.each { |key, value| yield key, value, nil if key }
-        elsif filter.is_a? Module or filter.is_a? Class
+        when Array
+          each_property_filter(filter) { |k, v, f| yield k, v, f }
+        when Module, Class
           if filter.respond_to? :route_conditions
-            each_property_filter([filter.route_conditions]) { |k, v, _| yield k, v, filter }
+            each_property_filter([filter.route_conditions]) { |k, v, f| yield k, v, (f || filter) }
           elsif filter.respond_to? :route
-            yield filter, filter, nil
+            yield filter, filter, filter
           end
+        when Symbol, String
+          yield 'label', filter, nil
         end
       end
       nil
@@ -78,7 +83,7 @@ module Pacer::Core::Graph
       if index.index_class == element_type.java_class
         key, value, index_specified = index_key_value(index_name, index_value)
         if index.index_type == Pacer.automatic_index
-          keys = index.auto_index_keys_in_use
+          keys = index.getAutoIndexKeys
           return false if keys and not keys.include? key
         end
         index.index_name == index_name or (not index_specified and index.index_type == Pacer.automatic_index)
@@ -107,7 +112,9 @@ module Pacer::Core::Graph
             else
               route = chain_route :back => self, :element_type => :vertex, :filter => :index, :index => idx, :key => key, :value => value
             end
-            return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
+            route = Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
+            route.add_extension extension if extension
+            return route
           end
         end
       end

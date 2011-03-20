@@ -7,7 +7,7 @@ describe PathsRoute do
 
   describe '#paths' do
     it 'should return the paths between people and projects' do
-      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.map(&:to_a)].should ==
+      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.collect(&:to_a)].should ==
         Set[[@g.vertex(0), @g.edge(0), @g.vertex(1)],
             [@g.vertex(5), @g.edge(1), @g.vertex(4)],
             [@g.vertex(5), @g.edge(13), @g.vertex(2)],
@@ -43,11 +43,11 @@ describe PathsRoute do
       @edges = @g.v(:type => 'person').out_e(:wrote)
     end
 
-    it { Set[*@sg.v.element_ids].should == Set[*@vertices.map { |v| v.element_id }] }
-    it { Set[*@sg.e.element_ids].should == Set[*@edges.map { |e| e.element_id }] }
+    it { Set[*@sg.v.element_ids].should == Set[*@vertices.collect { |v| v.element_id }] }
+    it { Set[*@sg.e.element_ids].should == Set[*@edges.collect { |e| e.element_id }] }
 
-    it { @sg.e.labels.uniq.should == ['wrote'] }
-    it { Set[*@sg.v.map { |v| v.properties }].should == Set[*@vertices.map { |v| v.properties }] }
+    it { @sg.e.labels.uniq.to_a.should == ['wrote'] }
+    it { Set[*@sg.v.collect { |v| v.properties }].should == Set[*@vertices.collect { |v| v.properties }] }
   end
 end
 

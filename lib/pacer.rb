@@ -1,5 +1,6 @@
 require 'java'
 require 'pp'
+require 'rubygems'
 
 module Pacer
   unless const_defined? :VERSION
@@ -31,6 +32,8 @@ module Pacer
   require 'pacer/support'
   require 'pacer/utils'
   require 'pacer/filter'
+  require 'pacer/transform'
+  require 'pacer/side_effect'
 
   class << self
     attr_accessor :debug_info
@@ -63,7 +66,20 @@ module Pacer
     end
 
     def hide_route_elements
-      @hide_route_elements
+      if block_given?
+        if @hide_route_elements
+          yield
+        else
+          begin
+            @hide_route_elements = true
+            yield
+          ensure
+            @hide_route_elements = false
+          end
+        end
+      else
+        @hide_route_elements
+      end
     end
 
     # Returns how many terminal columns we have.
@@ -97,10 +113,12 @@ module Pacer
     end
     alias verbose verbose?
 
+    # TODO make things register for these callbacks.
     def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
       Route::Helpers.clear_cache
+      Filter::ExpressionFilter::Parser.reset
     end
 
     def vertex?(element)

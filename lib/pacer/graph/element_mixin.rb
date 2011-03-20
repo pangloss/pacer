@@ -67,7 +67,7 @@ module Pacer
 
     def properties=(props)
       props = graph.sanitize_properties(props) if graph
-      (property_keys - props.keys.map { |k| k.to_s }).each do |key|
+      (property_keys - props.keys.collect { |k| k.to_s }).each do |key|
         remove_property key
       end
       props.each do |key, value|
@@ -85,6 +85,14 @@ module Pacer
 
     def <=>(other)
       display_name.to_s <=> other.display_name.to_s
+    end
+
+    def eql?(other)
+      if other.respond_to? :element
+        super(other.element)
+      else
+        super
+      end
     end
 
     # Yields the element once or returns an enumerator containing self if no

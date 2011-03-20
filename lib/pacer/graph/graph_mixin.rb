@@ -115,19 +115,21 @@ module Pacer
     end
 
     def rebuild_automatic_index(old_index)
-      name = old_index.index_name
-      index_class = old_index.index_class
-      keys = old_index.auto_index_keys
+      name = old_index.getIndexName
+      index_class = old_index.getIndexClass
+      keys = old_index.getAutoIndexKeys
       drop_index name
       index = create_index name, index_class, Pacer.automatic_index
-      keys.each { |key| index.add_auto_index_key key } if keys
-      if index_class == element_type(:vertex).java_class
-        v.bulk_job do |v|
-          Pacer::Utils::IndexHelper.autoIndexElement(index, v)
-        end
-      else
-        e.bulk_job do |e|
-          Pacer::Utils::IndexHelper.autoIndexElement(index, e)
+      keys.each { |key| index.addAutoIndexKey key } if keys
+      Thread.new do
+        if index_class == element_type(:vertex).java_class
+          v.bulk_job do |v|
+            Pacer::Utils::AutomaticIndexHelper.indexElement(index, v)
+          end
+        else
+          e.bulk_job do |e|
+            Pacer::Utils::AutomaticIndexHelper.indexElement(index, e)
+          end
         end
       end
       index
@@ -165,6 +167,14 @@ module Pacer
       element_type(et).java_class.to_java
     end
 
+    def element_type?(et)
+      if [element_type(:vertex), element_type(:edge), element_type(:mixed)].include?  element_type(et)
+        true
+      else
+        false
+      end
+    end
+
     protected
 
     def creating_elements
@@ -197,6 +207,7 @@ module Pacer
         when String
           value = value.strip
           value = nil if value == ''
+        when Numeric
         else
           value = value.to_s
         end

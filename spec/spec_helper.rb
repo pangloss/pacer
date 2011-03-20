@@ -30,7 +30,7 @@ module RSpec
     end
 
     class Example
-      class Procsy
+      module ProcsyTransactions
         def use_transactions?
           find_metadata(metadata, :transactions) != false
         end
@@ -42,6 +42,16 @@ module RSpec
           elsif hash.key? :example_group
             find_metadata(hash[:example_group], key)
           end
+        end
+      end
+
+      if RSpec::Core::Version::STRING >= '2.5.0'
+        module Procsy
+          include ProcsyTransactions
+        end
+      else
+        class Procsy
+          include ProcsyTransactions
         end
       end
     end

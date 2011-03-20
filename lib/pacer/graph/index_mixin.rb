@@ -20,7 +20,7 @@ module Pacer
     def all(key, value, extensions = nil)
       iter = get(key, value)
       if @graph or extensions
-        iter.extend Pacer::Routes::IteratorExtensionsMixin
+        iter.extend Pacer::Core::Route::IteratorExtensionsMixin
         iter.graph = @graph
         iter.extensions = extensions
       end

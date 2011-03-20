@@ -47,10 +47,16 @@ module Pacer::Routes
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|
-            prop_or_subset.map { |i| element.get_property(i.to_s) }
+            prop_or_subset.collect { |i| element.get_property(i.to_s) }
           end
         end
       end
+    end
+
+    def property?(name)
+      chain_route(:element_type => :object,
+                  :pipe_class => Pacer::Pipes::PropertyPipe,
+                  :pipe_args => [name.to_s, true])
     end
 
     # Returns an array of element ids.
@@ -63,12 +69,12 @@ module Pacer::Routes
     # the results set.
     def group_count(*props)
       result = Hash.new(0)
-      props = props.map { |p| p.to_s }
+      props = props.collect { |p| p.to_s }
       if props.empty? and block_given?
         each { |e| result[yield(e)] += 1 }
       elsif block_given?
         each do |e|
-          key = props.map { |p| e.get_property(p) }
+          key = props.collect { |p| e.get_property(p) }
           key << yield(e)
           result[key] += 1
         end
@@ -79,7 +85,7 @@ module Pacer::Routes
         end
       elsif props.any?
         each do |e|
-          result[props.map { |p| e.get_property(p) }] += 1
+          result[props.collect { |p| e.get_property(p) }] += 1
         end
       else
         each do |e|
@@ -89,14 +95,24 @@ module Pacer::Routes
       result
     end
 
-    def most_frequent(range = 0)
-      group_count.sort_by { |k, v| -v }.map { |k, v| k }[range]
-    end
-
-    def all_but_most_frequent(start_at = 1)
-      elements = group_count.sort_by { |k, v| -v }.map { |k, v| k }[start_at..-1]
-      elements ||= []
-      elements.to_route(:based_on => self)
+    def most_frequent(range = 0, include_counts = false)
+      if include_counts
+        result = group_count.sort_by { |k, v| -v }[range]
+        if not result and range.is_a? Fixnum
+          []
+        else
+          result
+        end
+      else
+        result = group_count.sort_by { |k, v| -v }[range]
+        if range.is_a? Fixnum
+          result.first if result
+        elsif result
+          result.collect { |k, v| k }
+        else
+          []
+        end
+      end
     end
 
     # Delete all matching elements.
@@ -180,11 +196,16 @@ module Pacer::Routes
       unless index.is_a? com.tinkerpop.blueprints.pgm.Index
         index = graph.indices.find { |i| i.index_name == index.to_s }
       end
+      sample_element = first
       unless index
-        if create
-          index = graph.create_index index_name, graph.element_type(first), Pacer.manual_index
+        if sample_element
+          if create
+            index = graph.create_index index_name, graph.element_type(sample_element), Pacer.manual_index
+          else
+            raise "No index found for #{ index } on #{ graph }" unless index
+          end
         else
-          raise "No index found for #{ index } on #{ graph }" unless index
+          return nil
         end
       end
       index_key ||= index.index_name
@@ -192,26 +213,21 @@ module Pacer::Routes
       if block_given?
         bulk_job do |element|
           value = yield(element)
-          index.put(index_key, value, element) if value
+          index.put(index_key, value, element.element) if value
         end
       else
         bulk_job do |element|
           value = element[property]
-          index.put(index_key, value, element) if value
+          index.put(index_key, value, element.element) if value
         end
       end
+      index
     end
 
     protected
 
     def has_routable_class?
       true
-    end
-
-    def route_class
-      route = self
-      route = route.back until route.has_routable_class?
-      route.class
     end
   end
 end
