@@ -148,7 +148,6 @@ shared_examples_for Pacer::ElementMixin do
         end
 
         it '(Time)' do
-          pending 'property converter'
           time = Time.now
           element[:time] = time
           element[:time].should == time
@@ -165,7 +164,6 @@ shared_examples_for Pacer::ElementMixin do
         end
 
         it '(Bignum)' do
-          pending 'property converter'
           element[:big] = 123321123321123321123321123321123321
           element[:big].should == 123321123321123321123321123321123321
         end

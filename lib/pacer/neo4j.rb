@@ -103,7 +103,11 @@ module Pacer
         value = nil if value == ''
         value
       when Numeric
-        value
+        if value.is_a? Bignum
+          value.to_yaml
+        else
+          value
+        end
       else
         value.to_yaml
       end
