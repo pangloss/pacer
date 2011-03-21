@@ -11,10 +11,14 @@ module Pacer
   class << self
     # Return a graph for the given path. Will create a graph if none exists at
     # that location. (The graph is only created if data is actually added to it).
-    def neo4j(path)
+    def neo4j(path, args = nil)
       path = File.expand_path(path)
       return neo_graphs[path] if neo_graphs[path]
-      graph = Neo4jGraph.new(path)
+      if args
+        graph = Neo4jGraph.new(path, args.to_hash_map)
+      else
+        graph = Neo4jGraph.new(path)
+      end
       neo_graphs[path] = graph
       register_neo_shutdown(path)
       graph
