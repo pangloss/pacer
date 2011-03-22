@@ -1,9 +1,11 @@
 module Pacer::Pipes
   class EnumerablePipe < RubyPipe
+    Enumerator = Enumerable::Enumerator if RUBY_VERSION !~ /^1.9/
+
     def initialize(enumerable)
       super()
       case enumerable
-      when Enumerable::Enumerator
+      when Enumerator
         starts = enumerable
       when Pacer::ElementMixin
         starts = [enumerable].to_enum

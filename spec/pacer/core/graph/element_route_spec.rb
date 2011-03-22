@@ -8,7 +8,7 @@ shared_examples_for Pacer::Core::Graph::ElementRoute do
     specify 'should all be hashes' do
       props = subject.each
       elements = r.each
-      elements.zip(props).each do |e, p|
+      elements.zip(props.to_a).each do |e, p|
         e.properties.should == p
       end
     end
