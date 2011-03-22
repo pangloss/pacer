@@ -91,10 +91,18 @@ module Pacer
           pipe
         end
 
+        def val(value)
+          if value.is_a? Parslet::Slice
+            value.to_s
+          else
+            value
+          end
+        end
+
         def build_transform
           @transform = t = Parslet::Transform.new
           t.rule(:var => t.simple(:x)) do |h|
-            var = @vars[h[:x]]
+            var = @vars[val(h[:x])]
             if var.is_a? Fixnum
               java.lang.Long.new var
             elsif var.is_a? Numeric
@@ -106,7 +114,7 @@ module Pacer
 
           t.rule(:str => t.simple(:x)) { x }
           t.rule(:int => t.simple(:x)) do |h|
-            java.lang.Long.new Integer(h[:x])
+            java.lang.Long.new Integer(val(h[:x]))
           end
           t.rule(:float => t.simple(:x)) { java.lang.Double.new Float(x) }
           t.rule(:bool => t.simple(:x)) { x == 'true' }
@@ -119,27 +127,27 @@ module Pacer
             pipeline 'false', Pacer::Pipes::NeverPipe.new
           end
           t.rule(:statement => { :proc => t.simple(:name) }) do |h|
-            pipeline h.inspect, Pacer::Pipes::BlockFilterPipe.new(@route, @vars[h[:name]])
+            pipeline h.inspect, Pacer::Pipes::BlockFilterPipe.new(@route, @vars[val(h[:name])])
           end
 
           t.rule(:statement => { :left => { :prop => t.simple(:property) }, :op => t.simple(:op), :right => t.simple(:value) }) do |h|
-            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
-            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], Filters[h[:op]])
+            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(val(h[:property]))
+            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(val(h[:value]), Filters[val(h[:op])])
             pipeline h.inspect, prop_pipe, filter_pipe
           end
 
           t.rule(:statement => { :left => { :prop => t.simple(:left) }, :op => t.simple(:op), :right => { :prop => t.simple(:right) } }) do |h|
-            pipeline h.inspect, Pacer::Pipes::PropertyComparisonFilterPipe.new(h[:left], h[:right], Filters[h[:op]])
+            pipeline h.inspect, Pacer::Pipes::PropertyComparisonFilterPipe.new(val(h[:left]), val(h[:right]), Filters[val(h[:op])])
           end
 
           t.rule(:statement => { :left => t.simple(:value), :op => t.simple(:op), :right => { :prop => t.simple(:property) } }) do |h|
-            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(h[:property])
-            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(h[:value], ReverseFilters[h[:op]])
+            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(val(h[:property]))
+            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(val(h[:value]), ReverseFilters[val(h[:op])])
             pipeline h.inspect, prop_pipe, filter_pipe
           end
 
           t.rule(:statement => { :left => t.simple(:left), :op => t.simple(:op), :right => t.simple(:right) }) do |h|
-            result = case h[:op]
+            result = case val(h[:op])
             when '=', '==' ; h[:left] == h[:right]
             when '>'       ; h[:left] > h[:right]
             when '>='      ; h[:left] >= h[:right]
