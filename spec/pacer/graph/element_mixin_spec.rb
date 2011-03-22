@@ -147,8 +147,20 @@ shared_examples_for Pacer::ElementMixin do
           element[:string].should == 'words'
         end
 
+        it '(Array)' do
+          a = [10, 'elements']
+          element[:array] = a
+          element[:array].should == a
+        end
+
+        it '(Hash)' do
+          h = { :elements => 10 }
+          element[:hash] = h
+          element[:hash].should == h
+        end
+
         it '(Time)' do
-          time = Time.now
+          time = Time.utc 2011, 1, 2, 3, 4, 5
           element[:time] = time
           element[:time].should == time
         end

@@ -1,4 +1,3 @@
-require 'autotest/timestamp'
 ENV['RUBY'] = 'bundle exec jruby --1.9'
 Autotest.add_hook(:initialize) {|at|
   at.add_exception %r{^\.git}  # ignore Version Control System
