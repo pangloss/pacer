@@ -254,13 +254,6 @@ module Pacer
 
       protected
 
-      # Initializes some basic instance variables.
-      # TODO: rename initialize_path initialize_route
-      def initialize_path(back = nil, *pipe_args)
-        self.back = back
-        @pipe_args = pipe_args || []
-      end
-
       # Set the previous route in the chain.
       def back=(back)
         if back.is_a? Route and not back.is_a? GraphMixin
