@@ -77,7 +77,17 @@ def for_each_graph(usage_style = :read_write, indices = true, &block)
   for_neo4j(usage_style, indices, &block)
 end
 
+def use_graph?(name)
+  if ENV['GRAPHS'].to_s == ''
+    true
+  else
+    graphs = ENV['GRAPHS'].downcase.split(/\s*,\s*/)
+    graphs.include? name
+  end
+end
+
 def for_tg(usage_style = :read_write, indices = true, &block)
+  return unless use_graph? 'tg'
   describe 'tg' do
     let(:supports_custom_id) { true }
     let(:graph) do
@@ -95,6 +105,7 @@ end
 
 
 def for_neo4j(usage_style = :read_write, indices = true, &block)
+  return unless use_graph? 'neo4j'
   describe 'neo4j' do
     let(:supports_custom_id) { false }
     let(:graph) do
@@ -173,23 +184,24 @@ RSpec.configure do |c|
   c.mock_with :rr
 
   c.before(:suite) do
-    path1 = File.expand_path('tmp/spec.neo4j')
-    dir = Pathname.new(path1)
-    dir.rmtree if dir.exist?
-    $neo_graph = Pacer.neo4j(path1)
+    if use_graph?('neo4j')
+      path1 = File.expand_path('tmp/spec.neo4j')
+      dir = Pathname.new(path1)
+      dir.rmtree if dir.exist?
+      $neo_graph = Pacer.neo4j(path1)
 
-    path2 = File.expand_path('tmp/spec.neo4j.2')
-    dir = Pathname.new(path2)
-    dir.rmtree if dir.exist?
-    $neo_graph2 = Pacer.neo4j(path2)
+      path2 = File.expand_path('tmp/spec.neo4j.2')
+      dir = Pathname.new(path2)
+      dir.rmtree if dir.exist?
+      $neo_graph2 = Pacer.neo4j(path2)
 
-    path3 = File.expand_path('tmp/spec_no_indices.neo4j')
-    dir = Pathname.new(path3)
-    dir.rmtree if dir.exist?
-    $neo_graph_no_indices = Pacer.neo4j(path3)
-    $neo_graph_no_indices.drop_index :vertices
-    $neo_graph_no_indices.drop_index :edges
-
+      path3 = File.expand_path('tmp/spec_no_indices.neo4j')
+      dir = Pathname.new(path3)
+      dir.rmtree if dir.exist?
+      $neo_graph_no_indices = Pacer.neo4j(path3)
+      $neo_graph_no_indices.drop_index :vertices
+      $neo_graph_no_indices.drop_index :edges
+    end
   end
 
 

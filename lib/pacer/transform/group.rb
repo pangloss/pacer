@@ -24,12 +24,12 @@ module Pacer
     module Group
       attr_accessor :key_route, :values_routes
 
-      def key(&block)
+      def key_map(&block)
         @key_route = map_route block
         self
       end
 
-      def values(&block)
+      def values_map(&block)
         @values_routes << map_route(block)
         self
       end

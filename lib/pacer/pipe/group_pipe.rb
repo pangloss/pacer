@@ -38,7 +38,7 @@ module Pacer::Pipes
       expando = ExpandablePipe.new
       expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(expando)
-      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
+      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new java.util.LinkedList.new
       cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
       agg_pipe.setStarts to_pipe
       cap_pipe.setStarts to_pipe
@@ -50,7 +50,7 @@ module Pacer::Pipes
         if @current_keys.empty?
           element = next_element
           @current_keys = get_keys(element)
-          @current_values = get_values(element) if @current_keys.any?
+          @current_values = get_values(element) unless @current_keys.empty?
         else
           return [@current_keys.removeFirst, @current_values]
         end
