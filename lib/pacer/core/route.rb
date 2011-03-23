@@ -15,6 +15,7 @@ module Pacer
 
       # Specify which pipe class will be instantiated when an iterator is created.
       attr_accessor :pipe_class
+      attr_reader :pipe_args
 
       # Boolean whether the route alone should be returned by inspect. If
       # false, the the elements that the route matches will also be displayed.

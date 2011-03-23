@@ -184,4 +184,19 @@ describe Pacer::Core::Route do
   end
 
   its(:element_type) { should == Object }
+
+  describe 'custom pipe' do
+    context 'with pipe args' do
+      let(:mock_type) { Pacer::Pipes::EnumerablePipe }
+      let(:pipe_args) { [['a', 1]] }
+
+      subject { Pacer::Route.new :element_type => :object,
+                  :pipe_class => mock_type, :pipe_args => pipe_args }
+
+      it 'should create the pipe' do
+        subject.send(:build_pipeline).last.to_a.should == ['a', 1]
+      end
+      its(:pipe_args) { should == [['a', 1]] }
+    end
+  end
 end
