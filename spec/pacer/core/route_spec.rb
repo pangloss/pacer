@@ -91,5 +91,97 @@ describe Pacer::Core::Route do
   describe '#==' do
     it { should == subject }
     it { should_not == [].to_route }
+    it { should == [1, 2, 3].to_route }
+    it { should_not == [1, 3, 2].to_route }
+    it { should_not == subject.select { true } }
+    # TODO: consider technique to compare blocks?
+    #it { subject.select { true }.should == subject.select { true } }
+    it { subject.select { true }.should_not == subject.select { false } }
+    it { subject.select { true }.should_not == subject.reject { false } }
+    it { r = subject.select { true }; r.should == r }
   end
+
+  it { should_not be_empty }
+  it 'should be empty' do
+    [].to_route.should be_empty
+  end
+
+  describe '#add_extension' do
+    context 'Object' do
+      subject { base_route.add_extension Object }
+      its(:extensions) { should be_empty }
+    end
+
+    context 'SimpleMixin' do
+      subject { base_route.add_extension Tackle::SimpleMixin }
+      its(:extensions) { should include(Tackle::SimpleMixin) }
+      its('extensions.count') { should == 1 }
+      it 'should have extension method' do
+        subject.route_mixin_method.should be_true
+      end
+      it { should be_a Tackle::SimpleMixin::Route }
+      its(:first) { should == 1 }
+    end
+  end
+
+  its(:extensions) { should == Set[] }
+
+  describe '#extensions=' do
+    before :all do
+      JRuby.objectspace = true
+    end
+    after :all do
+      JRuby.objectspace = false
+    end
+    it 'should add one extension' do
+      mock(subject).add_extension(Tackle::SimpleMixin)
+      subject.extensions = Tackle::SimpleMixin
+    end
+    it 'should add multiple extensions' do
+      mock(subject).add_extension(Tackle::SimpleMixin)
+      mock(subject).add_extension(TP::Person)
+      subject.extensions = [Tackle::SimpleMixin, TP::Person]
+    end
+    it 'should accumulate extensions' do
+      subject.add_extension TP::Person
+      subject.extensions.should == Set[TP::Person]
+      subject.extensions = Tackle::SimpleMixin
+      subject.extensions.should == Set[TP::Person, Tackle::SimpleMixin]
+    end
+  end
+
+  describe '#add_extensions' do
+    before :all do
+      JRuby.objectspace = true
+    end
+    after :all do
+      JRuby.objectspace = false
+    end
+    it 'should add use add_extension' do
+      mock(subject).add_extension(Tackle::SimpleMixin)
+      mock(subject).add_extension(TP::Person)
+      result = subject.add_extensions [Tackle::SimpleMixin, TP::Person]
+    end
+    it 'should add multiple extensions' do
+      subject.add_extensions [Tackle::SimpleMixin, TP::Person]
+      subject.extensions.should == Set[Tackle::SimpleMixin, TP::Person]
+    end
+    it 'should be chainable' do
+      subject.add_extensions([Tackle::SimpleMixin]).should be subject
+    end
+  end
+
+  describe '#set_pipe_source' do
+    before { base_route.set_pipe_source [:a, :b] }
+    its(:to_a) { should == [:a, :b] }
+
+    it 'should not change the structure' do
+      route = base_route.select { |o| o == 1 or o == :a }.select { true }
+      route.to_a.should == [:a]
+      route.set_pipe_source [1, 2, 3]
+      route.to_a.should == [1]
+    end
+  end
+
+  its(:element_type) { should == Object }
 end

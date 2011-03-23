@@ -19,6 +19,10 @@ module Pacer
 
       attr_accessor :block, :invert
 
+      def ==(other)
+        super and invert == other.invert and block == other.block
+      end
+
       protected
 
       def attach_pipe(end_pipe)

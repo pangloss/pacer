@@ -20,15 +20,10 @@ module Pacer
       # false, the the elements that the route matches will also be displayed.
       attr_accessor :hide_elements
 
-      # The previous route in the path
-      def back
-        @back
-      end
+      attr_reader :back, :source
 
       # Set which graph this route will operate on.
-      def graph=(graph)
-        @graph = graph
-      end
+      attr_writer :graph
 
       # Return which graph this route operates on.
       def graph
@@ -72,10 +67,6 @@ module Pacer
         else
           @vars ||= {}
         end
-      end
-
-      def each(&block)
-        each_element(&block)
       end
 
       # Yields each matching element or returns an iterator if no block is given.
@@ -211,8 +202,10 @@ module Pacer
       # defined routes unless the routes are actually the same object.
       def ==(other)
         other.class == self.class and
-          other.graph == graph and
-          other.send(:inspect_strings) == inspect_strings
+          other.function == function and
+          other.element_type == element_type and
+          other.back == back and
+          other.source == source
       end
 
       def empty?
@@ -257,10 +250,6 @@ module Pacer
         else
           self.source = src
         end
-      end
-
-      def element_type
-        Object
       end
 
       protected
