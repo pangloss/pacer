@@ -176,7 +176,7 @@ module Pacer
       # Graph#columns.  If this output behaviour is undesired, it may be turned
       # off by calling #route on the current route.
       def inspect(limit = nil)
-        if Pacer.hide_route_elements or hide_elements or source.nil?
+        if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
           "#<#{inspect_strings.join(' -> ')}>"
         else
           Pacer.hide_route_elements do
@@ -251,11 +251,11 @@ module Pacer
         self
       end
 
-      def set_pipe_source(source)
+      def set_pipe_source(src)
         if @back
-          @back.set_pipe_source source
+          @back.set_pipe_source src
         else
-          self.source = source
+          self.source = src
         end
       end
 
@@ -305,11 +305,11 @@ module Pacer
       end
 
       # Get the actual source of data for this route.
-      def source
+      def source_iterator
         if @source
           iterator_from_source(@source)
         elsif @back
-          @back.send(:source)
+          @back.send(:source_iterator)
         end
       end
 
@@ -345,7 +345,7 @@ module Pacer
         @vars = {}
         start, end_pipe = build_pipeline
         if start
-          src = source
+          src = source_iterator
           Pacer.debug_source = src if Pacer.debug_pipes
           start.set_starts src
           end_pipe
@@ -353,7 +353,7 @@ module Pacer
           raise "End pipe without start pipe"
         else
           pipe = Pacer::Pipes::IdentityPipe.new
-          pipe.set_starts source
+          pipe.set_starts source_iterator
           pipe
         end
       end

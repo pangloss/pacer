@@ -21,7 +21,7 @@ module Pacer
 
       protected
 
-      def source
+      def source_iterator
         src = index.get(key, value) || java.util.ArrayList.new
         src.iterator
       end
