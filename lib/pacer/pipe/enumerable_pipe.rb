@@ -1,7 +1,5 @@
 module Pacer::Pipes
   class EnumerablePipe < RubyPipe
-    Enumerator = Enumerable::Enumerator if RUBY_VERSION !~ /^1.9/
-
     def initialize(enumerable)
       super()
       case enumerable

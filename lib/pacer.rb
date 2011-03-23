@@ -18,6 +18,13 @@ module Pacer
     START_TIME = Time.now
   end
 
+  if RUBY_VERSION =~ /^1.9/
+    Enumerator = ::Enumerator
+  else
+    Enumerator = Enumerable::Enumerator
+  end
+
+
   require 'pacer/exceptions'
   require 'pacer/graph'
   require 'pacer/pipes'
