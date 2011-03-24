@@ -189,7 +189,7 @@ module Pacer
 
       def inspect_string
         key_route, values_routes = ensure_routes
-        "#{ inspect_class_name }(#{ key_route.inspect }, #{ values_routes.inspect })"
+        "#{ inspect_class_name }(#{ key_route.inspect }: #{ Hash[values_routes].inspect })"
       end
     end
   end

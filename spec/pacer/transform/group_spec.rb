@@ -79,7 +79,7 @@ for_tg :read_only do
 
       describe '#reduce' do
         context 'to count properties' do
-          subject { route.reduce(0, :default) { |t, value| t + value.properties.count } }
+          subject { route.reduce(proc { |h, k| h[k] = 0 }, :default) { |t, value| t + value.properties.count } }
           specify 'it should have a count for values' do
             subject['project'].should == 8
             subject['person'].should == 4
@@ -93,6 +93,33 @@ for_tg :read_only do
       subject { graph.v.group.key_map { |r| r[:type] } }
       its(:count) { should == 7 }
       its(:to_a) { should_not be_empty }
+    end
+
+    context 'with values_maps' do
+      subject do
+        graph.v.group.
+          values_map(:count) { |r| r.out_e.count }.
+          values_route(:out_e) { |r| r.out_e }.
+          key_route { |r| r[:type] }
+      end
+      its(:count) { should == 7 }
+      its(:to_a) { should_not be_empty }
+      specify 'combine(:count) should group the counts in a hash' do
+        hash = subject.combine(:count)
+        hash.should == {"project"=>[0, 1, 3, 2], "person"=>[1, 3], "group"=>[4]}
+      end
+
+      specify 'reduce summarizes edge labels for each type' do
+        result = subject.reduce(proc { |h, k| h[k] = Hash.new(0) }, :out_e) do |h, e|
+          h[e.label] += 1
+          h
+        end
+        result.should == {"project" => {"uses"     => 5, "modelled_on" => 1},
+                          "person"  => {"wrote"    => 4},
+                          "group"   => {"projects" => 3, "member"      => 1}}
+      end
+
+      its(:inspect) { should == "#<GraphV -> V-Group(#<V -> Obj(type)>: {:count=>#<V -> Obj-Map>, :out_e=>#<V -> outE>})>" }
     end
   end
 end
