@@ -33,6 +33,10 @@ module Pacer
       @all_values[name]
     end
 
+    def set_values(name, values)
+      @all_values[name] = values
+    end
+
     def combine!(group)
       group.all_values.each do |name, vals|
         set = values(name)
@@ -46,6 +50,20 @@ module Pacer
       Hash[@all_values.map { |key, val|
         [key, val.map { |v| v }]
       }]
+    end
+
+    def clone
+      Pacer::Group.new(key, clone_values)
+    end
+
+    def reducer(start)
+      group = Pacer::Group.new(key, [])
+      if start.is_a? Proc
+        group.all_values.default_proc = start
+      else
+        group.all_values.default = start
+      end
+      group
     end
   end
 
@@ -73,37 +91,58 @@ module Pacer
         self
       end
 
-      def combine
+      def combine_all
         hash = {}
         each do |group|
           a = hash[group.key]
           if a
-            hash[group.key].combine! group
+            a.combine! group
           else
-            hash[group.key] = Pacer::Group.new(group.key, group.clone_values)
+            hash[group.key] = group.clone
           end
         end
         hash
       end
 
-      def reduce(start)
+      def combine(name = :default)
+        hash = Hash.new { |h, k| h[k] = [] }
+        each do |group|
+          group.values(name).each do |value|
+            hash[group.key] << value
+          end
+        end
+        hash
+      end
+
+      def reduce_all(start)
+        hash = {}
+        each do |group|
+          reducer = hash[group.key] ||= group.reducer(start)
+          group.all_values.each do |name, values|
+            result = reducer.values(name)
+            values.each do |value|
+              result = yield result, name, value
+            end
+            reducer.set_values(name, result)
+          end
+        end
+        hash
+      end
+
+      def reduce(start, name = :default)
         if start.is_a? Proc
           hash = Hash.new(&start)
         else
           hash = Hash.new(start)
         end
-        each do |key, value_sets|
-          value_sets.each_with_index do |values, idx|
-            values.each do |value|
-              hash[key] = yield hash[key], key, value
-            end
+        each do |group|
+          result = hash[group.key]
+          group.values(name).each do |value|
+            result = yield result, value
           end
+          hash[group.key] = result
         end
         hash
-      end
-
-      def value_count
-        reduce(0) { |t, k, v| t + 1 }
       end
 
       protected

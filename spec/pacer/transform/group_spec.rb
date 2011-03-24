@@ -37,13 +37,54 @@ for_tg :read_only do
         end
       end
 
-      describe '#combine' do
-        subject { route.combine }
+      describe '#combine_all' do
+        subject { route.combine_all }
         it { should be_a(Hash) }
         its(:length) { should == 3 }
         specify 'type = person should have 2 vertices' do
           subject['project'].values.count.should == 4
           subject['person'].values.count.should == 2
+        end
+      end
+
+      describe '#combine' do
+        subject { route.combine(:default) }
+        it { should be_a(Hash) }
+        it { should == {
+          'project' => graph.v(:type => 'project').to_a,
+          'person'  => graph.v(:type => 'person').to_a,
+          'group'   => graph.v(:type => 'group').to_a
+        } }
+      end
+
+      describe '#reduce_all' do
+        context 'to count elements' do
+          subject { route.reduce_all(0) { |t, name, value| t + 1 } }
+          specify 'it should have a count for values' do
+            subject['project'].values.should == 4
+            subject['person'].values.should == 2
+            subject['group'].values.should == 1
+          end
+        end
+
+        context 'to join names' do
+          subject { route.reduce_all(nil) { |t, name, value| [t, value[:name]].compact.join ', ' } }
+          specify 'it should have a count for values' do
+            subject['project'].values.should == 'blueprints, pipes, pacer, gremlin'
+            subject['person'].values.should == 'pangloss, okram'
+            subject['group'].values.should == 'tinkerpop'
+          end
+        end
+      end
+
+      describe '#reduce' do
+        context 'to count properties' do
+          subject { route.reduce(0, :default) { |t, value| t + value.properties.count } }
+          specify 'it should have a count for values' do
+            subject['project'].should == 8
+            subject['person'].should == 4
+            subject['group'].should == 2
+          end
         end
       end
     end
