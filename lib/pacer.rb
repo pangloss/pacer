@@ -14,6 +14,7 @@ module Pacer
     end
 
     require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.2-SNAPSHOT-standalone.jar')
+    require File.join(PATH, 'vendor/blueprints-orientdb-adapter-0.2-SNAPSHOT-standalone.jar')
 
     START_TIME = Time.now
   end

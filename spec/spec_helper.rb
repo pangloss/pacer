@@ -75,6 +75,7 @@ end
 def for_each_graph(usage_style = :read_write, indices = true, &block)
   for_tg(usage_style, indices, &block)
   for_neo4j(usage_style, indices, &block)
+  for_orient(usage_style, indices, &block)
 end
 
 def use_graph?(name)
@@ -156,6 +157,10 @@ def for_neo4j(usage_style = :read_write, indices = true, &block)
   for_transactional_graph('neo4j', usage_style, indices, $neo_graph, $neo_graph2, $neo_graph_no_indices, block)
 end
 
+def for_orient(usage_style = :read_write, indices = true, &block)
+  for_transactional_graph('orient', usage_style, indices, $orient_graph, $orient_graph2, $orient_graph_no_indices, block)
+end
+
 def use_simple_graph_data
   let(:setup_data) { e0; e1 }
   let(:v0) { graph.create_vertex :name => 'eliza' }
@@ -227,4 +232,23 @@ if use_graph?('neo4j')
   $neo_graph_no_indices = Pacer.neo4j(path3)
   $neo_graph_no_indices.drop_index :vertices
   $neo_graph_no_indices.drop_index :edges
+end
+
+if use_graph?('orient')
+  path1 = File.expand_path('tmp/spec.orient')
+  dir = Pathname.new(path1)
+  dir.rmtree if dir.exist?
+  $orient_graph = Pacer.orient("local:#{path1}")
+
+  path2 = File.expand_path('tmp/spec.orient.2')
+  dir = Pathname.new(path2)
+  dir.rmtree if dir.exist?
+  $orient_graph2 = Pacer.orient("local:#{path2}")
+
+  path3 = File.expand_path('tmp/spec_no_indices.orient')
+  dir = Pathname.new(path3)
+  dir.rmtree if dir.exist?
+  $orient_graph_no_indices = Pacer.orient("local:#{path3}")
+  $orient_graph_no_indices.drop_index :vertices
+  $orient_graph_no_indices.drop_index :edges
 end
