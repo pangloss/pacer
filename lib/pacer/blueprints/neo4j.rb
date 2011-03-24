@@ -13,32 +13,11 @@ module Pacer
     # that location. (The graph is only created if data is actually added to it).
     def neo4j(path, args = nil)
       path = File.expand_path(path)
-      return neo_graphs[path] if neo_graphs[path]
-      if args
-        graph = Neo4jGraph.new(path, args.to_hash_map)
-      else
-        graph = Neo4jGraph.new(path)
-      end
-      neo_graphs[path] = graph
-      register_neo_shutdown(path)
-      graph
-    end
-
-    # Returns a hash of currently open neo graphs by path.
-    def neo_graphs
-      @neo_graphs ||= {}
-    end
-
-    protected
-
-    # Registers the graph to be safely shut down when the program exits if
-    # possible.
-    def register_neo_shutdown(path)
-      at_exit do
-        begin
-          neo_graphs[path].shutdown if neo_graphs[path]
-        rescue Exception, StandardError => e
-          pp e
+      Pacer.starting_graph(self, path) do
+        if args
+          Neo4jGraph.new(path, args.to_hash_map)
+        else
+          Neo4jGraph.new(path)
         end
       end
     end

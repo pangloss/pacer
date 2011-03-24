@@ -387,7 +387,7 @@ module Pacer
           ps = ps.split('::').last.sub(/FilterPipe/, '') if ps =~ /FilterPipe$/
           if @pipe_args
             pipeargs = @pipe_args.collect do |arg|
-              if arg.is_a? Enumerable and arg.count > 10
+              if ps =~ /FilterPipe/ and arg.is_a? Enumerable and arg.count > 10
                 "[...#{ arg.count } items...]"
               else
                 arg.to_s

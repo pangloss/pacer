@@ -33,8 +33,7 @@ module Pacer
   require 'pacer/wrappers'
   require 'pacer/route'
   require 'pacer/extensions'
-  require 'pacer/neo4j'
-  require 'pacer/tg'
+  require 'pacer/blueprints'
   require 'pacer/support'
   require 'pacer/utils'
   require 'pacer/filter'
@@ -157,10 +156,30 @@ module Pacer
       @debug_pipes = []
     end
 
+    def open_graphs
+      @open_graphs ||= Hash.new { |h, k| h[k] = {} }
+    end
+
+    def starting_graph(type, key)
+      graph = open_graphs[type][key]
+      return graph if graph
+      graph = yield
+      open_graphs[type][key] = graph
+    end
+
     attr_accessor :debug_source
     attr_reader :debug_pipes
-
   end
 end
 
-
+at_exit do
+  Pacer.open_graphs.each do |type, graphs|
+    graphs.each do |path, graph|
+      begin
+        graph.shutdown
+      rescue Exception, StandardError => e
+        pp e
+      end
+    end
+  end
+end
