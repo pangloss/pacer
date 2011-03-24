@@ -384,8 +384,8 @@ module Pacer
         return @route_name if @route_name
         if @pipe_class
           ps = @pipe_class.name
-          if ps =~ /FilterPipe$/
-            ps = ps.split('::').last.sub(/FilterPipe/, '')
+          ps = ps.split('::').last.sub(/FilterPipe/, '') if ps =~ /FilterPipe$/
+          if @pipe_args
             pipeargs = @pipe_args.collect do |arg|
               if arg.is_a? Enumerable and arg.count > 10
                 "[...#{ arg.count } items...]"
@@ -394,8 +394,6 @@ module Pacer
               end
             end
             ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
-          else
-            ps = @pipe_args.join(', ')
           end
         end
         s = inspect_class_name

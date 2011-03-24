@@ -86,6 +86,15 @@ describe Pacer::Core::Route do
         base_route.inspect.should == '#<Obj>'
       end
     end
+
+    describe 'with pipe with no args' do
+      subject do
+        r = base_route.uniq
+        r.route_name = nil
+        r.inspect
+      end
+      it { should == "#<Obj -> Obj(Duplicate)>" }
+    end
   end
 
   describe '#==' do
