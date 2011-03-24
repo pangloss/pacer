@@ -104,30 +104,32 @@ def for_tg(usage_style = :read_write, indices = true, &block)
 end
 
 
-def for_neo4j(usage_style = :read_write, indices = true, &block)
-  return unless use_graph? 'neo4j'
-  describe 'neo4j' do
+def for_transactional_graph(name, usage_style, indices, source_graph_1, source_graph_2, unindexed_graph, block)
+  return unless use_graph? name
+  describe name do
     let(:supports_custom_id) { false }
     let(:graph) do
       if indices
-        $neo_graph
+        source_graph_1
       else
-        $neo_graph_no_indices
+        unindexed_graph
       end
     end
     let(:graph2) do
-      $neo_graph2
+      source_graph_2
     end
     if usage_style == :read_only
       before(:all) do
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+        source_graph_1.v.delete!
+        source_graph_2.v.delete!
+        unindexed_graph.v.delete!
       end
     end
     around do |spec|
       if usage_style == :read_write
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+        source_graph_1.v.delete!
+        source_graph_2.v.delete!
+        unindexed_graph.v.delete!
       end
       if spec.use_transactions?
         graph.manual_transactions do
@@ -148,6 +150,10 @@ def for_neo4j(usage_style = :read_write, indices = true, &block)
     end
     instance_eval(&block)
   end
+end
+
+def for_neo4j(usage_style = :read_write, indices = true, &block)
+  for_transactional_graph('neo4j', usage_style, indices, $neo_graph, $neo_graph2, $neo_graph_no_indices, block)
 end
 
 def use_simple_graph_data
@@ -183,28 +189,6 @@ RSpec.configure do |c|
   Pacer.verbose = false
   c.mock_with :rr
 
-  c.before(:suite) do
-    if use_graph?('neo4j')
-      path1 = File.expand_path('tmp/spec.neo4j')
-      dir = Pathname.new(path1)
-      dir.rmtree if dir.exist?
-      $neo_graph = Pacer.neo4j(path1)
-
-      path2 = File.expand_path('tmp/spec.neo4j.2')
-      dir = Pathname.new(path2)
-      dir.rmtree if dir.exist?
-      $neo_graph2 = Pacer.neo4j(path2)
-
-      path3 = File.expand_path('tmp/spec_no_indices.neo4j')
-      dir = Pathname.new(path3)
-      dir.rmtree if dir.exist?
-      $neo_graph_no_indices = Pacer.neo4j(path3)
-      $neo_graph_no_indices.drop_index :vertices
-      $neo_graph_no_indices.drop_index :edges
-    end
-  end
-
-
   c.alias_it_should_behave_like_to :it_uses, '-'
 
   # Not sure what this does: ...
@@ -220,3 +204,27 @@ RSpec.configure do |c|
   # }
 end
 
+puts "Using JRuby #{ JRUBY_VERSION } in #{ RUBY_VERSION } mode."
+if ENV['GRAPHS'].to_s == ''
+  puts "Testing all graphs."
+else
+  puts "Testing graphs: #{ ENV['GRAPHS'] }."
+end
+if use_graph?('neo4j')
+  path1 = File.expand_path('tmp/spec.neo4j')
+  dir = Pathname.new(path1)
+  dir.rmtree if dir.exist?
+  $neo_graph = Pacer.neo4j(path1)
+
+  path2 = File.expand_path('tmp/spec.neo4j.2')
+  dir = Pathname.new(path2)
+  dir.rmtree if dir.exist?
+  $neo_graph2 = Pacer.neo4j(path2)
+
+  path3 = File.expand_path('tmp/spec_no_indices.neo4j')
+  dir = Pathname.new(path3)
+  dir.rmtree if dir.exist?
+  $neo_graph_no_indices = Pacer.neo4j(path3)
+  $neo_graph_no_indices.drop_index :vertices
+  $neo_graph_no_indices.drop_index :edges
+end
