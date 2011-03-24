@@ -19,6 +19,35 @@ module Pacer
   #
   # Pacer.source { |callback| callback.yield 1 }
   #
+  #
+  class Group
+    attr_reader :key
+    attr_reader :all_values
+
+    def initialize(key, values)
+      @key = key
+      @all_values = Hash[values]
+    end
+
+    def values(name = :default)
+      @all_values[name]
+    end
+
+    def combine!(group)
+      group.all_values.each do |name, vals|
+        set = values(name)
+        vals.each do |value|
+          set << value
+        end
+      end
+    end
+
+    def clone_values
+      Hash[@all_values.map { |key, val|
+        [key, val.map { |v| v }]
+      }]
+    end
+  end
 
   module Transform
     module Group
@@ -29,8 +58,8 @@ module Pacer
         self
       end
 
-      def values_map(&block)
-        @values_routes << map_route(block)
+      def values_map(name, &block)
+        @values_routes << [name, map_route(block)]
         self
       end
 
@@ -39,24 +68,19 @@ module Pacer
         self
       end
 
-      def values_route(&block)
-        @values_routes << block_route(block)
+      def values_route(name, &block)
+        @values_routes << [name, block_route(block)]
         self
       end
 
       def combine
         hash = {}
-        each do |key, value_sets|
-          a = hash[key]
-          unless a
-            a = []
-            hash[key] = a
-            value_sets.each { a << [] }
-          end
-          value_sets.each_with_index do |values, idx|
-            values.each do |value|
-              a[idx] << value
-            end
+        each do |group|
+          a = hash[group.key]
+          if a
+            hash[group.key].combine! group
+          else
+            hash[group.key] = Pacer::Group.new(group.key, group.clone_values)
           end
         end
         hash
@@ -107,9 +131,9 @@ module Pacer
         key_route = @key_route
         values_routes = @values_routes
         key_route ||= identity_route
-        values_routes = [identity_route] if values_routes.empty?
+        values_routes = [[:default, identity_route]] if values_routes.empty?
         key_route.route
-        values_routes.each { |r| r.route }
+        values_routes.each { |name, r| r.route }
         [key_route, values_routes]
       end
 
@@ -117,8 +141,8 @@ module Pacer
         key_route, values_routes = ensure_routes
         pipe = Pacer::Pipes::GroupPipe.new
         pipe.addKeyPipe *key_route.send(:build_pipeline)
-        values_routes.each do |route|
-          pipe.addValuesPipe *route.send(:build_pipeline)
+        values_routes.each do |name, route|
+          pipe.addValuesPipe name, *route.send(:build_pipeline)
         end
         pipe.setStarts end_pipe if end_pipe
         pipe
