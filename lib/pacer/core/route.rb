@@ -395,7 +395,7 @@ module Pacer
             end
             ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
           else
-            ps = @pipe_args
+            ps = @pipe_args.join(', ')
           end
         end
         s = inspect_class_name
