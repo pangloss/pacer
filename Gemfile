@@ -8,4 +8,5 @@ group :test do
   gem 'rcov', '0.9.9'
   gem 'rspec', '2.5.0'
   gem 'rr', '1.0.2'
+  gem 'ZenTest'
 end
