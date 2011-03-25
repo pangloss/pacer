@@ -4,8 +4,8 @@ require 'rubygems'
 
 module Pacer
   unless const_defined? :VERSION
-    VERSION = '0.4.0'
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
+    VERSION = File.read(File.join(PATH, 'VERSION')).chomp
     $:.unshift File.join(PATH, 'lib')
 
     unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
