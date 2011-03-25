@@ -62,6 +62,67 @@ for_tg do
           it { should == Object }
         end
       end
+
+      context 'from index_class' do
+        context ':vertex' do
+          subject { graph.element_type(graph.index_class :vertex) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+        end
+
+        context ':edge' do
+          subject { graph.element_type(graph.index_class :edge) }
+          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+        end
+      end
+    end
+
+    describe '#sanitize_properties' do
+      specify 'returns its argument' do
+        arg = { :a => 1 }
+        graph.sanitize_properties(arg).should equal(arg)
+      end
+    end
+
+    describe '#in_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.in_vertex(Tackle::SimpleMixin)
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.in_vertex([Tackle::SimpleMixin])
+        v.should == v1
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
+    describe '#out_vertex' do
+      it 'should wrap the vertex' do
+        v = e0.out_vertex(Tackle::SimpleMixin)
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should wrap the vertex 2' do
+        v = e0.out_vertex([Tackle::SimpleMixin])
+        v.should == v0
+        v.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+
+    describe '#get_vertices' do
+      before { e0 }
+      subject { graph.get_vertices }
+      it { should be_a(Pacer::Core::Route) }
+      its(:count) { should == 2 }
+    end
+
+    describe '#get_edges' do
+      before { e0 }
+      subject { graph.get_edges }
+      it { should be_a(Pacer::Core::Route) }
+      its(:count) { should == 1 }
     end
   end
 end

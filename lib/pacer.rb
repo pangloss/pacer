@@ -8,16 +8,22 @@ module Pacer
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.3-SNAPSHOT-standalone.jar'))
+    unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
       STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
       exit 1
     end
 
-    START_TIME = Time.now
+    require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.2-SNAPSHOT-standalone.jar')
 
-    require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.1-SNAPSHOT-standalone.jar')
-    require File.join(PATH, 'vendor/neo4j-lucene-index-0.2-1.2.M05.jar')
+    START_TIME = Time.now
   end
+
+  if RUBY_VERSION =~ /^1.9/
+    Enumerator = ::Enumerator
+  else
+    Enumerator = Enumerable::Enumerator
+  end
+
 
   require 'pacer/exceptions'
   require 'pacer/graph'
@@ -27,8 +33,7 @@ module Pacer
   require 'pacer/wrappers'
   require 'pacer/route'
   require 'pacer/extensions'
-  require 'pacer/neo4j'
-  require 'pacer/tg'
+  require 'pacer/blueprints'
   require 'pacer/support'
   require 'pacer/utils'
   require 'pacer/filter'
@@ -151,10 +156,30 @@ module Pacer
       @debug_pipes = []
     end
 
+    def open_graphs
+      @open_graphs ||= Hash.new { |h, k| h[k] = {} }
+    end
+
+    def starting_graph(type, key)
+      graph = open_graphs[type][key]
+      return graph if graph
+      graph = yield
+      open_graphs[type][key] = graph
+    end
+
     attr_accessor :debug_source
     attr_reader :debug_pipes
-
   end
 end
 
-
+at_exit do
+  Pacer.open_graphs.each do |type, graphs|
+    graphs.each do |path, graph|
+      begin
+        graph.shutdown
+      rescue Exception, StandardError => e
+        pp e
+      end
+    end
+  end
+end

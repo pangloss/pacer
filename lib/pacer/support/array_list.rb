@@ -19,3 +19,10 @@ class Java::JavaUtil::HashSet
     to_set.inspect.sub(/Set/, 'HashSet')
   end
 end
+
+java.util.HashMap
+class Java::JavaUtil::HashMap
+  def to_hash_map
+    self
+  end
+end

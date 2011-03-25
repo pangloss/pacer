@@ -176,7 +176,7 @@ for_each_graph(:read_only) do
       end
 
       it 'should not be nil when no matching mixed results' do
-        empty = graph.v.branch { |x| x.out_e(:missing) }.branch { |x| x.out_e(:missing) }
+        empty = [].to_route(:graph => graph, :element_type => :mixed)
         empty.should be_a(Pacer::Core::Graph::MixedRoute)
         empty.count.should == 0
       end
@@ -225,7 +225,6 @@ shared_examples_for Pacer::Core::Route do
     describe '#result' do
       before { graph.checkpoint }
       subject { route.result }
-      it { should be_root }
       its(:element_type) { should == route.element_type }
     end
 
@@ -250,7 +249,7 @@ shared_examples_for Pacer::Core::Route do
       subject { route[number_of_results - 1] }
       it { should be_a(Pacer::Core::Route) }
       its(:count) { should == 1 }
-      its(:result) { should be_a(graph.element_type(result_type)) }
+      its(:result) { should be_a(Pacer::Core::Route) }
       its(:extensions) { should == route.extensions }
     end
 

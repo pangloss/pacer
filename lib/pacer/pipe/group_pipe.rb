@@ -18,8 +18,8 @@ module Pacer::Pipes
       @key_pipes << prepare_aggregate_pipe(from_pipe, to_pipe)
     end
 
-    def addValuesPipe(from_pipe, to_pipe)
-      @values_pipes << prepare_aggregate_pipe(from_pipe, to_pipe)
+    def addValuesPipe(name, from_pipe, to_pipe)
+      @values_pipes << [name, *prepare_aggregate_pipe(from_pipe, to_pipe)]
     end
 
     def hasNext
@@ -38,7 +38,7 @@ module Pacer::Pipes
       expando = ExpandablePipe.new
       expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(expando)
-      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
+      agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new java.util.LinkedList.new
       cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
       agg_pipe.setStarts to_pipe
       cap_pipe.setStarts to_pipe
@@ -50,9 +50,9 @@ module Pacer::Pipes
         if @current_keys.empty?
           element = next_element
           @current_keys = get_keys(element)
-          @current_values = get_values(element) if @current_keys.any?
+          @current_values = get_values(element) unless @current_keys.empty?
         else
-          return [@current_keys.removeFirst, @current_values]
+          return Pacer::Group.new(@current_keys.removeFirst, @current_values)
         end
       end
     rescue NativeException => e
@@ -72,14 +72,14 @@ module Pacer::Pipes
     end
 
     def get_values(element)
-      @values_pipes.map do |expando, to_pipe|
-        next_results(expando, to_pipe, element)
+      @values_pipes.map do |name, expando, to_pipe|
+        [name, next_results(expando, to_pipe, element)]
       end
     end
 
     def next_results(expando, pipe, element)
-      expando.add element, java.util.ArrayList.new, nil
       pipe.reset
+      expando.add element, java.util.ArrayList.new, nil
       pipe.next
     end
 

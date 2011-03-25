@@ -26,7 +26,7 @@ module TP
 
   class Pangloss
     def self.route(base)
-      base.filter(:name => 'pangloss')
+      base.v(:name => 'pangloss')
     end
   end
 end

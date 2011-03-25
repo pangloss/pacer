@@ -60,6 +60,8 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
+    attr_reader :function, :element_type
+
     def initialize(args = {})
       self.graph = args[:graph]
       self.back = args[:back]
@@ -103,10 +105,6 @@ module Pacer
       else
         each_element(&block)
       end
-    end
-
-    def element_type
-      @element_type
     end
 
     protected

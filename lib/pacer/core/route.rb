@@ -6,27 +6,8 @@ module Pacer
     # defined here. Many of these methods are designed to be specialized by
     # other modules included after Core::Route is included.
     module Route
-
-      # Each route object is extended with these class or 'static' methods.
-      module RouteClassMethods
-        def from_edge_ids(graph, ids)
-          Pacer::Route.new :element_type => :edge,
-            :graph => graph,
-            :back => proc { graph.load_edges ids },
-            :info => ids.count
-        end
-
-        def from_vertex_ids(graph, ids)
-          Pacer::Route.new :element_type => :vertex,
-            :graph => graph,
-            :back => proc { graph.load_vertices ids },
-            :info => ids.count
-        end
-      end
-
       def self.included(target)
         target.send :include, Enumerable
-        target.extend RouteClassMethods
       end
 
       # Set these to effect how the route is displayed when inspected.
@@ -34,20 +15,16 @@ module Pacer
 
       # Specify which pipe class will be instantiated when an iterator is created.
       attr_accessor :pipe_class
+      attr_reader :pipe_args
 
       # Boolean whether the route alone should be returned by inspect. If
       # false, the the elements that the route matches will also be displayed.
       attr_accessor :hide_elements
 
-      # The previous route in the path
-      def back
-        @back
-      end
+      attr_reader :back, :source
 
       # Set which graph this route will operate on.
-      def graph=(graph)
-        @graph = graph
-      end
+      attr_writer :graph
 
       # Return which graph this route operates on.
       def graph
@@ -93,10 +70,6 @@ module Pacer
         end
       end
 
-      def each(&block)
-        each_element(&block)
-      end
-
       # Yields each matching element or returns an iterator if no block is given.
       def each_element
         iter = iterator
@@ -135,7 +108,6 @@ module Pacer
       # Yields each matching path or returns an iterator if no block is given.
       def each_path
         iter = iterator
-        iter.enable_path
         if block_given?
           g = graph
           while true
@@ -196,7 +168,7 @@ module Pacer
       # Graph#columns.  If this output behaviour is undesired, it may be turned
       # off by calling #route on the current route.
       def inspect(limit = nil)
-        if Pacer.hide_route_elements or hide_elements or source.nil?
+        if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
           "#<#{inspect_strings.join(' -> ')}>"
         else
           Pacer.hide_route_elements do
@@ -231,8 +203,10 @@ module Pacer
       # defined routes unless the routes are actually the same object.
       def ==(other)
         other.class == self.class and
-          other.graph == graph and
-          other.send(:inspect_strings) == inspect_strings
+          other.function == function and
+          other.element_type == element_type and
+          other.back == back and
+          other.source == source
       end
 
       def empty?
@@ -271,26 +245,15 @@ module Pacer
         self
       end
 
-      def set_pipe_source(source)
+      def set_pipe_source(src)
         if @back
-          @back.set_pipe_source source
+          @back.set_pipe_source src
         else
-          self.source = source
+          self.source = src
         end
       end
 
-      def element_type
-        Object
-      end
-
       protected
-
-      # Initializes some basic instance variables.
-      # TODO: rename initialize_path initialize_route
-      def initialize_path(back = nil, *pipe_args)
-        self.back = back
-        @pipe_args = pipe_args || []
-      end
 
       # Set the previous route in the chain.
       def back=(back)
@@ -299,10 +262,6 @@ module Pacer
         else
           @source = back
         end
-      end
-
-      def source=(source)
-        self.back = source
       end
 
       # Return the route which is attached to the given route.
@@ -329,11 +288,11 @@ module Pacer
       end
 
       # Get the actual source of data for this route.
-      def source
+      def source_iterator
         if @source
           iterator_from_source(@source)
         elsif @back
-          @back.send(:source)
+          @back.send(:source_iterator)
         end
       end
 
@@ -369,7 +328,7 @@ module Pacer
         @vars = {}
         start, end_pipe = build_pipeline
         if start
-          src = source
+          src = source_iterator
           Pacer.debug_source = src if Pacer.debug_pipes
           start.set_starts src
           end_pipe
@@ -377,7 +336,7 @@ module Pacer
           raise "End pipe without start pipe"
         else
           pipe = Pacer::Pipes::IdentityPipe.new
-          pipe.set_starts source
+          pipe.set_starts source_iterator
           pipe
         end
       end
@@ -427,16 +386,18 @@ module Pacer
           ps = @pipe_class.name
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            pipeargs = @pipe_args.collect do |arg|
-              if arg.is_a? Enumerable and arg.count > 10
-                "[...#{ arg.count } items...]"
-              else
-                arg.to_s
+            if @pipe_args
+              pipeargs = @pipe_args.collect do |arg|
+                if arg.is_a? Enumerable and arg.count > 10
+                  "[...#{ arg.count } items...]"
+                else
+                  arg.to_s
+                end
               end
+              ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
             end
-            ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
-          else
-            ps = @pipe_args
+          elsif @pipe_args
+            ps = @pipe_args.join(', ')
           end
         end
         s = inspect_class_name

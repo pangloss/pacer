@@ -3,7 +3,7 @@ module Pacer::Pipes
     def initialize(enumerable)
       super()
       case enumerable
-      when Enumerable::Enumerator
+      when Enumerator
         starts = enumerable
       when Pacer::ElementMixin
         starts = [enumerable].to_enum

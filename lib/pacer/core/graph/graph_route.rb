@@ -52,12 +52,12 @@ module Pacer::Core::Graph
       equal?(other)
     end
 
-    protected
-
     # Don't try to inspect the graph data when inspecting.
     def hide_elements
       true
     end
+
+    protected
 
     def each_property_filter(filters)
       filters.each do |filter|
@@ -102,7 +102,7 @@ module Pacer::Core::Graph
         if index_value.is_a? Module or index_value.is_a? Class
           route = index_value.route(self)
           route.add_extension extension if extension
-          return Pacer::Route.property_filter(route, filters_without_key(filters, key, extension), block)
+          return Pacer::Route.property_filter(route, filters - [index_value], block)
         elsif index_value
           idx = (indices || []).detect { |i| use_index?(i, element_type, index_name.to_s, index_value) }
           if idx
@@ -125,6 +125,8 @@ module Pacer::Core::Graph
         if f.is_a? Hash
           f = Hash[f.reject { |k, v| k.to_s == key.to_s }]
           f unless f.empty?
+        elsif f.is_a? Array
+          filters_without_key(f, key, extension)
         elsif f != extension
           f
         end

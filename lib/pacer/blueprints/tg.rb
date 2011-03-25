@@ -26,12 +26,12 @@ module Pacer
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
-      getVertices.to_a
+      getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
     end
 
     # Override to return an enumeration-friendly array of edges.
     def get_edges
-      getEdges.to_a
+      getEdges.iterator.to_route(:graph => self, :element_type => :edge)
     end
 
     def ==(other)
@@ -55,6 +55,10 @@ module Pacer
         else
           if et == Object
             Object
+          elsif et == TinkerVertex.java_class.to_java
+            TinkerVertex
+          elsif et == TinkerEdge.java_class.to_java
+            TinkerEdge
           else
             raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object'
           end
@@ -64,6 +68,19 @@ module Pacer
 
     def sanitize_properties(props)
       props
+    end
+
+    def encode_property(value)
+      if value.is_a? String
+        value = value.strip
+        value unless value == ''
+      else
+        value
+      end
+    end
+
+    def decode_property(value)
+      value
     end
   end
 
@@ -90,8 +107,10 @@ module Pacer
     def in_vertex(extensions = nil)
       v = inVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end
@@ -100,8 +119,10 @@ module Pacer
     def out_vertex(extensions = nil)
       v = outVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end

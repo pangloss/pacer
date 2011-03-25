@@ -327,49 +327,104 @@ shared_examples_for Pacer::GraphMixin do
     end
   end
 
-  describe 'rebuild_automatic_index', :transactions => false do
-    context 'vertices' do
-      before do
-        v0.properties = { :name => 'darrick', :type => 'person' }
-        v1.properties = { :name => 'eliza', :type => 'person' }
-        @new_idx = graph.rebuild_automatic_index orig_idx
-      end
-      let(:orig_idx) { graph.index_name 'vertices' }
-      subject { @new_idx }
-      it { should_not equal(orig_idx) }
-      it 'should not use the old vertices index' do
-        graph.index_name('vertices').should_not equal(orig_idx)
-      end
-      it { should equal(graph.index_name('vertices')) }
-      it 'should have 2 persons' do
-        subject.count('type', 'person').should == 2
-      end
-      it 'should have v1 for eliza' do
-        subject.get('name', 'eliza').to_a.should == [v1].to_a
-      end
+end
+
+
+for_each_graph :read_only, false do
+  let(:v0) { graph.create_vertex }
+  let(:v1) { graph.create_vertex }
+  let(:e0) { graph.create_edge nil, v0, v1, :links }
+  let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+
+  describe Pacer::GraphMixin do
+    before do
+      e0 # force edge and vertices to be created.
     end
 
-    context 'edges' do
-      before do
-        v0.properties = { :name => 'darrick', :type => 'person' }
-        v1.properties = { :name => 'eliza', :type => 'person' }
-        e0.properties = { :style => 'edgy' }
-        e1.properties = { :style => 'edgy' }
-        @new_idx = graph.rebuild_automatic_index orig_idx
+    describe 'rebuild_automatic_index', :transactions => false do
+      context 'vertices' do
+        before do
+          v0.properties = { :name => 'darrick', :type => 'person' }
+          v1.properties = { :name => 'eliza', :type => 'person' }
+          @orig_idx = graph.createAutomaticIndex 'vertices', graph.index_class(:vertex), nil
+          @new_idx = graph.rebuild_automatic_index @orig_idx
+        end
+
+        after do
+          graph.drop_index :vertices
+          graph.v.delete!
+        end
+
+        let(:orig_idx) { @orig_idx }
+        subject { @new_idx }
+        it { should_not equal(orig_idx) }
+        it 'should not use the old vertices index' do
+          graph.index_name('vertices').should_not equal(orig_idx)
+        end
+        it { should equal(graph.index_name('vertices')) }
+        it 'should have 2 persons' do
+          subject.count('type', 'person').should == 2
+        end
+        it 'should have v1 for eliza' do
+          subject.get('name', 'eliza').to_a.should == [v1].to_a
+        end
       end
-      let(:orig_idx) { graph.index_name 'edges' }
-      subject { @new_idx }
-      it { should_not equal(orig_idx) }
-      it 'should not use the old edges index' do
-        graph.index_name('edges').should_not equal(orig_idx)
+
+      context 'edges' do
+        before do
+          v0.properties = { :name => 'darrick', :type => 'person' }
+          v1.properties = { :name => 'eliza', :type => 'person' }
+          e0.properties = { :style => 'edgy' }
+          e1.properties = { :style => 'edgy' }
+          @orig_idx = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+          @new_idx = graph.rebuild_automatic_index @orig_idx
+        end
+
+        after do
+          graph.drop_index :edges
+          graph.v.delete!
+        end
+
+
+        let(:orig_idx) { @orig_idx }
+        subject { @new_idx }
+        it { should_not equal(orig_idx) }
+        it 'should not use the old edges index' do
+          graph.index_name('edges').should_not equal(orig_idx)
+        end
+        it { should equal(graph.index_name('edges')) }
+        it 'should have 1 edge' do
+          subject.count('label', 'links').should == 1
+        end
+        it 'should have e0 and e1 for style => edgy' do
+          subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
+        end
       end
-      it { should equal(graph.index_name('edges')) }
-      it 'should have 1 edge' do
-        subject.count('label', 'links').should == 1
-      end
-      it 'should have e0 and e1 for style => edgy' do
-        subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
-      end
+    end
+  end
+
+  describe 'edges can be indexed', :transactions => false do
+    after do
+      graph.drop_index 'edges'
+      graph.v.delete!
+    end
+
+    specify 'in an auto index' do
+      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+      graph.edges.count.should == 0
+      label = e0.label
+      graph.edges.count.should == 1
+      index.get('label', label).count.should == 1
+    end
+
+    specify 'by adding them to a new auto index' do
+      graph.edges.count.should == 0
+      label = e0.label
+      graph.edges.count.should == 1
+      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+      index.get('label', label).count.should == 0
+      Pacer::Utils::AutomaticIndexHelper.addElement(index, e0)
+      index.get('label', label).count.should == 1
     end
   end
 end

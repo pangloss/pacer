@@ -1,0 +1,1354 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html lang='en' xml:lang='en' xmlns='http://www.w3.org/1999/xhtml'>
+  <head>
+    <meta http-equiv="Content-type" content="text/html;charset=UTF-8" />
+    <title>Pacer C0 Coverage Information - RCov</title>
+    <link href="screen.css" media="all" rel="stylesheet" type="text/css" />
+    <link href="print.css" media="print" rel="stylesheet" type="text/css" />
+    
+    <script type="text/javascript" src="jquery-1.3.2.min.js"></script>
+    <script type="text/javascript" src="jquery.tablesorter.min.js"></script>
+    <script type="text/javascript" src="rcov.js"></script>
+  </head>
+  <body>
+    <h1>Pacer C0 Coverage Information - RCov</h1>
+    
+
+    <noscript><style type="text/css">.if_js { display:none; }</style></noscript>
+
+    <div class="filters if_js">
+      <fieldset>
+        <label>File Filter:</label>
+        <select id="file_filter" class="filter">
+          <option value="all_files">Show All</option>
+          <option value="core">core/</option><option value="expression_filter">expression_filter/</option><option value="extensions">extensions/</option><option value="filter">filter/</option><option value="graph">graph/</option><option value="lib">lib/</option><option value="mixin">mixin/</option><option value="pacer">pacer/</option><option value="pipe">pipe/</option><option value="route">route/</option><option value="side_effect">side_effect/</option><option value="support">support/</option><option value="transform">transform/</option><option value="utils">utils/</option>
+        </select>
+      </fieldset>
+      <fieldset>
+        <label>Code Coverage Threshold:</label>
+        <select id="coverage_filter" class="filter">
+          <option value="all_coverage">Show All</option>
+          <option value="10">&lt; 10% Coverage</option><option value="20">&lt; 20% Coverage</option><option value="30">&lt; 30% Coverage</option><option value="40">&lt; 40% Coverage</option><option value="50">&lt; 50% Coverage</option><option value="60">&lt; 60% Coverage</option><option value="70">&lt; 70% Coverage</option><option value="80">&lt; 80% Coverage</option><option value="90">&lt; 90% Coverage</option><option value="100">&lt; 100% Coverage</option>
+          <option value="110">= 100% Coverage</option>
+        </select>
+      </fieldset>
+    </div>
+    
+    <div class="report_table_wrapper">
+      <table class='report' id='report_table'>
+        <thead>
+          <tr>
+            <th class="left_align">Name</th>
+            <th class="right_align">Total Lines</th>
+            <th class="right_align">Lines of Code</th>
+            <th class="left_align">Total Coverage</th>
+            <th class="left_align">Code Coverage</th>
+          </tr>
+        </thead>
+        <tfoot>
+          <tr>
+            <td class="left_align">TOTAL</td>
+            <td class='right_align'><tt>5147</tt></td>
+            <td class='right_align'><tt>4245</tt></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class=''>78.20%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:78px"></div>
+            <div class="uncovered" style="width:22px"></div>
+          </div></td>
+            <td class="left_align"><div class="percent_graph_legend"><tt class='coverage_total'>73.78%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:74px"></div>
+            <div class="uncovered" style="width:26px"></div>
+          </div></td>
+          </tr>
+        </tfoot>
+        <tbody>
+          
+            <tr class="all_files all_coverage 80 90 100 lib even">
+              <td class="left_align"><a href="lib-pacer_rb.html">lib/pacer.rb</a></td>
+              <td class='right_align'><tt>166</tt></td>
+              <td class='right_align'><tt>124</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>83.73%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:84px"></div>
+            <div class="uncovered" style="width:16px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>78.23%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:78px"></div>
+            <div class="uncovered" style="width:22px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-core_rb.html">lib/pacer/core.rb</a></td>
+              <td class='right_align'><tt>8</tt></td>
+              <td class='right_align'><tt>7</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer core even">
+              <td class="left_align"><a href="lib-pacer-core-graph_rb.html">lib/pacer/core/graph.rb</a></td>
+              <td class='right_align'><tt>12</tt></td>
+              <td class='right_align'><tt>11</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer core graph odd">
+              <td class="left_align"><a href="lib-pacer-core-graph-edges_route_rb.html">lib/pacer/core/graph/edges_route.rb</a></td>
+              <td class='right_align'><tt>66</tt></td>
+              <td class='right_align'><tt>47</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer core graph even">
+              <td class="left_align"><a href="lib-pacer-core-graph-element_route_rb.html">lib/pacer/core/graph/element_route.rb</a></td>
+              <td class='right_align'><tt>29</tt></td>
+              <td class='right_align'><tt>19</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 100 lib pacer core graph odd">
+              <td class="left_align"><a href="lib-pacer-core-graph-graph_route_rb.html">lib/pacer/core/graph/graph_route.rb</a></td>
+              <td class='right_align'><tt>137</tt></td>
+              <td class='right_align'><tt>115</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>98.54%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:99px"></div>
+            <div class="uncovered" style="width:1px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>98.26%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:98px"></div>
+            <div class="uncovered" style="width:2px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer core graph even">
+              <td class="left_align"><a href="lib-pacer-core-graph-mixed_route_rb.html">lib/pacer/core/graph/mixed_route.rb</a></td>
+              <td class='right_align'><tt>94</tt></td>
+              <td class='right_align'><tt>68</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>59.57%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:60px"></div>
+            <div class="uncovered" style="width:40px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>44.12%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:44px"></div>
+            <div class="uncovered" style="width:56px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer core graph odd">
+              <td class="left_align"><a href="lib-pacer-core-graph-vertices_route_rb.html">lib/pacer/core/graph/vertices_route.rb</a></td>
+              <td class='right_align'><tt>104</tt></td>
+              <td class='right_align'><tt>69</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer core even">
+              <td class="left_align"><a href="lib-pacer-core-route_rb.html">lib/pacer/core/route.rb</a></td>
+              <td class='right_align'><tt>415</tt></td>
+              <td class='right_align'><tt>329</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.19%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:88px"></div>
+            <div class="uncovered" style="width:12px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>85.11%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:85px"></div>
+            <div class="uncovered" style="width:15px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer core odd">
+              <td class="left_align"><a href="lib-pacer-core-side_effect_rb.html">lib/pacer/core/side_effect.rb</a></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>44.44%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:44px"></div>
+            <div class="uncovered" style="width:56px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>44.44%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:44px"></div>
+            <div class="uncovered" style="width:56px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-exceptions_rb.html">lib/pacer/exceptions.rb</a></td>
+              <td class='right_align'><tt>11</tt></td>
+              <td class='right_align'><tt>8</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-extensions_rb.html">lib/pacer/extensions.rb</a></td>
+              <td class='right_align'><tt>6</tt></td>
+              <td class='right_align'><tt>5</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer extensions even">
+              <td class="left_align"><a href="lib-pacer-extensions-block_filter_element_rb.html">lib/pacer/extensions/block_filter_element.rb</a></td>
+              <td class='right_align'><tt>22</tt></td>
+              <td class='right_align'><tt>17</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>90.91%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:91px"></div>
+            <div class="uncovered" style="width:9px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.24%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:88px"></div>
+            <div class="uncovered" style="width:12px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-filter_rb.html">lib/pacer/filter.rb</a></td>
+              <td class='right_align'><tt>15</tt></td>
+              <td class='right_align'><tt>14</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer filter even">
+              <td class="left_align"><a href="lib-pacer-filter-block_filter_rb.html">lib/pacer/filter/block_filter.rb</a></td>
+              <td class='right_align'><tt>35</tt></td>
+              <td class='right_align'><tt>29</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-collection_filter_rb.html">lib/pacer/filter/collection_filter.rb</a></td>
+              <td class='right_align'><tt>86</tt></td>
+              <td class='right_align'><tt>74</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>79.07%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:79px"></div>
+            <div class="uncovered" style="width:21px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>75.68%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:76px"></div>
+            <div class="uncovered" style="width:24px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer filter even">
+              <td class="left_align"><a href="lib-pacer-filter-empty_filter_rb.html">lib/pacer/filter/empty_filter.rb</a></td>
+              <td class='right_align'><tt>22</tt></td>
+              <td class='right_align'><tt>19</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-expression_filter_rb.html">lib/pacer/filter/expression_filter.rb</a></td>
+              <td class='right_align'><tt>36</tt></td>
+              <td class='right_align'><tt>30</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer filter expression_filter even">
+              <td class="left_align"><a href="lib-pacer-filter-expression_filter-builder_rb.html">lib/pacer/filter/expression_filter/builder.rb</a></td>
+              <td class='right_align'><tt>191</tt></td>
+              <td class='right_align'><tt>162</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>73.82%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:74px"></div>
+            <div class="uncovered" style="width:26px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>70.37%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:70px"></div>
+            <div class="uncovered" style="width:30px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 100 lib pacer filter expression_filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-expression_filter-parser_rb.html">lib/pacer/filter/expression_filter/parser.rb</a></td>
+              <td class='right_align'><tt>62</tt></td>
+              <td class='right_align'><tt>48</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>96.77%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:97px"></div>
+            <div class="uncovered" style="width:3px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>95.83%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:96px"></div>
+            <div class="uncovered" style="width:4px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer filter even">
+              <td class="left_align"><a href="lib-pacer-filter-future_filter_rb.html">lib/pacer/filter/future_filter.rb</a></td>
+              <td class='right_align'><tt>102</tt></td>
+              <td class='right_align'><tt>84</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>35.29%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:35px"></div>
+            <div class="uncovered" style="width:65px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>25.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:25px"></div>
+            <div class="uncovered" style="width:75px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-index_filter_rb.html">lib/pacer/filter/index_filter.rb</a></td>
+              <td class='right_align'><tt>34</tt></td>
+              <td class='right_align'><tt>29</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>79.41%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:79px"></div>
+            <div class="uncovered" style="width:21px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>75.86%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:76px"></div>
+            <div class="uncovered" style="width:24px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 40 50 60 70 80 90 100 lib pacer filter even">
+              <td class="left_align"><a href="lib-pacer-filter-loop_filter_rb.html">lib/pacer/filter/loop_filter.rb</a></td>
+              <td class='right_align'><tt>60</tt></td>
+              <td class='right_align'><tt>51</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>43.33%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:43px"></div>
+            <div class="uncovered" style="width:57px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>33.33%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:33px"></div>
+            <div class="uncovered" style="width:67px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-property_filter_rb.html">lib/pacer/filter/property_filter.rb</a></td>
+              <td class='right_align'><tt>146</tt></td>
+              <td class='right_align'><tt>129</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>89.73%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:90px"></div>
+            <div class="uncovered" style="width:10px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.37%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:88px"></div>
+            <div class="uncovered" style="width:12px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 70 80 90 100 lib pacer filter even">
+              <td class="left_align"><a href="lib-pacer-filter-range_filter_rb.html">lib/pacer/filter/range_filter.rb</a></td>
+              <td class='right_align'><tt>100</tt></td>
+              <td class='right_align'><tt>84</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>68.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:68px"></div>
+            <div class="uncovered" style="width:32px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>61.90%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:62px"></div>
+            <div class="uncovered" style="width:38px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer filter odd">
+              <td class="left_align"><a href="lib-pacer-filter-uniq_filter_rb.html">lib/pacer/filter/uniq_filter.rb</a></td>
+              <td class='right_align'><tt>12</tt></td>
+              <td class='right_align'><tt>11</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-graph_rb.html">lib/pacer/graph.rb</a></td>
+              <td class='right_align'><tt>10</tt></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer graph odd">
+              <td class="left_align"><a href="lib-pacer-graph-edge_mixin_rb.html">lib/pacer/graph/edge_mixin.rb</a></td>
+              <td class='right_align'><tt>80</tt></td>
+              <td class='right_align'><tt>69</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>80.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:80px"></div>
+            <div class="uncovered" style="width:20px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>76.81%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:77px"></div>
+            <div class="uncovered" style="width:23px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer graph even">
+              <td class="left_align"><a href="lib-pacer-graph-element_mixin_rb.html">lib/pacer/graph/element_mixin.rb</a></td>
+              <td class='right_align'><tt>119</tt></td>
+              <td class='right_align'><tt>90</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>91.60%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:92px"></div>
+            <div class="uncovered" style="width:8px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.89%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:89px"></div>
+            <div class="uncovered" style="width:11px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer graph odd">
+              <td class="left_align"><a href="lib-pacer-graph-graph_mixin_rb.html">lib/pacer/graph/graph_mixin.rb</a></td>
+              <td class='right_align'><tt>226</tt></td>
+              <td class='right_align'><tt>193</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>84.51%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:85px"></div>
+            <div class="uncovered" style="width:15px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>82.38%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:82px"></div>
+            <div class="uncovered" style="width:18px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer graph even">
+              <td class="left_align"><a href="lib-pacer-graph-graph_transactions_mixin_rb.html">lib/pacer/graph/graph_transactions_mixin.rb</a></td>
+              <td class='right_align'><tt>180</tt></td>
+              <td class='right_align'><tt>152</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>78.89%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:79px"></div>
+            <div class="uncovered" style="width:21px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>75.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:75px"></div>
+            <div class="uncovered" style="width:25px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer graph odd">
+              <td class="left_align"><a href="lib-pacer-graph-index_mixin_rb.html">lib/pacer/graph/index_mixin.rb</a></td>
+              <td class='right_align'><tt>30</tt></td>
+              <td class='right_align'><tt>27</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>36.67%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:37px"></div>
+            <div class="uncovered" style="width:63px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>29.63%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:30px"></div>
+            <div class="uncovered" style="width:70px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer graph even">
+              <td class="left_align"><a href="lib-pacer-graph-vertex_mixin_rb.html">lib/pacer/graph/vertex_mixin.rb</a></td>
+              <td class='right_align'><tt>47</tt></td>
+              <td class='right_align'><tt>35</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 100 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-neo4j_rb.html">lib/pacer/neo4j.rb</a></td>
+              <td class='right_align'><tt>184</tt></td>
+              <td class='right_align'><tt>151</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>91.85%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:92px"></div>
+            <div class="uncovered" style="width:8px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>90.07%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:90px"></div>
+            <div class="uncovered" style="width:10px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-block_filter_pipe_rb.html">lib/pacer/pipe/block_filter_pipe.rb</a></td>
+              <td class='right_align'><tt>38</tt></td>
+              <td class='right_align'><tt>35</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>81.58%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:82px"></div>
+            <div class="uncovered" style="width:18px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>80.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:80px"></div>
+            <div class="uncovered" style="width:20px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-enumerable_pipe_rb.html">lib/pacer/pipe/enumerable_pipe.rb</a></td>
+              <td class='right_align'><tt>30</tt></td>
+              <td class='right_align'><tt>29</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>60.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:60px"></div>
+            <div class="uncovered" style="width:40px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>58.62%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:59px"></div>
+            <div class="uncovered" style="width:41px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-expandable_pipe_rb.html">lib/pacer/pipe/expandable_pipe.rb</a></td>
+              <td class='right_align'><tt>63</tt></td>
+              <td class='right_align'><tt>57</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>60.32%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:60px"></div>
+            <div class="uncovered" style="width:40px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>56.14%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:56px"></div>
+            <div class="uncovered" style="width:44px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-group_pipe_rb.html">lib/pacer/pipe/group_pipe.rb</a></td>
+              <td class='right_align'><tt>96</tt></td>
+              <td class='right_align'><tt>85</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>81.25%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:81px"></div>
+            <div class="uncovered" style="width:19px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>78.82%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:79px"></div>
+            <div class="uncovered" style="width:21px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-label_prefix_pipe_rb.html">lib/pacer/pipe/label_prefix_pipe.rb</a></td>
+              <td class='right_align'><tt>21</tt></td>
+              <td class='right_align'><tt>20</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>23.81%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:24px"></div>
+            <div class="uncovered" style="width:76px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>20.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:20px"></div>
+            <div class="uncovered" style="width:80px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 20 30 40 50 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-loop_pipe_rb.html">lib/pacer/pipe/loop_pipe.rb</a></td>
+              <td class='right_align'><tt>74</tt></td>
+              <td class='right_align'><tt>67</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>16.22%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:16px"></div>
+            <div class="uncovered" style="width:84px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>10.45%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:10px"></div>
+            <div class="uncovered" style="width:90px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-map_pipe_rb.html">lib/pacer/pipe/map_pipe.rb</a></td>
+              <td class='right_align'><tt>36</tt></td>
+              <td class='right_align'><tt>34</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>77.78%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:78px"></div>
+            <div class="uncovered" style="width:22px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>76.47%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:76px"></div>
+            <div class="uncovered" style="width:24px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-never_pipe_rb.html">lib/pacer/pipe/never_pipe.rb</a></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class='right_align'><tt>8</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>55.56%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:56px"></div>
+            <div class="uncovered" style="width:44px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>50.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:50px"></div>
+            <div class="uncovered" style="width:50px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-property_comparison_pipe_rb.html">lib/pacer/pipe/property_comparison_pipe.rb</a></td>
+              <td class='right_align'><tt>26</tt></td>
+              <td class='right_align'><tt>24</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>26.92%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:27px"></div>
+            <div class="uncovered" style="width:73px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>20.83%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:21px"></div>
+            <div class="uncovered" style="width:79px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-ruby_comparison_filter_pipe_rb.html">lib/pacer/pipe/ruby_comparison_filter_pipe.rb</a></td>
+              <td class='right_align'><tt>20</tt></td>
+              <td class='right_align'><tt>17</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>50.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:50px"></div>
+            <div class="uncovered" style="width:50px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>41.18%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:41px"></div>
+            <div class="uncovered" style="width:59px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-ruby_pipe_rb.html">lib/pacer/pipe/ruby_pipe.rb</a></td>
+              <td class='right_align'><tt>20</tt></td>
+              <td class='right_align'><tt>17</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>60.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:60px"></div>
+            <div class="uncovered" style="width:40px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>52.94%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:53px"></div>
+            <div class="uncovered" style="width:47px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 10 20 30 40 50 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-stream_sort_pipe_rb.html">lib/pacer/pipe/stream_sort_pipe.rb</a></td>
+              <td class='right_align'><tt>84</tt></td>
+              <td class='right_align'><tt>74</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>17.86%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:18px"></div>
+            <div class="uncovered" style="width:82px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>6.76%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:7px"></div>
+            <div class="uncovered" style="width:93px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 20 30 40 50 60 70 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-stream_uniq_pipe_rb.html">lib/pacer/pipe/stream_uniq_pipe.rb</a></td>
+              <td class='right_align'><tt>33</tt></td>
+              <td class='right_align'><tt>31</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>21.21%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:21px"></div>
+            <div class="uncovered" style="width:79px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>16.13%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:16px"></div>
+            <div class="uncovered" style="width:84px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer pipe odd">
+              <td class="left_align"><a href="lib-pacer-pipe-type_filter_pipe_rb.html">lib/pacer/pipe/type_filter_pipe.rb</a></td>
+              <td class='right_align'><tt>22</tt></td>
+              <td class='right_align'><tt>21</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>59.09%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:59px"></div>
+            <div class="uncovered" style="width:41px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>57.14%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:57px"></div>
+            <div class="uncovered" style="width:43px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer pipe even">
+              <td class="left_align"><a href="lib-pacer-pipe-variable_store_iterator_wrapper_rb.html">lib/pacer/pipe/variable_store_iterator_wrapper.rb</a></td>
+              <td class='right_align'><tt>26</tt></td>
+              <td class='right_align'><tt>22</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>76.92%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:77px"></div>
+            <div class="uncovered" style="width:23px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>72.73%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:73px"></div>
+            <div class="uncovered" style="width:27px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-pipes_rb.html">lib/pacer/pipes.rb</a></td>
+              <td class='right_align'><tt>56</tt></td>
+              <td class='right_align'><tt>47</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-route_rb.html">lib/pacer/route.rb</a></td>
+              <td class='right_align'><tt>202</tt></td>
+              <td class='right_align'><tt>180</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>87.13%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:87px"></div>
+            <div class="uncovered" style="width:13px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>85.56%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:86px"></div>
+            <div class="uncovered" style="width:14px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer route odd">
+              <td class="left_align"><a href="lib-pacer-route-context_route_rb.html">lib/pacer/route/context_route.rb</a></td>
+              <td class='right_align'><tt>21</tt></td>
+              <td class='right_align'><tt>16</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>61.90%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:62px"></div>
+            <div class="uncovered" style="width:38px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>50.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:50px"></div>
+            <div class="uncovered" style="width:50px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 70 80 90 100 lib pacer route mixin even">
+              <td class="left_align"><a href="lib-pacer-route-mixin-bulk_operations_rb.html">lib/pacer/route/mixin/bulk_operations.rb</a></td>
+              <td class='right_align'><tt>52</tt></td>
+              <td class='right_align'><tt>42</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>69.23%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:69px"></div>
+            <div class="uncovered" style="width:31px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>61.90%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:62px"></div>
+            <div class="uncovered" style="width:38px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer route mixin odd">
+              <td class="left_align"><a href="lib-pacer-route-mixin-route_operations_rb.html">lib/pacer/route/mixin/route_operations.rb</a></td>
+              <td class='right_align'><tt>233</tt></td>
+              <td class='right_align'><tt>169</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>70.39%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:70px"></div>
+            <div class="uncovered" style="width:30px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>59.17%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:59px"></div>
+            <div class="uncovered" style="width:41px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer route mixin even">
+              <td class="left_align"><a href="lib-pacer-route-mixin-variable_route_module_rb.html">lib/pacer/route/mixin/variable_route_module.rb</a></td>
+              <td class='right_align'><tt>26</tt></td>
+              <td class='right_align'><tt>18</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>92.31%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:92px"></div>
+            <div class="uncovered" style="width:8px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.89%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:89px"></div>
+            <div class="uncovered" style="width:11px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer route odd">
+              <td class="left_align"><a href="lib-pacer-route-mixins_rb.html">lib/pacer/route/mixins.rb</a></td>
+              <td class='right_align'><tt>3</tt></td>
+              <td class='right_align'><tt>3</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer route even">
+              <td class="left_align"><a href="lib-pacer-route-paths_route_rb.html">lib/pacer/route/paths_route.rb</a></td>
+              <td class='right_align'><tt>42</tt></td>
+              <td class='right_align'><tt>35</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>85.71%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:86px"></div>
+            <div class="uncovered" style="width:14px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>82.86%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:83px"></div>
+            <div class="uncovered" style="width:17px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-routes_rb.html">lib/pacer/routes.rb</a></td>
+              <td class='right_align'><tt>8</tt></td>
+              <td class='right_align'><tt>7</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-side_effect_rb.html">lib/pacer/side_effect.rb</a></td>
+              <td class='right_align'><tt>8</tt></td>
+              <td class='right_align'><tt>7</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer side_effect odd">
+              <td class="left_align"><a href="lib-pacer-side_effect-aggregate_rb.html">lib/pacer/side_effect/aggregate.rb</a></td>
+              <td class='right_align'><tt>19</tt></td>
+              <td class='right_align'><tt>17</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>47.37%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:47px"></div>
+            <div class="uncovered" style="width:53px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>41.18%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:41px"></div>
+            <div class="uncovered" style="width:59px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer side_effect even">
+              <td class="left_align"><a href="lib-pacer-side_effect-counted_rb.html">lib/pacer/side_effect/counted.rb</a></td>
+              <td class='right_align'><tt>30</tt></td>
+              <td class='right_align'><tt>25</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer side_effect odd">
+              <td class="left_align"><a href="lib-pacer-side_effect-group_count_rb.html">lib/pacer/side_effect/group_count.rb</a></td>
+              <td class='right_align'><tt>44</tt></td>
+              <td class='right_align'><tt>39</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>34.09%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:34px"></div>
+            <div class="uncovered" style="width:66px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>25.64%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:26px"></div>
+            <div class="uncovered" style="width:74px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-support_rb.html">lib/pacer/support.rb</a></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 60 70 80 90 100 lib pacer support odd">
+              <td class="left_align"><a href="lib-pacer-support-array_list_rb.html">lib/pacer/support/array_list.rb</a></td>
+              <td class='right_align'><tt>28</tt></td>
+              <td class='right_align'><tt>25</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>57.14%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:57px"></div>
+            <div class="uncovered" style="width:43px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>52.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:52px"></div>
+            <div class="uncovered" style="width:48px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 70 80 90 100 lib pacer support even">
+              <td class="left_align"><a href="lib-pacer-support-enumerable_rb.html">lib/pacer/support/enumerable.rb</a></td>
+              <td class='right_align'><tt>99</tt></td>
+              <td class='right_align'><tt>83</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>72.73%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:73px"></div>
+            <div class="uncovered" style="width:27px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>68.67%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:69px"></div>
+            <div class="uncovered" style="width:31px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 30 40 50 60 70 80 90 100 lib pacer support odd">
+              <td class="left_align"><a href="lib-pacer-support-hash_rb.html">lib/pacer/support/hash.rb</a></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>22.22%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:22px"></div>
+            <div class="uncovered" style="width:78px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>22.22%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:22px"></div>
+            <div class="uncovered" style="width:78px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 40 50 60 70 80 90 100 lib pacer support even">
+              <td class="left_align"><a href="lib-pacer-support-iterator_mixins_rb.html">lib/pacer/support/iterator_mixins.rb</a></td>
+              <td class='right_align'><tt>63</tt></td>
+              <td class='right_align'><tt>47</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>53.97%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:54px"></div>
+            <div class="uncovered" style="width:46px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>38.30%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:38px"></div>
+            <div class="uncovered" style="width:62px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 20 30 40 50 60 70 80 90 100 lib pacer support odd">
+              <td class="left_align"><a href="lib-pacer-support-proc_rb.html">lib/pacer/support/proc.rb</a></td>
+              <td class='right_align'><tt>16</tt></td>
+              <td class='right_align'><tt>16</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>12.50%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:13px"></div>
+            <div class="uncovered" style="width:87px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>12.50%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:13px"></div>
+            <div class="uncovered" style="width:87px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 100 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-tg_rb.html">lib/pacer/tg.rb</a></td>
+              <td class='right_align'><tt>132</tt></td>
+              <td class='right_align'><tt>106</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>98.48%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:98px"></div>
+            <div class="uncovered" style="width:2px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>98.11%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:98px"></div>
+            <div class="uncovered" style="width:2px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer odd">
+              <td class="left_align"><a href="lib-pacer-transform_rb.html">lib/pacer/transform.rb</a></td>
+              <td class='right_align'><tt>11</tt></td>
+              <td class='right_align'><tt>10</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 90 100 lib pacer transform even">
+              <td class="left_align"><a href="lib-pacer-transform-cap_rb.html">lib/pacer/transform/cap.rb</a></td>
+              <td class='right_align'><tt>49</tt></td>
+              <td class='right_align'><tt>42</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>89.80%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:90px"></div>
+            <div class="uncovered" style="width:10px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>88.10%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:88px"></div>
+            <div class="uncovered" style="width:12px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer transform odd">
+              <td class="left_align"><a href="lib-pacer-transform-gather_rb.html">lib/pacer/transform/gather.rb</a></td>
+              <td class='right_align'><tt>7</tt></td>
+              <td class='right_align'><tt>7</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>42.86%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:43px"></div>
+            <div class="uncovered" style="width:57px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>42.86%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:43px"></div>
+            <div class="uncovered" style="width:57px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 100 lib pacer transform even">
+              <td class="left_align"><a href="lib-pacer-transform-group_rb.html">lib/pacer/transform/group.rb</a></td>
+              <td class='right_align'><tt>196</tt></td>
+              <td class='right_align'><tt>158</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>97.96%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:98px"></div>
+            <div class="uncovered" style="width:2px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>97.47%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:97px"></div>
+            <div class="uncovered" style="width:3px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer transform odd">
+              <td class="left_align"><a href="lib-pacer-transform-map_rb.html">lib/pacer/transform/map.rb</a></td>
+              <td class='right_align'><tt>23</tt></td>
+              <td class='right_align'><tt>20</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer transform even">
+              <td class="left_align"><a href="lib-pacer-transform-stream_sort_rb.html">lib/pacer/transform/stream_sort.rb</a></td>
+              <td class='right_align'><tt>21</tt></td>
+              <td class='right_align'><tt>18</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>52.38%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:52px"></div>
+            <div class="uncovered" style="width:48px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>44.44%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:44px"></div>
+            <div class="uncovered" style="width:56px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 50 60 70 80 90 100 lib pacer transform odd">
+              <td class="left_align"><a href="lib-pacer-transform-stream_uniq_rb.html">lib/pacer/transform/stream_uniq.rb</a></td>
+              <td class='right_align'><tt>21</tt></td>
+              <td class='right_align'><tt>18</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>52.38%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:52px"></div>
+            <div class="uncovered" style="width:48px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>44.44%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:44px"></div>
+            <div class="uncovered" style="width:56px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 110 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-utils_rb.html">lib/pacer/utils.rb</a></td>
+              <td class='right_align'><tt>10</tt></td>
+              <td class='right_align'><tt>9</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>100.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:100px"></div>
+            <div class="uncovered" style="width:0px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer utils odd">
+              <td class="left_align"><a href="lib-pacer-utils-tsort_rb.html">lib/pacer/utils/tsort.rb</a></td>
+              <td class='right_align'><tt>55</tt></td>
+              <td class='right_align'><tt>46</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>76.36%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:76px"></div>
+            <div class="uncovered" style="width:24px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>71.74%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:72px"></div>
+            <div class="uncovered" style="width:28px"></div>
+          </div></td>
+            </tr>
+          
+            <tr class="all_files all_coverage 80 90 100 lib pacer even">
+              <td class="left_align"><a href="lib-pacer-wrappers_rb.html">lib/pacer/wrappers.rb</a></td>
+              <td class='right_align'><tt>200</tt></td>
+              <td class='right_align'><tt>158</tt></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>80.00%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:80px"></div>
+            <div class="uncovered" style="width:20px"></div>
+          </div></td>
+              <td class="left_align"><div class="percent_graph_legend"><tt class=''>74.68%</tt></div>
+          <div class="percent_graph">
+            <div class="covered" style="width:75px"></div>
+            <div class="uncovered" style="width:25px"></div>
+          </div></td>
+            </tr>
+          
+        </tbody>
+      </table>
+    </div>
+    
+    <p>Generated on Thu Mar 24 03:26:06 -0400 2011 with <a href="http://github.com/relevance/rcov">rcov 0.9.8</a></p>
+
+    <script type="text/javascript">
+      $(document).ready(function(){$("#report_table").tablesorter({widgets: ['zebra'], textExtraction: 'complex'});});
+      $('.filter').change(function(){
+        ff = $('#file_filter').val();
+        cf = $('#coverage_filter').val();
+        $('table#report_table tbody tr').each(function(i){ 
+          if ((this.className.split(" ").indexOf(ff) > -1) && (this.className.split(" ").indexOf(cf) > -1)) {
+            this.style.display = "";
+          } else {
+            this.style.display = "none";
+          };
+          restripe();
+        })
+      })
+    </script>
+
+  </body>
+</html>

@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Pacer
   Neo4jGraph = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jGraph
   Neo4jVertex = com.tinkerpop.blueprints.pgm.impls.neo4j.Neo4jVertex
@@ -9,30 +11,13 @@ module Pacer
   class << self
     # Return a graph for the given path. Will create a graph if none exists at
     # that location. (The graph is only created if data is actually added to it).
-    def neo4j(path)
+    def neo4j(path, args = nil)
       path = File.expand_path(path)
-      return neo_graphs[path] if neo_graphs[path]
-      graph = Neo4jGraph.new(path)
-      neo_graphs[path] = graph
-      register_neo_shutdown(path)
-      graph
-    end
-
-    # Returns a hash of currently open neo graphs by path.
-    def neo_graphs
-      @neo_graphs ||= {}
-    end
-
-    protected
-
-    # Registers the graph to be safely shut down when the program exits if
-    # possible.
-    def register_neo_shutdown(path)
-      at_exit do
-        begin
-          neo_graphs[path].shutdown if neo_graphs[path]
-        rescue Exception, StandardError => e
-          pp e
+      Pacer.starting_graph(self, path) do
+        if args
+          Neo4jGraph.new(path, args.to_hash_map)
+        else
+          Neo4jGraph.new(path)
         end
       end
     end
@@ -46,6 +31,16 @@ module Pacer
     include ManagedTransactionsMixin
     include Pacer::Core::Route
     include Pacer::Core::Graph::GraphRoute
+
+    # Override to return an enumeration-friendly array of vertices.
+    def get_vertices
+      getVertices.to_route(:graph => self, :element_type => :vertex)
+    end
+
+    # Override to return an enumeration-friendly array of edges.
+    def get_edges
+      getEdges.to_route(:graph => self, :element_type => :edge)
+    end
 
     def element_type(et = nil)
       return nil unless et
@@ -64,6 +59,10 @@ module Pacer
         else
           if et == Object
             Object
+          elsif et == Neo4jVertex.java_class.to_java
+            Neo4jVertex
+          elsif et == Neo4jEdge.java_class.to_java
+            Neo4jEdge
           else
             raise ArgumentError, 'Element type may be one of :vertex or :edge'
           end
@@ -72,21 +71,46 @@ module Pacer
     end
 
     def sanitize_properties(props)
-      props.inject({}) do |result, (name, value)|
-        case value
-        when Date, Time, Symbol
-          value = value.to_s
-        when ''
-          value = nil
-        when String
-          value = value.strip
-          value = nil if value == ''
-        when Numeric
+      pairs = props.map do |name, value|
+        [name, encode_property(value)]
+      end
+      Hash[pairs]
+    end
+
+    def encode_property(value)
+      case value
+      when nil
+        nil
+      when String
+        value = value.strip
+        value = nil if value == ''
+        value
+      when Numeric
+        if value.is_a? Bignum
+          value.to_yaml
         else
-          value = value.to_s
+          value
         end
-        result[name] = value if value
-        result
+      else
+        value.to_yaml
+      end
+    end
+
+    if RUBY_VERSION =~ /^1.9/
+      def decode_property(value)
+        if value.is_a? String and value[0, 5] == '%YAML'
+          YAML.load(value)
+        else
+          value
+        end
+      end
+    else
+      def decode_property(value)
+        if value.is_a? String and value[0, 3] == '---'
+          YAML.load(value)
+        else
+          value
+        end
       end
     end
   end
@@ -114,8 +138,10 @@ module Pacer
     def in_vertex(extensions = nil)
       v = inVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end
@@ -124,8 +150,10 @@ module Pacer
     def out_vertex(extensions = nil)
       v = outVertex
       v.graph = graph
-      if extensions
+      if extensions.is_a? Enumerable
         v.add_extensions extensions
+      elsif extensions
+        v.add_extensions [extensions]
       else
         v
       end

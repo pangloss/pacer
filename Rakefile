@@ -12,10 +12,9 @@ begin
     gem.homepage = "http://github.com/pangloss/pacer"
     gem.authors = ["Darrick Wiebe"]
     gem.license = "MIT"
-    gem.add_dependency "nokogiri", "~> 1.4"
     gem.add_dependency "parslet", "~> 1.0"
     gem.add_dependency 'fastercsv', '~> 1.5.4'
-    gem.add_development_dependency "rspec", "~> 2.5.1"
+    gem.add_development_dependency "rspec", "~> 2.5.0"
     gem.add_development_dependency "rr", "~> 1.0"
     gem.files = FileList['lib/**/*.rb', 'script/*', '[A-Z]*', 'spec/**/*', 'vendor/*'].to_a
     # gem is a Gem::Specification... see http://www.rubygems.org/read/chapter/20 for additional settings
@@ -69,9 +68,10 @@ end
 
 RSpec::Core::RakeTask.new(:rcov) do |spec|
   spec.pattern = 'spec/**/*_spec.rb'
+  spec.ruby_opts = '--debug'
+  spec.skip_bundler = true
   spec.rcov = true
+  spec.rcov_opts = %w{--exclude generator_internal,jsignal_internal,gems\/,spec\/}
 end
-
-task :spec => :check_dependencies
 
 task :default => :spec
