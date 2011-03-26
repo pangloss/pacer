@@ -304,7 +304,13 @@ shared_examples_for Pacer::GraphMixin do
 
   describe '#index_class' do
     subject { graph.index_class(:vertex) }
-    it { should == graph.element_type(:vertex).java_class.to_java }
+    specify 'should be the class the index returns when queried for index_class' do
+      if graph.is_a? Pacer::DexGraph
+        subject.should == graph.indices.first.index_class
+      else
+        subject.should == graph.index_name('vertices').index_class
+      end
+    end
   end
 
   describe '#import' do

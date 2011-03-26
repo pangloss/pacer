@@ -68,11 +68,6 @@ for_dex do
           subject { graph.element_type(graph.index_class :vertex) }
           it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexVertex }
         end
-
-        context ':edge' do
-          subject { graph.element_type(graph.index_class :edge) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexEdge }
-        end
       end
     end
 

@@ -59,6 +59,8 @@ module Pacer
             DexVertex
           elsif et == DexEdge.java_class.to_java
             DexEdge
+          elsif et == index_class(:vertex)
+            DexVertex
           else
             raise ArgumentError, 'Element type may be one of :vertex or :edge'
           end
@@ -68,7 +70,7 @@ module Pacer
 
     def index_class(et = nil)
       if element_type(et) == DexVertex
-        @index_class ||= indices.first.index_class
+        com.tinkerpop.blueprints.pgm.Vertex.java_class
       end
     end
 
