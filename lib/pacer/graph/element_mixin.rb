@@ -51,7 +51,9 @@ module Pacer
       value = graph.encode_property(value) if graph
       key = key.to_s
       if value
-        set_property(key, value) if value != get_property(key)
+        if value != get_property(key)
+          set_property(key, value)
+        end
       else
         remove_property(key)
       end
