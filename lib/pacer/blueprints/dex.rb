@@ -118,7 +118,19 @@ module Pacer
       end
     end
 
+    def supports_custom_element_ids?
+      false
+    end
+
+    def supports_automatic_indices?
+      false
+    end
+
     def supports_manual_indices?
+      false
+    end
+
+    def supports_edge_indices?
       false
     end
   end

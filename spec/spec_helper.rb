@@ -90,7 +90,6 @@ end
 def for_tg(usage_style = :read_write, indices = true, &block)
   return unless use_graph? 'tg'
   describe 'tg' do
-    let(:supports_custom_id) { true }
     let(:graph) do
       g = Pacer.tg
       unless indices
@@ -108,7 +107,6 @@ end
 def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)
   return unless use_graph? name
   describe name do
-    let(:supports_custom_id) { false }
     let(:graph) do
       if indices
         source_graph_1

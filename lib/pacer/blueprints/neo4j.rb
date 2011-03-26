@@ -113,6 +113,10 @@ module Pacer
         end
       end
     end
+
+    def supports_custom_element_ids?
+      false
+    end
   end
 
 
