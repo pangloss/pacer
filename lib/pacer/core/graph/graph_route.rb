@@ -80,7 +80,7 @@ module Pacer::Core::Graph
     end
 
     def use_index?(index, element_type, index_name, index_value)
-      if index.index_class == element_type.java_class
+      if index.index_class == graph.index_class(element_type)
         key, value, index_specified = index_key_value(index_name, index_value)
         if index.index_type == Pacer.automatic_index
           keys = index.getAutoIndexKeys

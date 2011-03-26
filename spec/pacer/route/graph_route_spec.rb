@@ -1,6 +1,7 @@
 require 'spec_helper'
 
 for_each_graph(:read_only, false) do
+  around { |spec| spec.run if graph }
   use_pacer_graphml_data(:read_only)
 
   context Pacer::Core::Graph::GraphRoute do
@@ -30,11 +31,11 @@ for_each_graph(:read_only, false) do
 
     context 'with vertex name indexed' do
       before :all do
-        graph.v.build_index :name
+        graph.v.build_index :name if graph
       end
 
       after :all do
-        graph.drop_index :name
+        graph.drop_index :name if graph
       end
 
       context 'basic search' do
@@ -76,11 +77,11 @@ for_each_graph(:read_only, false) do
 
     context 'with vertex auto index' do
       before :all do
-        graph.build_automatic_index :v_auto, :vertex, [:type]
+        graph.build_automatic_index :v_auto, :vertex, [:type] if graph
       end
 
       after :all do
-        graph.drop_index :v_auto
+        graph.drop_index :v_auto if graph
       end
 
       subject { graph.v(:type => 'person') }

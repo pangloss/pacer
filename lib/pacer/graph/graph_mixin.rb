@@ -181,6 +181,10 @@ module Pacer
       end
     end
 
+    def supports_circular_edges?
+      true
+    end
+
     def supports_custom_element_ids?
       true
     end

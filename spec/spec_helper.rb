@@ -171,11 +171,11 @@ def use_pacer_graphml_data(usage_style = :read_write, version = '')
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
-      graph.import 'spec/data/pacer.graphml'
+      graph.import 'spec/data/pacer.graphml' if graph
     end
   else
     let(:setup_data) do
-      graph.import 'spec/data/pacer.graphml'
+      graph.import 'spec/data/pacer.graphml' if graph
     end
   end
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }

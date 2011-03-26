@@ -66,6 +66,12 @@ module Pacer
       end
     end
 
+    def index_class(et = nil)
+      if element_type(et) == DexVertex
+        @index_class ||= indices.first.index_class
+      end
+    end
+
     def sanitize_properties(props)
       pairs = props.map do |name, value|
         [name, encode_property(value)]
