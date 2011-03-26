@@ -52,6 +52,7 @@ shared_examples_for Pacer::EdgeMixin do
     let(:dest) { graph2 }
   }) do
     describe '#clone_into', :transactions => false do
+      before { pending 'support temporary hash indices for clone/copy' unless graph.supports_manual_indices? }
       context 'including vertices' do
         subject { e0.clone_into(dest, :create_vertices => true) }
 
@@ -81,6 +82,7 @@ shared_examples_for Pacer::EdgeMixin do
     end
 
     describe '#copy_into', :transactions => false do
+      before { pending unless graph.supports_manual_indices? }
       subject { v0.clone_into(dest); v1.clone_into(dest); e0.copy_into(dest) }
       its(:label) { should == 'links' }
       its(:graph) { should equal(dest) }

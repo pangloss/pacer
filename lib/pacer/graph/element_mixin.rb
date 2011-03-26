@@ -55,7 +55,7 @@ module Pacer
           set_property(key, value)
         end
       else
-        remove_property(key)
+        remove_property(key) if property_keys.include? key
       end
     end
 

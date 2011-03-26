@@ -181,6 +181,10 @@ module Pacer
       end
     end
 
+    def supports_manual_indices?
+      true
+    end
+
     protected
 
     def creating_elements

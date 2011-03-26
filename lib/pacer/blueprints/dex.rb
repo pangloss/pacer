@@ -66,22 +66,6 @@ module Pacer
       end
     end
 
-    def set_property(key, value)
-      case value
-      when String
-        setProperty(key, java.lang.String.new(value))
-      when Fixnum
-        int = java.lang.Integer
-        if value > int.MIN_VALUE and value < int.MAX_VALUE
-          setProperty(key, value.to_java(:int))
-        else
-          setProperty(key, value.to_yaml)
-        end
-      else
-        setProperty(key, value)
-      end
-    end
-
     def sanitize_properties(props)
       pairs = props.map do |name, value|
         [name, encode_property(value)]
@@ -90,7 +74,7 @@ module Pacer
     end
 
     def encode_property(value)
-      r = case value
+      case value
       when nil
         nil
       when String
@@ -114,8 +98,6 @@ module Pacer
       else
         value.to_yaml
       end
-      pp value => r
-      r
     end
 
     if RUBY_VERSION =~ /^1.9/
@@ -134,6 +116,10 @@ module Pacer
           value
         end
       end
+    end
+
+    def supports_manual_indices?
+      false
     end
   end
 
