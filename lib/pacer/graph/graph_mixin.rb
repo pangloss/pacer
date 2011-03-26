@@ -181,6 +181,26 @@ module Pacer
       end
     end
 
+    def supports_circular_edges?
+      true
+    end
+
+    def supports_custom_element_ids?
+      true
+    end
+
+    def supports_automatic_indices?
+      true
+    end
+
+    def supports_manual_indices?
+      true
+    end
+
+    def supports_edge_indices?
+      true
+    end
+
     protected
 
     def creating_elements

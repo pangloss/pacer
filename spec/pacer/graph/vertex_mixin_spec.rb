@@ -49,13 +49,14 @@ shared_examples_for Pacer::VertexMixin do
     let(:dest) { Pacer.tg }
   },
   'into graph2' => proc {
+    before { pending 'support temporary hash indices for clone/copy' unless graph.supports_manual_indices? }
     let(:dest) { graph2 }
   }) do
     describe '#clone_into', :transactions => false do
       subject { v0.clone_into(dest) }
       its(:properties) { should == { 'name' => 'eliza' } }
       its(:graph) { should equal(dest) }
-      its('element_id.to_s') { should == v0.element_id.to_s if supports_custom_id }
+      its('element_id.to_s') { should == v0.element_id.to_s if graph.supports_custom_element_ids? }
     end
 
     describe '#copy_into', :transaction => false do
