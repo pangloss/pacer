@@ -56,7 +56,7 @@ shared_examples_for Pacer::EdgeMixin do
       context 'including vertices' do
         subject { e0.clone_into(dest, :create_vertices => true) }
 
-        its('element_id.to_s') { should == e0.element_id.to_s if supports_custom_id }
+        its('element_id.to_s') { should == e0.element_id.to_s if graph.supports_custom_element_ids? }
         its(:label) { should == 'links' }
         its(:graph) { should equal(dest) }
         its('in_vertex.properties') { should == { 'name' => 'eliza' } }
@@ -72,7 +72,7 @@ shared_examples_for Pacer::EdgeMixin do
             v0.clone_into(dest)
             v1.clone_into(dest)
           end
-          its('element_id.to_s') { should == e0.element_id.to_s if supports_custom_id }
+          its('element_id.to_s') { should == e0.element_id.to_s if graph.supports_custom_element_ids? }
           its(:label) { should == 'links' }
           its(:graph) { should equal(dest) }
           its('in_vertex.properties') { should == { 'name' => 'eliza' } }
