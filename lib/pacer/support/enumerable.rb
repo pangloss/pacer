@@ -57,16 +57,16 @@ module Enumerable
       self
     else
       based_on = opts[:based_on]
-      if opts[:unwrap] or based_on and based_on.extensions and based_on.graph
-        source = proc { self.map { |e| e.element } }
+      if opts[:unwrap] or based_on and based_on.extensions.any? and based_on.is_a? Pacer::Core::Graph::ElementRoute
+        source = Pacer::Route.new(:source => self, :element_type => :object).map { |e| e.element }
       else
         source = self
       end
       if based_on
-        Pacer::Route.new(:source => source, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => source, :element_type => (opts[:element_type] || :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
       end
     end
   end

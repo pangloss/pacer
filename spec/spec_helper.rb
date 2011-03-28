@@ -75,6 +75,7 @@ end
 def for_each_graph(usage_style = :read_write, indices = true, &block)
   for_tg(usage_style, indices, &block)
   for_neo4j(usage_style, indices, &block)
+  for_dex(usage_style, indices, &block)
 end
 
 def use_graph?(name)
@@ -89,7 +90,6 @@ end
 def for_tg(usage_style = :read_write, indices = true, &block)
   return unless use_graph? 'tg'
   describe 'tg' do
-    let(:supports_custom_id) { true }
     let(:graph) do
       g = Pacer.tg
       unless indices
@@ -104,32 +104,33 @@ def for_tg(usage_style = :read_write, indices = true, &block)
 end
 
 
-def for_neo4j(usage_style = :read_write, indices = true, &block)
-  return unless use_graph? 'neo4j'
-  describe 'neo4j' do
-    let(:supports_custom_id) { false }
+def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)
+  return unless use_graph? name
+  describe name do
     let(:graph) do
       if indices
-        $neo_graph
+        source_graph_1
       else
-        $neo_graph_no_indices
+        unindexed_graph
       end
     end
     let(:graph2) do
-      $neo_graph2
+      source_graph_2
     end
     if usage_style == :read_only
       before(:all) do
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+        source_graph_1.v.delete!
+        source_graph_2.v.delete!
+        unindexed_graph.v.delete! if unindexed_graph
       end
     end
     around do |spec|
       if usage_style == :read_write
-        $neo_graph.v.delete!
-        $neo_graph2.v.delete!
+        source_graph_1.v.delete!
+        source_graph_2.v.delete!
+        unindexed_graph.v.delete! if unindexed_graph
       end
-      if spec.use_transactions?
+      if transactions and spec.use_transactions?
         graph.manual_transactions do
           graph2.manual_transactions do
             begin
@@ -150,6 +151,14 @@ def for_neo4j(usage_style = :read_write, indices = true, &block)
   end
 end
 
+def for_neo4j(usage_style = :read_write, indices = true, &block)
+  for_graph('neo4j', usage_style, indices, true, $neo_graph, $neo_graph2, $neo_graph_no_indices, block)
+end
+
+def for_dex(usage_style = :read_write, indices = true, &block)
+  for_graph('dex', usage_style, indices, false, $dex_graph, $dex_graph2, nil, block)
+end
+
 def use_simple_graph_data
   let(:setup_data) { e0; e1 }
   let(:v0) { graph.create_vertex :name => 'eliza' }
@@ -162,11 +171,11 @@ def use_pacer_graphml_data(usage_style = :read_write, version = '')
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
-      graph.import 'spec/data/pacer.graphml'
+      graph.import 'spec/data/pacer.graphml' if graph
     end
   else
     let(:setup_data) do
-      graph.import 'spec/data/pacer.graphml'
+      graph.import 'spec/data/pacer.graphml' if graph
     end
   end
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
@@ -183,28 +192,6 @@ RSpec.configure do |c|
   Pacer.verbose = false
   c.mock_with :rr
 
-  c.before(:suite) do
-    if use_graph?('neo4j')
-      path1 = File.expand_path('tmp/spec.neo4j')
-      dir = Pathname.new(path1)
-      dir.rmtree if dir.exist?
-      $neo_graph = Pacer.neo4j(path1)
-
-      path2 = File.expand_path('tmp/spec.neo4j.2')
-      dir = Pathname.new(path2)
-      dir.rmtree if dir.exist?
-      $neo_graph2 = Pacer.neo4j(path2)
-
-      path3 = File.expand_path('tmp/spec_no_indices.neo4j')
-      dir = Pathname.new(path3)
-      dir.rmtree if dir.exist?
-      $neo_graph_no_indices = Pacer.neo4j(path3)
-      $neo_graph_no_indices.drop_index :vertices
-      $neo_graph_no_indices.drop_index :edges
-    end
-  end
-
-
   c.alias_it_should_behave_like_to :it_uses, '-'
 
   # Not sure what this does: ...
@@ -220,3 +207,38 @@ RSpec.configure do |c|
   # }
 end
 
+puts "Using JRuby #{ JRUBY_VERSION } in #{ RUBY_VERSION } mode."
+if ENV['GRAPHS'].to_s == ''
+  puts "Testing all graphs."
+else
+  puts "Testing graphs: #{ ENV['GRAPHS'] }."
+end
+if use_graph?('neo4j')
+  path1 = File.expand_path('tmp/spec.neo4j')
+  dir = Pathname.new(path1)
+  dir.rmtree if dir.exist?
+  $neo_graph = Pacer.neo4j(path1)
+
+  path2 = File.expand_path('tmp/spec.neo4j.2')
+  dir = Pathname.new(path2)
+  dir.rmtree if dir.exist?
+  $neo_graph2 = Pacer.neo4j(path2)
+
+  path3 = File.expand_path('tmp/spec_no_indices.neo4j')
+  dir = Pathname.new(path3)
+  dir.rmtree if dir.exist?
+  $neo_graph_no_indices = Pacer.neo4j(path3)
+  $neo_graph_no_indices.drop_index :vertices
+  $neo_graph_no_indices.drop_index :edges
+end
+if use_graph?('dex')
+  path1 = File.expand_path('tmp/spec.dex')
+  dir = Pathname.new(path1)
+  dir.rmtree if dir.exist?
+  $dex_graph = Pacer.dex(path1)
+
+  path2 = File.expand_path('tmp/spec.dex.2')
+  dir = Pathname.new(path2)
+  dir.rmtree if dir.exist?
+  $dex_graph2 = Pacer.dex(path2)
+end

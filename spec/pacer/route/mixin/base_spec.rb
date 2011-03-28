@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_tg do
+for_each_graph do
   describe Pacer::Core::Route, 'pipe creation internals' do
     context "graph.v" do
       describe '#build_pipeline' do

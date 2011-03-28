@@ -62,7 +62,7 @@ shared_examples_for Pacer::GraphMixin do
   describe '#create_vertex' do
     context 'existing' do
       it 'should raise an exception' do
-        if supports_custom_id
+        if graph.supports_custom_element_ids?
           expect { graph.create_vertex v0.element_id }.to raise_error(Pacer::ElementExists)
         end
       end
@@ -76,12 +76,12 @@ shared_examples_for Pacer::GraphMixin do
       context 'and an id' do
         subject { graph.create_vertex 123, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
-        its('element_id.to_i') { should == 123 if supports_custom_id }
+        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
 
         context 'and mixins' do
           subject { graph.create_vertex 123, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
-          its('element_id.to_i') { should == 123 if supports_custom_id }
+          its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
           it_behaves_like 'a vertex with a mixin'
         end
       end
@@ -89,11 +89,11 @@ shared_examples_for Pacer::GraphMixin do
 
     context 'with an id' do
       subject { graph.create_vertex 123 }
-      its('element_id.to_i') { should == 123 if supports_custom_id }
+      its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
 
       context 'and mixins' do
         subject { graph.create_vertex 123, Tackle::SimpleMixin }
-        its('element_id.to_i') { should == 123 if supports_custom_id }
+        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
         it_behaves_like 'a vertex with a mixin'
       end
     end
@@ -111,7 +111,7 @@ shared_examples_for Pacer::GraphMixin do
 
     context 'existing' do
       it 'should raise an exception' do
-        if supports_custom_id
+        if graph.supports_custom_element_ids?
           expect { graph.create_edge e0.element_id, from, to, :connects }.to raise_error(Pacer::ElementExists)
         end
       end
@@ -127,13 +127,13 @@ shared_examples_for Pacer::GraphMixin do
         subject { graph.create_edge 123, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 123 if supports_custom_id }
+        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
 
         context 'and mixins' do
           subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its('element_id.to_i') { should == 123 if supports_custom_id }
+          its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
           it_behaves_like 'an edge with a mixin'
         end
       end
@@ -142,12 +142,12 @@ shared_examples_for Pacer::GraphMixin do
     context 'with an id' do
       subject { graph.create_edge 123, from, to, :connects }
       its(:label) { should == 'connects' }
-      its('element_id.to_i') { should == 123 if supports_custom_id }
+      its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
 
       context 'and mixins' do
         subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 123 if supports_custom_id }
+        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
         it_behaves_like 'an edge with a mixin'
       end
     end
@@ -210,11 +210,13 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#index_name' do
+
     it 'should have 2 indices' do
-      graph.indices.count.should == 2
+      graph.indices.count.should == 2 if graph.supports_automatic_indices?
     end
 
     context "'vertices'" do
+      around { |spec| spec.run if graph.supports_automatic_indices? }
       subject { graph.index_name 'vertices' }
       it { should_not be_nil }
       its(:index_name) { should == 'vertices' }
@@ -231,6 +233,7 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     context "'edges'" do
+      around { |spec| spec.run if graph.supports_edge_indices? }
       subject { graph.index_name 'edges' }
       it { should_not be_nil }
       its(:index_name) { should == 'edges' }
@@ -247,6 +250,7 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     context 'missing' do
+      around { |spec| spec.run if graph.supports_manual_indices? }
       subject { graph.index_name 'invalid' }
       it { should be_nil }
       context 'edge' do
@@ -300,10 +304,18 @@ shared_examples_for Pacer::GraphMixin do
 
   describe '#index_class' do
     subject { graph.index_class(:vertex) }
-    it { should == graph.element_type(:vertex).java_class.to_java }
+    specify 'should be the class the index returns when queried for index_class' do
+      if graph.is_a? Pacer::DexGraph
+        subject.should == graph.indices.first.index_class
+      else
+        subject.should == graph.index_name('vertices').index_class
+      end
+    end
   end
 
   describe '#import' do
+    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
+
     it 'should load the data into an empty graph' do
       graph2.v.count.should == 0
       graph2.import 'spec/data/pacer.graphml'
@@ -312,13 +324,14 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     it 'should not load the data into a graph with conflicting vertex ids' do
-      if supports_custom_id
+      if graph.supports_custom_element_ids?
         expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
   end
 
   describe '#export' do
+    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
       graph.export 'tmp/graph_mixin_spec_export.graphml'
       graph2.import 'tmp/graph_mixin_spec_export.graphml'
@@ -331,6 +344,10 @@ end
 
 
 for_each_graph :read_only, false do
+  around do |spec|
+    spec.run if graph
+  end
+
   let(:v0) { graph.create_vertex }
   let(:v1) { graph.create_vertex }
   let(:e0) { graph.create_edge nil, v0, v1, :links }

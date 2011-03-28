@@ -27,14 +27,11 @@ module Pacer
       end
     end
 
-    def find_or_create_vertex(id, *args)
-    end
-
     def create_vertex(*args)
       id, modules, props = id_modules_properties(args)
       vertex = creating_elements { addVertex(id) }
       vertex.graph = self
-      sanitize_properties(props).each { |k, v| vertex[k.to_s] = v } if props
+      props.each { |k, v| vertex[k.to_s] = v } if props
       if modules.any?
         vertex.add_extensions modules
       else
@@ -46,7 +43,7 @@ module Pacer
       _, modules, props = id_modules_properties(args)
       edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
       edge.graph = self
-      sanitize_properties(props).each { |k, v| edge[k.to_s] = v } if props
+      props.each { |k, v| edge[k.to_s] = v } if props
       if modules.any?
         edge.add_extensions modules
       else
@@ -181,6 +178,26 @@ module Pacer
       end
     end
 
+    def supports_circular_edges?
+      true
+    end
+
+    def supports_custom_element_ids?
+      true
+    end
+
+    def supports_automatic_indices?
+      true
+    end
+
+    def supports_manual_indices?
+      true
+    end
+
+    def supports_edge_indices?
+      true
+    end
+
     protected
 
     def creating_elements
@@ -202,25 +219,5 @@ module Pacer
       id = nil if id == props or modules.include? id
       [id, modules, props]
     end
-
-    def sanitize_properties(props)
-      props.inject({}) do |result, (name, value)|
-        case value
-        when Symbol
-          value = value.to_s
-        when ''
-          value = nil
-        when String
-          value = value.strip
-          value = nil if value == ''
-        when Numeric
-        else
-          value = value.to_s
-        end
-        result[name] = value if value
-        result
-      end
-    end
-
   end
 end

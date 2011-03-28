@@ -23,7 +23,9 @@ for_tg(:read_only) do
 
       context '(0..1)' do
         subject { graph.v[:type].most_frequent(0..1) }
-        it { should == ['project', 'person'] }
+        it { should be_a Pacer::Core::Route }
+        its(:element_type) { should == Object }
+        its(:to_a) { should == ['project', 'person'] }
       end
 
       context '(0, true)' do

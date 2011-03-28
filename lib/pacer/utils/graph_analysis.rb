@@ -53,13 +53,13 @@ module Pacer
         def property_variations(result, node)
           prop_keys = group_count { |v| v.properties.keys.sort }
           prop_keys.each do |keys, count|
-            p_k_route = result.v(:element_type => 'property keys', :names => keys.inspect)
-            if p_k_route.none?
-              result.create_vertex :element_type => 'property keys', :names => keys.inspect, :number => keys.count, :count => 0
+            prop_key = result.v(:element_type => 'property keys').detect { |v| v[:keys] == keys }
+            unless prop_key
+              prop_key = result.create_vertex :element_type => 'property keys', :keys => keys, :number => keys.count, :count => 0
             end
-            p_k_route.first[:count] += count
+            prop_key[:count] += count
             puts "  #{ count } with #{ keys.count } properties: #{ keys.inspect }"
-            node.add_edges_to :properties, p_k_route, :count => count
+            node.add_edges_to :properties, prop_key, :count => count
           end
         end
       end
