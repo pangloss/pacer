@@ -107,9 +107,9 @@ module Pacer::Routes
         if range.is_a? Fixnum
           result.first if result
         elsif result
-          result.collect { |k, v| k }
+          result.collect { |k, v| k }.to_route(:based_on => self)
         else
-          []
+          [].to_route(:based_on => self)
         end
       end
     end
