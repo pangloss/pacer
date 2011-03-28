@@ -1,11 +1,31 @@
 Pacer is a JRuby library that enables very expressive graph traversals.
 
-Please look at my "Introducing Pacer":http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer post for a detailed introduction and explanation of how Pacer is at once similar to and quite different from "Gremlin":http://gremlin.tinkerpop.com , the project that inspired it.
+It currently supports 2 major graph database: "Neo4j":http://neo4j.org and "Dex":http://www.sparsity-technologies.com/dex using the "Tinkerpop":http://tinkerpop.com graphdb stack. Plus there's a very convenient in-memory graph called TinkerGraph which is part of "Blueprints":http://blueprints.tinkerpop.com .
 
-Until I write some documentation, you may find it helpful to refer to the following specs files as well:
+Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool "Pipes":http://pipes.tinkerpop.com library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
 
-* "base_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/base_spec.rb
-* "route_operations_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/mixin/route_operations_spec.rb
-* "paths_route_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/paths_route_spec.rb
-* "vertices_route_spec.rb":https://github.com/pangloss/pacer/blob/master/spec/pacer/route/vertices_route_spec.rb
+To get started, you need to know just a few methods. First, open up a graph and add some vertices to it:
+
+    >> dex = Pacer.dex '/tmp/dex_demo'
+    >> dex.create_vertex :name => 'Pacer', :type => 'project'
+    >> dex.create_vertex :name => 'Data', :type => 'graph'
+
+Now, let's see what we've got:
+
+    >> dex.v
+    #<V[1024]> #<V[1025]>
+    Total: 2
+    => #<GraphV>
+
+There are our vertices. Let's look their properties:
+
+    >> dex.v.properties
+    {"name"=>"Pacer", "type"=>"project"} {"name"=>"Data", "type"=>"graph"}   
+    Total: 2
+    => #<GraphV -> Obj-Map>
+
+
+
+Please look at my "Introducing Pacer":http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer post for a simple introduction and explanation of how Pacer is at once similar to and quite different from "Gremlin":http://gremlin.tinkerpop.com , the project that inspired it.
+
 
