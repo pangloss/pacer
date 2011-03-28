@@ -1,10 +1,12 @@
+# Pacer
+
 Pacer is a JRuby library that enables very expressive graph traversals.
 
-It currently supports 2 major graph database: "Neo4j":http://neo4j.org and "Dex":http://www.sparsity-technologies.com/dex using the "Tinkerpop":http://tinkerpop.com graphdb stack. Plus there's a very convenient in-memory graph called TinkerGraph which is part of "Blueprints":http://blueprints.tinkerpop.com .
+It currently supports 2 major graph database: [Neo4j](http://neo4j.org) and [Dex](http://www.sparsity-technologies.com/dex) using the [Tinkerpop](http://tinkerpop.com) graphdb stack. Plus there's a very convenient in-memory graph called TinkerGraph which is part of [Blueprints](http://blueprints.tinkerpop.com).
 
-Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool "Pipes":http://pipes.tinkerpop.com library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
+Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool [Pipes](http://pipes.tinkerpop.com) library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
 
-=== Example traversals
+## Example traversals
 
 
 Friend recommendation algorithm expressed in basic traversal functions:
@@ -22,7 +24,7 @@ or to take it one step further:
 
 
 
-=== Create and populate a graph
+## Create and populate a graph
 
 To get started, you need to know just a few methods. First, open up a graph (if one doesn't exist it will be automatically created) and add some vertices to it:
 
@@ -66,7 +68,7 @@ That's great for creating an edge but what if I've got lots to create? Try this 
 
 There is plenty more to see as well! Please dig into the code and the spec suite to find loads of examples and edge cases. And if you think of a case that I've missed, I'll greatly appreciate your contributions!
 
-=== Design Philosophy
+## Design Philosophy
 
 I want Pacer and its ecosystem to become a repository for real implementations of ideas, best practices and techniques for streaming data manipulation. I've got lots of ideas that I'd like to add, and although Pacer seems to be quite rock solid right now -- and I am using it in limited production environments -- it is still in flux. If we find a better way to do something, we're going to do it that way even if that means breaking changes from one release to another.
 
@@ -75,11 +77,11 @@ Once Pacer matures further, a decision will be made to 'lock it down' at least a
 Pacer is meant to be extensible and pluggable. If you look at any file in the filter/ side_effect/ or transform/ folders, you'll see that they add features to Pacer in a completely self-contained way. If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-<feature name> plugin! I will be releasing some of those as well in the near future.
 
 
-=== Gremlin
+## Gremlin
 
 
-If you're already familiar with "Gremlin":http://gremlin.tinkerpop.com , please look at my "Introducing Pacer":http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer post for a simple introduction and explanation of how Pacer is at once similar to and quite different from Gremlin, the project that inspired it. That post is a little out of date at this point since it refers to the original version of Gremlin. Groovy Gremlin is the latest version, inspired in turn by Pacer!
+If you're already familiar with [Gremlin](http://gremlin.tinkerpop.com), please look at my [Introducing Pacer](http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer) post for a simple introduction and explanation of how Pacer is at once similar to and quite different from Gremlin, the project that inspired it. That post is a little out of date at this point since it refers to the original version of Gremlin. Groovy Gremlin is the latest version, inspired in turn by Pacer!
 
-=== Test Coverage
+## Test Coverage
 
 I'm aiming for 100% test coverage in Pacer and am currently nearly there in the core classes, but there is a way to go with the filter, transform and side effect route modules. Open coverage/index.html to see the current state of test coverage. And of course contributions would be much apreciated.
