@@ -73,7 +73,7 @@ for_dex do
 
     describe '#indices' do
       subject { graph.indices.to_a }
-      its(:count) { should == 2 }
+      it { should_not be_empty }
     end
 
     describe '#sanitize_properties' do
