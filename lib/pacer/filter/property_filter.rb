@@ -83,6 +83,7 @@ module Pacer
           pipe, args_array = expand_extension_conditions(pipe, args_array) if expand_extensions
           pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
             hash.inject(p) do |p2, (key, value)|
+              value = graph.encode_property(value)
               if value.respond_to? :to_java
                 jvalue = value.to_java
               elsif value.respond_to? :to_java_string

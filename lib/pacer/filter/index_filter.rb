@@ -10,7 +10,7 @@ module Pacer
       def count
         if @index and @key and @value
           if @index.respond_to? :count
-            @index.count(@key, @value)
+            @index.count(@key, graph.encode_property(@value))
           else
             super
           end
@@ -22,7 +22,7 @@ module Pacer
       protected
 
       def source_iterator
-        src = index.get(key, value) || java.util.ArrayList.new
+        src = index.get(key, graph.encode_property(value)) || java.util.ArrayList.new
         src.iterator
       end
 
