@@ -48,10 +48,8 @@ module Pacer
       end
 
       def element_id_hashset(collection)
-        if collection.respond_to? :element_ids
+        if collection.is_a? Pacer::Core::Graph::ElementRoute
           collection.element_ids.to_hashset
-        else
-          collection.to_hashset(:element_id) rescue nil
         end
       end
 
