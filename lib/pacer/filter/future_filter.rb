@@ -62,15 +62,7 @@ module Pacer
 
       def lookahead_pipes
         lookahead_routes.map do |route|
-          # The lookahead route actually requires a pipeline object because it
-          # changes the starts on the same object as it requests the next result
-          # from.
-          s, e = route.send(:build_pipeline)
-          if s.equal?(e)
-            s
-          else
-            Pacer::Pipes::Pipeline.new s, e
-          end
+          Pacer::Route.pipeline(route)
         end
       end
 

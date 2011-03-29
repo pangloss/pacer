@@ -115,8 +115,8 @@ for_dex do
         subject[:empty].should be_nil
       end
 
-      specify 'numbers should be unmodified' do
-        subject[:integer].should == 121
+      specify 'numbers should be javafied' do
+        subject[:integer].should == 121.to_java(:int)
         subject[:float].should == 100.001
       end
 
