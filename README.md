@@ -74,13 +74,15 @@ I want Pacer and its ecosystem to become a repository for real implementations o
 
 Once Pacer matures further, a decision will be made to 'lock it down' at least a little more, hopefully there will be a community in place by then to help determine the right time for that to happen!
 
-Pacer is meant to be extensible and pluggable. If you look at any file in the filter/ side_effect/ or transform/ folders, you'll see that they add features to Pacer in a completely self-contained way. If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-<feature name> plugin! I will be releasing some of those as well in the near future.
-
 ## Pluggable Architecture
 
-Pacer is built on a very modular architecture and nearly every chainable route method is actually implemented in a pluggable module. See the lib/pacer/filter folder for a handful of examples that vary widely in complexity.
+Pacer is meant to be extensible and is built on a very modular architecture. Nearly every chainable route method is actually implemented in an independent module that is plugged into the route only when it's in use. That allows great flexibility in adding methods to routes without clogging up the method namespace. It also makes it natural to make pacer plugin gems.
 
-To see how to build your own Pacer plugin, see my example plugin at https://github.com/pangloss/pacer-bloomfilter which also has a readme file that goes into considerable detail on the process of creating plugins and provides some additional usage examples as well.
+There are lots of examples of route extensions right inside Pacer. Have a look at the [lib/pacer/filter](https://github.com/pangloss/pacer/tree/develop/lib/pacer/filter), [side_effect](https://github.com/pangloss/pacer/tree/develop/lib/pacer/side_effect) and [transform](https://github.com/pangloss/pacer/tree/develop/lib/pacer/transform) folders to see the modules that are built into Pacer. They vary widely in complexity, so take a look around.
+
+If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-&lt;feature name&gt; plugin! To see how to build your own Pacer plugin, see my [example pacer-bloomfilter plugin](https://github.com/pangloss/pacer-bloomfilter) which also has a readme file that goes into considerable detail on the process of creating plugins and provides some additional usage examples as well.
+
+As a side note, don't worry about any magic happening behind the scenes to discover or automatically load pacer plugins, there is none of that! If you want to use a pacer plugin, treat it like any other gem, add it to your Gemfile (if that's what you use) and <code>require</code> the gem as normal if you need it.
 
 ## Gremlin
 
