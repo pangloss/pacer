@@ -50,6 +50,8 @@ module Pacer
       def element_id_hashset(collection)
         if collection.is_a? Pacer::Core::Graph::ElementRoute
           collection.element_ids.to_hashset
+        else
+          collection.to_hashset(:element_id) rescue nil
         end
       end
 
