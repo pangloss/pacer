@@ -76,6 +76,11 @@ Once Pacer matures further, a decision will be made to 'lock it down' at least a
 
 Pacer is meant to be extensible and pluggable. If you look at any file in the filter/ side_effect/ or transform/ folders, you'll see that they add features to Pacer in a completely self-contained way. If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-<feature name> plugin! I will be releasing some of those as well in the near future.
 
+## Pluggable Architecture
+
+Pacer is built on a very modular architecture and nearly every chainable route method is actually implemented in a pluggable module. See the lib/pacer/filter folder for a handful of examples that vary widely in complexity.
+
+To see how to build your own Pacer plugin, see my example plugin at https://github.com/pangloss/pacer-bloomfilter which also has a readme file that goes into considerable detail on the process of creating plugins and provides some additional usage examples as well.
 
 ## Gremlin
 
