@@ -55,6 +55,18 @@ module Pacer
       def empty(back)
         Pacer::Route.new :filter => :empty, :back => back
       end
+
+      # A pipeline is sometimes required if a pipe needs to be passed
+      # into a method that will change the starts on the same object
+      # that it requests the next result from.
+      def pipeline(route)
+        s, e = route.send(:build_pipeline)
+        if s.equal?(e)
+          s
+        else
+          Pacer::Pipes::Pipeline.new s, e
+        end
+      end
     end
 
     include Pacer::Core::Route
