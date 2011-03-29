@@ -1,6 +1,7 @@
 module Pacer
   # Import the Pipes and related objects that we'll be using.
   module Pipes
+    # TODO: move pipe imports to the modules that actually use them.
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.IdentityPipe
     import com.tinkerpop.pipes.Pipeline
