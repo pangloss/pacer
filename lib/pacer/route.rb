@@ -162,7 +162,7 @@ module Pacer
           end
         end
       end
-      extend @function if @function
+      self.extend @function if @function
     end
 
     def back_object(args)
