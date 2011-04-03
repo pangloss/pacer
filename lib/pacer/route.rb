@@ -7,7 +7,18 @@
 end
 
 module Pacer
+  # The base class for almost everything in Pacer. Every route is an
+  # instance of this class with a variety of modules mixed into the
+  # instance at runtime.
+  #
+  # The class definition only contains methods directly related to the
+  # construction of new Routes. For methods more likely to be used, see
+  # the {Core::Route} module which is always mixed into this class.
+  #
+  # @see Core::Route
   class Route
+
+    @private
     module Helpers
       class << self
         def clear_cache
@@ -52,6 +63,17 @@ module Pacer
     end
 
     class << self
+      # This method is useful for creating sideline routes that branch
+      # off of the current route.
+      #
+      # It creates a new route without any source based on the type,
+      # filters, function and extensions of the given route. The main
+      # thing about the returned route is that the pipeline that is
+      # built from it will not include any of the pipes that make up
+      # the route it's based on.
+      #
+      # @param [Route] back the route the new route is based on.
+      # @return [Route]
       def empty(back)
         Pacer::Route.new :filter => :empty, :back => back
       end
@@ -59,6 +81,9 @@ module Pacer
       # A pipeline is sometimes required if a pipe needs to be passed
       # into a method that will change the starts on the same object
       # that it requests the next result from.
+      #
+      # @param [Route] route the route to create a pipeline based on
+      # @return [Pacer::Pipes::Pipeline] an instantiated pipeline
       def pipeline(route)
         s, e = route.send(:build_pipeline)
         if s.equal?(e)
@@ -72,8 +97,62 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
-    attr_reader :function, :element_type
+    # The function mixed into this instance
+    attr_reader :function
 
+    # The type of object that this route emits.
+    attr_reader :element_type
+
+    # Create a new route. It should be very rare that you would need to
+    # directly create a Route object.
+    #
+    # See {Core::Graph::GraphRoute} and {GraphMixin} for methods
+    # to build routes based on a graph.
+    #
+    # See {ElementMixin}, {VertexMixin} and
+    # {EdgeMixin} for methods to build routes based on an
+    # individual graph element.
+    #
+    # @see Core::Graph::GraphRoute
+    # @see GraphMixin
+    # @see ElementMixin
+    # @see VertexMixin
+    # @see EdgeMixin
+    #
+    # See Pacer's {Enumerable#to_route} method to create a route based
+    # on an Array, a Set or any other Enumerable type.
+    #
+    # @param [Hash] args
+    # @option args [Graph] :graph the graph this route is based on
+    # @option args [Route] :bace the previous route in the chain
+    # @option args [element type] :element_type
+    # @option args [Module] :modules additional modules to mix in
+    # @option args [Symbol, Module] :filter the filter to use as this
+    #   route's function
+    # @option args [Symbol, Module] :side_effect the side effect to use
+    #   as this route's function (Also triggers the {Core::SideEffect}
+    #   mixin)
+    # @option args [Symbol, Module] :transform the transform module to
+    #   use as this route's function
+    # @option args [[Module]] :extensions extensions for this route
+    #
+    # All other keys sent to the args method will be converted into
+    # setter method calls and called against the instantiated route to
+    # allow modules to define their own setup however they need.
+    #
+    # @example If a route is constructed with the a custom key:
+    #   route = Route.new(:filter => :block, :block => proc { |element| element.element_id.even? })
+    #
+    #   # is theoretically the same as
+    #
+    #   route = Route.new
+    #   route.extend Pacer::Filter::BlockFilter
+    #   route.block = proc { |element| element.element_id.even? }
+    #   route
+    #
+    # When the route object is fully initialized, the
+    # {#after_initialize} method is called to allow mixins to do any
+    # additional setup.
     def initialize(args = {})
       self.graph = args[:graph]
       self.back = args[:back]
@@ -91,6 +170,13 @@ module Pacer
       raise
     end
 
+    # Set the element type of this route and include the apropriate
+    # mixin to support the element type.
+    #
+    # TODO should this method be protected?
+    #
+    # @param [:vertex, :edge, :mixed, element type, Object] et the
+    #   element type to use
     def element_type=(et)
       if graph
         @element_type = graph.element_type(et)
@@ -111,6 +197,10 @@ module Pacer
       end
     end
 
+    # Iterate over all elements emitted from this route.
+    #
+    # @yield [element] the emitted element
+    # @return [Enumerator] only if no block is given.
     def each(&block)
       if @each_method
         send(@each_method, &block)
@@ -122,9 +212,13 @@ module Pacer
     protected
 
     # This callback may be overridden. Be sure to call super() though.
+    # @return ignored
     def after_initialize
     end
 
+    # Find the module for the function to include based on the :filter,
+    # :side_effect or :transform argument given to {#initialize} and
+    # extend this instance with it.
     def include_function(args)
       if args[:side_effect]
         extend Pacer::Core::SideEffect
@@ -177,6 +271,8 @@ module Pacer
       end
     end
 
+    # If no element type has been specified, try to find one by
+    # searching back along the route chain.
     def set_element_type(args)
       if args[:element_type]
         self.element_type = args[:element_type]
@@ -189,6 +285,8 @@ module Pacer
       end
     end
 
+    # extends this class with any modules passed to {#initialize} in the
+    # :modules key.
     def include_other_modules(args)
       if mods = args[:modules]
         @modules = [*mods]
@@ -204,6 +302,8 @@ module Pacer
       end
     end
 
+    # Creates a terse, human-friendly name for the class based on its
+    # element type, function and info.
     def inspect_class_name
       s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
       s = "#{s}-#{@function.name.split('::').last.sub(/Filter|Route$/, '')}" if @function
