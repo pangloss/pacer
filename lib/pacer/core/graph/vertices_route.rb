@@ -6,8 +6,8 @@ module Pacer::Core::Graph
 
     # Extends the route with out edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
@@ -19,8 +19,8 @@ module Pacer::Core::Graph
 
     # Extends the route with in edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
@@ -32,8 +32,8 @@ module Pacer::Core::Graph
 
     # Extends the route with all edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
@@ -45,8 +45,8 @@ module Pacer::Core::Graph
 
     # Extend route with the additional vertex property and block filters.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def v(*filters, &block)
       filter(*filters, &block)

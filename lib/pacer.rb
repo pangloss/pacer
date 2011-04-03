@@ -42,6 +42,9 @@ module Pacer
   require 'pacer/side_effect'
 
   class << self
+    # A global place for pacer to put debug info if it's tucked deep in
+    # its internals. Should typically not be used unless a mysterious
+    # bug needs to be analyzed but that never really happens ;)
     attr_accessor :debug_info
 
     # Returns the time pacer was last reloaded (or when it was started).
@@ -71,6 +74,15 @@ module Pacer
       @hide_route_elements = bool
     end
 
+    # Returns whether elements should be displayed. Also yields,
+    # temporarily setting the value to true to prevent a route
+    # containing routes from printing the contained routes' elements or
+    # going recursive if the route were to somehow contain itself.
+    #
+    # @todo don't use negative method names.
+    #
+    # @yield print elements while inside this block
+    # @return [true, false] should you not print elemets?
     def hide_route_elements
       if block_given?
         if @hide_route_elements
@@ -89,37 +101,51 @@ module Pacer
     end
 
     # Returns how many terminal columns we have.
+    # @return [Fixnum] number of terminal columns
     def columns
       @columns || 150
     end
 
-    # Tell the graph how many terminal columns we have.
+    # Tell Pacer how many terminal columns we have so it can print
+    # elements out in nice columns.
+    # @param [Fixnum] n number of terminal columns
     def columns=(n)
       @columns = n
     end
 
     # Returns how many matching items should be displayed by #inspect before we
     # give up and display nothing but the route definition.
+    # @return [Fixnum] maximum number of elements to display
     def inspect_limit
       @inspect_limit || 500
     end
 
-    # Alter the inspect limit.
+    # Set the maximum number of elements to print on the screen when
+    # inspecting a route.
+    # @param [Fixnum] n maximum number of elements to display
     def inspect_limit=(n)
       @inspect_limit = n
     end
 
+    # Set Pacer's general verbosity.
+    # @param [:very, true, false] default is true, :very is more
+    #   verbose, false is quiet
     def verbose=(v)
       @verbose = v
     end
 
+    # Current verbosity setting
+    # @return [:very, true, false]
     def verbose?
       @verbose = true if @verbose.nil?
       @verbose
     end
     alias verbose verbose?
 
-    # TODO make things register for these callbacks.
+    # Clear all cached data that may become invalid when {#reload!} is
+    # called.
+    #
+    # @todo reimpliment as callbacks to keep the code all in one place.
     def clear_plugin_cache
       VertexWrapper.clear_cache
       EdgeWrapper.clear_cache
@@ -127,26 +153,48 @@ module Pacer
       Filter::ExpressionFilter::Parser.reset
     end
 
+    # Is the object a vertex?
     def vertex?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Vertex or
         (element.respond_to? :element and
          element.element.is_a? com.tinkerpop.blueprints.pgm.Vertex)
     end
 
+    # Is the object an edge?
     def edge?(element)
       element.is_a? com.tinkerpop.blueprints.pgm.Edge
         (element.respond_to? :element and
          element.element.is_a? com.tinkerpop.blueprints.pgm.Edge)
     end
 
+    # Blueprints constant for manual index.
+    # @return [com.tinkerpop.blueprints.pgm.Index::Type::MANUAL]
     def manual_index
       com.tinkerpop.blueprints.pgm.Index::Type::MANUAL
     end
 
+    # Blueprints constant for automatic index.
+    # @return [com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC]
     def automatic_index
       com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
     end
 
+    # If a pipe is giving you trouble, you can get all of the
+    # intermediate pipes by using this method.
+    #
+    # @example how to use it:
+    #   Pacer.debug_pipe(graph.v.out_e)
+    #
+    # Each returned pipe can be iterated with it's #next method to see
+    # what it would have returned if it were the end pipe.
+    #
+    # @return [[java.util.Iterator, Array<Hash>, com.tinkerpop.pipes.Pipe]]
+    #   the iterator is the data source. Each Hash in the array is
+    #   information about one pipe in the pipeline that was created.
+    #   These are in order of creation, not necessarily of attachment.
+    #   However the hash will contain what pipe was used as the source
+    #   for the given pipe along with all arguments used to create the
+    #   pipe as well as other information if it seemed useful.
     def debug_pipe(pipe)
       @debug_pipes = []
       result = pipe.send :iterator
@@ -157,10 +205,19 @@ module Pacer
       @debug_pipes = []
     end
 
+    # All of the currently open graphs that are tied to the filesystem
+    # or a url or address.
+    # @return [Hash] address => graph
     def open_graphs
       @open_graphs ||= Hash.new { |h, k| h[k] = {} }
     end
 
+    # Tell pacer to record that we're starting a graph.
+    #
+    # @param [Class] type type of graph
+    # @param [String] key address of the graph
+    # @yield the block should return the instantiated graph.
+    # @return [GraphMixin] the instantiated graph
     def starting_graph(type, key)
       graph = open_graphs[type][key]
       return graph if graph
@@ -168,12 +225,17 @@ module Pacer
       open_graphs[type][key] = graph
     end
 
+    # Used internally to collect debug information while using
+    # {#debug_pipe}
     attr_accessor :debug_source
+    # Used internally to collect debug information while using
+    # {#debug_pipe}
     attr_reader :debug_pipes
   end
 end
 
 at_exit do
+  # Close all open graphs
   Pacer.open_graphs.each do |type, graphs|
     graphs.each do |path, graph|
       begin
