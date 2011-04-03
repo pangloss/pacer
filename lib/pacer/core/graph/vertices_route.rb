@@ -5,6 +5,10 @@ module Pacer::Core::Graph
     include ElementRoute
 
     # Extends the route with out edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @return [EdgesRoute]
     def out_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
@@ -14,6 +18,10 @@ module Pacer::Core::Graph
     end
 
     # Extends the route with in edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @return [EdgesRoute]
     def in_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
@@ -23,6 +31,10 @@ module Pacer::Core::Graph
     end
 
     # Extends the route with all edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
+    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @return [EdgesRoute]
     def both_e(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => Pacer::Pipes::VertexEdgePipe,
@@ -32,15 +44,24 @@ module Pacer::Core::Graph
     end
 
     # Extend route with the additional vertex property and block filters.
+    #
+    # @param [Array<Hash, extension>, Hash, extension] filter see {Route#property_filter}
+    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Route#property_filter}
+    # @return [VerticesRoute]
     def v(*filters, &block)
       filter(*filters, &block)
     end
 
+    # The element type of this route for this graph implementation.
+    #
+    # @return [element_type(:vertex)] The actual type varies based on
+    # which graph is in use.
     def element_type
       graph.element_type(:vertex)
     end
 
-    # Delete all matching elements.
+    # Delete all matching vertices and all edges which link to this
+    # vertex.
     def delete!
       uniq.both_e.uniq.bulk_job { |e| e.delete! }
       uniq.bulk_job { |e| e.delete! }
@@ -50,6 +71,23 @@ module Pacer::Core::Graph
     # matching this route to all vertices matching the given
     # to_route. If any properties are given, they will be applied
     # to each created edge.
+    #
+    # If this route emits more than one element and the to_vertices
+    # param also emits (or contains) more than one element, the
+    # resulting edges will represent a cross-product between the two
+    # collections.
+    #
+    # If a vertex appears in either the this route or in to_vertices,
+    # it will be linked once for each time it appears.
+    #
+    # @param [#to_s] label the label to use for the new edges
+    # @param [VerticesRoute, Enumerable, java.util.Iterator] to_vertices
+    #   collection of vertices that should have edges connecting them
+    #   from the source edges.
+    # @param optional [Hash] props properties that should be set for
+    #   each created edge
+    # @return [EdgesRoute, nil] includes all created edges or nil if no
+    #   edges were created
     def add_edges_to(label, to_vertices, props = {})
       case to_vertices
       when Pacer::Core::Route, Enumerable, java.util.Iterator
