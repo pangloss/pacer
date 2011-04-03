@@ -7,8 +7,13 @@ module Pacer
   module EdgeMixin
     # Add extensions to this edge.
     #
+    # If any extension has a Edge module within it, this edge will
+    # be extended with the extension's Edge module.
+    #
+    # @see Core::Route#add_extension
+    #
     # @param [[extensions]] exts the extensions to add
-    # @return [Pacer::EdgeWrapper] this vertex wrapped up and including
+    # @return [Pacer::EdgeWrapper] this edge wrapped up and including
     #   the extensions
     def add_extensions(exts)
       if exts.any?

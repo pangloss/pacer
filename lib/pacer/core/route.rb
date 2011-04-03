@@ -6,27 +6,35 @@ module Pacer
     # defined here. Many of these methods are designed to be specialized by
     # other modules included after Core::Route is included.
     module Route
-      def self.included(target)
-        target.send :include, Enumerable
+      class << self
+        protected
+        def included(target)
+          target.send :include, Enumerable
+        end
       end
 
-      # Set these to effect how the route is displayed when inspected.
-      attr_accessor :route_name, :info
+      # Replace the generated class name of this route with a specific
+      # one by setting route_name.
+      attr_accessor :route_name
 
       # Specify which pipe class will be instantiated when an iterator is created.
       attr_accessor :pipe_class
-      attr_reader :pipe_args
 
-      # Boolean whether the route alone should be returned by inspect. If
-      # false, the the elements that the route matches will also be displayed.
+      # If true, elements won't be printed to STDOUT when #inspect is
+      # called on this route.
+      # @return [true, false]
       attr_accessor :hide_elements
 
-      attr_reader :back, :source
-
       # Set which graph this route will operate on.
+      #
+      # @todo move this to graph routes.
       attr_writer :graph
 
       # Return which graph this route operates on.
+      #
+      # @todo move this to graph routes.
+      #
+      # @return [GraphMixin]
       def graph
         @graph ||= (@back || @source).graph rescue nil
       end
@@ -36,6 +44,16 @@ module Pacer
         graph.equals g
       end
 
+      # The arguments passed to the pipe constructor.
+      # @return [[Object]] array of arguments
+      attr_reader :pipe_args
+
+      # Set arguments for the pipe constructor.
+      #
+      # @overload pipe_args=(args)
+      #   @param [Object] args
+      # @overload pipe_args=(args)
+      #   @param [[Object]] args
       def pipe_args=(args)
         if args.is_a? Array
           @pipe_args = args
@@ -50,7 +68,11 @@ module Pacer
       end
 
       # Prevents the route from being evaluated when it is inspected. Useful
-      # for computationally expensive routes.
+      # for computationally expensive or one-time routes.
+      #
+      # @todo rename this method
+      #
+      # @return [self]
       def route
         @hide_elements = true
         self
@@ -62,6 +84,13 @@ module Pacer
       # The contents of vars is expected to be in a state relevant to the
       # latest route being evaluated and is primarily meant for internal use,
       # but YMMV.
+      #
+      # @todo It would maybe be better if the vars were tied to the
+      #   thread context or preferably to the actual pipe instance in
+      #   use. The current implementation of vars is not threadsafe if
+      #   the same route is being used in multiple threads concurrently.
+      #
+      # @return [Hash]
       def vars
         if @back
           @back.vars
@@ -70,7 +99,12 @@ module Pacer
         end
       end
 
-      # Yields each matching element or returns an iterator if no block is given.
+      # Iterates over each element resulting from traversing the route up to this point.
+      #
+      # @todo move with graph-specific code or make more general.
+      #
+      # @yield [item] if a block is given
+      # @return [Enumerator] if no block is given
       def each_element
         iter = iterator
         g = graph
@@ -105,7 +139,21 @@ module Pacer
         self
       end
 
-      # Yields each matching path or returns an iterator if no block is given.
+      # Iterates over each path resulting from traversing the route up
+      # to this point.
+      #
+      # The path should contain each element that has been produced by
+      # each step in the pipeline that the route constructs. That means
+      # that it is possible that single step in the overall route may
+      # produce 0..many elements in the path (though the typical number
+      # is 1). Also note that if an element is emitted by multiple steps
+      # in a row it will only appear in the route once in that position.
+      # On the other hand if a single element appears more than once in
+      # at different times during a traversal, it will appear multiple
+      # times in the path.
+      #
+      # @yield [java.util.List[Object]] if a block is given
+      # @return [Enumerator[Object]] if no block is given
       def each_path
         iter = iterator
         if block_given?
@@ -127,6 +175,15 @@ module Pacer
         self
       end
 
+      # Iterates over each element resulting from traversing the route
+      # up to this point. Extends each element with
+      # {Extensions::BlockFilterElement} to make route context
+      # available.
+      #
+      # @todo move with graph-specific code or make more general.
+      #
+      # @yield [ElementMixin(Extensions::BlockFilterElement)] if a block is given
+      # @return [Enumerator(IteratorContextMixin)] if no block is given
       def each_context
         iter = iterator
         if block_given?
@@ -148,6 +205,11 @@ module Pacer
         self
       end
 
+      # Iterates over each object resulting from traversing the route up
+      # to this point.
+      #
+      # @yield [Object] if a block is given
+      # @return [Enumerator] if no block is given
       def each_object
         iter = iterator
         if block_given?
@@ -167,6 +229,8 @@ module Pacer
       # elements formatted in columns up to a maximum character width of
       # Graph#columns.  If this output behaviour is undesired, it may be turned
       # off by calling #route on the current route.
+      #
+      # @return [String]
       def inspect(limit = nil)
         if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
           "#<#{inspect_strings.join(' -> ')}>"
@@ -201,6 +265,7 @@ module Pacer
       #
       # Note that block filters will prevent matches even with identically
       # defined routes unless the routes are actually the same object.
+      # @return [true, false]
       def ==(other)
         other.class == self.class and
           other.function == function and
@@ -209,10 +274,24 @@ module Pacer
           other.source == source
       end
 
+      # Returns true if this route currently has no elements.
       def empty?
         none?
       end
 
+      # Add an extension to the route.
+      #
+      # If the extension has a Route module inside it, this route will
+      # be extended with the extension's Route module.
+      #
+      # If the extension has a Vertex or Edge module inside it, any vertices
+      # or edges emitted from this route will be extended with with the
+      # extension as well.
+      #
+      # @see VertexMixin#add_extensions
+      # @see EdgeMixin#add_extensions
+      #
+      # @return [self]
       def add_extension(mod)
         return self unless mod.respond_to?(:const_defined?)
         is_extension = false
@@ -226,17 +305,24 @@ module Pacer
         self
       end
 
+      # Add extensions to this route.
+      #
+      # @see #add_extension
       def extensions=(exts)
         @extensions ||= Set[]
         add_extensions Set[*exts]
       end
 
+      # Get the set of extensions currently on this route.
+      # @return [Set[extension]]
       def extensions
         @extensions ||= Set[]
       end
 
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
+      # @see #add_extension
+      # @return [self]
       def add_extensions(exts)
         modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
         modules.each do |mod|
@@ -245,6 +331,12 @@ module Pacer
         self
       end
 
+      # Change the source of this route.
+      #
+      # @note all routes derived from any route in the chain will be
+      #   affected so use with caution.
+      #
+      # @param [Enumerable, Enumerator] src the data source.
       def set_pipe_source(src)
         if @back
           @back.set_pipe_source src

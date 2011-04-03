@@ -106,6 +106,17 @@ module Pacer
     # The type of object that this route emits.
     attr_reader :element_type
 
+    # Additional info to include after the class name when generating a
+    # name for this route.
+    attr_accessor :info
+
+    # The previous route in the chain
+    attr_reader :back
+
+    # The soure of data for the entire chain. Routes that have a source
+    # generally should not have a {#back}
+    attr_reader :source
+
     # Create a new route. It should be very rare that you would need to
     # directly create a Route object.
     #
