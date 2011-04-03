@@ -5,8 +5,11 @@ module Pacer
   # Adds more convenient/rubyish methods and adds support for extensions
   # to some methods where needed.
   module ElementMixin
-    def self.included(target)
-      target.send :include, Enumerable unless target.is_a? Enumerable
+    class << self
+      protected
+      def included(target)
+        target.send :include, Enumerable unless target.is_a? Enumerable
+      end
     end
 
     # Which extensions does this element have?
@@ -95,10 +98,15 @@ module Pacer
     end
 
     # Returns a hash of property values by name.
+    #
+    # @return [Hash]
     def properties
       property_keys.inject({}) { |h, name| h[name] = get_property(name); h }
     end
 
+    # Replace the element's properties with the given hash
+    #
+    # @param [Hash] props the element's new properties
     def properties=(props)
       (property_keys - props.keys.collect { |k| k.to_s }).each do |key|
         remove_property key
@@ -108,18 +116,51 @@ module Pacer
       end
     end
 
+    # The id of the current element
+    # @return [Object] element id (type varies by graph implementation.
     def element_id
       element.get_id
     end
 
-    def ==(other)
-      other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
-    end
-
+    # Sort objects semi arbitrarily based on {VertexMixin#display_name}
+    # or {EdgeMixin#display_name}.
+    # @param other
+    #
+    # @return [Fixnum]
     def <=>(other)
       display_name.to_s <=> other.display_name.to_s
     end
 
+    # Test equality to another object.
+    #
+    # Elements are equal if they are the same type and have the same id
+    # and the same graph, regardless of extensions.
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return true when comparing them.
+    #
+    # @see #eql?
+    # @param other
+    def ==(other)
+      if other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
+        if graph and other.graph
+          other.graph == graph
+        else
+          true
+        end
+      end
+    end
+
+    # Test object equality of the element instance.
+    #
+    # Wrappers/extensions (if any) are ignored, the underlying element
+    # only is compared
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return false when comparing them.
+    #
+    # @see #==
+    # @param other
     def eql?(other)
       if other.respond_to? :element
         super(other.element)
@@ -128,9 +169,12 @@ module Pacer
       end
     end
 
-    # Yields the element once or returns an enumerator containing self if no
-    # block is given. Follows Ruby conventions and is meant to be used along
+    # Yields the element once or returns an enumerator if no block is
+    # given. Follows Ruby conventions and is meant to be used along
     # with the Enumerable mixin.
+    #
+    # @yield [ElementMixin] this element
+    # @return [Enumerator] only if no block is given
     def each
       if block_given?
         yield self
@@ -139,6 +183,9 @@ module Pacer
       end
     end
 
+    # Returns the underlying element. For unwrapped elements, returns
+    # self.
+    # @return [ElementMixin]
     def element
       self
     end
