@@ -45,15 +45,16 @@ module Pacer
       end
 
       # The arguments passed to the pipe constructor.
-      # @return [[Object]] array of arguments
-      attr_reader :pipe_args
-
-      # Set arguments for the pipe constructor.
       #
+      # @overload pipe_args
       # @overload pipe_args=(args)
       #   @param [Object] args
       # @overload pipe_args=(args)
       #   @param [[Object]] args
+      #
+      # @return [[Object]] array of arguments
+      attr_reader :pipe_args
+
       def pipe_args=(args)
         if args.is_a? Array
           @pipe_args = args
