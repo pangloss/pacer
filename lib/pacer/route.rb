@@ -17,8 +17,11 @@ module Pacer
   #
   # @see Core::Route
   class Route
-
-    @private
+    # @private
+    # TODO The logic for filter, side_effect and transform is so simillar.
+    # Make it DRY
+    #
+    # TODO Is the trigger stuff worthwhile?
     module Helpers
       class << self
         def clear_cache
@@ -259,10 +262,13 @@ module Pacer
       self.extend @function if @function
     end
 
+    # @return [Route, nil] the previous route in the chain
     def back_object(args)
       back || args[:back]
     end
 
+    # Get element type from the previous route in the chain.
+    # @return [element type, nil]
     def back_element_type(args)
       b = back_object(args)
       if b.respond_to? :element_type
@@ -270,8 +276,9 @@ module Pacer
       end
     end
 
-    # If no element type has been specified, try to find one by
-    # searching back along the route chain.
+    # If no element type has been specified, try to find one from
+    # the previous route in the chain.
+    # @raise [StandardError] if no element type can be found
     def set_element_type(args)
       if args[:element_type]
         self.element_type = args[:element_type]
@@ -295,6 +302,9 @@ module Pacer
       end
     end
 
+    # Copy extensions from the previous route in the chain if the
+    # previous route's element type is the same as the current route's
+    # element type and no extensions were explicitly set on this route.
     def include_extensions(args)
       if back_element_type(args) == self.element_type and not args.key? :extensions
         self.extensions = back_object(args).extensions if back_object(args).respond_to? :extensions
@@ -303,6 +313,7 @@ module Pacer
 
     # Creates a terse, human-friendly name for the class based on its
     # element type, function and info.
+    # @return [String]
     def inspect_class_name
       s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
       s = "#{s}-#{@function.name.split('::').last.sub(/Filter|Route$/, '')}" if @function
