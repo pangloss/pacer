@@ -380,6 +380,8 @@ module Pacer
       end
 
       # Get the actual source of data for this route.
+      #
+      # @return [java.util.Iterator]
       def source_iterator
         if @source
           iterator_from_source(@source)
@@ -388,7 +390,10 @@ module Pacer
         end
       end
 
-      # Get the first and last pipes in the pipeline before the current route's pipes are added.
+      # Get the first and last pipes in the pipeline before the current
+      # route's pipes are added.
+      # @see #build_pipeline
+      # @return [[com.tinkerpop.pipes.Pipe, com.tinkerpop.pipes.Pipe], nil]
       def pipe_source
         if @source
           nil
@@ -433,6 +438,19 @@ module Pacer
         end
       end
 
+      # This is the default implementation of the method used to create
+      # the specialized pipe for each route instance. It is overridden
+      # in most function modules to produce the pipe needed to perform
+      # that function.
+      #
+      # @see Filter modules in this namespace override this method
+      # @see Transform modules in this namespace override this method
+      # @see SideEffect modules in this namespace override this method
+      #
+      # @param [com.tinkerpop.pipes.Pipe] the pipe emitting the source
+      #   data for this pipe
+      # @return [com.tinkerpop.pipes.Pipe] the pipe that emits the
+      #   resulting data from this step
       def attach_pipe(end_pipe)
         if @pipe_class
           if @pipe_args
@@ -455,6 +473,13 @@ module Pacer
         end
       end
 
+      # Walks back along the chain of routes to build the series of Pipe
+      # objects that represent this route.
+      #
+      # @return [[com.tinkerpop.pipes.Pipe, com.tinkerpop.pipes.Pipe]]
+      #   start and end pipe in the pipeline. The start pipe gets the
+      #   source applied to it, the end pipe produces the result when its
+      #   next method is called.
       def build_pipeline
         start, end_pipe = pipe_source
         pipe = attach_pipe(end_pipe)
@@ -464,6 +489,7 @@ module Pacer
 
       # Returns an array of strings representing each route object in the
       # chain.
+      # @return [[String]]
       def inspect_strings
         ins = []
         ins += @back.inspect_strings unless root?
@@ -472,6 +498,8 @@ module Pacer
         ins
       end
 
+      # Returns the string representing just this route instance.
+      # @return [String]
       def inspect_string
         return @route_name if @route_name
         if @pipe_class
@@ -498,6 +526,7 @@ module Pacer
       end
 
       # Return the class name of the current route.
+      # @return [String]
       def inspect_class_name
         s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
         s = "#{s} #{ @info }" if @info
