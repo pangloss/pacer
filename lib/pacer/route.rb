@@ -264,10 +264,9 @@ module Pacer
     end
 
     def back_element_type(args)
-      if back.respond_to? :element_type
-        back.element_type
-      elsif args[:back].respond_to? :element_type
-        args[:back].element_type rescue nil
+      b = back_object(args)
+      if b.respond_to? :element_type
+        b.element_type
       end
     end
 
