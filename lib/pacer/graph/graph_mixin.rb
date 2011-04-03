@@ -1,4 +1,9 @@
 module Pacer
+  # Methods to be mixed into Blueprints Graph objects from any
+  # implementation.
+  #
+  # Adds more convenient/rubyish methods and adds support for extensions
+  # to some methods where needed.
   module GraphMixin
     def self.included(target)
       target.class_eval do
@@ -9,6 +14,14 @@ module Pacer
 
     attr_accessor :in_bulk_job
 
+    # Get a vertex by id.
+    #
+    # @overload vertex(id)
+    #   @param [element id] id
+    # @overload vertex(id, *modules)
+    #   @param [element id] id
+    #   @param [Module, Class] *modules extensions to add to the returned
+    #     vertex.
     def vertex(id, *modules)
       v = getVertex(id) rescue nil
       if v
@@ -19,6 +32,14 @@ module Pacer
       end
     end
 
+    # Get an edge by id.
+    #
+    # @overload edge(id)
+    #   @param [element id] id
+    # @overload edge(id, *modules)
+    #   @param [element id] id
+    #   @param [Module, Class] *modules extensions to add to the returned
+    #     edge.
     def edge(id, *modules)
       v = getEdge(id) rescue nil
       if v
@@ -27,6 +48,18 @@ module Pacer
       end
     end
 
+    # Create a vertex in the graph.
+    #
+    # @overload create_vertex(*args)
+    #   @param [extension, Hash] *args extension (Module/Class) arguments will be
+    #     added to the current vertex. A Hash will be
+    #     treated as element properties.
+    # @overload create_vertex(id, *args)
+    #   @param [element id] id the desired element id. Some graphs
+    #     ignore this.
+    #   @param [extension, Hash] *args extension (Module/Class) arguments will be
+    #     added to the current vertex. A Hash will be
+    #     treated as element properties.
     def create_vertex(*args)
       id, modules, props = id_modules_properties(args)
       vertex = creating_elements { addVertex(id) }
@@ -39,6 +72,15 @@ module Pacer
       end
     end
 
+    # Create an edge in the graph.
+    #
+    # @param [element id] id some graphs allow you to specify your own edge id.
+    # @param [Pacer::VertexMixin] from_v the new edge's out_vertex
+    # @param [Pacer::VertexMixin] to_v the new edge's in_vertex
+    # @param [#to_s] label the edge label
+    # @param [extension, Hash] *args extension (Module/Class) arguments will be
+    #   added to the returned edge. A Hash will be
+    #   treated as element properties.
     def create_edge(id, from_v, to_v, label, *args)
       _, modules, props = id_modules_properties(args)
       edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
@@ -51,6 +93,11 @@ module Pacer
       end
     end
 
+    # Import the data in a GraphML file.
+    #
+    # Will fail if the data already exsts in the current graph.
+    #
+    # @param [String] path
     def import(path)
       path = File.expand_path path
       begin
@@ -66,6 +113,9 @@ module Pacer
       stream.close if stream
     end
 
+    # Export the graph to GraphML
+    #
+    # @param [String] path will be replaced if it exists
     def export(path)
       path = File.expand_path path
       stream = java.io.FileOutputStream.new path
@@ -74,31 +124,53 @@ module Pacer
       stream.close if stream
     end
 
+    # Set how many elements should go into each transaction in a bulk
+    # job.
+    #
+    # @param [Fixnum] size number of elements
     def bulk_job_size=(size)
       @bulk_job_size = size
     end
 
+    # The currently configured bulk job size.
     def bulk_job_size
       @bulk_job_size || 5000
     end
 
+    # Are we currently in the midst of a bulk job?
     def in_bulk_job?
       @in_bulk_job
     end
 
+    # Directly loads an array of vertices by id.
+    #
+    # @param [[vertex ids]] ids
+    # @return [[Pacer::VertexMixin]]
     def load_vertices(ids)
       ids.map do |id|
         vertex id
       end.compact
     end
 
+    # Directly loads an array of edges by id.
+    #
+    # @param [[edge ids]] ids
+    # @return [[Pacer::EdgeMixin]]
     def load_edges(ids)
       ids.map do |id|
         edge id
       end.compact
     end
 
+    # Return an index by name.
+    #
+    # @param [#to_s] name of the index
+    # @param [:vertex, :edge, element type] type guarantees that the index returned is of the type specified.
+    # @param [Hash] opts
+    # @option opts [true] :create create the index if it doesn't exist
+    # @return [Pacer::IndexMixin]
     def index_name(name, type = nil, opts = {})
+      name = name.to_s
       if type
         idx = indices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
         if idx.nil? and opts[:create]
@@ -111,6 +183,14 @@ module Pacer
       idx
     end
 
+    # Drops and recreates an automatic index with the same keys.
+    #
+    # In some earlier graphdb versions it was possible to corrupt
+    # automatic indices. This method provided a fast way to recreate
+    # them.
+    #
+    # @param [Index] old_index this index will be dropped
+    # @return [Index] rebuilt index
     def rebuild_automatic_index(old_index)
       name = old_index.getIndexName
       index_class = old_index.getIndexClass
@@ -119,6 +199,12 @@ module Pacer
       build_automatic_index(name, index_class, keys)
     end
 
+    # Creates a new automatic index.
+    #
+    # @param [#to_s] name index name
+    # @param [:vertex, :edge, element type] et element type
+    # @param [[#to_s], nil] keys The keys to be indexed. If nil then
+    #   index all keys
     def build_automatic_index(name, et, keys = nil)
       if keys and not keys.is_a? java.util.Set
         set = java.util.HashSet.new
@@ -138,38 +224,51 @@ module Pacer
       index
     end
 
+    # The current graph
+    #
+    # @return [Graph] returns self
     def graph
       self
     end
 
-    def description
-      toString
-    end
-
     # The proc used to name vertices.
+    #
+    # @return [Proc]
     def vertex_name
       @vertex_name
     end
 
     # Set the proc used to name vertices.
+    #
+    # @param [Proc(vertex)] a_proc returns a string given a vertex
     def vertex_name=(a_proc)
       @vertex_name = a_proc
     end
 
     # The proc used to name edges.
+    #
+    # @return [Proc]
     def edge_name
       @edge_name
     end
 
     # Set the proc used to name edges.
+    #
+    # @param [Proc(edge)] a_proc returns a string given an edge
     def edge_name=(a_proc)
       @edge_name = a_proc
     end
 
+    # Return an object that can be compared to the return value of
+    # Index#index_class.
     def index_class(et)
       element_type(et).java_class.to_java
     end
 
+    # Is the element type given supported by this graph?
+    #
+    # @param [:edge, :vertex, :mixed, element_type, Object] et the
+    #   object we're testing
     def element_type?(et)
       if [element_type(:vertex), element_type(:edge), element_type(:mixed)].include?  element_type(et)
         true
@@ -178,28 +277,46 @@ module Pacer
       end
     end
 
+    # Does this graph support edges where the in_vertex and the
+    # out_vertex are the same?
+    #
+    # Specific graphs may override this method to return false.
     def supports_circular_edges?
       true
     end
 
+    # When creating an element, does this graph allow me to specify the
+    # element_id?
+    #
+    # Specific graphs may override this method to return false.
     def supports_custom_element_ids?
       true
     end
 
+    # Does this graph allow me to create or modify automatic indices?
+    #
+    # Specific graphs may override this method to return false.
     def supports_automatic_indices?
       true
     end
 
+    # Does this graph allow me to create or modify manual indices?
+    #
+    # Specific graphs may override this method to return false.
     def supports_manual_indices?
       true
     end
 
+    # Does this graph support indices on edges?
+    #
+    # Specific graphs may override this method to return false.
     def supports_edge_indices?
       true
     end
 
     protected
 
+    # Helper method to wrap element creation in exception handling.
     def creating_elements
       begin
         yield

@@ -1,5 +1,15 @@
 module Pacer
+  # This module is mixed into the raw Blueprints Edge class from any
+  # graph implementation.
+  #
+  # Adds more convenient/rubyish methods and adds support for extensions
+  # to some methods where needed.
   module EdgeMixin
+    # Add extensions to this edge.
+    #
+    # @param [[extensions]] exts the extensions to add
+    # @returns [Pacer::EdgeWrapper] this vertex wrapped up and including
+    #   the extensions
     def add_extensions(exts)
       if exts.any?
         EdgeWrapper.wrap(self, exts)
@@ -8,6 +18,8 @@ module Pacer
       end
     end
 
+    # The incoming vertex for this edge.
+    # @return [Pacer::VertexMixin]
     def in_vertex(extensions = nil)
       v = inVertex
       v.graph = graph
@@ -18,6 +30,8 @@ module Pacer
       end
     end
 
+    # The outgoing vertex for this edge.
+    # @return [Pacer::VertexMixin]
     def out_vertex(extensions = nil)
       v = outVertex
       v.graph = graph
@@ -28,12 +42,15 @@ module Pacer
       end
     end
 
-    # Returns a human-readable representation of the edge.
+    # Returns a human-readable representation of the edge using the
+    # standard ruby console representation of an instantiated object.
+    # @return [String]
     def inspect
       "#<E[#{element_id}]:#{display_name}>"
     end
 
-    # Returns the display name of the vertex.
+    # Returns the display name of the edge.
+    # @return [String]
     def display_name
       if graph and graph.edge_name
         graph.edge_name.call self
@@ -47,11 +64,24 @@ module Pacer
       graph.remove_edge element
     end
 
+    # Clones this edge into the target graph.
+    #
+    # This differs from the {#copy_into} in that it tries to set
+    # the new element_id the same as the original element_id.
+    #
+    # @param [Pacer::GraphMixin] target_graph
+    # @param [Hash] opts
+    # @option opts :create_vertices [true] Create the vertices
+    #   associated to this edge if they don't already exist.
+    # @yield [e] Optional block yields the edge after it has been created.
+    # @return [Pacer::EdgeMixin] the new edge
+    #
+    # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
-      e_idx = target_graph.index_name("tmp:e:#{graph.description}", :edge, :create => true)
+      e_idx = target_graph.index_name("tmp:e:#{graph.to_s}", :edge, :create => true)
       e = target_graph.edge(element_id) || e_idx.get('id', element_id).first
       unless e
-        v_idx = target_graph.index_name("tmp:v:#{graph.description}", :vertex, :create => true)
+        v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
         iv = target_graph.vertex(in_vertex.element_id) || v_idx.get('id', in_vertex.element_id).first
         ov = target_graph.vertex(out_vertex.element_id) || v_idx.get('id', out_vertex.element_id).first
         if opts[:create_vertices]
@@ -66,8 +96,16 @@ module Pacer
       e
     end
 
-    def copy_into(target_graph, opts = {})
-      v_idx = target_graph.index_name("tmp:v:#{graph.description}", :vertex, :create => true)
+    # Copies this edge into the target graph with the next available
+    # edge id.
+    #
+    # @param [Pacer::GraphMixin] target_graph
+    # @yield [e] Optional block yields the edge after it has been created.
+    # @return [Pacer::EdgeMixin] the new edge
+    #
+    # @raise [StandardError] If this the associated vertices don't exist
+    def copy_into(target_graph)
+      v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
       iv = v_idx.get('id', in_vertex.element_id).first || target_graph.vertex(in_vertex.element_id)
       ov = v_idx.get('id', out_vertex.element_id).first || target_graph.vertex(out_vertex.element_id)
 
