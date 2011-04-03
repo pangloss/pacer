@@ -1,13 +1,22 @@
 module Pacer
+  # This module is mixed into the raw Blueprints Edge and Vertex classes
+  # from any graph implementation.
+  #
+  # Adds more convenient/rubyish methods and adds support for extensions
+  # to some methods where needed.
   module ElementMixin
     def self.included(target)
       target.send :include, Enumerable unless target.is_a? Enumerable
     end
 
+    # Which extensions does this element have?
+    # @return [Set[extensions]]
     def extensions
       Set[]
     end
 
+    # See {Core::Graph::VerticesRoute#v}
+    # @return [Route]
     def v(*args)
       route = super
       if args.empty? and not block_given?
@@ -16,6 +25,8 @@ module Pacer
       route
     end
 
+    # See {Core::Graph::EdgesRoute#e}
+    # @return [Route]
     def e(*args)
       route = super
       if args.empty? and not block_given?
@@ -24,19 +35,28 @@ module Pacer
       route
     end
 
-    # Specify the graph the element belongs to. For internal use only.
+    # For internal use only.
+    #
+    # Specify the graph the element belongs to.
     def graph=(graph)
       @graph = graph
     end
 
-    # The graph the element belongs to. Used to help prevent objects from
-    # different graphs from being accidentally associated, as well as to get
-    # graph-specific data for the element.
+    # The graph the element belongs to.
+    #
+    # Used to help prevent objects from different graphs from being
+    # accidentally associated, as well as to get graph-specific data for
+    # the element.
+    #
+    # @return [GraphMixin]
     def graph
       @graph
     end
 
     # Convenience method to retrieve a property by name.
+    #
+    # @param [#to_s] key the property name
+    # @return [Object]
     def [](key)
       value = get_property(key.to_s)
       if graph
@@ -47,6 +67,8 @@ module Pacer
     end
 
     # Convenience method to set a property by name to the given value.
+    # @param [#to_s] key the property name
+    # @param [Object] value the value to set the property to
     def []=(key, value)
       value = graph.encode_property(value) if graph
       key = key.to_s
@@ -60,11 +82,14 @@ module Pacer
     end
 
     # Specialize result to return self for elements.
+    # @return [ElementMixin] self
     def result(name = nil)
       self
     end
 
     # Query whether the current node belongs to the given graph.
+    #
+    # @param [Object] g the object to compare to {#graph}
     def from_graph?(g)
       g.equal? graph
     end

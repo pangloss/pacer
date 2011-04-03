@@ -81,6 +81,8 @@ module Pacer
     # @param [extension, Hash] *args extension (Module/Class) arguments will be
     #   added to the returned edge. A Hash will be
     #   treated as element properties.
+    #
+    # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
       _, modules, props = id_modules_properties(args)
       edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }

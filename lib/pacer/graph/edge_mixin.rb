@@ -8,7 +8,7 @@ module Pacer
     # Add extensions to this edge.
     #
     # @param [[extensions]] exts the extensions to add
-    # @returns [Pacer::EdgeWrapper] this vertex wrapped up and including
+    # @return [Pacer::EdgeWrapper] this vertex wrapped up and including
     #   the extensions
     def add_extensions(exts)
       if exts.any?
