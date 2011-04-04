@@ -147,8 +147,8 @@ module Pacer
     #
     # @todo reimpliment as callbacks to keep the code all in one place.
     def clear_plugin_cache
-      VertexWrapper.clear_cache
-      EdgeWrapper.clear_cache
+      Wrappers::VertexWrapper.clear_cache
+      Wrappers::EdgeWrapper.clear_cache
       Route::Helpers.clear_cache
       Filter::ExpressionFilter::Parser.reset
     end

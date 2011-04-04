@@ -2,11 +2,14 @@ require 'forwardable'
 
 module Pacer
   def self.vertex_wrapper(*exts)
-    VertexWrapper.wrapper_for(exts)
+    Wrappers::VertexWrapper.wrapper_for(exts)
   end
 
   def self.edge_wrapper(*exts)
-    EdgeWrapper.wrapper_for(exts)
+    Wrappers::EdgeWrapper.wrapper_for(exts)
+  end
+
+  module Wrappers
   end
 end
 

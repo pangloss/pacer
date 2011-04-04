@@ -1,8 +1,8 @@
-module Pacer
+module Pacer::Wrappers
   class VertexWrapper < ElementWrapper
     include Pacer::Core::Graph::VerticesRoute
-    include ElementMixin
-    include VertexMixin
+    include Pacer::ElementMixin
+    include Pacer::VertexMixin
     include Comparable
 
     def_delegators :@element,

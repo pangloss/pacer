@@ -13,11 +13,11 @@ module Pacer
     # @see Core::Route#add_extension
     #
     # @param [[extensions]] exts the extensions to add
-    # @return [Pacer::EdgeWrapper] this edge wrapped up and including
+    # @return [Pacer::Wrappers::EdgeWrapper] this edge wrapped up and including
     #   the extensions
     def add_extensions(exts)
       if exts.any?
-        EdgeWrapper.wrap(self, exts)
+        Wrappers::EdgeWrapper.wrap(self, exts)
       else
         self
       end

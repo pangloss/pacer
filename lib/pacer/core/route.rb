@@ -409,7 +409,7 @@ module Pacer
           al = java.util.ArrayList.new
           al << src
           al.iterator
-        elsif src.is_a? Pacer::ElementWrapper
+        elsif src.is_a? Pacer::Wrappers::ElementWrapper
           Pacer::Pipes::EnumerablePipe.new src.element
         elsif src.is_a? Proc
           iterator_from_source(src.call)

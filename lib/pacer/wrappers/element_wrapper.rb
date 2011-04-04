@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Wrappers
   class ElementWrapper
     extend Forwardable
 
@@ -12,7 +12,7 @@ module Pacer
       end
 
       def clear_cache
-        Pacer.send :remove_const, :Wrappers if Pacer.const_defined? :Wrappers
+        Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
         @wrappers = nil
       end
 
@@ -21,8 +21,8 @@ module Pacer
       def build_extension_wrapper(exts, mod_names, superclass)
         sc_name = superclass.to_s.split(/::/).last
         classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
-        eval "module ::Pacer; module Wrappers; class #{classname.to_s} < #{sc_name}; end; end; end"
-        wrapper = Pacer::Wrappers.const_get classname
+        eval "module ::Pacer; module Wrap; class #{classname.to_s} < #{sc_name}; end; end; end"
+        wrapper = Pacer::Wrap.const_get classname
         exts.each do |obj|
           if obj.is_a? Module or obj.is_a? Class
             mod_names.each do |mod_name|

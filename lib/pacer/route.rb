@@ -1,4 +1,4 @@
-[Pacer::Core::Route, Pacer::ElementMixin, Pacer::EdgeWrapper, Pacer::VertexWrapper].each do |klass|
+[Pacer::Core::Route, Pacer::ElementMixin, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
   klass.class_eval %{
     def chain_route(args_hash)
       Pacer::Route.new({ :back => self }.merge(args_hash))

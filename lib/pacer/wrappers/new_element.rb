@@ -1,4 +1,4 @@
-module Pacer
+module Pacer::Wrappers
   class NewElement
     def initialize
       @properties = {}

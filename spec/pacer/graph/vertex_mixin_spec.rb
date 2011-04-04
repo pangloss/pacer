@@ -14,15 +14,15 @@ shared_examples_for Pacer::VertexMixin do
     context 'no extensions' do
       subject { v0.add_extensions([]) }
       its(:extensions) { should == Set[] }
-      it { should_not be_a(Pacer::ElementWrapper) }
+      it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
     end
 
     context 'with extensions' do
       subject { v0.add_extensions([Tackle::SimpleMixin]) }
       its(:extensions) { should == Set[Tackle::SimpleMixin] }
-      it { should be_a(Pacer::ElementWrapper) }
-      it { should be_a(Pacer::VertexWrapper) }
-      it { should_not be_a(Pacer::EdgeWrapper) }
+      it { should be_a(Pacer::Wrappers::ElementWrapper) }
+      it { should be_a(Pacer::Wrappers::VertexWrapper) }
+      it { should_not be_a(Pacer::Wrappers::EdgeWrapper) }
 
       describe '#v' do
         subject { v0.add_extensions([Tackle::SimpleMixin]).v }

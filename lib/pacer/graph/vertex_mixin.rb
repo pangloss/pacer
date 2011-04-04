@@ -17,7 +17,7 @@ module Pacer
     #   the extensions
     def add_extensions(exts)
       if exts.any?
-        VertexWrapper.wrap(self, exts)
+        Wrappers::VertexWrapper.wrap(self, exts)
       else
         self
       end

@@ -1,8 +1,8 @@
-module Pacer
+module Pacer::Wrappers
   class EdgeWrapper < ElementWrapper
     include Pacer::Core::Graph::EdgesRoute
-    include ElementMixin
-    include EdgeMixin
+    include Pacer::ElementMixin
+    include Pacer::EdgeMixin
     include Comparable
 
     def_delegators :@element,
