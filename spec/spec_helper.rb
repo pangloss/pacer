@@ -184,6 +184,19 @@ def use_pacer_graphml_data(usage_style = :read_write, version = '')
   let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer } }
 end
 
+def use_grateful_dead_data(usage_style = :read_write, version = '')
+  if usage_style == :read_only
+    let(:setup_data) { }
+    before(:all) do
+      graph.import 'spec/data/grateful-dead.xml' if graph
+    end
+  else
+    let(:setup_data) do
+      graph.import 'spec/data/grateful-dead.xml' if graph
+    end
+  end
+end
+
 RSpec.configure do |c|
   c.color_enabled = !in_editor?
   c.filter_run :focus => true

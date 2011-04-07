@@ -13,13 +13,15 @@ module Pacer
 
   module Filter
     module FutureFilter
+      import com.tinkerpop.pipes.filter.FutureFilterPipe
+
       def block=(block)
-        @routes = [lookahead_route(block)]
+        @blocks = [block]
         @has_elements = [true]
       end
 
       def neg_block=(block)
-        @routes = [lookahead_route(block)]
+        @blocks = [block]
         @has_elements = [false]
       end
 
@@ -43,21 +45,27 @@ module Pacer
 
       protected
 
+      def after_initialize
+        if @blocks
+          @routes = @blocks.map { |block| lookahead_route(block) }
+          @blocks = nil
+        end
+      end
+
       def attach_pipe(end_pipe)
         if lookahead_routes.count > 1
+          # TODO use or filter
           pipe = Pacer::Pipes::FutureOrFilterPipe.new(*lookahead_pipes)
           pipe.setShouldHaveResults *has_elements
         else
-          pipe = Pacer::Pipes::FutureFilterPipe.new(lookahead_pipes.first, has_elements.first)
+          pipe = FutureFilterPipe.new(lookahead_pipes.first, has_elements.first)
         end
         pipe.set_starts(end_pipe) if end_pipe
         pipe
       end
 
       def lookahead_route(block)
-        empty = Pacer::Route.new :filter => :empty, :back => self
-        r = block.call(empty)
-        r
+        block.call(Pacer::Route.empty(self))
       end
 
       def lookahead_pipes
