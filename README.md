@@ -25,6 +25,33 @@ If you want to hack on Pacer, you'll need to have
 maven`), then use `rake jar` to set up maven's pom.xml file and run the
 maven build script.
 
+## Graph Database Support
+
+The Tinkerpop suite supports a number of graph data stores. They are all
+compatible with Pacer, but I have not yet implemented the simple
+adapters Pacer needs to use them yet. Here is the list of what's
+supported so far:
+
+ * TinkerGraph - In-memory graph db, built in and ready to use without
+   additional dependencies.
+ * [Neo4J](http://neo4j.org) - The industry-leading graph db. `gem
+   install pacer-neo4j`
+   [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j)
+ * [Dex](http://sparsity-technologies.com) - A very fast, relatively new graph db. `gem
+   install pacer-dex`
+   [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)
+
+You can run any or all of the above graph databases. Pacer supports
+running them simultaneuosly and even supports having many of any given
+type open at once.
+
+### A note on safely exiting
+
+Some databases need to be shutdown cleanly when the program exits. You
+can shut a database down anytime by calling `graph.shutdown`, but you
+don't need to worry about it much. Pacer uses Ruby's `at_exit` hook to
+automatically shut down all open databases!
+
 ## Example traversals
 
 Friend recommendation algorithm expressed in basic traversal functions:
