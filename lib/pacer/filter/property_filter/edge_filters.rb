@@ -10,7 +10,7 @@ module Pacer
 
         public
 
-        def initialize(filters, graph)
+        def initialize(filters)
           self.labels = []
           self.non_ext_labels = []
           super

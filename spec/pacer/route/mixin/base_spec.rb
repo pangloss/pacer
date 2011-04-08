@@ -28,7 +28,7 @@ Run.all do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote)>" }
+      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -36,7 +36,7 @@ Run.all do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote)>" }
+      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>" }
       its(:out_v) { should_not be_nil }
     end
 
@@ -111,7 +111,7 @@ Run.all(:read_only) do
         r = r.in_v
         r = r.except(:grem)
         r.inspect.should ==
-          "#<V-Index(name: \"gremlin\") -> :grem -> inE -> E-Property(:wrote) -> outV -> outE -> E-Property(:wrote, &block) -> inV -> V-Property(&block)>"
+          "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
       end
     end
 

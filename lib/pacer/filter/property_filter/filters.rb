@@ -12,13 +12,12 @@ module Pacer
 
         public
 
-        def initialize(filters, graph)
+        def initialize(filters)
           self.properties = []
           self.blocks = []
           self.extensions = []
           self.route_modules = []
           self.non_ext_props = []
-          self.graph = graph
           add_filters filters, nil
         end
 

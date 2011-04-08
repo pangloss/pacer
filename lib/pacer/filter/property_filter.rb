@@ -4,6 +4,14 @@ require 'pacer/filter/property_filter/edge_filters'
 module Pacer
   class Route
     class << self
+      def filters(filters)
+        Pacer::Filter::PropertyFilter::Filters.new(filters)
+      end
+
+      def edge_filters(filters)
+        Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
+      end
+
       def property_filter_before(base, filters, block)
         if filters and filters.any? or block
           yield new(:back => base, :filter => :property, :filters => filters, :block => block)
@@ -35,16 +43,18 @@ module Pacer
         [:filters]
       end
 
-      attr_accessor :block
-
       def filters=(f)
-        @filters = EdgeFilters.new(f, graph)
+        if f.is_a? Filters
+          @filters = f
+        else
+          @filters = EdgeFilters.new(f)
+        end
         add_extensions @filters.extensions
       end
 
       # Return an array of filter options for the current route.
       def filters
-        @filters ||= EdgeFilters.new(nil, graph)
+        @filters ||= EdgeFilters.new(nil)
       end
 
       def block=(block)
@@ -53,6 +63,10 @@ module Pacer
         else
           filters.blocks = []
         end
+      end
+
+      def block
+        filters.blocks.first
       end
 
       protected
