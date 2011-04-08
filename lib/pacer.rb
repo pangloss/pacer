@@ -8,14 +8,6 @@ module Pacer
     VERSION = File.read(PATH + '/VERSION').chomp
     $:.unshift File.join(PATH, 'lib')
 
-    unless require(File.join(PATH, 'vendor/pipes-0.4-SNAPSHOT-standalone.jar'))
-      STDERR.puts "Please build the pipes library from tinkerpop.com and place the jar in the vendor folder of this library."
-      exit 1
-    end
-
-    require File.join(PATH, 'vendor/blueprints-neo4j-adapter-0.2-SNAPSHOT-standalone.jar')
-    require File.join(PATH, 'vendor/blueprints-dex-adapter-0.2-SNAPSHOT-standalone.jar')
-
     START_TIME = Time.now
   end
 
@@ -25,6 +17,7 @@ module Pacer
     Enumerator = Enumerable::Enumerator
   end
 
+  require 'pacer-graph'
 
   require 'pacer/exceptions'
   require 'pacer/graph'
