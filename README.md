@@ -6,8 +6,53 @@ It currently supports 2 major graph database: [Neo4j](http://neo4j.org) and [Dex
 
 Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool [Pipes](http://pipes.tinkerpop.com) library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
 
-## Example traversals
+## Documentation
 
+Pacer is documented with a comprehensive RSpec test suite and with a
+thorough YARD documentation. [Dig in!](http://rubydoc.info/github/pangloss/pacer/develop/frames)
+
+If you like, you can also use the documentation locally via
+
+  gem install yard
+  yard server
+
+## Installation
+
+The easiest way to get Pacer is `gem install pacer`.
+
+If you want to hack on Pacer, you'll need to have
+[maven](http://maven.apache.org/) installed (I recommend `brew install
+maven`), then use `rake jar` to set up maven's pom.xml file and run the
+maven build script.
+
+## Graph Database Support
+
+The Tinkerpop suite supports a number of graph data stores. They are all
+compatible with Pacer, but I have not yet implemented the simple
+adapters Pacer needs to use them yet. Here is the list of what's
+supported so far:
+
+ * TinkerGraph - In-memory graph db, built in and ready to use without
+   additional dependencies.
+ * [Neo4J](http://neo4j.org) - The industry-leading graph db. `gem
+   install pacer-neo4j`
+   [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j)
+ * [Dex](http://sparsity-technologies.com) - A very fast, relatively new graph db. `gem
+   install pacer-dex`
+   [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)
+
+You can run any or all of the above graph databases. Pacer supports
+running them simultaneuosly and even supports having many of any given
+type open at once.
+
+### A note on safely exiting
+
+Some databases need to be shutdown cleanly when the program exits. You
+can shut a database down anytime by calling `graph.shutdown`, but you
+don't need to worry about it much. Pacer uses Ruby's `at_exit` hook to
+automatically shut down all open databases!
+
+## Example traversals
 
 Friend recommendation algorithm expressed in basic traversal functions:
 
@@ -21,8 +66,6 @@ or using Pacer's route extensions to create your own query methods:
 or to take it one step further:
 
     person.recommended_friends
-
-
 
 ## Create and populate a graph
 
@@ -74,8 +117,15 @@ I want Pacer and its ecosystem to become a repository for real implementations o
 
 Once Pacer matures further, a decision will be made to 'lock it down' at least a little more, hopefully there will be a community in place by then to help determine the right time for that to happen!
 
-Pacer is meant to be extensible and pluggable. If you look at any file in the filter/ side_effect/ or transform/ folders, you'll see that they add features to Pacer in a completely self-contained way. If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-<feature name> plugin! I will be releasing some of those as well in the near future.
+## Pluggable Architecture
 
+Pacer is meant to be extensible and is built on a very modular architecture. Nearly every chainable route method is actually implemented in an independent module that is plugged into the route only when it's in use. That allows great flexibility in adding methods to routes without clogging up the method namespace. It also makes it natural to make pacer plugin gems.
+
+There are lots of examples of route extensions right inside Pacer. Have a look at the [lib/pacer/filter](https://github.com/pangloss/pacer/tree/develop/lib/pacer/filter), [side_effect](https://github.com/pangloss/pacer/tree/develop/lib/pacer/side_effect) and [transform](https://github.com/pangloss/pacer/tree/develop/lib/pacer/transform) folders to see the modules that are built into Pacer. They vary widely in complexity, so take a look around.
+
+If you want to add a traversal technique to Pacer, you can fork Pacer and send me a pull request or just create your own pacer-&lt;feature name&gt; plugin! To see how to build your own Pacer plugin, see my [example pacer-bloomfilter plugin](https://github.com/pangloss/pacer-bloomfilter) which also has a readme file that goes into considerable detail on the process of creating plugins and provides some additional usage examples as well.
+
+As a side note, don't worry about any magic happening behind the scenes to discover or automatically load pacer plugins, there is none of that! If you want to use a pacer plugin, treat it like any other gem, add it to your Gemfile (if that's what you use) and <code>require</code> the gem as normal if you need it.
 
 ## Gremlin
 

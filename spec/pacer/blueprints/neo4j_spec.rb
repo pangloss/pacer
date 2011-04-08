@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_neo4j do
+Run.neo4j do
   describe Pacer::Neo4jGraph do
     let(:v0) { graph.create_vertex }
     let(:v1) { graph.create_vertex }

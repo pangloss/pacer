@@ -18,8 +18,7 @@ pkg
 # Project specific
 *.graph
 *.db
-vendor/pipes*.jar
 *.graphml
-pacer.gemspec
 pkg
 tmp
+lib/*.jar

@@ -1,10 +1,26 @@
 module Pacer
   import com.tinkerpop.blueprints.pgm.TransactionalGraph
 
+  # Collect a global set of graphs that are currently in a transaction.
+  #
+  # @return [Set] graphs with an open transaction
   def self.graphs_in_transaction
     @graphs ||= Set[]
   end
 
+  # Methods used internally to do 'managed transactions' which I define
+  # as transactions that are started and committed automatically
+  # internally, typically on operations that potentially touch a large
+  # number of elements.
+  #
+  # The reason for keeping track of these separately is to prevent them
+  # from being confused with manual transactions. Although when this was
+  # written, I had made manual transactions nestable. That has been
+  # since explicitly disallowed by Blueprints. I am not sure if this
+  # code is actually needed anymore (if it was refactored out).
+  #
+  # TODO: the method names in this module need to be cleaned up.
+  # TODO: some methods may be able to be eliminated.
   module ManagedTransactionsMixin
     def manage_transactions=(v)
       @manage_transactions = v
@@ -61,6 +77,11 @@ module Pacer
     end
   end
 
+  # This is included into graphs that don't support transactions so that
+  # their interface is the same as for graphs that do support them.
+  #
+  # All methods in this module do nothing but yield or return values
+  # that match those in {GraphTransactionsMixin}
   module GraphTransactionsStub
     def in_transaction?
       false
@@ -91,6 +112,11 @@ module Pacer
     end
   end
 
+  # Add features to transactions to allow them to be more rubyish and
+  # more convenient to use.
+  #
+  # TODO: the method names in this module need to be cleaned up.
+  # TODO: some methods may be able to be eliminated.
   module GraphTransactionsMixin
     def self.included(target)
       target.send :protected, :startTransaction, :start_transaction

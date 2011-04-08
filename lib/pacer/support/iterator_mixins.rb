@@ -55,7 +55,7 @@ module Pacer::Core::Route
 
     def next
       item = super
-      item.add_extensions @extensions
+      item = item.add_extensions @extensions
       item.graph ||= @graph
       item
     end

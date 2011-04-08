@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_tg do
+Run.tg do
   describe Pacer::TinkerGraph do
     let(:v0) { graph.create_vertex }
     let(:v1) { graph.create_vertex }

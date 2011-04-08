@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'pacer/graph/element_mixin_spec'
 
-for_each_graph do
+Run.all do
   it_uses Pacer::ElementMixin do
 
     let(:v0) { graph.create_vertex(Tackle::SimpleMixin, :name => 'eliza') }

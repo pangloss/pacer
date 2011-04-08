@@ -13,9 +13,19 @@ shared_examples_for Pacer::Core::Graph::ElementRoute do
       end
     end
   end
+
+  context 'with extensions' do
+    let(:route) { r.add_extension(Tackle::SimpleMixin) }
+    describe '#each without a block' do
+      subject { route.each_element }
+      specify 'elements should be wrapped' do
+        subject.first.extensions.should include(Tackle::SimpleMixin)
+      end
+    end
+  end
 end
 
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   context Pacer::Core::Graph::EdgesRoute, '2' do

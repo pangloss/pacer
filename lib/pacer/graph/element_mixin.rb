@@ -1,13 +1,25 @@
 module Pacer
+  # This module is mixed into the raw Blueprints Edge and Vertex classes
+  # from any graph implementation.
+  #
+  # Adds more convenient/rubyish methods and adds support for extensions
+  # to some methods where needed.
   module ElementMixin
-    def self.included(target)
-      target.send :include, Enumerable unless target.is_a? Enumerable
+    class << self
+      protected
+      def included(target)
+        target.send :include, Enumerable unless target.is_a? Enumerable
+      end
     end
 
+    # Which extensions does this element have?
+    # @return [Set[extensions]]
     def extensions
       Set[]
     end
 
+    # See {Core::Graph::VerticesRoute#v}
+    # @return [Route]
     def v(*args)
       route = super
       if args.empty? and not block_given?
@@ -16,6 +28,8 @@ module Pacer
       route
     end
 
+    # See {Core::Graph::EdgesRoute#e}
+    # @return [Route]
     def e(*args)
       route = super
       if args.empty? and not block_given?
@@ -24,19 +38,28 @@ module Pacer
       route
     end
 
-    # Specify the graph the element belongs to. For internal use only.
+    # For internal use only.
+    #
+    # Specify the graph the element belongs to.
     def graph=(graph)
       @graph = graph
     end
 
-    # The graph the element belongs to. Used to help prevent objects from
-    # different graphs from being accidentally associated, as well as to get
-    # graph-specific data for the element.
+    # The graph the element belongs to.
+    #
+    # Used to help prevent objects from different graphs from being
+    # accidentally associated, as well as to get graph-specific data for
+    # the element.
+    #
+    # @return [GraphMixin]
     def graph
       @graph
     end
 
     # Convenience method to retrieve a property by name.
+    #
+    # @param [#to_s] key the property name
+    # @return [Object]
     def [](key)
       value = get_property(key.to_s)
       if graph
@@ -47,6 +70,8 @@ module Pacer
     end
 
     # Convenience method to set a property by name to the given value.
+    # @param [#to_s] key the property name
+    # @param [Object] value the value to set the property to
     def []=(key, value)
       value = graph.encode_property(value) if graph
       key = key.to_s
@@ -60,20 +85,28 @@ module Pacer
     end
 
     # Specialize result to return self for elements.
+    # @return [ElementMixin] self
     def result(name = nil)
       self
     end
 
     # Query whether the current node belongs to the given graph.
+    #
+    # @param [Object] g the object to compare to {#graph}
     def from_graph?(g)
       g.equal? graph
     end
 
     # Returns a hash of property values by name.
+    #
+    # @return [Hash]
     def properties
       property_keys.inject({}) { |h, name| h[name] = get_property(name); h }
     end
 
+    # Replace the element's properties with the given hash
+    #
+    # @param [Hash] props the element's new properties
     def properties=(props)
       (property_keys - props.keys.collect { |k| k.to_s }).each do |key|
         remove_property key
@@ -83,18 +116,51 @@ module Pacer
       end
     end
 
+    # The id of the current element
+    # @return [Object] element id (type varies by graph implementation.
     def element_id
       element.get_id
     end
 
-    def ==(other)
-      other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
-    end
-
+    # Sort objects semi arbitrarily based on {VertexMixin#display_name}
+    # or {EdgeMixin#display_name}.
+    # @param other
+    #
+    # @return [Fixnum]
     def <=>(other)
       display_name.to_s <=> other.display_name.to_s
     end
 
+    # Test equality to another object.
+    #
+    # Elements are equal if they are the same type and have the same id
+    # and the same graph, regardless of extensions.
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return true when comparing them.
+    #
+    # @see #eql?
+    # @param other
+    def ==(other)
+      if other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
+        if graph and other.graph
+          other.graph == graph
+        else
+          true
+        end
+      end
+    end
+
+    # Test object equality of the element instance.
+    #
+    # Wrappers/extensions (if any) are ignored, the underlying element
+    # only is compared
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return false when comparing them.
+    #
+    # @see #==
+    # @param other
     def eql?(other)
       if other.respond_to? :element
         super(other.element)
@@ -103,9 +169,12 @@ module Pacer
       end
     end
 
-    # Yields the element once or returns an enumerator containing self if no
-    # block is given. Follows Ruby conventions and is meant to be used along
+    # Yields the element once or returns an enumerator if no block is
+    # given. Follows Ruby conventions and is meant to be used along
     # with the Enumerable mixin.
+    #
+    # @yield [ElementMixin] this element
+    # @return [Enumerator] only if no block is given
     def each
       if block_given?
         yield self
@@ -114,6 +183,9 @@ module Pacer
       end
     end
 
+    # Returns the underlying element. For unwrapped elements, returns
+    # self.
+    # @return [ElementMixin]
     def element
       self
     end

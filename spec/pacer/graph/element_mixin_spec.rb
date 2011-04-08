@@ -273,7 +273,7 @@ shared_examples_for Pacer::ElementMixin do
 end
 end
 
-for_each_graph do
+Run.all do
   it_uses Pacer::ElementMixin do
     let(:v0) { graph.create_vertex :name => 'eliza' }
     let(:v1) { graph.create_vertex :name => 'darrick' }
@@ -284,7 +284,7 @@ for_each_graph do
   context 'vertex' do
     let(:v0) { graph.create_vertex :name => 'eliza' }
     subject { v0 }
-    it { should_not be_a(Pacer::ElementWrapper) }
+    it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
   end
 
   context 'edge' do
@@ -292,6 +292,6 @@ for_each_graph do
     let(:v1) { graph.create_vertex :name => 'darrick' }
     let(:e0) { graph.create_edge nil, v0, v1, :links }
     subject { e0 }
-    it { should_not be_a(Pacer::ElementWrapper) }
+    it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
   end
 end

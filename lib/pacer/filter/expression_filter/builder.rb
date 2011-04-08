@@ -11,6 +11,13 @@ module Pacer
     module ExpressionFilter
       remove_const 'Builder' if const_defined? 'Builder'
 
+      import com.tinkerpop.pipes.filter.OrFilterPipe
+      import com.tinkerpop.pipes.filter.ComparisonFilterPipe
+      import com.tinkerpop.pipes.filter.AndFilterPipe
+      import com.tinkerpop.pipes.filter.OrFilterPipe
+      import com.tinkerpop.pipes.util.HasNextPipe
+      import com.tinkerpop.pipes.filter.ObjectFilterPipe
+
       class OrGroup
         def initialize(pipes = [])
           @pipes = pipes
@@ -25,31 +32,31 @@ module Pacer
         end
 
         def pipe
-          com.tinkerpop.pipes.filter.OrFilterPipe.new(*@pipes)
+          OrFilterPipe.new(*@pipes)
         end
       end
 
       class Builder
         # These are defined with counterintuitive meanings so all meanings must be reversed.
         Filters = {
-          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
-          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN,
-          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN
+          '==' => ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '='  => ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '!=' => ComparisonFilterPipe::Filter::EQUAL,
+          '>'  => ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
+          '<'  => ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>=' => ComparisonFilterPipe::Filter::LESS_THAN,
+          '<=' => ComparisonFilterPipe::Filter::GREATER_THAN
         }
 
         # Further adjust to swap the order of the parameters.
         ReverseFilters = {
-          '==' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '='  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '!=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::EQUAL,
-          '<'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>'  => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
-          '<=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::GREATER_THAN,
-          '>=' => com.tinkerpop.pipes.filter.ComparisonFilterPipe::Filter::LESS_THAN
+          '==' => ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '='  => ComparisonFilterPipe::Filter::NOT_EQUAL,
+          '!=' => ComparisonFilterPipe::Filter::EQUAL,
+          '<'  => ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>'  => ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
+          '<=' => ComparisonFilterPipe::Filter::GREATER_THAN,
+          '>=' => ComparisonFilterPipe::Filter::LESS_THAN
         }
 
         class << self
@@ -57,11 +64,11 @@ module Pacer
             @builder ||= new
             pipe = @builder.apply(tree, route, vars)
             case pipe
-            when com.tinkerpop.pipes.filter.AndFilterPipe, com.tinkerpop.pipes.filter.OrFilterPipe
+            when AndFilterPipe, OrFilterPipe
               pipe
             else
-              pipe = com.tinkerpop.pipes.util.HasNextPipe.new(pipe)
-              com.tinkerpop.pipes.filter.AndFilterPipe.new(pipe)
+              pipe = HasNextPipe.new(pipe)
+              AndFilterPipe.new(pipe)
             end
           end
         end
@@ -80,7 +87,7 @@ module Pacer
         protected
 
         def pipeline(name, *pipes)
-          pipe = com.tinkerpop.pipes.Pipeline.new *pipes
+          pipe = Pacer::Pipes::Pipeline.new *pipes
           if Pacer.debug_pipes
             if name.is_a? Hash
               Pacer.debug_pipes << name.merge(:pipeline => pipes, :end => pipe)
@@ -131,8 +138,8 @@ module Pacer
           end
 
           t.rule(:statement => { :left => { :prop => t.simple(:property) }, :op => t.simple(:op), :right => t.simple(:value) }) do |h|
-            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(val(h[:property]))
-            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(val(h[:value]), Filters[val(h[:op])])
+            prop_pipe = Pacer::Pipes::PropertyPipe.new(val(h[:property]))
+            filter_pipe = ObjectFilterPipe.new(val(h[:value]), Filters[val(h[:op])])
             pipeline h.inspect, prop_pipe, filter_pipe
           end
 
@@ -141,8 +148,8 @@ module Pacer
           end
 
           t.rule(:statement => { :left => t.simple(:value), :op => t.simple(:op), :right => { :prop => t.simple(:property) } }) do |h|
-            prop_pipe = com.tinkerpop.pipes.pgm.PropertyPipe.new(val(h[:property]))
-            filter_pipe = com.tinkerpop.pipes.filter.ObjectFilterPipe.new(val(h[:value]), ReverseFilters[val(h[:op])])
+            prop_pipe = Pacer::Pipes::PropertyPipe.new(val(h[:property]))
+            filter_pipe = ObjectFilterPipe.new(val(h[:value]), ReverseFilters[val(h[:op])])
             pipeline h.inspect, prop_pipe, filter_pipe
           end
 
@@ -167,21 +174,21 @@ module Pacer
           t.rule(:group => t.simple(:x)) { x }
 
           t.rule(:or => t.sequence(:pipes)) do |h|
-            pipes = h[:pipes].map { |p| com.tinkerpop.pipes.util.HasNextPipe.new(p) }
-            pipeline({ :name => 'or', :or => h[:pipes], :or_ends => pipes }, com.tinkerpop.pipes.filter.OrFilterPipe.new(*pipes))
+            pipes = h[:pipes].map { |p| HasNextPipe.new(p) }
+            pipeline({ :name => 'or', :or => h[:pipes], :or_ends => pipes }, OrFilterPipe.new(*pipes))
           end
 
           t.rule(:and => t.sequence(:pipes)) do |h|
-            pipes = h[:pipes].map { |p| com.tinkerpop.pipes.util.HasNextPipe.new(p) }
-            pipeline({ :name => 'and', :and => h[:pipes], :and_ends => pipes }, com.tinkerpop.pipes.filter.AndFilterPipe.new(*pipes))
+            pipes = h[:pipes].map { |p| HasNextPipe.new(p) }
+            pipeline({ :name => 'and', :and => h[:pipes], :and_ends => pipes }, AndFilterPipe.new(*pipes))
           end
 
           t.rule(:not => t.simple(:pipe)) do |h|
             # TODO: this only negates matches, it doesn't negate non-matches because a non-match leaves nothing to negate!
             #       It must rather be done in the same way an AndFilterPipe is, where it controls the incoming element and tests the other pipe.
             pipes = []
-            pipes << com.tinkerpop.pipes.util.HasNextPipe.new
-            pipes << com.tinkerpop.pipes.filter.ObjectFilterPipe.new(true, Filters['!='])
+            pipes << HasNextPipe.new
+            pipes << ObjectFilterPipe.new(true, Filters['!='])
             pipeline 'not', *pipes
           end
         end
