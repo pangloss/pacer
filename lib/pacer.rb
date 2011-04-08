@@ -3,13 +3,12 @@ require 'pp'
 require 'rubygems'
 
 module Pacer
-  unless const_defined? :VERSION
+  unless const_defined? :PATH
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    VERSION = File.read(PATH + '/VERSION').chomp
     $:.unshift File.join(PATH, 'lib')
-
-    START_TIME = Time.now
   end
+
+  require 'pacer/version'
 
   if RUBY_VERSION =~ /^1.9/
     Enumerator = ::Enumerator
@@ -17,7 +16,7 @@ module Pacer
     Enumerator = Enumerable::Enumerator
   end
 
-  require 'pacer-graph'
+  require JAR
 
   require 'pacer/exceptions'
   require 'pacer/graph'
