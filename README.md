@@ -6,8 +6,26 @@ It currently supports 2 major graph database: [Neo4j](http://neo4j.org) and [Dex
 
 Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool [Pipes](http://pipes.tinkerpop.com) library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
 
-## Example traversals
+## Documentation
 
+Pacer is documented with a comprehensive RSpec test suite and with a
+thorough YARD documentation. [Dig in!](http://rubydoc.info/github/pangloss/pacer/develop/frames)
+
+If you like, you can also use the documentation locally via
+
+  gem install yard
+  yard server
+
+## Installation
+
+The easiest way to get Pacer is `gem install pacer`.
+
+If you want to hack on Pacer, you'll need to have
+[maven](http://maven.apache.org/) installed (I recommend `brew install
+maven`), then use `rake jar` to set up maven's pom.xml file and run the
+maven build script.
+
+## Example traversals
 
 Friend recommendation algorithm expressed in basic traversal functions:
 
@@ -21,8 +39,6 @@ or using Pacer's route extensions to create your own query methods:
 or to take it one step further:
 
     person.recommended_friends
-
-
 
 ## Create and populate a graph
 
