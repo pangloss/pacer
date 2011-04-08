@@ -30,7 +30,7 @@ describe Enumerable do
     end
   end
 
-  for_tg do
+  Run.tg do
     use_simple_graph_data
 
     describe '#to_route' do

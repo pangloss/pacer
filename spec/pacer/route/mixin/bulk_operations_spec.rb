@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_each_graph do
+Run.all do
   use_pacer_graphml_data
 
   describe RouteOperations, :transactions => false do

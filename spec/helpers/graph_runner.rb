@@ -1,36 +1,6 @@
 class Rspec::GraphRunner
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
-
-    if use_graph?('neo4j')
-      path1 = File.expand_path('tmp/spec.neo4j')
-      dir = Pathname.new(path1)
-      dir.rmtree if dir.exist?
-      $neo_graph = Pacer.neo4j(path1)
-
-      path2 = File.expand_path('tmp/spec.neo4j.2')
-      dir = Pathname.new(path2)
-      dir.rmtree if dir.exist?
-      $neo_graph2 = Pacer.neo4j(path2)
-
-      path3 = File.expand_path('tmp/spec_no_indices.neo4j')
-      dir = Pathname.new(path3)
-      dir.rmtree if dir.exist?
-      $neo_graph_no_indices = Pacer.neo4j(path3)
-      $neo_graph_no_indices.drop_index :vertices
-      $neo_graph_no_indices.drop_index :edges
-    end
-    if use_graph?('dex')
-      path1 = File.expand_path('tmp/spec.dex')
-      dir = Pathname.new(path1)
-      dir.rmtree if dir.exist?
-      $dex_graph = Pacer.dex(path1)
-
-      path2 = File.expand_path('tmp/spec.dex.2')
-      dir = Pathname.new(path2)
-      dir.rmtree if dir.exist?
-      $dex_graph2 = Pacer.dex(path2)
-    end
   end
 
   def inspect
@@ -43,8 +13,6 @@ class Rspec::GraphRunner
 
   def all(usage_style = :read_write, indices = true, &block)
     tg(usage_style, indices, &block)
-    neo4j(usage_style, indices, &block)
-    dex(usage_style, indices, &block)
   end
 
   def use_graph?(name)
@@ -71,6 +39,7 @@ class Rspec::GraphRunner
     end
   end
 
+protected
 
   def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)
     return unless use_graph? name
@@ -117,14 +86,6 @@ class Rspec::GraphRunner
       end
       instance_eval(&block)
     end
-  end
-
-  def neo4j(usage_style = :read_write, indices = true, &block)
-    for_graph('neo4j', usage_style, indices, true, $neo_graph, $neo_graph2, $neo_graph_no_indices, block)
-  end
-
-  def dex(usage_style = :read_write, indices = true, &block)
-    for_graph('dex', usage_style, indices, false, $dex_graph, $dex_graph2, nil, block)
   end
 end
 

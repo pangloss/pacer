@@ -273,7 +273,7 @@ shared_examples_for Pacer::ElementMixin do
 end
 end
 
-for_each_graph do
+Run.all do
   it_uses Pacer::ElementMixin do
     let(:v0) { graph.create_vertex :name => 'eliza' }
     let(:v1) { graph.create_vertex :name => 'darrick' }

@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_tg(:read_only) do
+Run.tg(:read_only) do
   context Pacer::Core::Graph::VerticesRoute do
     use_pacer_graphml_data(:read_only)
 
@@ -24,7 +24,7 @@ for_tg(:read_only) do
   end
 end
 
-for_tg do
+Run.tg do
   use_pacer_graphml_data
 
   context Pacer::Core::Graph::VerticesRoute do

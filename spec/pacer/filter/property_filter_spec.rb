@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_tg(:read_only) do
+Run.tg(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   describe Pacer::Filter::PropertyFilter do

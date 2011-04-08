@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_each_graph(:read_only, false) do
+Run.all(:read_only, false) do
   around { |spec| spec.run if graph }
   use_pacer_graphml_data(:read_only)
 

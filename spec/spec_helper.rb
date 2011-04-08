@@ -25,23 +25,7 @@ require 'spec/helpers/graph_runner'
 require 'spec/helpers/matchers'
 require 'spec/helpers/use_transactions'
 
-$graph_runner = Rspec::GraphRunner.new ENV['GRAPHS']
-
-def for_each_graph(usage_style = :read_write, indices = true, &block)
-  $graph_runner.all(usage_style, indices, &block)
-end
-
-def for_neo4j(usage_style = :read_write, indices = true, &block)
-  $graph_runner.neo4j(usage_style, indices, &block)
-end
-
-def for_dex(usage_style = :read_write, indices = true, &block)
-  $graph_runner.dex(usage_style, indices, &block)
-end
-
-def for_tg(usage_style = :read_write, indices = true, &block)
-  $graph_runner.tg(usage_style, indices, &block)
-end
+Run = Rspec::GraphRunner.new ENV['GRAPHS']
 
 def use_simple_graph_data
   let(:setup_data) { e0; e1 }
@@ -51,7 +35,7 @@ def use_simple_graph_data
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 end
 
-def use_pacer_graphml_data(usage_style = :read_write, version = '')
+def use_pacer_graphml_data(usage_style = :read_write)
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
@@ -68,7 +52,7 @@ def use_pacer_graphml_data(usage_style = :read_write, version = '')
   let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer } }
 end
 
-def use_grateful_dead_data(usage_style = :read_write, version = '')
+def use_grateful_dead_data(usage_style = :read_write)
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
@@ -91,6 +75,9 @@ RSpec.configure do |c|
 
   c.alias_it_should_behave_like_to :it_uses, '-'
 
+  puts "Using JRuby #{ JRUBY_VERSION } in #{ RUBY_VERSION } mode."
+  puts Run.inspect
+
   # Not sure what this does: ...
   # c.filter_run_excluding :ruby => lambda {|version|
   #   case version.to_s
@@ -103,6 +90,3 @@ RSpec.configure do |c|
   #   end
   # }
 end
-
-puts "Using JRuby #{ JRUBY_VERSION } in #{ RUBY_VERSION } mode."
-puts $graph_runner.inspect

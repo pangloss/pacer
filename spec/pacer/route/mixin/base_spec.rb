@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_each_graph do
+Run.all do
   describe Pacer::Core::Route, 'pipe creation internals' do
     context "graph.v" do
       describe '#build_pipeline' do
@@ -97,7 +97,7 @@ for_each_graph do
   end
 end
 
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   describe Pacer::Core::Route do
     use_pacer_graphml_data(:read_only)
     before { setup_data }
@@ -386,7 +386,7 @@ shared_examples_for Pacer::Core::Route do
   end
 end
 
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices' do
     it_uses Pacer::Core::Route do
@@ -396,7 +396,7 @@ for_each_graph(:read_only) do
     end
   end
 end
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
     it_uses Pacer::Core::Route do
@@ -408,7 +408,7 @@ for_each_graph(:read_only) do
     end
   end
 end
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'no vertices' do
     it_uses Pacer::Core::Route do
@@ -419,7 +419,7 @@ for_each_graph(:read_only) do
     end
   end
 end
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'edges' do
     it_uses Pacer::Core::Route do

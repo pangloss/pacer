@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_each_graph(:read_only) do
+Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   context Pacer::Core::Graph::EdgesRoute do

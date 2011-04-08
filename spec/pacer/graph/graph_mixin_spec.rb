@@ -343,7 +343,7 @@ shared_examples_for Pacer::GraphMixin do
 end
 
 
-for_each_graph :read_only, false do
+Run.all :read_only, false do
   around do |spec|
     spec.run if graph
   end
@@ -446,11 +446,11 @@ for_each_graph :read_only, false do
   end
 end
 
-for_each_graph do
+Run.all do
   it_uses Pacer::GraphMixin
 end
 
-for_neo4j do
+Run.neo4j do
   describe '#vertex' do
     it 'should not raise an exception for invalid key type' do
       graph.vertex('bad id').should be_nil

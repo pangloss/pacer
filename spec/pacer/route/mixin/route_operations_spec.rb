@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 # New tests:
-for_tg(:read_only) do
+Run.tg(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   describe RouteOperations do
@@ -46,7 +46,7 @@ for_tg(:read_only) do
   end
 end
 
-for_tg do
+Run.tg do
   use_pacer_graphml_data
 
   describe RouteOperations do

@@ -111,6 +111,6 @@ shared_examples_for Pacer::EdgeMixin do
   end
 end
 
-for_each_graph do
+Run.all do
   it_uses Pacer::EdgeMixin
 end

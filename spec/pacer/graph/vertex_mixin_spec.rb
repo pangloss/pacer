@@ -84,6 +84,6 @@ shared_examples_for Pacer::VertexMixin do
   end
 end
 
-for_each_graph do
+Run.all do
   it_uses Pacer::VertexMixin
 end

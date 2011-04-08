@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-for_dex do
+Run.dex do
   describe Pacer::DexGraph do
     let(:v0) { graph.create_vertex }
     let(:v1) { graph.create_vertex }
