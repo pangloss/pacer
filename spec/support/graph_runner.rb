@@ -1,4 +1,28 @@
 class Rspec::GraphRunner
+  module Tg
+    def all(usage_style = :read_write, indices = true, &block)
+      tg(usage_style, indices, &block)
+    end
+
+    def tg(usage_style = :read_write, indices = true, &block)
+      return unless use_graph? 'tg'
+      describe 'tg' do
+        let(:graph) do
+          g = Pacer.tg
+          unless indices
+            g.drop_index :vertices
+            g.drop_index :edges
+          end
+          g
+        end
+        let(:graph2) { Pacer.tg }
+        instance_eval(&block)
+      end
+    end
+  end
+
+  include Tg
+
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
   end
@@ -11,31 +35,11 @@ class Rspec::GraphRunner
     end
   end
 
-  def all(usage_style = :read_write, indices = true, &block)
-    tg(usage_style, indices, &block)
-  end
-
   def use_graph?(name)
     if @graphs.empty?
       true
     else
       @graphs.include? name
-    end
-  end
-
-  def tg(usage_style = :read_write, indices = true, &block)
-    return unless use_graph? 'tg'
-    describe 'tg' do
-      let(:graph) do
-        g = Pacer.tg
-        unless indices
-          g.drop_index :vertices
-          g.drop_index :edges
-        end
-        g
-      end
-      let(:graph2) { Pacer.tg }
-      instance_eval(&block)
     end
   end
 
