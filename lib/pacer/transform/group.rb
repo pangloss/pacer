@@ -81,7 +81,7 @@ module Pacer
         self
       end
 
-      def values_map(name, &block)
+      def values_map(name = :values, &block)
         @values_routes << [name, map_route(block)]
         self
       end
@@ -91,7 +91,7 @@ module Pacer
         self
       end
 
-      def values_route(name, &block)
+      def values_route(name = :values, &block)
         @values_routes << [name, block_route(block)]
         self
       end
