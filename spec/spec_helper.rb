@@ -20,11 +20,6 @@ end
 require 'pacer-neo4j'
 require 'pacer-dex'
 
-require 'spec/helpers/contexts'
-require 'spec/helpers/graph_runner'
-require 'spec/helpers/matchers'
-require 'spec/helpers/use_transactions'
-
 Run = Rspec::GraphRunner.new ENV['GRAPHS']
 
 def use_simple_graph_data
