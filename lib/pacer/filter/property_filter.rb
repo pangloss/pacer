@@ -33,13 +33,20 @@ module Pacer
 
         attr_reader :graph
 
+        protected
+
+        attr_accessor :non_ext_props
+
+        public
+
         def initialize(filters, graph)
           self.properties = []
           self.blocks = []
           self.extensions = []
           self.route_modules = []
+          self.non_ext_props = []
           self.graph = graph
-          add_filters filters
+          add_filters filters, nil
         end
 
         def graph=(g)
@@ -55,35 +62,36 @@ module Pacer
           end
         end
 
-        def add_filter(filter)
+        def add_filter(filter, extension)
           case filter
           when Hash
             filter.each do |k, v|
-              self.properties << [k.to_s, encode_value(v)]
+              self.non_ext_props << [k, v] unless extension
+              self.properties << [k.to_s, v]
             end
           when Module, Class
             self.extensions << filter
             if filter.respond_to? :route_conditions
-              add_filters filter.route_conditions
+              add_filters filter.route_conditions, filter
             end
             if filter.respond_to? :route
               self.route_modules << filter
             end
           when Array
-            add_filters(filter)
+            add_filters(filter, extension)
           when nil
           else
             raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
           end
         end
 
-        def add_filters(filters)
+        def add_filters(filters, extension)
           if filters.is_a? Array
             filters.each do |filter|
-              add_filter filter
+              add_filter filter, extension
             end
           else
-            add_filter filters
+            add_filter filters, extension
           end
         end
 
@@ -130,7 +138,8 @@ module Pacer
         end
 
         def inspect
-          strings = properties.map { |k, v| "#{ k }==#{ v.inspect }" }
+          strings = extensions.map { |e| e.name }
+          strings.concat non_ext_props.map { |k, v| "#{ k }==#{ v.inspect }" }
           strings.concat blocks.map { '&block' }
           strings.concat route_modules.map { |mod| mod.name }
           strings.join ', '
@@ -140,14 +149,22 @@ module Pacer
       class EdgeFilters < ElementFilters
         attr_accessor :labels
 
+        protected
+
+        attr_accessor :non_ext_labels
+
+        public
+
         def initialize(filters, graph)
           self.labels = []
+          self.non_ext_labels = []
           super
         end
 
-        def add_filter(filter)
+        def add_filter(filter, extension)
           case filter
           when String, Symbol
+            self.non_ext_labels << filter
             self.labels << filter.to_s
           else
             super
@@ -172,7 +189,7 @@ module Pacer
 
         def inspect
           if labels.any?
-            [labels.map { |l| l.inspect }.join(', '), super].compact.join ', '
+            [non_ext_labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
           else
             super
           end
@@ -196,20 +213,22 @@ module Pacer
       end
 
       def block=(block)
-        filters.blocks = [block]
+        if block
+          filters.blocks = [block]
+        else
+          filters.blocks = []
+        end
       end
 
       protected
 
       def build_pipeline
-        pl = filters.build_pipeline(self, *pipe_source)
-        pp pl
-        pl
+        filters.build_pipeline(self, *pipe_source)
       end
 
       def inspect_string
         if filters.any?
-          "#{inspect_class_name}#{filters.inspect}"
+          "#{inspect_class_name}(#{filters.inspect})"
         else
           inspect_class_name
         end
