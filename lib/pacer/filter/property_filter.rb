@@ -25,17 +25,156 @@ module Pacer
 
   module Filter
     module PropertyFilter
-      module EdgeLabels
-        # Specialize filter_pipe for edge labels.
-        def filter_pipe(pipe, filters, block, expand_extensions)
-          pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
-          labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
-          if labels.empty?
-            super
+      import com.tinkerpop.pipes.pgm.LabelCollectionFilterPipe
+      import com.tinkerpop.pipes.pgm.PropertyFilterPipe
+
+      class ElementFilters
+        attr_accessor :properties, :blocks, :extensions, :route_modules
+
+        attr_reader :graph
+
+        def initialize(filters, graph)
+          self.properties = []
+          self.blocks = []
+          self.extensions = []
+          self.route_modules = []
+          self.graph = graph
+          add_filters filters
+        end
+
+        def graph=(g)
+          if @graph != g
+            @encoded_properties = nil
+            @graph = g
+          end
+        end
+
+        def encoded_properties
+          @encoded_properties ||= properties.map do |k, v|
+            [k, encode_value(v)]
+          end
+        end
+
+        def add_filter(filter)
+          case filter
+          when Hash
+            filter.each do |k, v|
+              self.properties << [k.to_s, encode_value(v)]
+            end
+          when Module, Class
+            self.extensions << filter
+            if filter.respond_to? :route_conditions
+              add_filters filter.route_conditions
+            end
+            if filter.respond_to? :route
+              self.route_modules << filter
+            end
+          when Array
+            add_filters(filter)
+          when nil
           else
-            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.collect { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
+            raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
+          end
+        end
+
+        def add_filters(filters)
+          if filters.is_a? Array
+            filters.each do |filter|
+              add_filter filter
+            end
+          else
+            add_filter filters
+          end
+        end
+
+        def encode_value(value)
+          value = graph.encode_property(value)
+          if value.respond_to? :to_java
+            jvalue = value.to_java
+          elsif value.respond_to? :to_java_string
+            jvalue = value.to_java_string
+          else
+            jvalue = value
+          end
+        end
+
+        def build_pipeline(route, start_pipe, pipe = nil)
+          self.graph = route.graph
+          pipe ||= start_pipe
+          encoded_properties.each do |key, value|
+            new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
+            new_pipe.set_starts pipe if pipe
+            Pacer.debug_pipes << { :name => key, :start => pipe, :end => new_pipe } if Pacer.debug_pipes
+            pipe = new_pipe
+            start_pipe ||= pipe
+          end
+          blocks.each do |block|
+            block_pipe = Pacer::Pipes::BlockFilterPipe.new(route, block)
+            block_pipe.set_starts pipe if pipe
+            Pacer.debug_pipes << { :name => 'block', :start => pipe, :end => block_pipe } if Pacer.debug_pipes
+            pipe = block_pipe
+            start_pipe ||= pipe
+          end
+          route_modules.each do |mod|
+            extension_route = mod.route(Pacer::Route.empty(route))
+            s, e = extension_route.send :build_pipeline
+            s.setStarts(pipe) if pipe
+            start_pipe ||= s
+            pipe = e
+          end
+          [start_pipe, pipe]
+        end
+
+        def any?
+          properties.any? or blocks.any? or route_modules.any?
+        end
+
+        def inspect
+          strings = properties.map { |k, v| "#{ k }==#{ v.inspect }" }
+          strings.concat blocks.map { '&block' }
+          strings.concat route_modules.map { |mod| mod.name }
+          strings.join ', '
+        end
+      end
+
+      class EdgeFilters < ElementFilters
+        attr_accessor :labels
+
+        def initialize(filters, graph)
+          self.labels = []
+          super
+        end
+
+        def add_filter(filter)
+          case filter
+          when String, Symbol
+            self.labels << filter.to_s
+          else
+            super
+          end
+        end
+
+        def build_pipeline(route, start_pipe, pipe = nil)
+          pipe ||= start_pipe
+          if labels.any?
+            label_pipe = LabelCollectionFilterPipe.new labels, Pacer::Pipes::NOT_EQUAL
             label_pipe.set_starts pipe if pipe
-            super(label_pipe, filters - labels, block, false)
+            Pacer.debug_pipes << { :name => labels.inspect, :start => pipe, :end => block_pipe } if Pacer.debug_pipes
+            pipe = label_pipe
+            start_pipe ||= pipe
+          end
+          super(route, start_pipe, pipe)
+        end
+
+        def any?
+          labels.any? or super
+        end
+
+        def inspect
+          if labels.any?
+            [labels.map { |l| l.inspect }.join(', '), super].compact.join ', '
+          else
+            super
           end
         end
       end
@@ -46,101 +185,34 @@ module Pacer
 
       attr_accessor :block
 
-      def filters=(filter_array)
-        case filter_array
-        when Array
-          @filters = filter_array
-        when nil
-          @filters = []
-        else
-          @filters = [filter_array]
-        end
-        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
-        add_extensions @filters
+      def filters=(f)
+        @filters = EdgeFilters.new(f, graph)
+        add_extensions @filters.extensions
       end
 
       # Return an array of filter options for the current route.
       def filters
-        @filters ||= []
+        @filters ||= EdgeFilters.new(nil, graph)
+      end
+
+      def block=(block)
+        filters.blocks = [block]
       end
 
       protected
 
-      def after_initialize
-        if element_type == graph.element_type(:edge)
-          extend EdgeLabels
-        end
-      end
-
-      def attach_pipe(end_pipe)
-        filter_pipe(end_pipe, @filters, @block, true)
-      end
-
-      # Appends the defined filter pipes to narrow the results passed through
-      # the pipes for this route object.
-      def filter_pipe(pipe, args_array, block, expand_extensions)
-        if args_array and args_array.any?
-          pipe, args_array = expand_extension_conditions(pipe, args_array) if expand_extensions
-          pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
-            hash.inject(p) do |p2, (key, value)|
-              value = graph.encode_property(value)
-              if value.respond_to? :to_java
-                jvalue = value.to_java
-              elsif value.respond_to? :to_java_string
-                jvalue = value.to_java_string
-              else
-                jvalue = value
-              end
-              new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, jvalue, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
-              new_pipe.set_starts p2 if p2
-              new_pipe
-            end
-          end
-        end
-        if block
-          block_pipe = Pacer::Pipes::BlockFilterPipe.new(self, block)
-          block_pipe.set_starts pipe if pipe
-          pipe = block_pipe
-        end
-        pipe
-      end
-
-      def expand_extension_conditions(pipe, args_array)
-        modules = args_array.select { |obj| obj.is_a? Module or obj.is_a? Class }
-        pipe = modules.inject(pipe) do |p, mod|
-          if mod.respond_to? :route_conditions
-            if mod.route_conditions.is_a? Array
-              args_array = args_array + mod.route_conditions
-            else
-              args_array = args_array + [mod.route_conditions]
-            end
-            p
-          elsif mod.respond_to? :route
-            route = mod.route(Pacer::Route.empty(self))
-            s, e = route.send :build_pipeline
-            s.setStarts(p) if p
-            e
-          else
-            p
-          end
-        end
-        [pipe, args_array]
+      def build_pipeline
+        pl = filters.build_pipeline(self, *pipe_source)
+        pp pl
+        pl
       end
 
       def inspect_string
-        fs = filters.map do |f|
-          if f.is_a? Hash
-            f.map { |k, v| "#{ k }==#{ v.inspect }" }
-          else
-            f.inspect
-          end
+        if filters.any?
+          "#{inspect_class_name}#{filters.inspect}"
+        else
+          inspect_class_name
         end
-        fs << '&block' if @block
-        s = inspect_class_name
-        if fs or bs
-          s = "#{s}(#{ fs.join(', ') })"
-        end
-        s
       end
     end
   end
