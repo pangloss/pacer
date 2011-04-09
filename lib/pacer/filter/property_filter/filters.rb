@@ -202,8 +202,10 @@ module Pacer
           end
           index_options = index_options.sort_by do |a|
             count = a.first
-            if count == 0
-              # Only use 0 result indices if there is no alternative.
+            if count == 0 and search_manual_indices
+              # Only use 0 result indices if there is no alternative
+              # because most manual indices won't be populating the
+              # data in question.
               java.lang.Integer::MAX_VALUE
             else
               count
