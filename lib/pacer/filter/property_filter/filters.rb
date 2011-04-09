@@ -125,7 +125,7 @@ module Pacer
         def best_index(element_type)
           index, key, value = find_best_index(element_type)
           if properties.delete [key, value]
-            @encoded_properties = []
+            @encoded_properties = nil
           end
           [index, key, value]
         end
