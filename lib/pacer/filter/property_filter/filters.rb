@@ -106,7 +106,7 @@ module Pacer
         end
 
         def any?
-          properties.any? or blocks.any? or route_modules.any?
+          properties.any? or blocks.any? or route_modules.any? or extensions.any?
         end
 
         def to_s
