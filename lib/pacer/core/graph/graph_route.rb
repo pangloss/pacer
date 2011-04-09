@@ -67,6 +67,7 @@ module Pacer::Core::Graph
       idx, key, value = filters.best_index(element_type)
       if idx and key
         route = chain_route :back => self, :element_type => element_type, :filter => :index, :index => idx, :key => key, :value => value
+        Pacer::Route.property_filter(route, filters, block)
       end
     end
   end

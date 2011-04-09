@@ -138,7 +138,7 @@ module Pacer
           return nil if avail.empty?
           index_options = []
           yield avail, index_options if block_given?
-          return @index_key_values ||= properties.each do |k, v|
+          @index_key_values ||= properties.each do |k, v|
             if v.is_a? Hash
               v.each do |k2, v2|
                 if (idxs = avail["name:#{k}"]).any?
