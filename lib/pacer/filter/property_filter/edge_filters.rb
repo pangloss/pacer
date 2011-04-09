@@ -19,6 +19,7 @@ module Pacer
         def add_filter(filter, extension)
           case filter
           when String, Symbol
+            reset_properties
             self.non_ext_labels << filter
             self.labels << filter.to_s
           else
@@ -47,6 +48,42 @@ module Pacer
             [non_ext_labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
           else
             super
+          end
+        end
+
+        def best_index(route)
+          index, key, value = find_best_index(route)
+          if key == 'label'
+            labels.delete value
+          end
+          super
+        end
+
+        protected
+
+        def reset_properties
+          @encoded_properties = nil
+          if @best_index
+            # put removed index label back...
+            i, k, v = @best_index
+            labels << v if k == 'label'
+          end
+          super
+        end
+
+        def find_best_index(route)
+          super do |avail, index_options|
+            labels.each do |label|
+              if idxs = avail["key:label"]
+                if choose_best_index
+                  idxs.each do |idx|
+                    index_options << [idx.count('label', label), idx, k, v]
+                  end
+                else
+                  return @best_index = [idxs.first, 'label', label]
+                end
+              end
+            end
           end
         end
       end

@@ -2,9 +2,12 @@ module Pacer
   module Filter
     module PropertyFilter
       class Filters
-        attr_accessor :properties, :blocks, :extensions, :route_modules
+        attr_reader :properties, :extensions, :route_modules
+        attr_accessor :blocks
 
-        attr_reader :graph
+        attr_reader :graph, :indices
+
+        attr_accessor :choose_best_index
 
         protected
 
@@ -13,30 +16,32 @@ module Pacer
         public
 
         def initialize(filters)
-          self.properties = []
-          self.blocks = []
-          self.extensions = []
-          self.route_modules = []
-          self.non_ext_props = []
+          @properties = []
+          @blocks = []
+          @extensions = []
+          @route_modules = []
+          @non_ext_props = []
           add_filters filters, nil
         end
 
         def graph=(g)
           if @graph != g
-            @encoded_properties = nil
+            reset_properties
             @graph = g
           end
         end
 
-        def encoded_properties
-          @encoded_properties ||= properties.map do |k, v|
-            [k, encode_value(v)]
+        def indices=(i)
+          if @indices != i
+            reset_properties
+            @indices = i
           end
         end
 
         def add_filter(filter, extension)
           case filter
           when Hash
+            reset_properties
             filter.each do |k, v|
               self.non_ext_props << [k, v] unless extension
               self.properties << [k.to_s, v]
@@ -116,6 +121,89 @@ module Pacer
           strings.concat route_modules.map { |mod| mod.name }
           strings.join ', '
         end
+
+        def best_index(element_type)
+          index, key, value = find_best_index(element_type)
+          if properties.delete [key, value]
+            @encoded_properties = []
+          end
+          [index, key, value]
+        end
+
+        protected
+
+        def find_best_index(element_type)
+          return @best_index if @best_index
+          avail = available_indices(element_type)
+          return nil if avail.empty?
+          index_options = []
+          yield avail, index_options if block_given?
+          return @index_key_values ||= properties.each do |k, v|
+            if v.is_a? Hash
+              v.each do |k2, v2|
+                if (idxs = avail["name:#{k}"]).any?
+                  if choose_best_index
+                    idxs.each do |idx|
+                      index_options << [idx.count(k2, encode_value(v2)), idx, k2, v2]
+                    end
+                  else
+                    return @best_index = [idxs.first, k2, v2]
+                  end
+                end
+              end
+            elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
+              if choose_best_index
+                idxs.each do |idx|
+                  index_options << [idx.count(k, encode_value(v)), idx, k, v]
+                end
+              else
+                return @best_index = [idxs.first, k, v]
+              end
+            end
+          end
+          @best_index = index_options.sort_by { |a| a.first }.first[1..-1]
+          @best_index ||= []
+        end
+
+        def reset_properties
+          @encoded_properties = nil
+          if @best_index
+            # put removed index property back...
+            i, k, v = @best_index
+            properties << [k, v]
+          end
+          @best_index = nil
+          @available_indices = nil
+        end
+
+        def encoded_properties
+          @encoded_properties ||= properties.map do |k, v|
+            [k, encode_value(v)]
+          end
+        end
+
+        def available_indices(element_type)
+          return @available_indices if @available_indices
+          @available_indices = Hash.new { |h, k| h[k] = [] }
+          return @available_indices unless indices
+          index_class = graph.index_class(element_type)
+          indices.each do |index|
+            next unless index.index_class == index_class
+            if index.index_type == Pacer.automatic_index
+              if keys = index.getAutoIndexKeys
+                keys.each do |key|
+                  @available_indices["key:#{key}"] << index
+                end
+              else
+                @available_indices[:all] << index
+              end
+            else
+              @available_indices["name:#{index.index_name}"] = [index]
+            end
+          end
+          @available_indices
+        end
+
       end
     end
   end
