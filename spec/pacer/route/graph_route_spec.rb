@@ -32,6 +32,7 @@ Run.all(:read_only, false) do
     context 'with vertex name indexed' do
       before :all do
         graph.v.build_index :name if graph
+        graph.search_manual_indices = true if graph
       end
 
       after :all do

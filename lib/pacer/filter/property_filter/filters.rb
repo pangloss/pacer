@@ -22,8 +22,8 @@ module Pacer
         #
         #   graph.v(:index_key => value)
         #
-        # @attr [Boolean] automatic_manual_indices
-        attr_accessor :automatic_manual_indices
+        # @attr [Boolean] search_manual_indices
+        attr_accessor :search_manual_indices
 
         protected
 
@@ -243,7 +243,7 @@ module Pacer
               end
             else
               @available_indices["name:#{index.index_name}"] = [index]
-              @available_indices[:all] << index #if automatic_manual_indices
+              @available_indices[:all] << index if search_manual_indices
             end
           end
           @available_indices

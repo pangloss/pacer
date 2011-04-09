@@ -31,6 +31,9 @@ module Pacer::Core::Graph
       route
     end
 
+    attr_accessor :choose_best_index
+    attr_accessor :search_manual_indices
+
     def filter(*args)
       raise 'Not implemented'
     end
@@ -64,7 +67,8 @@ module Pacer::Core::Graph
     def indexed_route(element_type, filters, block)
       filters.graph = self
       filters.indices = graph.indices
-      filters.choose_best_index = true
+      filters.choose_best_index = @choose_best_index != false
+      filters.search_manual_indices = @search_manual_indices
       idx, key, value = filters.best_index(element_type)
       if idx and key
         route = chain_route :back => self, :element_type => element_type, :filter => :index, :index => idx, :key => key, :value => value
