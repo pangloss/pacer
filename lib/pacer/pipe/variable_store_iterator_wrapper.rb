@@ -6,7 +6,7 @@ module Pacer::Pipes
 
     def initialize(pipe, vars, variable_name)
       super()
-      setStarts pipe
+      setStarts pipe if pipe
       @vars = vars
       @variable_name = variable_name
     end
