@@ -5,9 +5,25 @@ module Pacer
         attr_reader :properties, :extensions, :route_modules
         attr_accessor :blocks
 
-        attr_reader :graph, :indices
-
+        # Allow Pacer to use index counts to determine which index has
+        # the least number elements for the available keys in the query.
+        #
+        # @attr [Boolean] choose_best_index
         attr_accessor :choose_best_index
+
+        # Allow Pacer to use manual indices without explicitly
+        # referencing them by name.
+        #
+        # @example Explicit manual index:
+        #
+        #   graph.v(:index_name => { :index_key => value })
+        #
+        # @example Non-explicit index lookup:
+        #
+        #   graph.v(:index_key => value)
+        #
+        # @attr [Boolean] automatic_manual_indices
+        attr_accessor :automatic_manual_indices
 
         protected
 
@@ -24,12 +40,26 @@ module Pacer
           add_filters filters, nil
         end
 
+        # Set which graph this filter is currently operating on
+        #
+        # @note this is not threadsafe if you are reusing predefined
+        #   routes on multiple graphs.
+        #
+        # @attr [GraphMixin] g a graph
+        attr_reader :graph
+
         def graph=(g)
           if @graph != g
             reset_properties
             @graph = g
           end
         end
+
+        # Set which indices are available to be used to determine the
+        # best_index.
+        #
+        # @attr [Array<Pacer::IndexMixin>] i an array of indices
+        attr_reader :indices
 
         def indices=(i)
           if @indices != i
@@ -43,7 +73,7 @@ module Pacer
           when Hash
             reset_properties
             filter.each do |k, v|
-              self.non_ext_props << [k, v] unless extension
+              self.non_ext_props << [k.to_s, v] unless extension
               self.properties << [k.to_s, v]
             end
           when Module, Class
@@ -86,6 +116,13 @@ module Pacer
         def build_pipeline(route, start_pipe, pipe = nil)
           self.graph = route.graph
           pipe ||= start_pipe
+          route_modules.each do |mod|
+            extension_route = mod.route(Pacer::Route.empty(route))
+            s, e = extension_route.send :build_pipeline
+            s.setStarts(pipe) if pipe
+            start_pipe ||= s
+            pipe = e
+          end
           encoded_properties.each do |key, value|
             new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
             new_pipe.set_starts pipe if pipe
@@ -100,13 +137,6 @@ module Pacer
             pipe = block_pipe
             start_pipe ||= pipe
           end
-          route_modules.each do |mod|
-            extension_route = mod.route(Pacer::Route.empty(route))
-            s, e = extension_route.send :build_pipeline
-            s.setStarts(pipe) if pipe
-            start_pipe ||= s
-            pipe = e
-          end
           [start_pipe, pipe]
         end
 
@@ -116,18 +146,19 @@ module Pacer
 
         def to_s
           strings = extensions.map { |e| e.name }
-          strings.concat non_ext_props.map { |k, v| "#{ k }==#{ v.inspect }" }
+          strings.concat((non_ext_props - [@best_index_value]).map { |k, v| "#{ k }==#{ v.inspect }" })
           strings.concat blocks.map { '&block' }
           strings.concat route_modules.map { |mod| mod.name }
           strings.join ', '
         end
 
         def best_index(element_type)
-          index, key, value = find_best_index(element_type)
-          if properties.delete [key, value]
+          result = find_best_index(element_type)
+          # the call to find_best_index produces @best_index_value:
+          if properties.delete @best_index_value
             @encoded_properties = nil
           end
-          [index, key, value]
+          result
         end
 
         protected
@@ -138,15 +169,16 @@ module Pacer
           return nil if avail.empty?
           index_options = []
           yield avail, index_options if block_given?
-          @index_key_values ||= properties.each do |k, v|
+          properties.each do |k, v|
             if v.is_a? Hash
               v.each do |k2, v2|
                 if (idxs = avail["name:#{k}"]).any?
                   if choose_best_index
                     idxs.each do |idx|
-                      index_options << [idx.count(k2, encode_value(v2)), idx, k2, v2]
+                      index_options << [idx.count(k2, encode_value(v2)), [idx, k2, v2], [k, v]]
                     end
                   else
+                    @best_index_value = [k, v]
                     return @best_index = [idxs.first, k2, v2]
                   end
                 end
@@ -154,25 +186,37 @@ module Pacer
             elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
               if choose_best_index
                 idxs.each do |idx|
-                  index_options << [idx.count(k, encode_value(v)), idx, k, v]
+                  index_options << [idx.count(k, encode_value(v)), [idx, k, v], [k, v]]
                 end
               else
+                @best_index_value = [k, v]
                 return @best_index = [idxs.first, k, v]
               end
+            else
+              nil
             end
           end
-          @best_index = index_options.sort_by { |a| a.first }.first[1..-1]
-          @best_index ||= []
+          index_options = index_options.sort_by do |a|
+            count = a.first
+            if count == 0
+              # Only use 0 result indices if there is no alternative.
+              java.lang.Integer::MAX_VALUE
+            else
+              count
+            end
+          end
+          _, @best_index, @best_index_value = index_options.first || [nil, [], []]
+          @best_index
         end
 
         def reset_properties
           @encoded_properties = nil
-          if @best_index
+          if @best_index_value
             # put removed index property back...
-            i, k, v = @best_index
-            properties << [k, v]
+            properties << @best_index_value
           end
           @best_index = nil
+          @best_index_value = nil
           @available_indices = nil
         end
 
@@ -199,6 +243,7 @@ module Pacer
               end
             else
               @available_indices["name:#{index.index_name}"] = [index]
+              @available_indices[:all] << index #if automatic_manual_indices
             end
           end
           @available_indices

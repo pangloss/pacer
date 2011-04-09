@@ -69,6 +69,9 @@ module Pacer::Core::Graph
       if idx and key
         route = chain_route :back => self, :element_type => element_type, :filter => :index, :index => idx, :key => key, :value => value
         Pacer::Route.property_filter(route, filters, block)
+      elsif filters.route_modules.any?
+        mod = filters.route_modules.shift
+        Pacer::Route.property_filter(mod.route(self), filters, block)
       end
     end
   end

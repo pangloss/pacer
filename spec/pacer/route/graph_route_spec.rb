@@ -60,7 +60,7 @@ Run.all(:read_only, false) do
       end
 
       context 'extension search' do
-        subject { graph.v(TP::Person, :name => 'pangloss') }
+        subject { graph.v(TP::Person, :name => { :name => 'pangloss' }) }
         its(:inspect) { should == '#<V-Index(name: "pangloss") -> V-Property(TP::Person)>' }
         its(:extensions) { should include(TP::Person) }
         its(:to_a) { should_not be_empty }
@@ -69,7 +69,7 @@ Run.all(:read_only, false) do
 
       context 'extension search 2' do
         subject { graph.v(TP::Pangloss) }
-        it { should be_a(Pacer::Filter::IndexFilter) }
+        its(:back) { should be_a(Pacer::Filter::IndexFilter) }
         its(:to_a) { should_not be_empty }
         its(:count) { should == 1 }
       end
