@@ -64,6 +64,7 @@ module Pacer::Core::Graph
     def indexed_route(element_type, filters, block)
       filters.graph = self
       filters.indices = graph.indices
+      filters.choose_best_index = true
       idx, key, value = filters.best_index(element_type)
       if idx and key
         route = chain_route :back => self, :element_type => element_type, :filter => :index, :index => idx, :key => key, :value => value
