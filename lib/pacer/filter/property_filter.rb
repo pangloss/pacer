@@ -5,24 +5,45 @@ module Pacer
   class Route
     class << self
       def filters(filters)
-        Pacer::Filter::PropertyFilter::Filters.new(filters)
+        if filters? filters
+          filters
+        else
+          Pacer::Filter::PropertyFilter::Filters.new(filters)
+        end
       end
 
       def edge_filters(filters)
-        Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
+        if filters? filters
+          filters
+        else
+          Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
+        end
+      end
+
+      def filters?(filters)
+        filters.is_a? Pacer::Filter::PropertyFilter::Filters
       end
 
       def property_filter_before(base, filters, block)
-        if filters and filters.any? or block
-          yield new(:back => base, :filter => :property, :filters => filters, :block => block)
+        filters = Pacer::Route.edge_filters(filters)
+        filters.blocks = [block] if block
+        if filters.extensions_only? and base.is_a? Route
+          base.add_extensions(filters.extensions)
+          yield base
+        elsif filters and filters.any?
+          yield new(:back => base, :filter => :property, :filters => filters)
         else
           yield base
         end
       end
 
       def property_filter(base, filters, block)
-        if filters and filters.any? or block
-          new(:back => base, :filter => :property, :filters => filters, :block => block)
+        filters = Pacer::Route.edge_filters(filters)
+        filters.blocks = [block] if block
+        if filters.extensions_only? and base.is_a? Route
+          base.add_extensions(filters.extensions)
+        elsif filters and filters.any?
+          new(:back => base, :filter => :property, :filters => filters)
         elsif Pacer.vertex? base
           new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
         elsif Pacer.edge? base

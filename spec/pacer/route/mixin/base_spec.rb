@@ -400,8 +400,8 @@ Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
     it_uses Pacer::Core::Route do
-      let(:back) { graph.v }
-      let(:route) { back.filter(Tackle::SimpleMixin) }
+      let(:back) { nil }
+      let(:route) { graph.v.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
       let(:route_extensions) { Set[Tackle::SimpleMixin] }

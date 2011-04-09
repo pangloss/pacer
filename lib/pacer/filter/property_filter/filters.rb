@@ -144,6 +144,10 @@ module Pacer
           properties.any? or blocks.any? or route_modules.any? or extensions.any?
         end
 
+        def extensions_only?
+          properties.none? and blocks.none? and route_modules.none? and extensions.any?
+        end
+
         def to_s
           strings = extensions.map { |e| e.name }
           strings.concat((non_ext_props - [@best_index_value]).map { |k, v| "#{ k }==#{ v.inspect }" })
