@@ -68,7 +68,7 @@ module Pacer
 
     def inspect
       prefix = "#<Group #{ key.inspect } "
-      "#{prefix}#{ all_values.map { |k,v| [k, ': ', v.inspect].join }.join("\n" + (' ' * prefix.length)) } >"
+      "#{prefix}#{ all_values.map { |k,v| [k, ': ', v.inspect].join }.join("  ") } >"
     end
   end
 
