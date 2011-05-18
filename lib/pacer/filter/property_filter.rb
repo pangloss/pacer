@@ -1,17 +1,49 @@
+require 'pacer/filter/property_filter/filters'
+require 'pacer/filter/property_filter/edge_filters'
+
 module Pacer
   class Route
     class << self
+      def filters(filters)
+        if filters? filters
+          filters
+        else
+          Pacer::Filter::PropertyFilter::Filters.new(filters)
+        end
+      end
+
+      def edge_filters(filters)
+        if filters? filters
+          filters
+        else
+          Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
+        end
+      end
+
+      def filters?(filters)
+        filters.is_a? Pacer::Filter::PropertyFilter::Filters
+      end
+
       def property_filter_before(base, filters, block)
-        if filters and filters.any? or block
-          yield new(:back => base, :filter => :property, :filters => filters, :block => block)
+        filters = Pacer::Route.edge_filters(filters)
+        filters.blocks = [block] if block
+        if filters.extensions_only? and base.is_a? Route
+          base.add_extensions(filters.extensions)
+          yield base
+        elsif filters and filters.any?
+          yield new(:back => base, :filter => :property, :filters => filters)
         else
           yield base
         end
       end
 
       def property_filter(base, filters, block)
-        if filters and filters.any? or block
-          new(:back => base, :filter => :property, :filters => filters, :block => block)
+        filters = Pacer::Route.edge_filters(filters)
+        filters.blocks = [block] if block
+        if filters.extensions_only? and base.is_a? Route
+          base.add_extensions(filters.extensions)
+        elsif filters and filters.any?
+          new(:back => base, :filter => :property, :filters => filters)
         elsif Pacer.vertex? base
           new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
         elsif Pacer.edge? base
@@ -25,122 +57,51 @@ module Pacer
 
   module Filter
     module PropertyFilter
-      module EdgeLabels
-        # Specialize filter_pipe for edge labels.
-        def filter_pipe(pipe, filters, block, expand_extensions)
-          pipe, filters = expand_extension_conditions(pipe, filters) if expand_extensions
-          labels = filters.select { |arg| arg.is_a? Symbol or arg.is_a? String }
-          if labels.empty?
-            super
-          else
-            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.collect { |l| l.to_s }, Pacer::Pipes::NOT_EQUAL
-            label_pipe.set_starts pipe if pipe
-            super(label_pipe, filters - labels, block, false)
-          end
-        end
-      end
+      import com.tinkerpop.pipes.pgm.LabelCollectionFilterPipe
+      import com.tinkerpop.pipes.pgm.PropertyFilterPipe
 
       def self.triggers
         [:filters]
       end
 
-      attr_accessor :block
-
-      def filters=(filter_array)
-        case filter_array
-        when Array
-          @filters = filter_array
-        when nil
-          @filters = []
+      def filters=(f)
+        if f.is_a? Filters
+          @filters = f
         else
-          @filters = [filter_array]
+          @filters = EdgeFilters.new(f)
         end
-        # Sometimes filters are modules. If they contain a Route submodule, extend this route with that module.
-        add_extensions @filters
+        add_extensions @filters.extensions
       end
 
       # Return an array of filter options for the current route.
       def filters
-        @filters ||= []
+        @filters ||= EdgeFilters.new(nil)
+      end
+
+      def block=(block)
+        if block
+          filters.blocks = [block]
+        else
+          filters.blocks = []
+        end
+      end
+
+      def block
+        filters.blocks.first
       end
 
       protected
 
-      def after_initialize
-        if element_type == graph.element_type(:edge)
-          extend EdgeLabels
-        end
-      end
-
-      def attach_pipe(end_pipe)
-        filter_pipe(end_pipe, @filters, @block, true)
-      end
-
-      # Appends the defined filter pipes to narrow the results passed through
-      # the pipes for this route object.
-      def filter_pipe(pipe, args_array, block, expand_extensions)
-        if args_array and args_array.any?
-          pipe, args_array = expand_extension_conditions(pipe, args_array) if expand_extensions
-          pipe = args_array.select { |arg| arg.is_a? Hash }.inject(pipe) do |p, hash|
-            hash.inject(p) do |p2, (key, value)|
-              value = graph.encode_property(value)
-              if value.respond_to? :to_java
-                jvalue = value.to_java
-              elsif value.respond_to? :to_java_string
-                jvalue = value.to_java_string
-              else
-                jvalue = value
-              end
-              new_pipe = Pacer::Pipes::PropertyFilterPipe.new(key.to_s, jvalue, Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL)
-              new_pipe.set_starts p2 if p2
-              new_pipe
-            end
-          end
-        end
-        if block
-          block_pipe = Pacer::Pipes::BlockFilterPipe.new(self, block)
-          block_pipe.set_starts pipe if pipe
-          pipe = block_pipe
-        end
-        pipe
-      end
-
-      def expand_extension_conditions(pipe, args_array)
-        modules = args_array.select { |obj| obj.is_a? Module or obj.is_a? Class }
-        pipe = modules.inject(pipe) do |p, mod|
-          if mod.respond_to? :route_conditions
-            if mod.route_conditions.is_a? Array
-              args_array = args_array + mod.route_conditions
-            else
-              args_array = args_array + [mod.route_conditions]
-            end
-            p
-          elsif mod.respond_to? :route
-            route = mod.route(Pacer::Route.empty(self))
-            s, e = route.send :build_pipeline
-            s.setStarts(p) if p
-            e
-          else
-            p
-          end
-        end
-        [pipe, args_array]
+      def build_pipeline
+        filters.build_pipeline(self, *pipe_source)
       end
 
       def inspect_string
-        fs = filters.map do |f|
-          if f.is_a? Hash
-            f.map { |k, v| "#{ k }==#{ v.inspect }" }
-          else
-            f.inspect
-          end
+        if filters.any?
+          "#{inspect_class_name}(#{filters})"
+        else
+          inspect_class_name
         end
-        fs << '&block' if @block
-        s = inspect_class_name
-        if fs or bs
-          s = "#{s}(#{ fs.join(', ') })"
-        end
-        s
       end
     end
   end

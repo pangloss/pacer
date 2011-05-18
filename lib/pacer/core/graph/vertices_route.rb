@@ -2,6 +2,10 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
   module VerticesRoute
+    import com.tinkerpop.pipes.pgm.OutEdgesPipe
+    import com.tinkerpop.pipes.pgm.InEdgesPipe
+    import com.tinkerpop.pipes.pgm.BothEdgesPipe
+
     include ElementRoute
 
     # Extends the route with out edges from this route's matching vertices.
@@ -10,10 +14,11 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
+      filters = extract_sole_label(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
-                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::OUT_EDGES,
-                                               :route_name => 'outE'),
+                                               :pipe_class => OutEdgesPipe,
+                                               :pipe_args => sole_label,
+                                               :route_name => edge_route_name('outE')),
                                   filters, block)
     end
 
@@ -23,10 +28,11 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
+      filters = extract_sole_label(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
-                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::IN_EDGES,
-                                               :route_name => 'inE'),
+                                               :pipe_class => InEdgesPipe,
+                                               :pipe_args => sole_label,
+                                               :route_name => edge_route_name('inE')),
                                   filters, block)
     end
 
@@ -36,10 +42,11 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
+      filters = extract_sole_label(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
-                                               :pipe_class => Pacer::Pipes::VertexEdgePipe,
-                                               :pipe_args => Pacer::Pipes::VertexEdgePipe::Step::BOTH_EDGES,
-                                               :route_name => 'bothE'),
+                                               :pipe_class => BothEdgesPipe,
+                                               :pipe_args => sole_label,
+                                               :route_name => edge_route_name('bothE')),
                                   filters, block)
     end
 
@@ -132,7 +139,30 @@ module Pacer::Core::Graph
       end
     end
 
+    def sole_label
+      @sole_label
+    end
+
     protected
+
+    def edge_route_name(prefix)
+      if sole_label
+        "#{prefix}(#{sole_label.first.to_sym.inspect})"
+      else
+        prefix
+      end
+    end
+
+    def extract_sole_label(filters)
+      filters = Pacer::Route.edge_filters(filters)
+      if filters.labels.count == 1
+        @sole_label = filters.labels
+        filters.labels = []
+      else
+        @sole_label = nil
+      end
+      filters
+    end
 
     # TODO: move id_pipe_class into the element_type object
     def id_pipe_class

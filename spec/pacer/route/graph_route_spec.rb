@@ -32,6 +32,7 @@ Run.all(:read_only, false) do
     context 'with vertex name indexed' do
       before :all do
         graph.v.build_index :name if graph
+        graph.search_manual_indices = true if graph
       end
 
       after :all do
@@ -60,7 +61,7 @@ Run.all(:read_only, false) do
       end
 
       context 'extension search' do
-        subject { graph.v(TP::Person, :name => 'pangloss') }
+        subject { graph.v(TP::Person, :name => { :name => 'pangloss' }) }
         its(:inspect) { should == '#<V-Index(name: "pangloss") -> V-Property(TP::Person)>' }
         its(:extensions) { should include(TP::Person) }
         its(:to_a) { should_not be_empty }

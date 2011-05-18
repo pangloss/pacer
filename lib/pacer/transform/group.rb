@@ -68,7 +68,7 @@ module Pacer
 
     def inspect
       prefix = "#<Group #{ key.inspect } "
-      "#{prefix}#{ all_values.map { |k,v| [k, ': ', v.inspect].join }.join("\n" + (' ' * prefix.length)) } >"
+      "#{prefix}#{ all_values.map { |k,v| [k, ': ', v.inspect].join }.join("  ") } >"
     end
   end
 
@@ -81,7 +81,7 @@ module Pacer
         self
       end
 
-      def values_map(name, &block)
+      def values_map(name = :values, &block)
         @values_routes << [name, map_route(block)]
         self
       end
@@ -91,7 +91,7 @@ module Pacer
         self
       end
 
-      def values_route(name, &block)
+      def values_route(name = :values, &block)
         @values_routes << [name, block_route(block)]
         self
       end

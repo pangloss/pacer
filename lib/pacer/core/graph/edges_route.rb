@@ -2,6 +2,10 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
   module EdgesRoute
+    import com.tinkerpop.pipes.pgm.OutVertexPipe
+    import com.tinkerpop.pipes.pgm.InVertexPipe
+    import com.tinkerpop.pipes.pgm.BothVerticesPipe
+
     include ElementRoute
 
     # Extends the route with out vertices from this route's matching edges.
@@ -11,8 +15,7 @@ module Pacer::Core::Graph
     # @return [VerticesRoute]
     def out_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
-                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
-                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::OUT_VERTEX,
+                                               :pipe_class => OutVertexPipe,
                                                :route_name => 'outV'),
                                   filters, block)
     end
@@ -24,8 +27,7 @@ module Pacer::Core::Graph
     # @return [VerticesRoute]
     def in_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
-                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
-                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::IN_VERTEX,
+                                               :pipe_class => InVertexPipe,
                                                :route_name => 'inV'),
                                   filters, block)
     end
@@ -37,8 +39,7 @@ module Pacer::Core::Graph
     # @return [VerticesRoute]
     def both_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
-                                               :pipe_class => Pacer::Pipes::EdgeVertexPipe,
-                                               :pipe_args => Pacer::Pipes::EdgeVertexPipe::Step::BOTH_VERTICES,
+                                               :pipe_class => BothVerticesPipe,
                                                :route_name => 'bothV'),
                                   filters, block)
     end

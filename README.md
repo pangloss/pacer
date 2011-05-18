@@ -25,6 +25,11 @@ If you want to hack on Pacer, you'll need to have
 maven`), then use `rake jar` to set up maven's pom.xml file and run the
 maven build script.
 
+*Note* Pacer currently relies on some features that are not yet in the
+main Pipes repo. You will need to build the `develop` branch of [my pipes
+repo](https://github.com/pangloss/pipes) by cloning it and running `mvn
+clean install`.
+
 ## Graph Database Support
 
 The Tinkerpop suite supports a number of graph data stores. They are all
