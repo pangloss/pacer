@@ -27,7 +27,7 @@ module Pacer
           end
         end
 
-        def build_pipeline(route, start_pipe, pipe = nil)
+        def build_pipeline(route, start_pipe = nil, pipe = nil)
           pipe ||= start_pipe
           if labels.any?
             label_pipe = LabelCollectionFilterPipe.new labels, Pacer::Pipes::NOT_EQUAL
