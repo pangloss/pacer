@@ -4,6 +4,9 @@ module Pacer
   #
   # Adds more convenient/rubyish methods and adds support for extensions
   # to some methods where needed.
+  
+  require 'json'
+  
   module GraphMixin
     def self.included(target)
       target.class_eval do
@@ -124,6 +127,39 @@ module Pacer
       com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter.outputGraph self, stream
     ensure
       stream.close if stream
+    end
+    
+    # Return the graph in JSON format in a string.  If you do this on a large graph, KABOOM.
+    def to_json
+      # Generate an array of vertices, keyed by ID, filled with properties
+      #
+      # See GraphML format example:
+      #
+      # <node id="33">
+      #   <data key="address">serena.bishop@enron.com</data>
+      #   <data key="type">email</data>
+      # </node>
+      json_graph[:vertices] = []
+      self.v.each do |v| 
+        json_graph[:vertices].push v.properties.merge( {'id' => v.id.to_i} )
+      end
+      
+      # Generate an array of edges, keyed by ID, filled with in_v/out_v and properties
+      #
+      # See GraphML format example:
+      #
+      # <edge id="162582" source="41" target="1718" label="sent"><data key="volume">3</data></edge>
+      json_graph[:edges] = []
+      self.e.each do |e|
+        edge = e.properties.merge( { 'id' => e.id.to_i,
+                                    'label' => e.first.get_label,
+                                    'in_v' => e.in_v.first.id, 
+                                    'out_v' => e.out_v.first.id
+                                  } )    
+        json_graph[:edges].push edge
+      end
+      
+      JSON json_graph
     end
 
     # Set how many elements should go into each transaction in a bulk
