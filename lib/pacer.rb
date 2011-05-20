@@ -1,3 +1,7 @@
+if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-5])/
+  raise Exception, 'Pacer requires JRuby version 1.6.0 or higher. It is strongly recommended that you use the latest JRuby release.'
+end
+
 require 'java'
 require 'pp'
 require 'rubygems'
