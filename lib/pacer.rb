@@ -18,7 +18,8 @@ require 'rubygems'
 module Pacer
   unless const_defined? :PATH
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    $:.unshift File.join(PATH, 'lib')
+    lib_path = File.join(PATH, 'lib')
+    $:.unshift lib_path unless $:.any? { |path| path == lib_path }
   end
 
   require 'pacer/version'
