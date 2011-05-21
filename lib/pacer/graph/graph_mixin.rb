@@ -131,6 +131,7 @@ module Pacer
     
     # Return the graph in JSON format in a string.  If you do this on a large graph, KABOOM.
     def to_json
+      json_graph = {}
       # Generate an array of vertices, keyed by ID, filled with properties
       #
       # See GraphML format example:
