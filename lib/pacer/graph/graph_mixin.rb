@@ -129,35 +129,75 @@ module Pacer
       stream.close if stream
     end
     
+    # Import the data from a JSON string.
+    #
+    # @param [String] json_data
+    #
+    # Handling JSON::ParserError?
+    def import_json_string(json_data)
+      data = JSON.parse(json_data)
+      data['vertices'].each_pair do |_id, vertex|
+        print "."
+        next if vertex['_type'] != 'vertex'
+        vertex.delete '_type'
+        # If present, remove the vertex ID and use all other properties as 
+        # vertex properties
+        id = vertex['_id']; vertex.delete '_id'
+        create_vertex id, vertex
+      end
+      puts "SPLIT"
+      data['edges'].each_pair do |_id, edge|
+        print "."
+        if edge['_type'] != 'edge'
+          if edge['label'] or edge['label'].nil?
+            next
+          end
+        end
+        edge.delete '_type'
+        # If present, remove the vertex ID/label/out_v/in_v and use all other 
+        # properties as edge properties
+        id = edge['_id']; edge.delete '_id'
+        label = edge['label']; edge.delete 'label'
+        out_v = edge['out_v']; edge.delete 'out_v'
+        in_v = edge['in_v']; edge.delete 'in_v'
+        new_edge = create_edge id, vertex(out_v), vertex(in_v), label
+        new_edge.properties = edge
+      end
+      true
+    end
+    
     # Return the graph in JSON format in a string.  If you do this on a large graph, KABOOM.
     def to_json
       json_graph = {}
       # Generate an array of vertices, keyed by ID, filled with properties
       #
-      # See GraphML format example:
+      # Conforms roughly with Rexster format.  See GraphML format example:
       #
       # <node id="33">
       #   <data key="address">serena.bishop@enron.com</data>
       #   <data key="type">email</data>
       # </node>
-      json_graph[:vertices] = []
+      json_graph[:vertices] = {}
       self.v.each do |v| 
-        json_graph[:vertices].push v.properties.merge( {'id' => v.id.to_i} )
+        json_graph[:vertices][v.id.to_i] = v.properties.merge( {'_type' => 'vertex', '_id' => v.id.to_i} )
       end
       
       # Generate an array of edges, keyed by ID, filled with in_v/out_v and properties
       #
-      # See GraphML format example:
+      # Conforms roughly to Rexster format.  See GraphML format example:
       #
-      # <edge id="162582" source="41" target="1718" label="sent"><data key="volume">3</data></edge>
-      json_graph[:edges] = []
+      # <edge id="162582" source="41" target="1718" label="sent">
+      #   <data key="volume">3</data>
+      # </edge>
+      json_graph[:edges] = {}
       self.e.each do |e|
-        edge = e.properties.merge( { 'id' => e.id.to_i,
+        edge = e.properties.merge( {'_type' => 'edge',
+       	 	 													'_id' => e.id.to_i,
                                     'label' => e.first.get_label,
                                     'in_v' => e.in_v.first.id, 
                                     'out_v' => e.out_v.first.id
                                   } )    
-        json_graph[:edges].push edge
+        json_graph[:edges][e.id.to_i] = edge
       end
       
       JSON json_graph
