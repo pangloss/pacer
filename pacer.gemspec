@@ -15,6 +15,7 @@ Gem::Specification.new do |s|
 
   s.add_dependency 'parslet', '1.2'
   s.add_dependency 'fastercsv', '>= 1.5.4'
+  s.add_dependency 'jruby-json', '>= 1.4.3.1'
   s.add_development_dependency 'rspec', '~> 2.5.0'
   s.add_development_dependency 'rr', '~> 1.0'
   s.add_development_dependency 'rcov'
