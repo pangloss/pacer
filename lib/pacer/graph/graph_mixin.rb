@@ -137,7 +137,6 @@ module Pacer
     def import_json_string(json_data)
       data = JSON.parse(json_data)
       data['vertices'].each_pair do |_id, vertex|
-        print "."
         next if vertex['_type'] != 'vertex'
         vertex.delete '_type'
         # If present, remove the vertex ID and use all other properties as 
@@ -145,9 +144,7 @@ module Pacer
         id = vertex['_id']; vertex.delete '_id'
         create_vertex id, vertex
       end
-      puts "SPLIT"
       data['edges'].each_pair do |_id, edge|
-        print "."
         if edge['_type'] != 'edge'
           if edge['label'] or edge['label'].nil?
             next
@@ -201,6 +198,12 @@ module Pacer
       end
       
       JSON json_graph
+    end
+    
+    # Create and return an n degree k-core for the graph.  See http://en.wikipedia.org/wiki/K-core
+    def k_core(k)
+      k_nodes = self.v.filter{|v| v.out_e.count > k}
+      self.v.only(k_nodes).out_e.in_v.only(k_nodes).paths.subgraph
     end
 
     # Set how many elements should go into each transaction in a bulk
