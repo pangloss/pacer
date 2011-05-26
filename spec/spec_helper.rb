@@ -1,6 +1,7 @@
 require 'rspec'
 require 'pacer'
 require 'set'
+require 'json'
 
 Dir['./spec/support/**/*.rb'].map {|f| require f}
 Dir['./spec/tackle/*.rb'].map {|f| require f}

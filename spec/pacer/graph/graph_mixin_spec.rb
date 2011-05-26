@@ -339,6 +339,27 @@ shared_examples_for Pacer::GraphMixin do
       graph2.e.count.should == graph.e.count
     end
   end
+  
+  describe '#to_json' do
+    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
+    it 'should return a json string of the graph' do
+      json_data = graph.to_json
+      o = JSON.parse json_data
+      o['vertices'].size.should == graph.v.count
+      o['edges'].size.should == graph.e.count
+    end
+  end
+  
+  describe '#from_json' do
+    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
+    it 'should populate a graph from a json string' do
+      json_data = graph.to_json
+      test_graph = Pacer.tg
+      test_graph.from_json json_data
+      test_graph.v.count.should == graph.v.count
+      test_graph.e.count.should == graph.e.count
+    end
+  end
 
 end
 
