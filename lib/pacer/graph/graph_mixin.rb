@@ -134,7 +134,7 @@ module Pacer
     # @param [String] json_data
     #
     # Handling JSON::ParserError?
-    def import_json_string(json_data)
+    def from_json(json_data)
       data = JSON.parse(json_data)
       data['vertices'].each_pair do |_id, vertex|
         next if vertex['_type'] != 'vertex'
@@ -200,10 +200,11 @@ module Pacer
       JSON json_graph
     end
     
-    # Create and return an n degree k-core for the graph.  See http://en.wikipedia.org/wiki/K-core
-    def k_core(k)
-      k_nodes = self.v.filter{|v| v.out_e.count > k}
-      self.v.only(k_nodes).out_e.in_v.only(k_nodes).paths.subgraph
+    # Create and return an n degree k-core for the graph.  
+    # See http://en.wikipedia.org/wiki/K-core
+    def k_core(k)      
+      k_nodes = self.v.filter{|v| v.out_e.count > k}.result
+			k_nodes.out_e.in_v.only(k_nodes).subgraph
     end
 
     # Set how many elements should go into each transaction in a bulk
