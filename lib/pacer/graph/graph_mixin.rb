@@ -134,7 +134,7 @@ module Pacer
     # @param [String] json_data
     #
     # Handling JSON::ParserError?
-    def from_json(json_data)
+    def from_json!(json_data)
       data = JSON.parse(json_data)
       data['vertices'].each_pair do |_id, vertex|
         next if vertex['_type'] != 'vertex'
@@ -162,49 +162,20 @@ module Pacer
       end
       true
     end
-    
-    # Return the graph in JSON format in a string.  If you do this on a large graph, KABOOM.
-    def to_json
-      json_graph = {}
-      # Generate an array of vertices, keyed by ID, filled with properties
-      #
-      # Conforms roughly with Rexster format.  See GraphML format example:
-      #
-      # <node id="33">
-      #   <data key="address">serena.bishop@enron.com</data>
-      #   <data key="type">email</data>
-      # </node>
-      json_graph[:vertices] = {}
-      self.v.each do |v| 
-        json_graph[:vertices][v.id.to_i] = v.properties.merge( {'_type' => 'vertex', '_id' => v.id.to_i} )
-      end
-      
-      # Generate an array of edges, keyed by ID, filled with in_v/out_v and properties
-      #
-      # Conforms roughly to Rexster format.  See GraphML format example:
-      #
-      # <edge id="162582" source="41" target="1718" label="sent">
-      #   <data key="volume">3</data>
-      # </edge>
-      json_graph[:edges] = {}
-      self.e.each do |e|
-        edge = e.properties.merge( {'_type' => 'edge',
-       	 	 													'_id' => e.id.to_i,
-                                    'label' => e.first.get_label,
-                                    'in_v' => e.in_v.first.id, 
-                                    'out_v' => e.out_v.first.id
-                                  } )    
-        json_graph[:edges][e.id.to_i] = edge
-      end
-      
-      JSON json_graph
-    end
-    
-    # Create and return an n degree k-core for the graph.  
+        
+    # Create and return an n degree k-core from the graph.  
     # See http://en.wikipedia.org/wiki/K-core
-    def k_core(k)      
-      k_nodes = self.v.filter{|v| v.out_e.count > k}.result
-			k_nodes.out_e.in_v.only(k_nodes).subgraph
+    def k_core!(k)
+			dk = []
+			self.v.each do |v|
+				if v.out_e.count < k
+					dk << v
+				end
+			end
+
+			dk.each do |v|
+				self.remove_vertex v
+			end
     end
 
     # Set how many elements should go into each transaction in a bulk
