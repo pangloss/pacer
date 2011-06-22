@@ -42,12 +42,29 @@ file 'pom.xml' => 'lib/pacer/version.rb' do
   end
 end
 
-file Pacer::JAR_PATH => 'pom.xml' do
+pipes_jar = 'pipes/target/pipes-0.6-SNAPSHOT-standalone.jar'
+
+file Pacer::JAR_PATH => ['pom.xml', pipes_jar] do
   when_writing("Execute 'mvn package' task") do
     system('mvn clean package')
   end
 end
 
+file pipes_jar do
+  puts "Pacer requires a customized blueprints pipes install:"
+  if !File.exists?('pipes')
+    puts "...downloading pangloss' pipes repo from git@github.com/pangloss/pipes.git"
+    `git clone https://github.com/pangloss/pipes.git` 
+  else
+    puts "...found pangloss' pipes repo in pacer/pipes"
+  end
+  Dir.chdir("pipes")
+  puts "running 'mvn install' in #{Dir.getwd}"
+  `mvn install`
+  puts "pangloss/pipes installed"
+end
+
+desc "Build the pacer jar (you'll need this to run pacer)"
 task :jar => Pacer::JAR_PATH
 task :build => Pacer::JAR_PATH
 task :install => Pacer::JAR_PATH
