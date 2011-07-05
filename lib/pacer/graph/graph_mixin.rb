@@ -163,7 +163,7 @@ module Pacer
       true
     end
         
-    # Create and return an n degree k-core from the graph.  
+    # Modify the current graph using an n degree k-core.  
     # See http://en.wikipedia.org/wiki/K-core
     def k_core!(k)
 			dk = []

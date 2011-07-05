@@ -22,3 +22,6 @@ pkg
 pkg
 tmp
 lib/*.jar
+
+*.gem
+./.gitignore
