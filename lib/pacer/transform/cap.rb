@@ -17,7 +17,7 @@ module Pacer
       def pipe_source
         s, e = super
         if not s and not e
-          s = e = com.tinkerpop.pipes.IdentityPipe.new
+          s = e = Pacer::Pipes::IdentityPipe.new
         end
         [s, e]
       end

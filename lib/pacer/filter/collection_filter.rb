@@ -25,18 +25,21 @@ module Pacer
 
   module Filter
     module CollectionFilter
+      # TODO: re
+      #import com.tinkerpop.pipes.filter.IdCollectionFilterPipe
+
       def self.triggers
         [:except, :only]
       end
 
       def except=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        @comparison = Pacer::Pipes::EQUAL
       end
 
       def only=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
+        @comparison = Pacer::Pipes::NOT_EQUAL
       end
 
       protected
@@ -57,7 +60,8 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @ids
-          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparison)
+          raise 'bring back IdCollectionFilterPipe'
+          #pipe = IdCollectionFilterPipe.new(@ids, @comparison)
         else
           pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
         end
@@ -70,7 +74,7 @@ module Pacer
       end
 
       def inspect_class_name
-        if @comparison == Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        if @comparison == Pacer::Pipes::EQUAL
           'Except'
         else
           'Only'

@@ -1,5 +1,5 @@
 module Pacer::Pipes
-  class PropertyComparisonFilterPipe < RubyComparisonFilterPipe
+  class PropertyComparisonFilterPipe < RubyPipe
     def initialize(left, right, filter)
       super(filter)
       @left = left.to_s
@@ -11,7 +11,7 @@ module Pacer::Pipes
     def processNextStart
       while true
         obj = @starts.next
-        unless compareObjects(obj.getProperty(@left), obj.getProperty(@right))
+        unless Pacer::Pipes::PipeHelper.compareObjects(obj.getProperty(@left), obj.getProperty(@right))
           return obj
         end
       end

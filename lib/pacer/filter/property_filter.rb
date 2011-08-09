@@ -57,8 +57,8 @@ module Pacer
 
   module Filter
     module PropertyFilter
-      import com.tinkerpop.pipes.pgm.LabelCollectionFilterPipe
-      import com.tinkerpop.pipes.pgm.PropertyFilterPipe
+      #import com.tinkerpop.pipes.filter.LabelCollectionFilterPipe
+      import com.tinkerpop.pipes.filter.PropertyFilterPipe
 
       def self.triggers
         [:filters]

@@ -2,9 +2,9 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
   module VerticesRoute
-    import com.tinkerpop.pipes.pgm.OutEdgesPipe
-    import com.tinkerpop.pipes.pgm.InEdgesPipe
-    import com.tinkerpop.pipes.pgm.BothEdgesPipe
+    import com.tinkerpop.pipes.transform.OutEdgesPipe
+    import com.tinkerpop.pipes.transform.InEdgesPipe
+    import com.tinkerpop.pipes.transform.BothEdgesPipe
 
     include ElementRoute
 
@@ -166,7 +166,7 @@ module Pacer::Core::Graph
 
     # TODO: move id_pipe_class into the element_type object
     def id_pipe_class
-      com.tinkerpop.pipes.pgm.IdVertexPipe
+      com.tinkerpop.pipes.transform.IdVertexPipe
     end
   end
 end

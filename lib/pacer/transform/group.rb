@@ -167,7 +167,7 @@ module Pacer
       end
 
       def identity_route
-        Pacer::Route.empty(self).chain_route(:pipe_class => com.tinkerpop.pipes.IdentityPipe,
+        Pacer::Route.empty(self).chain_route(:pipe_class => Pacer::Pipes::IdentityPipe,
                                              :route_name => '@').route
       end
 
