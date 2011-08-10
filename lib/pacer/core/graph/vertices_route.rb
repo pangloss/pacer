@@ -14,10 +14,10 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
-      filters = extract_sole_label(filters)
+      filters = extract_labels(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => OutEdgesPipe,
-                                               :pipe_args => sole_label,
+                                               :pipe_args => route_labels,
                                                :route_name => edge_route_name('outE')),
                                   filters, block)
     end
@@ -28,10 +28,10 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
-      filters = extract_sole_label(filters)
+      filters = extract_labels(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => InEdgesPipe,
-                                               :pipe_args => sole_label,
+                                               :pipe_args => route_labels,
                                                :route_name => edge_route_name('inE')),
                                   filters, block)
     end
@@ -42,10 +42,10 @@ module Pacer::Core::Graph
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
-      filters = extract_sole_label(filters)
+      filters = extract_labels(filters)
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => BothEdgesPipe,
-                                               :pipe_args => sole_label,
+                                               :pipe_args => route_labels,
                                                :route_name => edge_route_name('bothE')),
                                   filters, block)
     end
@@ -139,28 +139,24 @@ module Pacer::Core::Graph
       end
     end
 
-    def sole_label
-      @sole_label
+    def route_labels
+      @route_labels
     end
 
     protected
 
     def edge_route_name(prefix)
-      if sole_label
-        "#{prefix}(#{sole_label.first.to_sym.inspect})"
+      if route_labels
+        "#{prefix}(#{route_labels.map { |l| l.to_sym.inspect }.join ', '})"
       else
         prefix
       end
     end
 
-    def extract_sole_label(filters)
+    def extract_labels(filters)
       filters = Pacer::Route.edge_filters(filters)
-      if filters.labels.count == 1
-        @sole_label = filters.labels
-        filters.labels = []
-      else
-        @sole_label = nil
-      end
+      @route_labels = filters.labels
+      filters.labels = []
       filters
     end
 
