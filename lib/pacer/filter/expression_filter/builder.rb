@@ -39,25 +39,19 @@ module Pacer
       class Builder
         # These are defined with counterintuitive meanings so all meanings must be reversed.
         Filters = {
-          '==' => FilterPipe::Filter::NOT_EQUAL,
-          '='  => FilterPipe::Filter::NOT_EQUAL,
-          '!=' => FilterPipe::Filter::EQUAL,
-          '>'  => FilterPipe::Filter::LESS_THAN_EQUAL,
-          '<'  => FilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>=' => FilterPipe::Filter::LESS_THAN,
-          '<=' => FilterPipe::Filter::GREATER_THAN
+          '==' => FilterPipe::Filter::EQUAL,
+          '='  => FilterPipe::Filter::EQUAL,
+          '!=' => FilterPipe::Filter::NOT_EQUAL,
+          '>'  => FilterPipe::Filter::GREATER_THAN,
+          '<'  => FilterPipe::Filter::LESS_THAN,
+          '>=' => FilterPipe::Filter::GREATER_THAN_EQUAL,
+          '<=' => FilterPipe::Filter::LESS_THAN_EQUAL
         }
 
-        # Further adjust to swap the order of the parameters.
-        ReverseFilters = {
-          '==' => FilterPipe::Filter::NOT_EQUAL,
-          '='  => FilterPipe::Filter::NOT_EQUAL,
-          '!=' => FilterPipe::Filter::EQUAL,
-          '<'  => FilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>'  => FilterPipe::Filter::LESS_THAN_EQUAL,
-          '<=' => FilterPipe::Filter::GREATER_THAN,
-          '>=' => FilterPipe::Filter::LESS_THAN
-        }
+        # Further adjust to swap the order of the parameters...?
+        # TODO: This was either undone or done wrong before. I need to do some
+        # sanity tests and verify the unit tests here
+        ReverseFilters = Filters
 
         class << self
           def build(tree, route, vars)

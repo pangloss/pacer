@@ -34,12 +34,12 @@ module Pacer
 
       def except=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::EQUAL
+        @comparison = Pacer::Pipes::NOT_EQUAL
       end
 
       def only=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::NOT_EQUAL
+        @comparison = Pacer::Pipes::EQUAL
       end
 
       protected
@@ -74,7 +74,7 @@ module Pacer
       end
 
       def inspect_class_name
-        if @comparison == Pacer::Pipes::EQUAL
+        if @comparison == Pacer::Pipes::NOT_EQUAL
           'Except'
         else
           'Only'

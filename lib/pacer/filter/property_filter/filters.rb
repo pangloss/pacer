@@ -124,7 +124,7 @@ module Pacer
             pipe = e
           end
           encoded_properties.each do |key, value|
-            new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::NOT_EQUAL)
+            new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::EQUAL)
             new_pipe.set_starts pipe if pipe
             Pacer.debug_pipes << { :name => key, :start => pipe, :end => new_pipe } if Pacer.debug_pipes
             pipe = new_pipe

@@ -39,7 +39,7 @@ module Pacer::Pipes
       expando.setStarts java.util.ArrayList.new.iterator
       from_pipe.setStarts(expando)
       agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new java.util.LinkedList.new
-      cap_pipe = com.tinkerpop.pipes.sideeffect.SideEffectCapPipe.new agg_pipe
+      cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
       agg_pipe.setStarts to_pipe
       cap_pipe.setStarts to_pipe
       [expando, cap_pipe]
