@@ -26,7 +26,6 @@ module Pacer
   module Filter
     module CollectionFilter
       # TODO: re
-      #import com.tinkerpop.pipes.filter.IdCollectionFilterPipe
 
       def self.triggers
         [:except, :only]
@@ -60,8 +59,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         if @ids
-          raise 'bring back IdCollectionFilterPipe'
-          #pipe = IdCollectionFilterPipe.new(@ids, @comparison)
+          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparison)
         else
           pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
         end

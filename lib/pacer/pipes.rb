@@ -44,6 +44,8 @@ require 'pacer/pipe/map_pipe'
 require 'pacer/pipe/stream_sort_pipe'
 require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
+require 'pacer/pipe/label_collection_filter_pipe'
+require 'pacer/pipe/id_collection_filter_pipe'
 require 'pacer/pipe/label_prefix_pipe'
 require 'pacer/pipe/variable_store_iterator_wrapper'
 
