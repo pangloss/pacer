@@ -22,3 +22,4 @@ pkg
 pkg
 tmp
 lib/*.jar
+jdex.log
