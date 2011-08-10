@@ -144,9 +144,9 @@ module Pacer
         id = vertex['_id']; vertex.delete '_id'
         create_vertex id, vertex
       end
-      data['edges'].each_pair do |_id, edge|
+      data['edges'].each do |edge|
         if edge['_type'] != 'edge'
-          if edge['label'] or edge['label'].nil?
+          if edge['label'] or edge['label'].nil? or edge['_id'].nil?
             next
           end
         end
@@ -163,19 +163,22 @@ module Pacer
       true
     end
         
-    # Modify the current graph using an n degree k-core.  
+    # Modify the current graph using an k degree k-core.  
     # See http://en.wikipedia.org/wiki/K-core
-    def k_core!(k)
-			dk = []
-			self.v.each do |v|
-				if v.out_e.count < k
-					dk << v
-				end
-			end
-
-			dk.each do |v|
-				self.remove_vertex v
-			end
+    def k_core!(k)			
+			while true
+			  removed_count = 0
+  			v.bulk_job(v.count, self) do |v|
+  			  degree = v.both_e.count
+  				if degree < k
+  					self.remove_vertex v
+  					removed_count += 1
+  				end
+  			end
+  			if removed_count == 0 #k-core is done!
+			    break
+			  end
+  		end
     end
 
     # Set how many elements should go into each transaction in a bulk
