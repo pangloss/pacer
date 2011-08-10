@@ -45,7 +45,7 @@ module Pacer
 
         def to_s
           if labels.any?
-            [non_ext_labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
+            [labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
           else
             super
           end

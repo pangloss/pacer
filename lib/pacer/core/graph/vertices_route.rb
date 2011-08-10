@@ -146,7 +146,7 @@ module Pacer::Core::Graph
     protected
 
     def edge_route_name(prefix)
-      if route_labels
+      if route_labels.any?
         "#{prefix}(#{route_labels.map { |l| l.to_sym.inspect }.join ', '})"
       else
         prefix
