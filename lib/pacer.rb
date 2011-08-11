@@ -1,3 +1,16 @@
+if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-4]|1\.5\.[0-4])/
+  raise Exception, 'Pacer requires JRuby version 1.5.5 or higher. It is strongly recommended that you use the latest JRuby release.'
+end
+
+if RUBY_VERSION == '1.8.7'
+  STDERR.puts <<WARNING
+WARNING: Pacer is developed using JRuby in 1.9 mode. I recommend you
+  restart JRuby in 1.9 mode, either with the --1.9 flag, or by
+  defaulting to 1.9 mode by setting the environment variable
+  JRUBY_OPTS=--1.9
+WARNING
+end
+
 require 'java'
 require 'pp'
 require 'rubygems'
@@ -5,7 +18,8 @@ require 'rubygems'
 module Pacer
   unless const_defined? :PATH
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
-    $:.unshift File.join(PATH, 'lib')
+    lib_path = File.join(PATH, 'lib')
+    $:.unshift lib_path unless $:.any? { |path| path == lib_path }
   end
 
   require 'pacer/version'

@@ -12,10 +12,10 @@ module Pacer
       remove_const 'Builder' if const_defined? 'Builder'
 
       import com.tinkerpop.pipes.filter.OrFilterPipe
-      import com.tinkerpop.pipes.filter.ComparisonFilterPipe
+      import com.tinkerpop.pipes.filter.FilterPipe
       import com.tinkerpop.pipes.filter.AndFilterPipe
       import com.tinkerpop.pipes.filter.OrFilterPipe
-      import com.tinkerpop.pipes.util.HasNextPipe
+      import com.tinkerpop.pipes.transform.HasNextPipe
       import com.tinkerpop.pipes.filter.ObjectFilterPipe
 
       class OrGroup
@@ -39,25 +39,19 @@ module Pacer
       class Builder
         # These are defined with counterintuitive meanings so all meanings must be reversed.
         Filters = {
-          '==' => ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '='  => ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '!=' => ComparisonFilterPipe::Filter::EQUAL,
-          '>'  => ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
-          '<'  => ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>=' => ComparisonFilterPipe::Filter::LESS_THAN,
-          '<=' => ComparisonFilterPipe::Filter::GREATER_THAN
+          '==' => FilterPipe::Filter::EQUAL,
+          '='  => FilterPipe::Filter::EQUAL,
+          '!=' => FilterPipe::Filter::NOT_EQUAL,
+          '>'  => FilterPipe::Filter::GREATER_THAN,
+          '<'  => FilterPipe::Filter::LESS_THAN,
+          '>=' => FilterPipe::Filter::GREATER_THAN_EQUAL,
+          '<=' => FilterPipe::Filter::LESS_THAN_EQUAL
         }
 
-        # Further adjust to swap the order of the parameters.
-        ReverseFilters = {
-          '==' => ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '='  => ComparisonFilterPipe::Filter::NOT_EQUAL,
-          '!=' => ComparisonFilterPipe::Filter::EQUAL,
-          '<'  => ComparisonFilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>'  => ComparisonFilterPipe::Filter::LESS_THAN_EQUAL,
-          '<=' => ComparisonFilterPipe::Filter::GREATER_THAN,
-          '>=' => ComparisonFilterPipe::Filter::LESS_THAN
-        }
+        # Further adjust to swap the order of the parameters...?
+        # TODO: This was either undone or done wrong before. I need to do some
+        # sanity tests and verify the unit tests here
+        ReverseFilters = Filters
 
         class << self
           def build(tree, route, vars)

@@ -30,7 +30,7 @@ module Pacer
         def build_pipeline(route, start_pipe = nil, pipe = nil)
           pipe ||= start_pipe
           if labels.any?
-            label_pipe = LabelCollectionFilterPipe.new labels, Pacer::Pipes::NOT_EQUAL
+            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels
             label_pipe.set_starts pipe if pipe
             Pacer.debug_pipes << { :name => labels.inspect, :start => pipe, :end => block_pipe } if Pacer.debug_pipes
             pipe = label_pipe
@@ -45,7 +45,7 @@ module Pacer
 
         def to_s
           if labels.any?
-            [non_ext_labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
+            [labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
           else
             super
           end
