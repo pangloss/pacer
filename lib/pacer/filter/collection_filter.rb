@@ -25,18 +25,20 @@ module Pacer
 
   module Filter
     module CollectionFilter
+      # TODO: re
+
       def self.triggers
         [:except, :only]
       end
 
       def except=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        @comparison = Pacer::Pipes::NOT_EQUAL
       end
 
       def only=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::ComparisonFilterPipe::Filter::NOT_EQUAL
+        @comparison = Pacer::Pipes::EQUAL
       end
 
       protected
@@ -70,7 +72,7 @@ module Pacer
       end
 
       def inspect_class_name
-        if @comparison == Pacer::Pipes::ComparisonFilterPipe::Filter::EQUAL
+        if @comparison == Pacer::Pipes::NOT_EQUAL
           'Except'
         else
           'Only'

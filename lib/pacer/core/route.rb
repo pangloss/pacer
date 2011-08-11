@@ -522,7 +522,7 @@ module Pacer
           end
         end
         s = inspect_class_name
-        s = "#{s}(#{ ps })" if ps
+        s = "#{s}(#{ ps })" if ps and ps != ''
         s
       end
 

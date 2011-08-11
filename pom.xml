@@ -6,7 +6,7 @@
     <groupId>com.tinkerpop.pacer</groupId>
     <artifactId>pacer</artifactId>
     <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
-    <version>0.7.1</version>
+    <version>0.8.0</version>
     <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
     <packaging>pom</packaging>
     <url>https://github.com/pangloss/pacer</url>
@@ -27,13 +27,13 @@
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
             <artifactId>blueprints-core</artifactId>
-            <version>0.8-SNAPSHOT</version>
+            <version>1.0-SNAPSHOT</version>
         </dependency>
         <!-- GRAPH TRAVERSAL SUPPORT -->
         <dependency>
             <groupId>com.tinkerpop</groupId>
             <artifactId>pipes</artifactId>
-            <version>0.6-SNAPSHOT</version>
+            <version>0.8-SNAPSHOT</version>
         </dependency>
     </dependencies>
 

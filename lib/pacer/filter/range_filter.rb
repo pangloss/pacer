@@ -86,7 +86,15 @@ module Pacer
       def attach_pipe(end_pipe)
         from = @range.begin
         to = @range.end
-        to += 1 unless @range.exclude_end? if to >= 0
+        if @range.exclude_end?
+          if to == 0 
+            pipe = Pacer::Pipes::NeverPipe.new
+            pipe.set_starts end_pipe if end_pipe
+            return pipe
+          elsif to > 0
+            to -= 1
+          end
+        end
         pipe = Pacer::Pipes::RangeFilterPipe.new from, to
         pipe.set_starts end_pipe if end_pipe
         pipe

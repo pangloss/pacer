@@ -2,9 +2,9 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
   module EdgesRoute
-    import com.tinkerpop.pipes.pgm.OutVertexPipe
-    import com.tinkerpop.pipes.pgm.InVertexPipe
-    import com.tinkerpop.pipes.pgm.BothVerticesPipe
+    import com.tinkerpop.pipes.transform.OutVertexPipe
+    import com.tinkerpop.pipes.transform.InVertexPipe
+    import com.tinkerpop.pipes.transform.BothVerticesPipe
 
     include ElementRoute
 
@@ -58,7 +58,7 @@ module Pacer::Core::Graph
     #
     # @return [Core::Route]
     def labels
-      chain_route(:pipe_class => com.tinkerpop.pipes.pgm.LabelPipe,
+      chain_route(:pipe_class => com.tinkerpop.pipes.transform.LabelPipe,
                   :route_name => 'labels',
                   :element_type => :object)
     end
@@ -86,7 +86,7 @@ module Pacer::Core::Graph
     protected
 
     def id_pipe_class
-      com.tinkerpop.pipes.pgm.IdEdgePipe
+      com.tinkerpop.pipes.transform.IdEdgePipe
     end
   end
 end
