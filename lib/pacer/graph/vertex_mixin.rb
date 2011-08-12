@@ -68,5 +68,19 @@ module Pacer
       yield v if block_given?
       v
     end
+
+    def out_edges(*labels)
+      java_send :getOutEdges, [java.lang.String[]], labels.to_java(:string)
+    end
+
+    def in_edges(*labels)
+      java_send :getInEdges, [java.lang.String[]], labels.to_java(:string)
+    end
+
+    def both_edges(*labels)
+      ins = in_edges(*labels).iterator
+      outs = out_edges(*labels).iterator
+      Pacer::Pipes::MultiIterator.new ins, outs
+    end
   end
 end

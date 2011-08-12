@@ -58,7 +58,8 @@ Run.all(:read_only) do
       describe '(:wrote)' do
         subject { graph.v.both(:wrote) }
         its(:count) { should == 8 }
-        it { subject.element_ids.to_a.should == %w[5 5 0 1 4 2 3 5] }
+        # These element ids only work under TinkerGraph:
+        #it { subject.element_ids.to_a.should == %w[5 5 0 1 4 2 3 5] }
       end
     end
   end
