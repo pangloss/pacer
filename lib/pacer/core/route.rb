@@ -108,33 +108,19 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each_element
         iter = iterator
-        g = graph
-        if extensions.empty?
-          if block_given?
-            while true
-              item = iter.next
-              item.graph ||= g if g and item.respond_to? :graph=
-              yield item
-            end
-          else
-            iter
+        if extensions and extensions.any?
+          iter.extend IteratorExtensionsMixin
+          iter.extensions = extensions 
+        else
+          iter.extend IteratorMixin
+        end
+        iter.graph = graph
+        if block_given?
+          while true
+            yield iter.next
           end
         else
-          if block_given?
-            while true
-              item = iter.next
-              if item.respond_to? :graph=
-                item.graph ||= g if g and item.respond_to? :graph=
-                item = item.add_extensions(extensions)
-              end
-              yield item
-            end
-          else
-            iter.extend IteratorExtensionsMixin
-            iter.graph = g
-            iter.extensions = extensions
-            iter
-          end
+          iter
         end
       rescue java.util.NoSuchElementException
         self
@@ -157,19 +143,13 @@ module Pacer
       # @return [Enumerator[Object]] if no block is given
       def each_path
         iter = iterator
+        iter.extend IteratorPathMixin
+        iter.graph = graph
         if block_given?
-          g = graph
           while true
-            item = iter.next
-            path = iter.path.collect do |e|
-              e.graph ||= g rescue nil
-              e
-            end
-            yield path
+            yield iter.next
           end
         else
-          iter.extend IteratorPathMixin
-          iter.graph = graph
           iter
         end
       rescue java.util.NoSuchElementException
