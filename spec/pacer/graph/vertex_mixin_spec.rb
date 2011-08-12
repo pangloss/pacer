@@ -37,7 +37,7 @@ shared_examples_for Pacer::VertexMixin do
     before do
       @vertex_id = v0.element_id
       v0.delete!
-      graph.checkpoint # deleted edges in neo may be looked up during the transaction
+      graph.checkpoint # deleted edges in neo may otherwise still be looked up during the transaction
     end
     it 'should be removed' do
       graph.vertex(@vertex_id).should be_nil
@@ -81,6 +81,109 @@ shared_examples_for Pacer::VertexMixin do
   it { should == v0 }
   context 'edge with same element id', :transactions => false do
     it { should_not == e0 }
+  end
+
+  context 'with more data' do
+    let(:from_v) { graph.create_vertex }
+    let(:to_v) { graph.create_vertex }
+
+    before do
+      %w[ a a a b b c ].each do |label|
+        v = graph.create_vertex
+        graph.create_edge nil, from_v, v, label
+        graph.create_edge nil, v, to_v, label
+      end
+    end
+    
+    describe '#in_edges' do
+      specify 'to_v should have 6 in edges' do
+        to_v.in_edges.count.should == 6
+      end
+
+      specify 'to_v should have 3 in edges with label a' do
+        to_v.in_edges('a').count.should == 3
+      end
+
+      specify 'to_v should have 4 in edges with label a or c' do
+        to_v.in_edges('a', 'c').count.should == 4
+      end
+
+      it 'should add an extension' do
+        edge = to_v.in_edges(Tackle::SimpleMixin).first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should be able to mix labels and mixins as arguments' do
+        edge = to_v.in_edges('a', Tackle::SimpleMixin, 'b').first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should filter correctly with a mix of labels and mixins as arguments' do
+        to_v.in_edges('a', Tackle::SimpleMixin, 'b').count.should == 5
+      end
+    end
+    
+    describe '#out_edges' do
+      specify 'from_v should have 6 out edges' do
+        from_v.out_edges.count.should == 6
+      end
+
+      specify 'from_v should have 3 out edges with label a' do
+        from_v.out_edges('a').count.should == 3
+      end
+
+      specify 'from_v should have 4 out edges with label a or c' do
+        from_v.out_edges('a', 'c').count.should == 4
+      end
+
+      it 'should add an extension' do
+        edge = from_v.out_edges(Tackle::SimpleMixin).first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should be able to mix labels and mixins as arguments' do
+        edge = from_v.out_edges('a', Tackle::SimpleMixin, 'b').first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should filter correctly with a mix of labels and mixins as arguments' do
+        from_v.out_edges('a', Tackle::SimpleMixin, 'b').count.should == 5
+      end
+    end
+    
+    describe '#both_edges' do
+      specify 'from_v should have 6 edges' do
+        from_v.both_edges.count.should == 6
+      end
+
+      specify 'from_v should have 3 edges with label a' do
+        from_v.both_edges('a').count.should == 3
+      end
+
+      specify 'from_v should have 4 edges with label a or c' do
+        from_v.both_edges('a', 'c').count.should == 4
+      end
+
+      it 'should add an extension' do
+        edge = from_v.both_edges(Tackle::SimpleMixin).first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should be able to mix labels and mixins as arguments' do
+        edge = from_v.both_edges('a', Tackle::SimpleMixin, 'b').first
+        edge.should be_a(Pacer::EdgeMixin)
+        edge.extensions.should include(Tackle::SimpleMixin)
+      end
+
+      it 'should filter correctly with a mix of labels and mixins as arguments' do
+        from_v.both_edges('a', Tackle::SimpleMixin, 'b').count.should == 5
+      end
+    end
   end
 end
 
