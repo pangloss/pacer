@@ -6,7 +6,7 @@
     <groupId>com.tinkerpop.pacer</groupId>
     <artifactId>pacer</artifactId>
     <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
-    <version>0.8.0</version>
+    <version>0.8.1</version>
     <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
     <packaging>pom</packaging>
     <url>https://github.com/pangloss/pacer</url>
