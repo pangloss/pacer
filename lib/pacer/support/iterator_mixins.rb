@@ -37,11 +37,11 @@ module Pacer::Core::Route
     attr_accessor :graph
 
     def next
-      path = super
-      path.each do |e|
-        e.graph ||= @graph rescue nil
+      super
+      path.collect do |e|
+        e.graph ||= @graph if e.respond_to? :graph=
+        e
       end
-      path
     end
   end
 
@@ -55,8 +55,27 @@ module Pacer::Core::Route
 
     def next
       item = super
-      item = item.add_extensions @extensions
-      item.graph ||= @graph
+      # TODO: optimize this (and other) check:
+      #   - exception?
+      #   - type check?
+      #   - method check?
+      #   - ...?
+      if item.respond_to? :graph=
+        item = item.add_extensions @extensions
+        item.graph ||= @graph
+      end
+      item
+    end
+  end
+
+  module IteratorMixin
+    attr_accessor :graph
+
+    def next
+      item = super
+      if item.respond_to? :graph=
+        item.graph ||= @graph
+      end
       item
     end
   end

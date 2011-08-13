@@ -3,14 +3,20 @@ module Pacer::Core::Graph
   # Basic methods for routes that contain only vertices.
   module VerticesRoute
     import com.tinkerpop.pipes.transform.OutEdgesPipe
+    import com.tinkerpop.pipes.transform.OutPipe
     import com.tinkerpop.pipes.transform.InEdgesPipe
+    import com.tinkerpop.pipes.transform.InPipe
     import com.tinkerpop.pipes.transform.BothEdgesPipe
+    import com.tinkerpop.pipes.transform.BothPipe
 
     include ElementRoute
 
     # Extends the route with out edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
@@ -22,9 +28,29 @@ module Pacer::Core::Graph
                                   filters, block)
     end
 
+    # Extends the route with vertices via the out edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
+    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @return [VerticesRoute]
+    def out(*filters, &block)
+      filters = extract_labels(filters)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => OutPipe,
+                                               :pipe_args => route_labels,
+                                               :route_name => edge_route_name('out')),
+                                  filters, block)
+    end
+
     # Extends the route with in edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
@@ -36,9 +62,29 @@ module Pacer::Core::Graph
                                   filters, block)
     end
 
+    # Extends the route with vertices via the in edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
+    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @return [VerticesRoute]
+    def in(*filters, &block)
+      filters = extract_labels(filters)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => InPipe,
+                                               :pipe_args => route_labels,
+                                               :route_name => edge_route_name('in')),
+                                  filters, block)
+    end
+
     # Extends the route with all edges from this route's matching vertices.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
     # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
@@ -50,9 +96,29 @@ module Pacer::Core::Graph
                                   filters, block)
     end
 
+    # Extends the route with vertices via all edges from this route's matching vertices.
+    #
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
+    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @return [VerticesRoute]
+    def both(*filters, &block)
+      filters = extract_labels(filters)
+      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
+                                               :pipe_class => BothPipe,
+                                               :pipe_args => route_labels,
+                                               :route_name => edge_route_name('both')),
+                                  filters, block)
+    end
+
     # Extend route with the additional vertex property and block filters.
     #
-    # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
+    # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
+    #   If string(s) or symbol(s) are given, they will be treated as edge
+    #   labels. Unlike other property filters which all must be matched, an
+    #   edge will pass the filter if it matches any of the given labels.
     # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def v(*filters, &block)

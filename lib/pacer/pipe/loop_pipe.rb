@@ -39,6 +39,7 @@ module Pacer::Pipes
           @next_path = @starts.path
           depth = 0
         end
+        element.graph = @graph if element.respond_to? :graph=
         case @control_block.call element, depth, @next_path
         when :loop
           @expando.add element, depth, @next_path

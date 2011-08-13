@@ -68,5 +68,52 @@ module Pacer
       yield v if block_given?
       v
     end
+
+    def raw_out_edges(*labels)
+      java_send :getOutEdges, [java.lang.String[]], labels.to_java(:string)
+    end
+
+    def raw_in_edges(*labels)
+      java_send :getInEdges, [java.lang.String[]], labels.to_java(:string)
+    end
+
+    def out_edges(*labels_and_extensions)
+      labels, exts = split_labels_and_extensions(labels_and_extensions)
+      edge_iterator(raw_out_edges(*labels).iterator, exts)
+    end
+
+    def in_edges(*labels_and_extensions)
+      labels, exts = split_labels_and_extensions(labels_and_extensions)
+      edge_iterator(raw_in_edges(*labels).iterator, exts)
+    end
+
+    def both_edges(*labels_and_extensions)
+      labels, exts = split_labels_and_extensions(labels_and_extensions)
+      ins = raw_in_edges(*labels).iterator
+      outs = raw_out_edges(*labels).iterator
+      edge_iterator(Pacer::Pipes::MultiIterator.new(ins, outs), exts)
+    end
+
+    protected
+
+    def split_labels_and_extensions(mixed)
+      labels = Set[]
+      exts = Set[]
+      mixed.each do |obj|
+        if obj.is_a? Symbol or obj.is_a? String
+          labels << obj
+        else
+          exts << obj
+        end
+      end
+      [labels, exts]
+    end
+
+    def edge_iterator(iter, exts)
+      iter.extend Pacer::Core::Route::IteratorExtensionsMixin
+      iter.graph = self.graph
+      iter.extensions = exts
+      iter
+    end
   end
 end

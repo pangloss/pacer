@@ -6,6 +6,7 @@ module Pacer
     import com.tinkerpop.pipes.transform.IdentityPipe
     import com.tinkerpop.pipes.util.Pipeline
     import com.tinkerpop.pipes.util.ExpandableIterator
+    import com.tinkerpop.pipes.util.MultiIterator
     import com.tinkerpop.pipes.util.PipeHelper
 
     import com.tinkerpop.pipes.filter.RandomFilterPipe
