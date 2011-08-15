@@ -6,6 +6,12 @@ It currently supports 2 major graph database: [Neo4j](http://neo4j.org) and [Dex
 
 Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool [Pipes](http://pipes.tinkerpop.com) library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
 
+## Mailing List
+
+With the release of 0.8.1, I just set up a brand new [pacer google
+group](http://groups.google.com/group/pacer-users?lnk=gcimv). Join and
+let's get the conversation going!
+
 ## Documentation
 
 Pacer is documented with a comprehensive RSpec test suite and with a
