@@ -65,6 +65,9 @@ follow soon as I find out about them or get requests to support them.
 To use Pacer together with the neo4j gem, get your Pacer graph instance
 as follows:
 
+    require 'neo4j'
+    require 'pacer-neo4j'
+    Neo4j.db.start
     graph = Pacer.neo4j(Neo4j.db.graph)
 
 After that, you can continue to use the graph as normal with *both*
