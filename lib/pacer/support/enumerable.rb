@@ -7,7 +7,7 @@ module Enumerable
       return false if counter == 1
       counter += 1
     end
-    true
+    counter == 1
   end
 
   def many?
