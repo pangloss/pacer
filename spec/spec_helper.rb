@@ -19,6 +19,7 @@ end
 
 require 'pacer-neo4j'
 require 'pacer-dex'
+require 'pacer-orient'
 
 Run = Rspec::GraphRunner.new ENV['GRAPHS']
 
