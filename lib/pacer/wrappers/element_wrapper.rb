@@ -4,7 +4,7 @@ module Pacer::Wrappers
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts).new(element.element)
+        wrapper_for(exts.to_set).new(element.element)
       end
 
       def extensions
