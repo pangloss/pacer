@@ -28,15 +28,12 @@ end
 file 'pom.xml' => 'lib/pacer/version.rb' do
   pom = File.read 'pom.xml'
   when_writing('Update pom.xml version number') do
-    updated = false
     open 'pom.xml', 'w' do |f|
       pom.each_line do |line|
-        if not updated and line =~ %r{<version>.*</version>}
-          f << line.sub(%r{<version>.*</version>}, "<version>#{ Pacer::VERSION }</version>")
-          updated = true
-        else
-          f << line
-        end
+        line.sub!(%r{<gem.version>.*</gem.version>}, "<gem.version>#{ Pacer::VERSION }</gem.version>")
+        line.sub!(%r{<blueprints.version>.*</blueprints.version>}, "<blueprints.version>#{ Pacer::BLUEPRINTS_VERSION }</blueprints.version>")
+        line.sub!(%r{<pipes.version>.*</pipes.version>}, "<pipes.version>#{ Pacer::PIPES_VERSION }</pipes.version>")
+        f << line
       end
     end
   end

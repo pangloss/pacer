@@ -5,9 +5,14 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>com.tinkerpop.pacer</groupId>
     <artifactId>pacer</artifactId>
-    <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
-    <version>0.8.1</version>
-    <!-- NOTE: the version property is automatically updated with the value in lib/pacer/version.rb -->
+    <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
+    <properties>
+      <gem.version>0.8.3</gem.version>
+      <blueprints.version>1.0-SNAPSHOT</blueprints.version>
+      <pipes.version>0.8-SNAPSHOT</pipes.version>
+    </properties>
+    <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
+    <version>${gem.version}</version>
     <packaging>pom</packaging>
     <url>https://github.com/pangloss/pacer</url>
     <name>Pacer Tinkerpop core dependencies including Blueprints Core
@@ -27,13 +32,13 @@
         <dependency>
             <groupId>com.tinkerpop.blueprints</groupId>
             <artifactId>blueprints-core</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>${blueprints.version}</version>
         </dependency>
         <!-- GRAPH TRAVERSAL SUPPORT -->
         <dependency>
             <groupId>com.tinkerpop</groupId>
             <artifactId>pipes</artifactId>
-            <version>0.8-SNAPSHOT</version>
+            <version>${pipes.version}</version>
         </dependency>
     </dependencies>
 
@@ -59,7 +64,7 @@
 
     <build>
         <directory>${basedir}/target</directory>
-        <finalName>${artifactId}-${version}</finalName>
+        <finalName>${project.artifactId}-${project.version}</finalName>
         <resources>
             <resource>
                 <directory>${basedir}/src/main/resources
