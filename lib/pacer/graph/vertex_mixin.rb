@@ -70,11 +70,11 @@ module Pacer
     end
 
     def raw_out_edges(*labels)
-      java_send :getOutEdges, [java.lang.String[]], labels.to_java(:string)
+      getOutEdges *labels
     end
 
     def raw_in_edges(*labels)
-      java_send :getInEdges, [java.lang.String[]], labels.to_java(:string)
+      getInEdges *labels
     end
 
     def out_edges(*labels_and_extensions)
