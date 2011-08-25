@@ -37,6 +37,7 @@ module Pacer
           @extensions = []
           @route_modules = []
           @non_ext_props = []
+          @best_index_value = nil
           add_filters filters, nil
         end
 
@@ -49,7 +50,7 @@ module Pacer
         attr_reader :graph
 
         def graph=(g)
-          if @graph != g
+          if graph != g
             reset_properties
             @graph = g
           end
@@ -62,7 +63,7 @@ module Pacer
         attr_reader :indices
 
         def indices=(i)
-          if @indices != i
+          if indices != i
             reset_properties
             @indices = i
           end

@@ -55,7 +55,11 @@ module Pacer
 
     # Returns the time pacer was last reloaded (or when it was started).
     def reload_time
-      @reload_time || START_TIME
+      if defined? @reload_time
+        @reload_time
+      else
+        START_TIME
+      end
     end
 
     # Reload all Ruby modified files in the Pacer library. Useful for debugging
@@ -90,6 +94,7 @@ module Pacer
     # @yield print elements while inside this block
     # @return [true, false] should you not print elemets?
     def hide_route_elements
+      @hide_route_elements = nil unless defined? @hide_route_elements
       if block_given?
         if @hide_route_elements
           yield
@@ -109,7 +114,11 @@ module Pacer
     # Returns how many terminal columns we have.
     # @return [Fixnum] number of terminal columns
     def columns
-      @columns || 150
+      if defined? @columns
+        @columns
+      else
+        150
+      end
     end
 
     # Tell Pacer how many terminal columns we have so it can print
@@ -123,7 +132,11 @@ module Pacer
     # give up and display nothing but the route definition.
     # @return [Fixnum] maximum number of elements to display
     def inspect_limit
-      @inspect_limit || 500
+      if defined? @inspect_limit
+        @inspect_limit
+      else
+        500
+      end
     end
 
     # Set the maximum number of elements to print on the screen when
@@ -143,6 +156,7 @@ module Pacer
     # Current verbosity setting
     # @return [:very, true, false]
     def verbose?
+      @verbose = nil unless defined? @verbose
       @verbose = true if @verbose.nil?
       @verbose
     end
@@ -215,7 +229,8 @@ module Pacer
     # or a url or address.
     # @return [Hash] address => graph
     def open_graphs
-      @open_graphs ||= Hash.new { |h, k| h[k] = {} }
+      @open_graphs = Hash.new { |h, k| h[k] = {} } unless defined? @open_graphs
+      @open_graphs
     end
 
     # Tell pacer to record that we're starting a graph.

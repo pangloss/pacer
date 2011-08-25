@@ -16,6 +16,7 @@ module Pacer
       # Replace the generated class name of this route with a specific
       # one by setting route_name.
       attr_accessor :route_name
+      attr_accessor :info
 
       # Specify which pipe class will be instantiated when an iterator is created.
       attr_accessor :pipe_class
@@ -36,6 +37,7 @@ module Pacer
       #
       # @return [GraphMixin]
       def graph
+        @graph = nil unless defined? @graph
         @graph ||= (@back || @source).graph rescue nil
       end
 
@@ -290,14 +292,14 @@ module Pacer
       #
       # @see #add_extension
       def extensions=(exts)
-        @extensions ||= Set[]
         add_extensions Set[*exts]
       end
 
       # Get the set of extensions currently on this route.
       # @return [Set[extension]]
       def extensions
-        @extensions ||= Set[]
+        @extensions = Set[] unless defined? @extensions
+        @extensions
       end
 
       # If any objects in the given array are modules that contain a Route
@@ -433,18 +435,18 @@ module Pacer
       # @return [com.tinkerpop.pipes.Pipe] the pipe that emits the
       #   resulting data from this step
       def attach_pipe(end_pipe)
-        if @pipe_class
-          if @pipe_args
+        if pipe_class
+          if pipe_args
             begin
-              pipe = @pipe_class.new(*@pipe_args)
+              pipe = pipe_class.new(*pipe_args)
             rescue ArgumentError
-              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new(*#{@pipe_args.inspect})"
+              raise ArgumentError, "Invalid args for pipe: #{ pipe_class.inspect }.new(*#{pipe_args.inspect})"
             end
           else
             begin
-              pipe = @pipe_class.new
+              pipe = pipe_class.new
             rescue ArgumentError
-              raise ArgumentError, "Invalid args for pipe: #{ @pipe_class.inspect }.new()"
+              raise ArgumentError, "Invalid args for pipe: #{ pipe_class.inspect }.new()"
             end
           end
           pipe.set_starts end_pipe if end_pipe
@@ -482,13 +484,13 @@ module Pacer
       # Returns the string representing just this route instance.
       # @return [String]
       def inspect_string
-        return @route_name if @route_name
-        if @pipe_class
-          ps = @pipe_class.name
+        return route_name if route_name
+        if pipe_class
+          ps = pipe_class.name
           if ps =~ /FilterPipe$/
             ps = ps.split('::').last.sub(/FilterPipe/, '')
-            if @pipe_args
-              pipeargs = @pipe_args.collect do |arg|
+            if pipe_args
+              pipeargs = pipe_args.collect do |arg|
                 if arg.is_a? Enumerable and arg.count > 10
                   "[...#{ arg.count } items...]"
                 else
@@ -497,8 +499,8 @@ module Pacer
               end
               ps = "#{ps}(#{pipeargs.join(', ')})" if pipeargs.any?
             end
-          elsif @pipe_args
-            ps = @pipe_args.join(', ')
+          elsif pipe_args
+            ps = pipe_args.join(', ')
           end
         end
         s = inspect_class_name
@@ -510,7 +512,7 @@ module Pacer
       # @return [String]
       def inspect_class_name
         s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
-        s = "#{s} #{ @info }" if @info
+        s = "#{s} #{ info }" if info
         s
       end
 

@@ -5,7 +5,8 @@ module Pacer
   #
   # @return [Set] graphs with an open transaction
   def self.graphs_in_transaction
-    @graphs ||= Set[]
+    @graphs = Set[] unless defined? @graphs
+    @graphs
   end
 
   # Methods used internally to do 'managed transactions' which I define
@@ -27,13 +28,13 @@ module Pacer
     end
 
     def manage_transactions?
-      @manage_transactions = true if @manage_transactions.nil?
+      @manage_transactions = true unless defined? @manage_transactions
       @manage_transactions
     end
     alias manage_transactions manage_transactions?
 
     def unmanaged_transactions
-      old_value = @manage_transactions
+      old_value = manage_transactions
       @manage_transactions = false
       yield
     ensure

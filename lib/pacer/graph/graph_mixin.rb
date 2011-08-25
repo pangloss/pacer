@@ -136,12 +136,16 @@ module Pacer
 
     # The currently configured bulk job size.
     def bulk_job_size
-      @bulk_job_size || 5000
+      if defined? @bulk_job_size
+        @bulk_job_size
+      else
+        5000
+      end
     end
 
     # Are we currently in the midst of a bulk job?
     def in_bulk_job?
-      @in_bulk_job
+      @in_bulk_job if defined? @in_bulk_job
     end
 
     # Directly loads an array of vertices by id.
@@ -237,7 +241,7 @@ module Pacer
     #
     # @return [Proc]
     def vertex_name
-      @vertex_name
+      @vertex_name if defined? @vertex_name
     end
 
     # Set the proc used to name vertices.
@@ -251,7 +255,7 @@ module Pacer
     #
     # @return [Proc]
     def edge_name
-      @edge_name
+      @edge_name if defined? @edge_name
     end
 
     # Set the proc used to name edges.

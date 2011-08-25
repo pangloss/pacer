@@ -70,11 +70,11 @@ module Pacer
     end
 
     def raw_out_edges(*labels)
-      getOutEdges *labels
+      element.getOutEdges *labels
     end
 
     def raw_in_edges(*labels)
-      getInEdges *labels
+      element.getInEdges *labels
     end
 
     def out_edges(*labels_and_extensions)

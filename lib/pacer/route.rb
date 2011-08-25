@@ -168,8 +168,10 @@ module Pacer
     # {#after_initialize} method is called to allow mixins to do any
     # additional setup.
     def initialize(args = {})
+      @graph = @back = @source = nil
       self.graph = args[:graph]
       self.back = args[:back]
+      @each_method = nil
       include_function args
       set_element_type args
       include_other_modules args
@@ -270,7 +272,7 @@ module Pacer
           end
         end
       end
-      self.extend @function if @function
+      self.extend function if function
     end
 
     # @return [Route, nil] the previous route in the chain
@@ -327,7 +329,7 @@ module Pacer
     # @return [String]
     def inspect_class_name
       s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
-      s = "#{s}-#{@function.name.split('::').last.sub(/Filter|Route$/, '')}" if @function
+      s = "#{s}-#{function.name.split('::').last.sub(/Filter|Route$/, '')}" if function
       s = "#{s} #{ @info }" if @info
       s
     end

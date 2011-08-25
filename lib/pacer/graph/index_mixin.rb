@@ -5,13 +5,13 @@ module Pacer
     end
 
     def graph
-      @graph
+      @graph if defined? @graph
     end
 
     def first(key, value, extensions = nil)
       e = get(key, value).first
-      if e and (@graph or extensions)
-        e.graph = @graph
+      if e and (graph or extensions)
+        e.graph = graph
         e.add_extensions extensions
       end
       e
@@ -19,9 +19,9 @@ module Pacer
 
     def all(key, value, extensions = nil)
       iter = get(key, value)
-      if @graph or extensions
+      if graph or extensions
         iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-        iter.graph = @graph
+        iter.graph = graph
         iter.extensions = extensions
       end
       iter
