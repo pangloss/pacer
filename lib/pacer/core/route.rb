@@ -207,6 +207,14 @@ module Pacer
         self
       end
 
+      def pipe(iterator_method = :each)
+        iterator = send(iterator_method) 
+        yield iterator if block_given?
+        iterator
+      rescue java.util.NoSuchElementException
+        iterator
+      end
+
       # Returns a string representation of the route definition. If there are
       # less than Graph#inspect_limit matches, it will also output all matching
       # elements formatted in columns up to a maximum character width of
