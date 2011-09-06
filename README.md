@@ -159,8 +159,9 @@ As a side note, don't worry about any magic happening behind the scenes to disco
 
 ## Gremlin
 
-
 If you're already familiar with [Gremlin](http://gremlin.tinkerpop.com), please look at my [Introducing Pacer](http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer) post for a simple introduction and explanation of how Pacer is at once similar to and quite different from Gremlin, the project that inspired it. That post is a little out of date at this point since it refers to the original version of Gremlin. Groovy Gremlin is the latest version, inspired in turn by Pacer!
+
+A great introduction to the underlying concept of pipes can be found at http://markorodriguez.com/2011/08/03/on-the-nature-of-pipes/
 
 ## Test Coverage
 
