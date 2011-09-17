@@ -136,18 +136,18 @@ module Pacer
     end
 
     def manual_transactions
-      original_mode = get_transaction_mode
-      if original_mode != TransactionalGraph::Mode::MANUAL
+      original_buffer_size = getMaxBufferSize
+      if original_buffer_size != 0
         begin
-          puts "transaction mode reset to MANUAL" if Pacer.verbose == :very
-          set_transaction_mode TransactionalGraph::Mode::MANUAL
+          puts "transaction buffer size reset to 0 (MANUAL)" if Pacer.verbose == :very
+          setMaxBufferSize 0
           yield
         rescue Exception
           rollback_transaction if in_transaction?
           raise
         ensure
-          puts "transaction mode reset to #{ original_mode }" if Pacer.verbose == :very
-          set_transaction_mode original_mode
+          puts "transaction buffer size reset to #{ original_buffer_size }" if Pacer.verbose == :very
+          setMaxBufferSize original_buffer_size
         end
       else
         yield
