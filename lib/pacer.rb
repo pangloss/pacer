@@ -1,4 +1,10 @@
 if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-5]|1\.6\.[0-3])/
+  # NOTE: This is because JRuby 1.6.4 fixes a bug that made it impossible to
+  # instantiate Java classes with a varargs constructor signature  with 0
+  # arguments. Marko would not accept a patch to create a 0 args constructor to
+  # work around the problem, therefore this version of Pacer will not work
+  # under any older versions of JRuby. The oldest Pacer version that will work
+  # is 0.8.1.
   raise Exception, 'Pacer >= 0.8.2 requires JRuby version 1.6.4 or higher. It is strongly recommended that you use the latest JRuby release.'
 end
 
