@@ -462,6 +462,12 @@ module Pacer
         else
           end_pipe
         end
+      rescue NativeException => e
+        if e.cause.name == 'java.lang.InstantiationException'
+          raise Exception, "Unable to instantiate abstract class #{ pipe_class }"
+        else
+          raise
+        end
       end
 
       # Walks back along the chain of routes to build the series of Pipe
