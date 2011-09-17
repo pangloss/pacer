@@ -1,12 +1,12 @@
 module Pacer
   module Routes
     module RouteOperations
-      def lookahead(&block)
-        chain_route :filter => :future, :block => block
+      def lookahead(opts = {}, &block)
+        chain_route({ :filter => :future, :block => block }.merge(opts))
       end
 
-      def neg_lookahead(&block)
-        chain_route :filter => :future, :neg_block => block
+      def neg_lookahead(opts = {}, &block)
+        chain_route({ :filter => :future, :neg_block => block }.merge(opts))
       end
     end
   end
@@ -14,6 +14,8 @@ module Pacer
   module Filter
     module FutureFilter
       import com.tinkerpop.pipes.filter.FutureFilterPipe
+
+      attr_accessor :min, :max
 
       def block=(block)
         @blocks = [block]
@@ -65,7 +67,12 @@ module Pacer
       end
 
       def lookahead_route(block)
-        block.call(Pacer::Route.empty(self))
+        route = block.call(Pacer::Route.empty(self))
+        if min or max
+          route.has_count_route(:min => min, :max => max).is(true)
+        else
+          route
+        end
       end
 
       def lookahead_pipes
