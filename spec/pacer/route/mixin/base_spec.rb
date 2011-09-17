@@ -7,7 +7,7 @@ Run.all do
         subject { graph.v.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
         specify { subject.first.should equal(subject.last) }
       end
 
@@ -65,7 +65,7 @@ Run.all do
         subject { graph.v.element_ids.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(Pacer::Pipes::GraphElementPipe) }
+        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
         its(:last) { should be_a(Pacer::Pipes::IdPipe) }
       end
 

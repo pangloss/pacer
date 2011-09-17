@@ -15,7 +15,6 @@ module Pacer
     import com.tinkerpop.pipes.filter.FilterPipe
     import com.tinkerpop.pipes.filter.CollectionFilterPipe
 
-    import com.tinkerpop.pipes.transform.GraphElementPipe
     import com.tinkerpop.pipes.transform.IdPipe
     import com.tinkerpop.pipes.transform.PropertyPipe
 
