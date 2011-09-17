@@ -13,7 +13,6 @@ module Pacer
     import com.tinkerpop.pipes.filter.DuplicateFilterPipe
     import com.tinkerpop.pipes.filter.RangeFilterPipe
     import com.tinkerpop.pipes.filter.FilterPipe
-    import com.tinkerpop.pipes.filter.CollectionFilterPipe
 
     import com.tinkerpop.pipes.transform.IdPipe
     import com.tinkerpop.pipes.transform.PropertyPipe
@@ -36,6 +35,7 @@ require 'pacer/pipe/ruby_pipe'
 
 require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/block_filter_pipe'
+require 'pacer/pipe/collection_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
 require 'pacer/pipe/expandable_pipe'
 require 'pacer/pipe/group_pipe'
