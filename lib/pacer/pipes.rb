@@ -52,3 +52,5 @@ require 'pacer/pipe/label_prefix_pipe'
 require 'pacer/pipe/variable_store_iterator_wrapper'
 
 require 'pacer/pipe/property_comparison_pipe'
+
+require 'pacer/pipe/blackbox_pipeline'

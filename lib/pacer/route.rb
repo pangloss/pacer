@@ -86,13 +86,13 @@ module Pacer
       # that it requests the next result from.
       #
       # @param [Route] route the route to create a pipeline based on
-      # @return [Pacer::Pipes::Pipeline] an instantiated pipeline
+      # @return [Pacer::Pipes::BlackboxPipeline] an instantiated pipeline
       def pipeline(route)
         s, e = route.send(:build_pipeline)
         if s.equal?(e)
           s
         else
-          Pacer::Pipes::Pipeline.new s, e
+          Pacer::Pipes::BlackboxPipeline.new s, e
         end
       end
     end
