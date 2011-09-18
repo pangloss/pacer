@@ -239,7 +239,11 @@ module Pacer
               max = lens.max
               cols = (Pacer.columns / (max + 1).to_f).floor
               cols = 1 if cols < 1
-              template_part = ["%-#{max}s"]
+              if max > Pacer.columns
+                template_part = ['%s']
+              else
+                template_part = ["%-#{max}s"]
+              end
               template = (template_part * cols).join(' ')
               results.each_slice(cols) do |row|
                 template = (template_part * row.count).join(' ') if row.count < cols

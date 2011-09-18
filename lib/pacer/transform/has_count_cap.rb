@@ -24,6 +24,18 @@ module Pacer
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
+
+      def inspect_string
+        if min and max
+          "HasCount(#{ min }..#{max})"
+        elsif min
+          "HasCount(>= #{ min })"
+        elsif max
+          "HasCount(<= #{ max })"
+        else
+          "HasCount(...any...)"
+        end
+      end
     end
   end
 end

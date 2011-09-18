@@ -24,6 +24,14 @@ module Pacer
         pipe.set_starts end_pipe if end_pipe
         pipe
       end
+
+      def inspect_string
+        if negate
+          "is_not(#{ value.inspect })"
+        else
+          "is(#{ value.inspect })"
+        end
+      end
     end
   end
 end
