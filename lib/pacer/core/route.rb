@@ -239,7 +239,7 @@ module Pacer
               max = lens.max
               cols = (Pacer.columns / (max + 1).to_f).floor
               cols = 1 if cols < 1
-              if max > Pacer.columns
+              if cols == 1
                 template_part = ['%s']
               else
                 template_part = ["%-#{max}s"]
