@@ -79,7 +79,11 @@ module Pacer
         protected
 
         def pipeline(name, *pipes)
-          pipe = Pacer::Pipes::Pipeline.new *pipes
+          if pipes.count > 1
+            pipe = Pacer::Pipes::Pipeline.new *pipes
+          else
+            pipe = pipes.first
+          end
           if Pacer.debug_pipes
             if name.is_a? Hash
               Pacer.debug_pipes << name.merge(:pipeline => pipes, :end => pipe)
