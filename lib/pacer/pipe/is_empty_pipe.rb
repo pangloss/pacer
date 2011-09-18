@@ -8,6 +8,7 @@ module Pacer::Pipes
     def processNextStart
       raise Pacer::NoSuchElementException if @raise
       @starts.next
+      @raise = true
     rescue NativeException => e
       if e.cause.getClass == NoSuchElementException.getClass
         # This is the only case where we return true.
@@ -18,13 +19,12 @@ module Pacer::Pipes
         raise e
       end
     else
-      @raise = true
       raise Pacer::NoSuchElementException
     end
 
     def reset
       @raise = false
-      super
+      super()
     end
   end
 end

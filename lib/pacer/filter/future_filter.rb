@@ -18,97 +18,49 @@ module Pacer
       attr_accessor :min, :max
 
       def block=(block)
-        @blocks = [block]
-        @has_elements = [true]
+        @future_filter = [block, true]
       end
 
       def neg_block=(block)
-        @blocks = [block]
-        @has_elements = [false]
-      end
-
-      def or(has_element = true, &block)
-        if block
-          lookahead_routes << lookahead_route(block)
-          has_elements << has_element
-          self
-        else
-          Proxy.new(self, extensions)
-        end
-      end
-
-      def lookahead_routes
-        @routes ||= []
-      end
-
-      def has_elements
-        @has_elements ||= []
+        @future_filter = [block, false]
       end
 
       protected
 
       def after_initialize
-        if @blocks
-          @routes = @blocks.map { |block| lookahead_route(block) }
-          @blocks = nil
-        end
+        @future_filter = nil unless defined? @future_filter
+        @route = nil unless defined? @route
       end
 
       def attach_pipe(end_pipe)
-        if lookahead_routes.count > 1
-          # TODO use or filter
-          pipe = Pacer::Pipes::FutureOrFilterPipe.new(*lookahead_pipes)
-          pipe.setShouldHaveResults *has_elements
-        else
-          if has_elements.first
-            lookahead = lookahead_pipes.first
-          else
-            lookahead = Pacer::Pipes::IsEmptyPipe.new
-            lookahead.setStarts lookahead_pipes.first
-          end
-          pipe = FutureFilterPipe.new(lookahead)
-        end
+        pipe = FutureFilterPipe.new(lookahead_pipe)
         pipe.set_starts(end_pipe) if end_pipe
         pipe
       end
 
-      def lookahead_route(block)
-        route = block.call(Pacer::Route.empty(self))
-        if min or max
-          route.has_count_route(:min => min, :max => max).is(true)
-        else
-          route
+      def lookahead_route
+        if @future_filter
+          block, has_elements = @future_filter
+          @future_filter = nil
+          route = block.call(Pacer::Route.empty(self))
+          if min or max
+            route = route.has_count_route(:min => min, :max => max).is(true)
+          end
+          unless has_elements
+            route = route.chain_route(:element_type => :object, :pipe_class => Pacer::Pipes::IsEmptyPipe, :route_name => 'negate')
+          end
+          @route = route
+        elsif @route
+          @route
         end
       end
 
-      def lookahead_pipes
-        lookahead_routes.map do |route|
-          Pacer::Route.pipeline(route)
-        end
+      def lookahead_pipe
+        Pacer::Route.pipeline(lookahead_route)
       end
 
       def inspect_string
-        "#{ inspect_class_name }(#{ lookahead_routes.zip(has_elements).map { |r, he| (he ? '' : 'NOT ') + r.inspect }.join(' | ') })"
-      end
-
-
-      class Proxy
-        def initialize(route, extensions)
-          @route = route
-          extensions.each do |e|
-            if e.const_defined? 'Route'
-              extend e.const_get 'Route'
-            end
-          end
-        end
-
-        def lookahead(&block)
-          @route.or(true, &block)
-        end
-
-        def neg_lookahead(&block)
-          @route.or(false, &block)
-        end
+        "#{ inspect_class_name }(#{ lookahead_route.inspect })"
       end
     end
   end
