@@ -60,7 +60,13 @@ module Pacer
           pipe = Pacer::Pipes::FutureOrFilterPipe.new(*lookahead_pipes)
           pipe.setShouldHaveResults *has_elements
         else
-          pipe = FutureFilterPipe.new(lookahead_pipes.first, has_elements.first)
+          if has_elements.first
+            lookahead = lookahead_pipes.first
+          else
+            lookahead = Pacer::Pipes::IsEmptyPipe.new
+            lookahead.setStarts lookahead_pipes.first
+          end
+          pipe = FutureFilterPipe.new(lookahead)
         end
         pipe.set_starts(end_pipe) if end_pipe
         pipe
