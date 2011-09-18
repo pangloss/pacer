@@ -15,7 +15,6 @@ module Pacer
       import com.tinkerpop.pipes.filter.FilterPipe
       import com.tinkerpop.pipes.filter.AndFilterPipe
       import com.tinkerpop.pipes.filter.OrFilterPipe
-      import com.tinkerpop.pipes.transform.HasNextPipe
       import com.tinkerpop.pipes.filter.ObjectFilterPipe
 
       class OrGroup
@@ -61,7 +60,6 @@ module Pacer
             when AndFilterPipe, OrFilterPipe
               pipe
             else
-              pipe = HasNextPipe.new(pipe)
               AndFilterPipe.new(pipe)
             end
           end
@@ -168,12 +166,12 @@ module Pacer
           t.rule(:group => t.simple(:x)) { x }
 
           t.rule(:or => t.sequence(:pipes)) do |h|
-            pipes = h[:pipes].map { |p| HasNextPipe.new(p) }
+            pipes = h[:pipes]
             pipeline({ :name => 'or', :or => h[:pipes], :or_ends => pipes }, OrFilterPipe.new(*pipes))
           end
 
           t.rule(:and => t.sequence(:pipes)) do |h|
-            pipes = h[:pipes].map { |p| HasNextPipe.new(p) }
+            pipes = h[:pipes]
             pipeline({ :name => 'and', :and => h[:pipes], :and_ends => pipes }, AndFilterPipe.new(*pipes))
           end
 
@@ -181,7 +179,6 @@ module Pacer
             # TODO: this only negates matches, it doesn't negate non-matches because a non-match leaves nothing to negate!
             #       It must rather be done in the same way an AndFilterPipe is, where it controls the incoming element and tests the other pipe.
             pipes = []
-            pipes << HasNextPipe.new
             pipes << ObjectFilterPipe.new(true, Filters['!='])
             pipeline 'not', *pipes
           end
