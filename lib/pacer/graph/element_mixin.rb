@@ -61,11 +61,15 @@ module Pacer
     # @param [#to_s] key the property name
     # @return [Object]
     def [](key)
-      value = get_property(key.to_s)
-      if graph
-        graph.decode_property(value)
+      if key.is_a? Array
+        key.map { |k| self[k] }
       else
-        value
+        value = get_property(key.to_s)
+        if graph
+          graph.decode_property(value)
+        else
+          value
+        end
       end
     end
 
