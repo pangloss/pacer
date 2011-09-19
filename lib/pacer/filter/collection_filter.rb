@@ -25,8 +25,6 @@ module Pacer
 
   module Filter
     module CollectionFilter
-      # TODO: re
-
       def self.triggers
         [:except, :only]
       end
@@ -45,7 +43,10 @@ module Pacer
 
       def collection=(collection)
         collection = [collection] unless collection.is_a? Enumerable
-        @ids = element_id_hashset(collection)
+        @ids = nil
+        if element_type != Object
+          @ids = element_id_hashset(collection)
+        end
         @objects = collection.to_hashset unless @ids
       end
 
