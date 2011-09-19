@@ -13,7 +13,7 @@ module Pacer::Wrappers
 
       def clear_cache
         Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
-        @wrappers = nil
+        @wrappers = {}
       end
 
       protected
@@ -47,11 +47,6 @@ module Pacer::Wrappers
 
     def eql?(other)
       @element.eql?(other)
-    end
-
-    def initialize(element = nil)
-      @element = element || NewElement.new
-      after_initialize
     end
 
     protected

@@ -13,7 +13,7 @@ module Pacer::Wrappers
 
     class << self
       def wrapper_for(exts)
-        @wrappers ||= {}
+        @wrappers = {} unless defined? @wrappers
         @wrappers[exts] ||= build_vertex_wrapper(exts)
       end
 
@@ -22,6 +22,11 @@ module Pacer::Wrappers
       def build_vertex_wrapper(exts)
         build_extension_wrapper(exts, [:Route, :Vertex], VertexWrapper)
       end
+    end
+
+    def initialize(element = nil)
+      @element = element || NewVertex.new
+      after_initialize
     end
 
     def extensions
