@@ -33,6 +33,16 @@ Run.tg(:read_only) do
         names.should == names_over_30
       end
     end
+
+    context 'multi-step traversal' do
+      # Artists who wrote both covers and original songs...???...
+
+      subject do
+        artists.lookahead { |v| v.in(:written_by, :song_type => 'cover').out(:written_by).in(:written_by).where('song_type != "cover"') }
+      end
+
+      it { subject.count.should == 5 }
+    end
   end
 
   describe Pacer::Filter::FutureFilter, '(negative)' do
@@ -63,4 +73,5 @@ Run.tg(:read_only) do
       end
     end
   end
+
 end
