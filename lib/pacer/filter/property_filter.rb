@@ -7,6 +7,8 @@ module Pacer
       def filters(filters)
         if filters? filters
           filters
+        elsif filters? filters.first
+          filters.first
         else
           Pacer::Filter::PropertyFilter::Filters.new(filters)
         end
@@ -15,6 +17,8 @@ module Pacer
       def edge_filters(filters)
         if filters? filters
           filters
+        elsif filters? filters.first
+          filters.first
         else
           Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
         end

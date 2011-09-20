@@ -19,10 +19,12 @@ module Pacer
   # Extend the java class imported from blueprints.
   class TinkerGraph
     include GraphMixin
+    include GraphIndicesMixin
     include GraphTransactionsStub
     include ManagedTransactionsMixin
     include Pacer::Core::Route
     include Pacer::Core::Graph::GraphRoute
+    include Pacer::Core::Graph::GraphIndexRoute
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
