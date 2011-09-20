@@ -7,9 +7,9 @@
     <artifactId>pacer</artifactId>
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
     <properties>
-      <gem.version>0.8.4</gem.version>
-      <blueprints.version>1.0-SNAPSHOT</blueprints.version>
-      <pipes.version>0.8-SNAPSHOT</pipes.version>
+      <gem.version>0.8.5</gem.version>
+      <blueprints.version>1.0</blueprints.version>
+      <pipes.version>0.8</pipes.version>
     </properties>
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
     <version>${gem.version}</version>
