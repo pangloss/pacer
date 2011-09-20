@@ -33,5 +33,45 @@ Run.tg(:read_only) do
         names.should == names_over_30
       end
     end
+
+    context 'multi-step traversal' do
+      # Artists who wrote both covers and original songs...???...
+
+      subject do
+        artists.lookahead { |v| v.in(:written_by, :song_type => 'cover').out(:written_by).in(:written_by).where('song_type != "cover"') }
+      end
+
+      it { subject.count.should == 5 }
+    end
   end
+
+  describe Pacer::Filter::FutureFilter, '(negative)' do
+    context 'artists who did not write songs' do
+      let(:people) do
+        [ "Daryl_Hall",
+          "Hall_and_Oates",
+          "Peter_Krug"
+        ].to_route.map(:graph => graph, :element_type => :vertex) { |name| graph.v(:name => name).first }
+      end
+      let(:wrote_songs) { people.lookahead     { |v| v.in_e(:written_by) } }
+      let(:no_songs) { people.neg_lookahead { |v| v.in_e(:written_by) } }
+
+      it 'should have a non songwriting artist' do
+        no_songs.count.should == 1
+      end
+
+      it 'should have 3 people' do
+        people.count.should == 3
+      end
+      
+      it 'should have 2 songwriters' do
+        wrote_songs.count.should == 2
+      end
+
+      it 'should combine the two types of artists to get the full list' do
+        (wrote_songs.element_ids.to_a + no_songs.element_ids.to_a).sort.should == people.element_ids.to_a.sort
+      end
+    end
+  end
+
 end

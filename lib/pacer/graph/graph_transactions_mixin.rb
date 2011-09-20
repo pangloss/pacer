@@ -5,7 +5,8 @@ module Pacer
   #
   # @return [Set] graphs with an open transaction
   def self.graphs_in_transaction
-    @graphs ||= Set[]
+    @graphs = Set[] unless defined? @graphs
+    @graphs
   end
 
   # Methods used internally to do 'managed transactions' which I define
@@ -27,13 +28,13 @@ module Pacer
     end
 
     def manage_transactions?
-      @manage_transactions = true if @manage_transactions.nil?
+      @manage_transactions = true unless defined? @manage_transactions
       @manage_transactions
     end
     alias manage_transactions manage_transactions?
 
     def unmanaged_transactions
-      old_value = @manage_transactions
+      old_value = manage_transactions
       @manage_transactions = false
       yield
     ensure
@@ -135,18 +136,18 @@ module Pacer
     end
 
     def manual_transactions
-      original_mode = get_transaction_mode
-      if original_mode != TransactionalGraph::Mode::MANUAL
+      original_buffer_size = getMaxBufferSize
+      if original_buffer_size != 0
         begin
-          puts "transaction mode reset to MANUAL" if Pacer.verbose == :very
-          set_transaction_mode TransactionalGraph::Mode::MANUAL
+          puts "transaction buffer size reset to 0 (MANUAL)" if Pacer.verbose == :very
+          setMaxBufferSize 0
           yield
         rescue Exception
           rollback_transaction if in_transaction?
           raise
         ensure
-          puts "transaction mode reset to #{ original_mode }" if Pacer.verbose == :very
-          set_transaction_mode original_mode
+          puts "transaction buffer size reset to #{ original_buffer_size }" if Pacer.verbose == :very
+          setMaxBufferSize original_buffer_size
         end
       else
         yield

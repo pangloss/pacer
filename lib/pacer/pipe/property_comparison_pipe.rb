@@ -1,7 +1,8 @@
 module Pacer::Pipes
   class PropertyComparisonFilterPipe < RubyPipe
     def initialize(left, right, filter)
-      super(filter)
+      super()
+      @filter = filter
       @left = left.to_s
       @right = right.to_s
     end
@@ -11,8 +12,21 @@ module Pacer::Pipes
     def processNextStart
       while true
         obj = @starts.next
-        unless Pacer::Pipes::PipeHelper.compareObjects(obj.getProperty(@left), obj.getProperty(@right))
-          return obj
+        l = obj.getProperty(@left)
+        r = obj.getProperty(@right)
+        case @filter
+        when FilterPipe::Filter::EQUAL
+          return obj if l == r
+        when FilterPipe::Filter::NOT_EQUAL
+          return obj if l != r
+        when FilterPipe::Filter::GREATER_THAN
+          return obj if l and r and l > r
+        when FilterPipe::Filter::LESS_THAN
+          return obj if l and r and l < r
+        when FilterPipe::Filter::GREATER_THAN_EQUAL
+          return obj if l and r and l >= r
+        when FilterPipe::Filter::LESS_THAN_EQUAL
+          return obj if l and r and l <= r
         end
       end
     rescue NativeException => e

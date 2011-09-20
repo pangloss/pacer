@@ -262,7 +262,11 @@ shared_examples_for Pacer::GraphMixin do
         its(:index_name) { should == 'missing_edge' }
         its(:index_type) { should == Pacer.manual_index }
         its(:index_class) { should == graph.index_class(:edge) }
-        after { graph.drop_index 'missing_edge' rescue nil }
+        after do
+          graph.transaction do
+            graph.drop_index 'missing_edge'
+          end
+        end
       end
 
       context 'vertex' do
@@ -274,7 +278,11 @@ shared_examples_for Pacer::GraphMixin do
         its(:index_name) { should == 'missing_vertex' }
         its(:index_type) { should == Pacer.manual_index }
         its(:index_class) { should == graph.index_class(:vertex) }
-        after { graph.drop_index 'missing_vertex' rescue nil }
+        after do
+          graph.transaction do
+            graph.drop_index 'missing_vertex'
+          end
+        end
       end
     end
 
@@ -308,7 +316,7 @@ shared_examples_for Pacer::GraphMixin do
       if graph.is_a? Pacer::DexGraph
         subject.should == graph.indices.first.index_class
       else
-        subject.should == graph.index_name('vertices').index_class
+        subject.to_s.should == graph.index_name('vertices').index_class.to_s
       end
     end
   end

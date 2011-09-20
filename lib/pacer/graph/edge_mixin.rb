@@ -26,7 +26,7 @@ module Pacer
     # The incoming vertex for this edge.
     # @return [Pacer::VertexMixin]
     def in_vertex(extensions = nil)
-      v = inVertex
+      v = getInVertex
       v.graph = graph
       if extensions
         v.add_extensions extensions
@@ -35,10 +35,14 @@ module Pacer
       end
     end
 
+    def label
+      getLabel
+    end
+
     # The outgoing vertex for this edge.
     # @return [Pacer::VertexMixin]
     def out_vertex(extensions = nil)
-      v = outVertex
+      v = getOutVertex
       v.graph = graph
       if extensions
         v.add_extensions extensions
@@ -60,7 +64,7 @@ module Pacer
       if graph and graph.edge_name
         graph.edge_name.call self
       else
-        "#{ out_vertex.element_id }-#{ get_label }-#{ in_vertex.element_id }"
+        "#{ out_vertex.element_id }-#{ getLabel }-#{ in_vertex.element_id }"
       end
     end
 

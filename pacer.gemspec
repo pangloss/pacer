@@ -21,9 +21,9 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard'
   s.add_development_dependency 'rake'
 
-  s.add_development_dependency 'pacer-neo4j', '1.0.3'
-  s.add_development_dependency 'pacer-dex', '1.0.2'
-  s.add_development_dependency 'ZenTest'
+  s.add_development_dependency 'pacer-neo4j', '1.0.6'
+  s.add_development_dependency 'pacer-dex', '1.0.5'
+  s.add_development_dependency 'autotest'
 
   s.files = `git ls-files`.split("\n") + [Pacer::JAR_PATH]
   s.test_files = `git ls-files -- spec/*`.split("\n")

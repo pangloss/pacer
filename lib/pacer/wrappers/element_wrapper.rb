@@ -1,10 +1,11 @@
 module Pacer::Wrappers
   class ElementWrapper
     extend Forwardable
+    include Comparable
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts).new(element.element)
+        wrapper_for(exts.to_set).new(element.element)
       end
 
       def extensions
@@ -13,7 +14,7 @@ module Pacer::Wrappers
 
       def clear_cache
         Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
-        @wrappers = nil
+        @wrappers = {}
       end
 
       protected
@@ -37,6 +38,11 @@ module Pacer::Wrappers
       end
     end
 
+    def initialize(element)
+      @element = element
+      after_initialize
+    end
+
     def element_id
       @element.get_id
     end
@@ -47,11 +53,6 @@ module Pacer::Wrappers
 
     def eql?(other)
       @element.eql?(other)
-    end
-
-    def initialize(element = nil)
-      @element = element || NewElement.new
-      after_initialize
     end
 
     protected

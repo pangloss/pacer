@@ -56,6 +56,25 @@ You can run any or all of the above graph databases. Pacer supports
 running them simultaneuosly and even supports having many of any given
 type open at once.
 
+### Interoperation with the neo4j gem
+
+Pacer can work together with other Ruby GraphDB libraries, too. The
+first functioning example is with theo neo4j gem. Hopefully more will
+follow soon as I find out about them or get requests to support them.
+
+To use Pacer together with the neo4j gem, get your Pacer graph instance
+as follows:
+
+    require 'neo4j'
+    require 'pacer-neo4j'
+    Neo4j.db.start
+    graph = Pacer.neo4j(Neo4j.db.graph)
+
+After that, you can continue to use the graph as normal with *both*
+gems. Any update that's committed with one gem will be visible
+immediately to the other because they are now both pointing to the same
+Java graphdb instance.
+
 ### A note on safely exiting
 
 Some databases need to be shutdown cleanly when the program exits. You
@@ -140,8 +159,9 @@ As a side note, don't worry about any magic happening behind the scenes to disco
 
 ## Gremlin
 
-
 If you're already familiar with [Gremlin](http://gremlin.tinkerpop.com), please look at my [Introducing Pacer](http://ofallpossibleworlds.wordpress.com/2010/12/19/introducing-pacer) post for a simple introduction and explanation of how Pacer is at once similar to and quite different from Gremlin, the project that inspired it. That post is a little out of date at this point since it refers to the original version of Gremlin. Groovy Gremlin is the latest version, inspired in turn by Pacer!
+
+A great introduction to the underlying concept of pipes can be found in Marko Rodriguez' post [On the Nature of Pipes](http://markorodriguez.com/2011/08/03/on-the-nature-of-pipes/)
 
 ## Test Coverage
 

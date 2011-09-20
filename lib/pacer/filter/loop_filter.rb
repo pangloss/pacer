@@ -44,12 +44,7 @@ module Pacer
       end
 
       def looping_pipe
-        s, e = looping_route.send(:build_pipeline)
-        if s.equal?(e)
-          s
-        else
-          Pacer::Pipes::Pipeline.new s, e
-        end
+        Pacer::Route.pipeline(looping_route)
       end
 
       def inspect_string

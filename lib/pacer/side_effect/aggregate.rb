@@ -7,10 +7,12 @@ module Pacer
 
   module SideEffect
     module Aggregate
+      import com.tinkerpop.pipes.sideeffect.AggregatePipe
+
       protected
 
       def attach_pipe(end_pipe)
-        pipe = com.tinkerpop.pipes.sideeffect.AggregatorPipe.new
+        pipe = AggregatePipe.new
         pipe.setStarts end_pipe if end_pipe
         pipe
       end

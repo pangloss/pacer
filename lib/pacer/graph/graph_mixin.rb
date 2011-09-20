@@ -7,8 +7,10 @@ module Pacer
   module GraphMixin
     def self.included(target)
       target.class_eval do
-        protected :addVertex, :addEdge, :add_vertex, :add_edge
-        protected :getVertex, :getEdge, :get_vertex, :get_edge
+        protected :addVertex, :addEdge
+        protected :add_vertex, :add_edge rescue nil
+        protected :getVertex, :getEdge
+        protected :get_vertex, :get_edge rescue nil
       end
     end
 
@@ -136,12 +138,16 @@ module Pacer
 
     # The currently configured bulk job size.
     def bulk_job_size
-      @bulk_job_size || 5000
+      if defined? @bulk_job_size
+        @bulk_job_size
+      else
+        5000
+      end
     end
 
     # Are we currently in the midst of a bulk job?
     def in_bulk_job?
-      @in_bulk_job
+      @in_bulk_job if defined? @in_bulk_job
     end
 
     # Directly loads an array of vertices by id.
@@ -164,68 +170,6 @@ module Pacer
       end.compact
     end
 
-    # Return an index by name.
-    #
-    # @param [#to_s] name of the index
-    # @param [:vertex, :edge, element type] type guarantees that the index returned is of the type specified.
-    # @param [Hash] opts
-    # @option opts [true] :create create the index if it doesn't exist
-    # @return [Pacer::IndexMixin]
-    def index_name(name, type = nil, opts = {})
-      name = name.to_s
-      if type
-        idx = indices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
-        if idx.nil? and opts[:create]
-          idx = createManualIndex name, element_type(type)
-        end
-      else
-        idx = indices.detect { |i| i.index_name == name }
-      end
-      idx.graph = self if idx
-      idx
-    end
-
-    # Drops and recreates an automatic index with the same keys.
-    #
-    # In some earlier graphdb versions it was possible to corrupt
-    # automatic indices. This method provided a fast way to recreate
-    # them.
-    #
-    # @param [Index] old_index this index will be dropped
-    # @return [Index] rebuilt index
-    def rebuild_automatic_index(old_index)
-      name = old_index.getIndexName
-      index_class = old_index.getIndexClass
-      keys = old_index.getAutoIndexKeys
-      drop_index name
-      build_automatic_index(name, index_class, keys)
-    end
-
-    # Creates a new automatic index.
-    #
-    # @param [#to_s] name index name
-    # @param [:vertex, :edge, element type] et element type
-    # @param [[#to_s], nil] keys The keys to be indexed. If nil then
-    #   index all keys
-    def build_automatic_index(name, et, keys = nil)
-      if keys and not keys.is_a? java.util.Set
-        set = java.util.HashSet.new
-        keys.each { |k| set.add k.to_s }
-        keys = set
-      end
-      index = createAutomaticIndex name.to_s, index_class(et), keys
-      if index_class(et) == element_type(:vertex).java_class
-        v.bulk_job do |v|
-          Pacer::Utils::AutomaticIndexHelper.addElement(index, v)
-        end
-      else
-        e.bulk_job do |e|
-          Pacer::Utils::AutomaticIndexHelper.addElement(index, e)
-        end
-      end
-      index
-    end
-
     # The current graph
     #
     # @return [Graph] returns self
@@ -237,7 +181,7 @@ module Pacer
     #
     # @return [Proc]
     def vertex_name
-      @vertex_name
+      @vertex_name if defined? @vertex_name
     end
 
     # Set the proc used to name vertices.
@@ -251,7 +195,7 @@ module Pacer
     #
     # @return [Proc]
     def edge_name
-      @edge_name
+      @edge_name if defined? @edge_name
     end
 
     # Set the proc used to name edges.
@@ -259,12 +203,6 @@ module Pacer
     # @param [Proc(edge)] a_proc returns a string given an edge
     def edge_name=(a_proc)
       @edge_name = a_proc
-    end
-
-    # Return an object that can be compared to the return value of
-    # Index#index_class.
-    def index_class(et)
-      element_type(et).java_class.to_java
     end
 
     # Is the element type given supported by this graph?
@@ -299,21 +237,75 @@ module Pacer
     #
     # Specific graphs may override this method to return false.
     def supports_automatic_indices?
-      true
+      false
     end
 
     # Does this graph allow me to create or modify manual indices?
     #
     # Specific graphs may override this method to return false.
     def supports_manual_indices?
-      true
+      false
     end
 
     # Does this graph support indices on edges?
     #
     # Specific graphs may override this method to return false.
     def supports_edge_indices?
-      true
+      false
+    end
+
+    def element_type(et = nil)
+      return nil unless et
+      result = if et == vertex_class or et == edge_class or et == element_class
+        et
+      else
+        case et
+        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+          vertex_class
+        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+          edge_class
+        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+          element_class
+        when :object
+          Object
+        else
+          if et == Object
+            Object
+          elsif vertex_class.respond_to? :java_class
+            if et == vertex_class.java_class.to_java
+              vertex_class
+            elsif et == edge_class.java_class.to_java
+              edge_class
+            elsif et == com.tinkerpop.blueprints.pgm.Vertex.java_class.to_java
+              vertex_class
+            elsif et == com.tinkerpop.blueprints.pgm.Edge.java_class.to_java
+              edge_class
+            end
+          end
+        end
+      end
+      if result
+        result
+      else
+        raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object' 
+      end
+    end
+
+    def sanitize_properties(props)
+      props
+    end
+
+    def encode_property(value)
+      if value.is_a? String
+        value = value.strip
+        value unless value == ''
+      else
+        value
+      end
+    end
+
+    def decode_property(value)
+      value
     end
 
     protected

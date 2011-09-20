@@ -17,11 +17,15 @@ module Pacer
 
       def where=(str)
         @where = str
-        @parsed = Parser.parse str
+        @built = @parsed = nil
+      end
+
+      def parsed
+        @parsed ||= Parser.parse @where
       end
 
       def build!
-        Builder.build(parsed, self, vars)
+        @built ||= Builder.build(parsed, self, vars)
       end
 
       protected

@@ -1,6 +1,42 @@
 require 'spec_helper'
 
 describe Enumerable do
+  describe '#one?' do
+    it 'should be true if there is one element' do
+      [:x].one?.should be_true
+    end
+
+    it 'should be false if there are no elements' do
+      [].one?.should be_false
+    end
+
+    it 'should be false if there are 2 elements' do
+      [:a, :b].one?.should be_false
+    end
+
+    it 'should be false if there are lots of elements' do
+      ([:a, :b] * 100).one?.should be_false
+    end
+  end
+
+  describe '#many?' do
+    it 'should be false if there is one element' do
+      [:x].many?.should be_false
+    end
+
+    it 'should be false if there are no elements' do
+      [].many?.should be_false
+    end
+
+    it 'should be true if there are 2 elements' do
+      [:a, :b].many?.should be_true
+    end
+
+    it 'should be true if there are lots of elements' do
+      ([:a, :b] * 100).many?.should be_true
+    end
+  end
+
   describe '#to_hashset' do
     it 'should return an empty hashset' do
       [].to_hashset.should == java.util.HashSet.new

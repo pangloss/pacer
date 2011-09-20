@@ -1,5 +1,11 @@
-if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-4]|1\.5\.[0-4])/
-  raise Exception, 'Pacer requires JRuby version 1.5.5 or higher. It is strongly recommended that you use the latest JRuby release.'
+if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-5]|1\.6\.[0-3])/
+  # NOTE: This is because JRuby 1.6.4 fixes a bug that made it impossible to
+  # instantiate Java classes with a varargs constructor signature  with 0
+  # arguments. Marko would not accept a patch to create a 0 args constructor to
+  # work around the problem, therefore this version of Pacer will not work
+  # under any older versions of JRuby. The oldest Pacer version that will work
+  # is 0.8.1.
+  raise Exception, 'Pacer >= 0.8.2 requires JRuby version 1.6.4 or higher. It is strongly recommended that you use the latest JRuby release.'
 end
 
 if RUBY_VERSION == '1.8.7'
@@ -55,7 +61,11 @@ module Pacer
 
     # Returns the time pacer was last reloaded (or when it was started).
     def reload_time
-      @reload_time || START_TIME
+      if defined? @reload_time
+        @reload_time
+      else
+        START_TIME
+      end
     end
 
     # Reload all Ruby modified files in the Pacer library. Useful for debugging
@@ -90,6 +100,7 @@ module Pacer
     # @yield print elements while inside this block
     # @return [true, false] should you not print elemets?
     def hide_route_elements
+      @hide_route_elements = nil unless defined? @hide_route_elements
       if block_given?
         if @hide_route_elements
           yield
@@ -109,7 +120,11 @@ module Pacer
     # Returns how many terminal columns we have.
     # @return [Fixnum] number of terminal columns
     def columns
-      @columns || 150
+      if defined? @columns
+        @columns
+      else
+        150
+      end
     end
 
     # Tell Pacer how many terminal columns we have so it can print
@@ -123,7 +138,11 @@ module Pacer
     # give up and display nothing but the route definition.
     # @return [Fixnum] maximum number of elements to display
     def inspect_limit
-      @inspect_limit || 500
+      if defined? @inspect_limit
+        @inspect_limit
+      else
+        500
+      end
     end
 
     # Set the maximum number of elements to print on the screen when
@@ -143,6 +162,7 @@ module Pacer
     # Current verbosity setting
     # @return [:very, true, false]
     def verbose?
+      @verbose = nil unless defined? @verbose
       @verbose = true if @verbose.nil?
       @verbose
     end
@@ -215,7 +235,8 @@ module Pacer
     # or a url or address.
     # @return [Hash] address => graph
     def open_graphs
-      @open_graphs ||= Hash.new { |h, k| h[k] = {} }
+      @open_graphs = Hash.new { |h, k| h[k] = {} } unless defined? @open_graphs
+      @open_graphs
     end
 
     # Tell pacer to record that we're starting a graph.
