@@ -123,7 +123,7 @@ module Pacer
     # The id of the current element
     # @return [Object] element id (type varies by graph implementation.
     def element_id
-      element.get_id
+      element.getId
     end
 
     # Sort objects semi arbitrarily based on {VertexMixin#display_name}

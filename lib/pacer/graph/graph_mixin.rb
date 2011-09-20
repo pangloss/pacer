@@ -7,8 +7,10 @@ module Pacer
   module GraphMixin
     def self.included(target)
       target.class_eval do
-        protected :addVertex, :addEdge, :add_vertex, :add_edge
-        protected :getVertex, :getEdge, :get_vertex, :get_edge
+        protected :addVertex, :addEdge
+        protected :add_vertex, :add_edge rescue nil
+        protected :getVertex, :getEdge
+        protected :get_vertex, :get_edge rescue nil
       end
     end
 
