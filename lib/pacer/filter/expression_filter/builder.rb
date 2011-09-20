@@ -36,7 +36,6 @@ module Pacer
       end
 
       class Builder
-        # These are defined with counterintuitive meanings so all meanings must be reversed.
         Filters = {
           '==' => FilterPipe::Filter::EQUAL,
           '='  => FilterPipe::Filter::EQUAL,
@@ -47,10 +46,12 @@ module Pacer
           '<=' => FilterPipe::Filter::LESS_THAN_EQUAL
         }
 
-        # Further adjust to swap the order of the parameters...?
-        # TODO: This was either undone or done wrong before. I need to do some
-        # sanity tests and verify the unit tests here
-        ReverseFilters = Filters
+        ReverseFilters = Filters.merge(
+          '<'  => FilterPipe::Filter::GREATER_THAN,
+          '>'  => FilterPipe::Filter::LESS_THAN,
+          '<=' => FilterPipe::Filter::GREATER_THAN_EQUAL,
+          '>=' => FilterPipe::Filter::LESS_THAN_EQUAL
+        )
 
         class << self
           def build(tree, route, vars)
