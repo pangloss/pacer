@@ -120,6 +120,10 @@ module Pacer
       end
     end
 
+    def property_keys
+      getPropertyKeys
+    end
+
     # The id of the current element
     # @return [Object] element id (type varies by graph implementation.
     def element_id

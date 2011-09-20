@@ -1,6 +1,7 @@
 module Pacer::Wrappers
   class ElementWrapper
     extend Forwardable
+    include Comparable
 
     class << self
       def wrap(element, exts)
@@ -35,6 +36,11 @@ module Pacer::Wrappers
         end
         wrapper
       end
+    end
+
+    def initialize(element)
+      @element = element
+      after_initialize
     end
 
     def element_id

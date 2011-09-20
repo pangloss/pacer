@@ -3,11 +3,10 @@ module Pacer::Wrappers
     include Pacer::Core::Graph::EdgesRoute
     include Pacer::ElementMixin
     include Pacer::EdgeMixin
-    include Comparable
 
     def_delegators :@element,
-      :label, :get_label, :property_keys, :get_property, :set_property, :remove_property,
-      :in_vertex, :out_vertex,
+      :getId, :getLabel, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
+      :getInVertex, :getOutVertex,
       :raw_edge,
       :graph, :graph=, :<=>, :==
 
@@ -24,15 +23,14 @@ module Pacer::Wrappers
       end
     end
 
-    def initialize(element = nil)
-      @element = element || NewEdge.new
-      after_initialize
-    end
-
+    # This method must be defined here rather than in the superclass in order
+    # to correctly override the method in an included module
     def extensions
       self.class.extensions
     end
 
+    # This method must be defined here rather than in the superclass in order
+    # to correctly override the method in an included module
     def element
       @element
     end
