@@ -26,6 +26,18 @@ module Pacer
     include Pacer::Core::Graph::GraphRoute
     include Pacer::Core::Graph::GraphIndexRoute
 
+    def element_class
+      TinkerElement
+    end
+
+    def vertex_class
+      TinkerVertex
+    end
+
+    def edge_class
+      TinkerEdge
+    end
+
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
       getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
@@ -38,51 +50,6 @@ module Pacer
 
     def ==(other)
       other.class == self.class and other.object_id == self.object_id
-    end
-
-    def element_type(et = nil)
-      return nil unless et
-      if et == TinkerVertex or et == TinkerEdge or et == TinkerElement
-        et
-      else
-        case et
-        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
-          TinkerVertex
-        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
-          TinkerEdge
-        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
-          TinkerElement
-        when :object
-          Object
-        else
-          if et == Object
-            Object
-          elsif et == TinkerVertex.java_class.to_java
-            TinkerVertex
-          elsif et == TinkerEdge.java_class.to_java
-            TinkerEdge
-          else
-            raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object'
-          end
-        end
-      end
-    end
-
-    def sanitize_properties(props)
-      props
-    end
-
-    def encode_property(value)
-      if value.is_a? String
-        value = value.strip
-        value unless value == ''
-      else
-        value
-      end
-    end
-
-    def decode_property(value)
-      value
     end
   end
 
@@ -129,6 +96,5 @@ module Pacer
         v
       end
     end
-
   end
 end

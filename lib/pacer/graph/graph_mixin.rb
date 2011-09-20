@@ -252,6 +252,60 @@ module Pacer
       false
     end
 
+    def element_type(et = nil)
+      return nil unless et
+      result = if et == vertex_class or et == edge_class or et == element_class
+        et
+      else
+        case et
+        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+          vertex_class
+        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+          edge_class
+        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+          element_class
+        when :object
+          Object
+        else
+          if et == Object
+            Object
+          elsif vertex_class.respond_to? :java_class
+            if et == vertex_class.java_class.to_java
+              vertex_class
+            elsif et == edge_class.java_class.to_java
+              edge_class
+            elsif et == com.tinkerpop.blueprints.pgm.Vertex.java_class.to_java
+              vertex_class
+            elsif et == com.tinkerpop.blueprints.pgm.Edge.java_class.to_java
+              edge_class
+            end
+          end
+        end
+      end
+      if result
+        result
+      else
+        raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object' 
+      end
+    end
+
+    def sanitize_properties(props)
+      props
+    end
+
+    def encode_property(value)
+      if value.is_a? String
+        value = value.strip
+        value unless value == ''
+      else
+        value
+      end
+    end
+
+    def decode_property(value)
+      value
+    end
+
     protected
 
     # Helper method to wrap element creation in exception handling.
