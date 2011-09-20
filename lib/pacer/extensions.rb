@@ -4,3 +4,4 @@ module Pacer
 end
 
 require 'pacer/extensions/block_filter_element'
+require 'pacer/extensions/disconnected_element'
