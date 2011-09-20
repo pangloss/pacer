@@ -60,7 +60,7 @@ module Pacer
       if graph and graph.edge_name
         graph.edge_name.call self
       else
-        "#{ out_vertex.element_id }-#{ get_label }-#{ in_vertex.element_id }"
+        "#{ out_vertex.element_id }-#{ getLabel }-#{ in_vertex.element_id }"
       end
     end
 

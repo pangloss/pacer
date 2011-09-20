@@ -64,7 +64,7 @@ module Pacer
       if key.is_a? Array
         key.map { |k| self[k] }
       else
-        value = get_property(key.to_s)
+        value = element.getProperty(key.to_s)
         if graph
           graph.decode_property(value)
         else
@@ -80,11 +80,11 @@ module Pacer
       value = graph.encode_property(value) if graph
       key = key.to_s
       if value
-        if value != get_property(key)
-          set_property(key, value)
+        if value != element.getProperty(key)
+          element.setProperty(key, value)
         end
       else
-        remove_property(key) if property_keys.include? key
+        element.removeProperty(key) if element.getPropertyKeys.include? key
       end
     end
 
@@ -105,15 +105,15 @@ module Pacer
     #
     # @return [Hash]
     def properties
-      property_keys.inject({}) { |h, name| h[name] = get_property(name); h }
+      element.getPropertyKeys.inject({}) { |h, name| h[name] = element.getProperty(name); h }
     end
 
     # Replace the element's properties with the given hash
     #
     # @param [Hash] props the element's new properties
     def properties=(props)
-      (property_keys - props.keys.collect { |k| k.to_s }).each do |key|
-        remove_property key
+      (element.getPropertyKeys - props.keys.collect { |k| k.to_s }).each do |key|
+        element.removeProperty key
       end
       props.each do |key, value|
         self[key] = value
