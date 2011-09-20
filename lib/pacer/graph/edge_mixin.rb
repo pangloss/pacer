@@ -35,6 +35,10 @@ module Pacer
       end
     end
 
+    def label
+      getLabel
+    end
+
     # The outgoing vertex for this edge.
     # @return [Pacer::VertexMixin]
     def out_vertex(extensions = nil)
