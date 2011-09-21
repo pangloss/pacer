@@ -49,7 +49,7 @@ module Pacer
     end
 
     def getVertices
-      @vertices.values
+      Pacer::Pipes::EnumerablePipe.new @vertices.values
     end
 
     def addEdge(id, outVertex, inVertex, label)
@@ -68,7 +68,7 @@ module Pacer
     end
 
     def getEdges
-      @edges.values
+      Pacer::Pipes::EnumerablePipe.new @edges.values
     end
 
     def clear
@@ -141,12 +141,14 @@ module Pacer
       self
     end
 
-    def getInEdges
-      graph.getEdges.select { |e| e.getInVertex == self }
+    def getInEdges(*labels)
+      edges = graph.getEdges.select { |e| e.getInVertex == self and (labels.empty? or labels.include? e.getLabel) }
+      Pacer::Pipes::EnumerablePipe.new edges
     end
 
-    def getOutEdges
-      graph.getEdges.select { |e| e.getOutVertex == self }
+    def getOutEdges(*labels)
+      edges = graph.getEdges.select { |e| e.getOutVertex == self and (labels.empty? or labels.include? e.getLabel) }
+      Pacer::Pipes::EnumerablePipe.new edges
     end
 
     include VertexExtensions

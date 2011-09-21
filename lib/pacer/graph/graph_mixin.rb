@@ -189,6 +189,10 @@ module Pacer
       self
     end
 
+    def equals(other)
+      self == other
+    end
+
     # The proc used to name vertices.
     #
     # @return [Proc]
@@ -318,6 +322,10 @@ module Pacer
 
     def decode_property(value)
       value
+    end
+
+    def edges
+      getEdges
     end
 
     protected

@@ -21,7 +21,38 @@ class Rspec::GraphRunner
     end
   end
 
+  module ReplayGraph
+    def all(usage_style = :read_write, indices = true, &block)
+      super
+      replay(usage_style, &block)
+    end
+
+    def replay(usage_style = :read_write, indices = false, &block)
+      return unless use_graph? 'replay'
+      for_graph('replay', usage_style, false, true, replay_graph, replay_graph2, replay_graph_no_indices, block)
+    end
+
+    protected
+
+    def replay_graph
+      return @replay_graph if @replay_graph
+      @replay_graph = Pacer::ReplayGraph.new
+    end
+
+    def replay_graph2
+      return @replay_graph2 if @replay_graph2
+      @replay_graph2 = Pacer::ReplayGraph.new
+    end
+
+    def replay_graph_no_indices
+      return @replay_graph_no_indices if @replay_graph_no_indices
+      @replay_graph_no_indices = Pacer::ReplayGraph.new
+      @replay_graph_no_indices
+    end
+  end
+
   include Tg
+  include ReplayGraph
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
