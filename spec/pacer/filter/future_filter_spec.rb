@@ -74,4 +74,20 @@ Run.tg(:read_only) do
     end
   end
 
+  describe 'bug: ruby pipe was not calling reset on the next pipe in the chain' do
+    let!(:a) { graph.create_vertex :type => 'a' }
+    let!(:b) { graph.create_vertex :type => 'a' }
+    let!(:c) { graph.create_vertex :type => 'a' }
+    let!(:x) { graph.create_vertex :type => 'b' }
+    let!(:y) { graph.create_vertex :type => 'b' }
+    before do
+      x.add_edges_to :has, [a,b,c] 
+      y.add_edges_to :has, c 
+    end
+
+    subject do
+      graph.v(type:'b').lookahead { |r| r.out(:has).only([a,b]) } 
+    end
+    its(:to_a) { should == [x] }
+  end
 end

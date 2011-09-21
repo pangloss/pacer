@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.summary = %Q{A very efficient and easy to use graph traversal engine.}
   s.description = %Q{Pacer defines routes through a graph and then traverses them very quickly.}
 
-  s.add_dependency 'parslet', '1.2'
+  s.add_dependency 'parslet', '1.2.1'
   s.add_dependency 'fastercsv', '>= 1.5.4'
   s.add_development_dependency 'rspec', '~> 2.5.0'
   s.add_development_dependency 'rr', '~> 1.0'
@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard'
   s.add_development_dependency 'rake'
 
-  s.add_development_dependency 'pacer-neo4j', '1.0.6'
+  s.add_development_dependency 'pacer-neo4j', '1.0.7'
   s.add_development_dependency 'pacer-dex', '1.0.5'
   s.add_development_dependency 'autotest'
 

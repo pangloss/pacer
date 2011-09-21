@@ -10,12 +10,16 @@ module Pacer::Pipes
       if @comparison == Pacer::Pipes::EQUAL
         while true
           element = @starts.next
-          return element if element and @ids.include? element.id
+          if element and @ids.include? element.element_id
+            return element
+          end
         end
       else
         while true
           element = @starts.next
-          return element unless @ids.include? element.id if element
+          if element and not @ids.include? element.element_id
+            return element
+          end
         end
       end
     rescue NativeException => e

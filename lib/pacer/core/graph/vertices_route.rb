@@ -169,21 +169,8 @@ module Pacer::Core::Graph
       end
       graph = self.graph
 
-      # NOTE: this originally gave me a lot of problems but I think the issues
-      # that caused routes to sometimes not have graphs are fixed. If the error
-      # comes back, uncomment the fix below. Hopefully this can be removed
-      # soon. (dw 2011-03-19)
-      #unless graph
-      #  v = (detect { |v| v.graph } || to_vertices.detect { |v| v.graph })
-      #  graph = v.graph if v
-      #  unless graph
-      #    Pacer.debug_info << { :error => 'No graph found', :from => self, :to => to_vertices, :graph => graph }
-      #    raise "No graph found"
-      #  end
-      #end
-
       has_props = !props.empty?
-      first_edge_id = last_edge_id = nil
+      edge_ids = []
       counter = 0
       graph.managed_transactions do
         graph.managed_transaction do
@@ -193,15 +180,14 @@ module Pacer::Core::Graph
               graph.managed_checkpoint if counter % graph.bulk_job_size == 0
               begin
                 edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
-                first_edge_id ||= edge.element_id
-                last_edge_id = edge.element_id
+                edge_ids << edge.element_id
               end
             end
           end
         end
       end
-      if first_edge_id
-        (first_edge_id..last_edge_id).id_to_element_route(:based_on => graph.e)
+      if edge_ids.any?
+        edge_ids.id_to_element_route(:based_on => graph.e)
       end
     end
 
