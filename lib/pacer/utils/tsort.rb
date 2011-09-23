@@ -11,6 +11,8 @@ module Pacer
 
         attr_accessor :tsort_anon_mod
 
+        # NOTE: this is a great example of dynamically injecting a custom method
+        # into a route.
         def dependencies(&block)
           anon_mod = Module.new
           anon_mod.const_set :Route, TSort::Route
@@ -33,7 +35,7 @@ module Pacer
         end
 
         def tsort_each_child(node)
-          node.tsort_dependencies.each do |vertex|
+          node.tsort_dependencies(tsort_anon_mod).each do |vertex|
             yield vertex
           end
         end
@@ -50,9 +52,9 @@ module Pacer
           yield self
         end
 
-        def tsort_dependencies
+        def tsort_dependencies(tsort_anon_mod = nil)
           if self.class.const_defined? :DependenciesBlock
-            self.class::DependenciesBlock.call(self)
+            self.class::DependenciesBlock.call(self).add_extension(tsort_anon_mod)
           else
             self.in
           end
