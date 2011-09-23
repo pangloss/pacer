@@ -29,4 +29,16 @@ module TP
       base.v(:name => 'pangloss')
     end
   end
+
+  module Wrote
+    def self.route_conditions
+      { label: 'wrote' }
+    end
+
+    module Edge
+      def writer
+        out_vertex
+      end
+    end
+  end
 end

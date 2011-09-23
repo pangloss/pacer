@@ -44,7 +44,7 @@ def use_pacer_graphml_data(usage_style = :read_write)
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
   let(:pacer) { graph.v(:name => 'pacer', :type => 'project').first }
   let(:people) { graph.v(:type => 'person') }
-  let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer } }
+  let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer }.first }
 end
 
 def use_grateful_dead_data(usage_style = :read_write)

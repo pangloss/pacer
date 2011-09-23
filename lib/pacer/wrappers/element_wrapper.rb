@@ -17,6 +17,18 @@ module Pacer::Wrappers
         @wrappers = {}
       end
 
+      def route_conditions
+        return @route_conditions if defined? @route_conditions
+        @route_conditions = extensions.inject({}) do |h, ext|
+          if ext.respond_to? :route_conditions
+            h.merge! ext.route_conditions
+          else
+            h
+          end
+        end
+        @route_conditions
+      end
+
       protected
 
       def build_extension_wrapper(exts, mod_names, superclass)
@@ -56,10 +68,6 @@ module Pacer::Wrappers
     end
 
     protected
-
-    def _swap_element!(element)
-      @element = element
-    end
 
     def after_initialize
     end

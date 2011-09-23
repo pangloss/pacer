@@ -42,7 +42,7 @@ module Pacer
       end
 
       def property_filter(base, filters, block)
-        $f = filters = Pacer::Route.edge_filters(filters)
+        filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
         if filters.extensions_only? and base.is_a? Route
           base.wrapper ||= filters.wrapper if filters.wrapper
