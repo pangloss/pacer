@@ -17,6 +17,10 @@ module Pacer::Wrappers
         @wrappers[exts] ||= build_edge_wrapper(exts)
       end
 
+      def clear_cache
+        @wrappers = {}
+      end
+
       protected
 
       def build_edge_wrapper(exts)

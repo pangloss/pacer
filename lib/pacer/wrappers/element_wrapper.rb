@@ -15,7 +15,8 @@ module Pacer::Wrappers
 
       def clear_cache
         Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
-        @wrappers = {}
+        VertexWrapper.clear_cache
+        EdgeWrapper.clear_cache
       end
 
       def route_conditions
