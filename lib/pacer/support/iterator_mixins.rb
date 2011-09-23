@@ -46,12 +46,7 @@ module Pacer::Core::Route
   end
 
   module IteratorExtensionsMixin
-    attr_accessor :graph
-
-    # Set the extensions
-    def extensions=(extensions)
-      @extensions = extensions
-    end
+    attr_accessor :graph, :extensions
 
     def next
       item = super
@@ -64,6 +59,36 @@ module Pacer::Core::Route
         item = item.add_extensions @extensions
         item.graph ||= @graph
       end
+      item
+    end
+  end
+
+  module IteratorWrapperMixin
+    attr_reader :graph, :wrapper
+
+    def wrapper=(w)
+      @wrapper = w
+      @set_graph = set_graph?
+    end
+
+    def graph=(g)
+      @graph = g
+      @set_graph = set_graph?
+    end
+
+    if RUBY_VERSION =~ /^1\.8\./
+      def set_graph?
+        graph and wrapper and wrapper.instance_methods.include?('graph=')
+      end
+    else
+      def set_graph?
+        graph and wrapper and wrapper.instance_methods.include?(:graph=)
+      end
+    end
+
+    def next
+      item = wrapper.new(super)
+      item.graph = graph if @set_graph
       item
     end
   end

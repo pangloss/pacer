@@ -319,8 +319,10 @@ module Pacer
     # previous route's element type is the same as the current route's
     # element type and no extensions were explicitly set on this route.
     def include_extensions(args)
-      if back_element_type(args) == self.element_type and not args.key? :extensions
-        self.extensions = back_object(args).extensions if back_object(args).respond_to? :extensions
+      if back_element_type(args) == self.element_type and not args.key? :extensions and not args.key? :wrapper
+        back_obj = back_object(args)
+        self.wrapper = back_obj.wrapper if back_obj.respond_to? :wrapper
+        self.extensions = back_obj.extensions if back_obj.respond_to? :extensions
       end
     end
 

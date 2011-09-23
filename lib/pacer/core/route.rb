@@ -110,7 +110,10 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each_element
         iter = iterator
-        if extensions and extensions.any?
+        if wrapper
+          iter.extend IteratorWrapperMixin
+          iter.wrapper = wrapper
+        elsif extensions and extensions.any?
           iter.extend IteratorExtensionsMixin
           iter.extensions = extensions 
         else
@@ -300,6 +303,19 @@ module Pacer
         self
       end
 
+      def set_wrapper(wrapper)
+        @wrapper = wrapper
+        self
+      end
+
+      def wrapper=(wrapper)
+        @wrapper = wrapper
+      end
+
+      def wrapper
+        @wrapper
+      end
+
       # Add extensions to this route.
       #
       # @see #add_extension
@@ -311,7 +327,11 @@ module Pacer
       # @return [Set[extension]]
       def extensions
         @extensions = Set[] unless defined? @extensions
-        @extensions
+        if wrapper
+          @extensions + wrapper.extensions
+        else
+          @extensions
+        end
       end
 
       # If any objects in the given array are modules that contain a Route

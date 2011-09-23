@@ -10,6 +10,7 @@ module Pacer::Core::Graph
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
         :pipe_args => Pacer::VertexMixin,
+        :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
     end
@@ -19,6 +20,7 @@ module Pacer::Core::Graph
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
         :pipe_args => Pacer::EdgeMixin,
+        :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
     end
