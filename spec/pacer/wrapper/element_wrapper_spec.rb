@@ -28,31 +28,29 @@ describe Pacer, '.wrap_vertex' do
   its(:ancestors) { should include Pacer::Wrappers::EdgeWrapper }
 end
 
-describe Pacer::Wrappers::ElementWrapper, focus: true do
-  subject { Pacer.vertex_wrapper Tackle::SimpleMixin }
+Run.tg do
+  describe Pacer::Wrappers::ElementWrapper do
+    subject { Pacer.vertex_wrapper Tackle::SimpleMixin }
 
-  its(:name) { should =~ /^Pacer::Wrap::/ }
-  its(:extensions) { should == [Tackle::SimpleMixin] }
+    its(:name) { should =~ /^Pacer::Wrap::/ }
+    its(:extensions) { should == Set[Tackle::SimpleMixin] }
 
-  describe '.clear_cache' do
-    before do
-      subject.const_set :ORIGINAL, true
-      Pacer.vertex_wrapper(Tackle::SimpleMixin).const_defined?(:ORIGINAL).should be_true
-      Pacer::Wrappers::ElementWrapper.clear_cache
+    describe '.clear_cache' do
+      before do
+        subject.const_set :ORIGINAL, true
+        Pacer.vertex_wrapper(Tackle::SimpleMixin).const_defined?(:ORIGINAL).should be_true
+        Pacer::Wrappers::ElementWrapper.clear_cache
+      end
+
+      it 'should get rid of the Pacer::Wrap namespace' do
+        Pacer.const_defined?(:Wrap).should be_false
+      end
+
+      it 'should not be the same object if redefined' do
+        # if the wrapper is redefined identically, you can't use a normal
+        # comparison to see if it's actually been redefined.
+        Pacer.vertex_wrapper(Tackle::SimpleMixin).const_defined?(:ORIGINAL).should be_false
+      end
     end
-
-    it 'should get rid of the Pacer::Wrap namespace' do
-      Pacer.const_defined?(:Wrap).should be_false
-    end
-
-    it 'should not be the same object if redefined' do
-      # if the wrapper is redefined identically, you can't use a normal
-      # comparison to see if it's actually been redefined.
-      Pacer.vertex_wrapper(Tackle::SimpleMixin).const_defined?(:ORIGINAL).should be_false
-    end
-  end
-
-  describe '.wrap' do
   end
 end
-
