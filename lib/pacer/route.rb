@@ -168,7 +168,9 @@ module Pacer
     # {#after_initialize} method is called to allow mixins to do any
     # additional setup.
     def initialize(args = {})
-      @graph = @back = @source = nil
+      @@graph = @back = @source = nil
+      @wrapper = nil
+      @extensions = Set[]
       self.graph = args[:graph]
       self.back = args[:back]
       @each_method = nil
@@ -321,8 +323,10 @@ module Pacer
     def include_extensions(args)
       if back_element_type(args) == self.element_type and not args.key? :extensions and not args.key? :wrapper
         back_obj = back_object(args)
-        self.wrapper = back_obj.wrapper if back_obj.respond_to? :wrapper
-        self.extensions = back_obj.extensions if back_obj.respond_to? :extensions
+        if not wrapper and extensions.none?
+          self.wrapper = back_obj.wrapper if back_obj.respond_to? :wrapper
+          self.extensions = back_obj.extensions if back_obj.respond_to? :extensions
+        end
       end
     end
 

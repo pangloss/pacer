@@ -75,8 +75,8 @@ module Pacer
         else
           @filters = EdgeFilters.new(f)
         end
-        self.wrapper ||= @filters.wrapper if @filters.wrapper
-        add_extensions @filters.extensions
+        self.wrapper ||= f.wrapper if f.wrapper
+        add_extensions f.extensions
       end
 
       # Return an array of filter options for the current route.

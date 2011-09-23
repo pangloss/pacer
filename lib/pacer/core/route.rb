@@ -298,7 +298,7 @@ module Pacer
           extend mod::Route
         end
         if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
-          extensions << mod
+          @extensions << mod
         end
         self
       end
@@ -326,7 +326,6 @@ module Pacer
       # Get the set of extensions currently on this route.
       # @return [Set[extension]]
       def extensions
-        @extensions = Set[] unless defined? @extensions
         if wrapper
           @extensions + wrapper.extensions
         else
