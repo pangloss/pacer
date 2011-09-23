@@ -260,11 +260,11 @@ module Pacer
         et
       else
         case et
-        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+        when :vertex, Pacer::Vertex, VertexMixin
           vertex_class
-        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+        when :edge, Pacer::Edge, EdgeMixin
           edge_class
-        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+        when :mixed, Pacer::Element, ElementMixin
           element_class
         when :object
           Object
@@ -276,9 +276,9 @@ module Pacer
               vertex_class
             elsif et == edge_class.java_class.to_java
               edge_class
-            elsif et == com.tinkerpop.blueprints.pgm.Vertex.java_class.to_java
+            elsif et == Pacer::Vertex.java_class.to_java
               vertex_class
-            elsif et == com.tinkerpop.blueprints.pgm.Edge.java_class.to_java
+            elsif et == Pacer::Edge.java_class.to_java
               edge_class
             end
           end

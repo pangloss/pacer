@@ -1,5 +1,6 @@
 module Pacer::Wrappers
   class VertexWrapper < ElementWrapper
+    include Pacer::Vertex
     include Pacer::Core::Graph::VerticesRoute
     include Pacer::ElementMixin
     include Pacer::VertexMixin

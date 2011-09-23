@@ -181,16 +181,16 @@ module Pacer
 
     # Is the object a vertex?
     def vertex?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Vertex or
+      element.is_a? Pacer::Vertex or
         (element.respond_to? :element and
-         element.element.is_a? com.tinkerpop.blueprints.pgm.Vertex)
+         element.element.is_a? Pacer::Vertex)
     end
 
     # Is the object an edge?
     def edge?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Edge
+      element.is_a? Pacer::Edge
         (element.respond_to? :element and
-         element.element.is_a? com.tinkerpop.blueprints.pgm.Edge)
+         element.element.is_a? Pacer::Edge)
     end
 
     # Blueprints constant for manual index.

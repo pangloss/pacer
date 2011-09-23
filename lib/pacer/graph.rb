@@ -1,5 +1,8 @@
 module Pacer
   import com.tinkerpop.blueprints.pgm.Graph
+  import com.tinkerpop.blueprints.pgm.Element
+  import com.tinkerpop.blueprints.pgm.Vertex
+  import com.tinkerpop.blueprints.pgm.Edge
 end
 
 require 'pacer/graph/graph_mixin'

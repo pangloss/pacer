@@ -1,5 +1,6 @@
 module Pacer::Wrappers
   class EdgeWrapper < ElementWrapper
+    include Pacer::Edge
     include Pacer::Core::Graph::EdgesRoute
     include Pacer::ElementMixin
     include Pacer::EdgeMixin

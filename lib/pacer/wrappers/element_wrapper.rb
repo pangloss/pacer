@@ -1,5 +1,6 @@
 module Pacer::Wrappers
   class ElementWrapper
+    include Pacer::Element
     extend Forwardable
     include Comparable
 
