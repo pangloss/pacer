@@ -10,7 +10,7 @@ module Pacer::Wrappers
       end
 
       def extensions
-        @extensions ||= Set[]
+        @extensions ||= []
       end
 
       def clear_cache
@@ -35,7 +35,7 @@ module Pacer::Wrappers
 
       def build_extension_wrapper(exts, mod_names, superclass)
         sc_name = superclass.to_s.split(/::/).last
-        exts = exts.uniq
+        exts = exts.uniq unless exts.is_a? Set
         classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
         eval "module ::Pacer; module Wrap; class #{classname.to_s} < #{sc_name}; end; end; end"
         wrapper = Pacer::Wrap.const_get classname
@@ -44,7 +44,7 @@ module Pacer::Wrappers
             mod_names.each do |mod_name|
               if obj.const_defined? mod_name
                 wrapper.send :include, obj.const_get(mod_name)
-                wrapper.extensions << obj
+                wrapper.extensions << obj unless wrapper.extensions.include? obj
               end
             end
           end

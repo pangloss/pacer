@@ -30,6 +30,22 @@ module TP
     end
   end
 
+  module Coder
+    module Route
+      def projects
+        out(Project, Software)
+      end
+    end
+  end
+
+  module Software
+    module Route
+      def coders
+        self.in(Coder)
+      end
+    end
+  end
+
   module Wrote
     def self.route_conditions
       { label: 'wrote' }
