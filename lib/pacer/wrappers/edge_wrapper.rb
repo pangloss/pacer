@@ -14,7 +14,7 @@ module Pacer::Wrappers
     class << self
       def wrapper_for(exts)
         @wrappers = {} unless defined? @wrappers
-        @wrappers[exts] ||= build_edge_wrapper(exts)
+        @wrappers[exts.to_set] ||= build_edge_wrapper(exts)
       end
 
       def clear_cache

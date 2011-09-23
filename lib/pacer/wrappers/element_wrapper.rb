@@ -6,7 +6,7 @@ module Pacer::Wrappers
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts.to_set).new(element.element)
+        wrapper_for(exts).new(element.element)
       end
 
       def extensions
@@ -35,6 +35,7 @@ module Pacer::Wrappers
 
       def build_extension_wrapper(exts, mod_names, superclass)
         sc_name = superclass.to_s.split(/::/).last
+        exts = exts.uniq
         classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
         eval "module ::Pacer; module Wrap; class #{classname.to_s} < #{sc_name}; end; end; end"
         wrapper = Pacer::Wrap.const_get classname
