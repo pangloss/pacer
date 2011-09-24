@@ -5,7 +5,7 @@ Run.all :read_only do
 
   describe Pacer::Wrappers::VertexWrapper do
 
-    let(:v_exts) { Set[Tackle::SimpleMixin, TP::Project] }
+    let(:v_exts) { [Tackle::SimpleMixin, TP::Project] }
     let(:v_wrapper_class) { Pacer::Wrappers::VertexWrapper.wrapper_for v_exts }
 
     subject { v_wrapper_class }

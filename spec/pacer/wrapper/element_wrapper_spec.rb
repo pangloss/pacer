@@ -35,7 +35,7 @@ Run.tg :read_only do
     subject { Pacer.vertex_wrapper Tackle::SimpleMixin }
 
     its(:name) { should =~ /^Pacer::Wrap::/ }
-    its(:extensions) { should == Set[Tackle::SimpleMixin] }
+    its(:extensions) { should == [Tackle::SimpleMixin] }
 
     describe '.clear_cache' do
       before do

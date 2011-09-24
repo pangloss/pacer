@@ -269,14 +269,14 @@ shared_examples_for Pacer::Core::Route do
       subject { route.first }
       it { should_not be_nil }
       its(:graph) { should equal(graph) }
-      its(:extensions) { should == route.extensions }
+      its('extensions.to_a') { should == route.extensions.to_a }
     end
 
     describe '#to_a' do
       subject { route.to_a }
       its(:count) { should == number_of_results }
       it { should be_a(Array) }
-      its('first.extensions') { should == route.extensions }
+      its('first.extensions.to_a') { should == route.extensions.to_a }
     end
 
     describe '#except' do

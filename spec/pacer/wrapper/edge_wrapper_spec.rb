@@ -5,7 +5,7 @@ Run.all :read_only do
 
   describe Pacer::Wrappers::EdgeWrapper do
 
-    let(:e_exts) { Set[Tackle::SimpleMixin, TP::Wrote] }
+    let(:e_exts) { [Tackle::SimpleMixin, TP::Wrote] }
     let(:e_wrapper_class) { Pacer::Wrappers::EdgeWrapper.wrapper_for e_exts }
 
     subject { e_wrapper_class }
