@@ -27,6 +27,11 @@ module Pacer
     def vertex(id, *modules)
       v = getVertex(id) rescue nil
       if v
+        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
+        if wrapper
+          v = wrapper.new v
+          modules.delete wrapper
+        end
         v.graph = self
         v.add_extensions modules
       else
@@ -45,6 +50,11 @@ module Pacer
     def edge(id, *modules)
       v = getEdge(id) rescue nil
       if v
+        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
+        if wrapper
+          v = wrapper.new v
+          modules.delete wrapper
+        end
         v.graph = self
         v.add_extensions modules
       end
@@ -63,8 +73,9 @@ module Pacer
     #     added to the current vertex. A Hash will be
     #     treated as element properties.
     def create_vertex(*args)
-      id, modules, props = id_modules_properties(args)
+      id, wrapper, modules, props = id_modules_properties(args)
       vertex = creating_elements { addVertex(id) }
+      vertex = wrapper.new vertex if wrapper
       vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
       if modules.any?
@@ -86,8 +97,9 @@ module Pacer
     #
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
-      _, modules, props = id_modules_properties(args)
+      _, wrapper, modules, props = id_modules_properties(args)
       edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
+      edge = wrapper.new edge if wrapper
       edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
       if modules.any?
@@ -326,9 +338,11 @@ module Pacer
     def id_modules_properties(args)
       props = args.last if args.last.is_a? Hash
       modules = args.select { |obj| obj.is_a? Module or obj.is_a? Class }
+      wrapper = modules.detect { |obj| obj.is_a? Class and obj.ancestors.include? Pacer::Wrappers::ElementWrapper }
+      modules.delete wrapper
       id = args.first
-      id = nil if id == props or modules.include? id
-      [id, modules, props]
+      id = nil if id == props or modules.include? id or id == wrapper
+      [id, wrapper, modules, props]
     end
   end
 end

@@ -40,6 +40,24 @@ shared_examples_for Pacer::GraphMixin do
       its(:element_id) { should == v0.element_id }
       it_behaves_like 'a vertex with a mixin'
     end
+
+    context 'with a wrapper' do
+      let(:wrapper) { Pacer.vertex_wrapper Tackle::SimpleMixin }
+      subject { graph.vertex v0.element_id, wrapper }
+      its(:element_id) { should == v0.element_id }
+      its(:class) { should == wrapper }
+      it_behaves_like 'a vertex with a mixin'
+    end
+
+    context 'with a wrapper and a mixin' do
+      let(:orig_wrapper) { Pacer.vertex_wrapper Tackle::SimpleMixin }
+      let(:wrapper) { Pacer.vertex_wrapper Tackle::SimpleMixin, TP::Person }
+      subject { graph.vertex v0.element_id, TP::Person, orig_wrapper }
+      its(:element_id) { should == v0.element_id }
+      its(:class) { should_not == orig_wrapper }
+      its(:class) { should == wrapper }
+      it_behaves_like 'a vertex with a mixin'
+    end
   end
 
   describe '#edge' do
@@ -55,6 +73,24 @@ shared_examples_for Pacer::GraphMixin do
     context 'with mixins' do
       subject { graph.edge e0.element_id, Tackle::SimpleMixin }
       its(:element_id) { should == e0.element_id }
+      it_behaves_like 'an edge with a mixin'
+    end
+
+    context 'with a wrapper' do
+      let(:wrapper) { Pacer.edge_wrapper Tackle::SimpleMixin }
+      subject { graph.edge e0.element_id, wrapper }
+      its(:element_id) { should == e0.element_id }
+      its(:class) { should == wrapper }
+      it_behaves_like 'an edge with a mixin'
+    end
+
+    context 'with a wrapper and a mixin' do
+      let(:orig_wrapper) { Pacer.edge_wrapper Tackle::SimpleMixin }
+      let(:wrapper) { Pacer.edge_wrapper Tackle::SimpleMixin, TP::Wrote }
+      subject { graph.edge e0.element_id, orig_wrapper, TP::Wrote }
+      its(:element_id) { should == e0.element_id }
+      its(:class) { should_not == orig_wrapper }
+      its(:class) { should == wrapper }
       it_behaves_like 'an edge with a mixin'
     end
   end
