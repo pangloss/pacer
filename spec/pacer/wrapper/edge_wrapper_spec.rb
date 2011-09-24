@@ -22,6 +22,12 @@ Run.all :read_only do
       it               { should_not equal pangloss_wrote_pacer }
       its(:element_id) { should == pangloss_wrote_pacer.element_id }
       its(:extensions) { should == e_exts }
+
+      describe 'with more extensions added' do
+        subject { e_wrapper_class.new(pacer).add_extensions([Pacer::Utils::TSort]) }
+        its(:class) { should_not == e_wrapper_class }
+        its(:extensions) { should == e_exts + [Pacer::Utils::TSort] }
+      end
     end
   end
 end

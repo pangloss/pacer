@@ -39,5 +39,13 @@ module Pacer::Wrappers
     def element
       @element
     end
+
+    def add_extensions(exts)
+      if exts.any?
+        self.class.wrap(element, extensions + exts.to_a)
+      else
+        self
+      end
+    end
   end
 end
