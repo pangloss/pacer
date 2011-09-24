@@ -113,6 +113,7 @@ module Pacer
         if wrapper
           iter.extend IteratorWrapperMixin
           iter.wrapper = wrapper
+          iter.extensions = @extensions if @extensions.any?
         elsif extensions and extensions.any?
           iter.extend IteratorExtensionsMixin
           iter.extensions = extensions 
@@ -324,10 +325,19 @@ module Pacer
       end
 
       # Get the set of extensions currently on this route.
-      # @return [Set[extension]]
+      #
+      # The order of extensions for custom defined wrappers are
+      # guaranteed. If a wrapper is iterated with additional extensions,
+      # a new wrapper will be created dynamically with the original
+      # extensions in order followed by any additional extensions in
+      # undefined order.
+      #
+      # If a wrapper is present, returns an Array. Otherwise a Set.
+      #
+      # @return [Enumerable[extension]]
       def extensions
         if wrapper
-          @extensions + wrapper.extensions
+          wrapper.extensions + @extensions.to_a
         else
           @extensions
         end

@@ -79,7 +79,31 @@ Run.tg :read_only do
         subject.ancestors.should == Pacer.vertex_wrapper(TP::Coder, TP::Person, Tackle::SimpleMixin).ancestors
       end
 
-      context 'should preserve extension order if a route adds more extensions' do
+      context 'should preserve extension order if a route uses the wrapper and adds more extensions' do
+        let(:wrapper) { Pacer.vertex_wrapper TP::Person, Tackle::SimpleMixin, TP::Coder }
+        subject do
+          route = graph.v(wrapper, Pacer::Utils::TSort)
+          first = route.first
+          first.should_not be_nil
+          first.class
+        end
+
+        it 'should have ancestors in the correct order' do
+          subject.ancestors[0...9].should == [
+            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_CoderPacer_Utils_TSort,
+            Pacer::Utils::TSort::Vertex,
+            Pacer::Utils::TSort::Route,
+            TSort,
+            TP::Coder::Route,
+            Tackle::SimpleMixin::Vertex,
+            Tackle::SimpleMixin::Route,
+            TP::Person::Route,
+            Pacer::Wrappers::VertexWrapper,
+          ]
+        end
+      end
+
+      context 'should preserve extension order in a block filter' do
         subject do
           klass = nil
           route = graph.v(TP::Person, Tackle::SimpleMixin, TP::Coder) { |e| klass = e.class }
@@ -87,7 +111,6 @@ Run.tg :read_only do
           klass
         end
 
-        it { should_not be_nil }
         it 'should have ancestors in the correct order' do
           subject.ancestors[0...7].should == [
             Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_CoderPacer_Extensions_BlockFilterElement,

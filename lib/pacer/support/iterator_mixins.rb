@@ -64,16 +64,36 @@ module Pacer::Core::Route
   end
 
   module IteratorWrapperMixin
-    attr_reader :graph, :wrapper
+    attr_reader :graph, :extensions, :wrapper
 
     def wrapper=(w)
-      @wrapper = w
+      @base_wrapper = w
+      @wrapper = build_wrapper?
       @set_graph = set_graph?
     end
 
     def graph=(g)
       @graph = g
+      @wrapper = build_wrapper?
       @set_graph = set_graph?
+    end
+
+    def extensions=(exts)
+      @extensions = exts
+      @wrapper = build_wrapper?
+      @set_graph = set_graph?
+    end
+
+    def build_wrapper?
+      @base_wrapper = nil unless defined? @base_wrapper
+      @extensions = nil unless defined? @extensions
+      if @base_wrapper and @extensions
+        @wrapper = @base_wrapper.wrapper_for(@base_wrapper.extensions + @extensions.to_a)
+      elsif @base_wrapper
+        @wrapper = @base_wrapper
+      elsif @extensions
+        # We don't know what type of wrapper to create
+      end
     end
 
     if RUBY_VERSION =~ /^1\.8\./
