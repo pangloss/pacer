@@ -88,7 +88,7 @@ module Pacer::Core::Route
       @base_wrapper = nil unless defined? @base_wrapper
       @extensions = nil unless defined? @extensions
       if @base_wrapper and @extensions
-        @wrapper = @base_wrapper.wrapper_for(@base_wrapper.extensions + @extensions.to_a)
+        @wrapper = @base_wrapper.add_extensions(@extensions.to_a)
       elsif @base_wrapper
         @wrapper = @base_wrapper
       elsif @extensions
