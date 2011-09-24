@@ -99,7 +99,7 @@ Run.tg(:read_only) do
 
       describe 'v(wrapper_class, :name => "pacer")' do
         subject { graph.v(wrapper_class, :name => 'pacer') }
-        #its(:count) { should == 1 }
+        its(:count) { should == 1 }
         its(:wrapper) { should == wrapper_class }
         its(:extensions) { should == exts.to_a }
         its(:first) { should be_a wrapper_class }
