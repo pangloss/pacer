@@ -30,6 +30,7 @@ module Pacer
       def after_initialize
         @future_filter = nil unless defined? @future_filter
         @route = nil unless defined? @route
+        super
       end
 
       def attach_pipe(end_pipe)
