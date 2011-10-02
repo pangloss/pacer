@@ -291,27 +291,27 @@ module Pacer
       # @see EdgeMixin#add_extensions
       #
       # @return [self]
-      def add_extension(mod)
+      def add_extension(mod, add_to_list = true)
         return self unless mod.respond_to?(:const_defined?)
         is_extension = false
         if mod.const_defined? :Route
           is_extension = true
           extend mod::Route
         end
-        if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
+        if add_to_list and (is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge)
           @extensions << mod
         end
         self
       end
 
       def set_wrapper(wrapper)
+        wrapper.extensions.each do |ext|
+          add_extension ext, false
+        end
         @wrapper = wrapper
         self
       end
-
-      def wrapper=(wrapper)
-        @wrapper = wrapper
-      end
+      alias wrapper= set_wrapper
 
       def wrapper
         @wrapper
