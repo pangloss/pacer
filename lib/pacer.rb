@@ -193,6 +193,16 @@ module Pacer
          element.element.is_a? Pacer::Edge)
     end
 
+    def vertex_route?(obj)
+      obj.is_a? Pacer::Core::Graph::VerticesRoute
+    end
+    alias vertices_route? vertex_route?
+
+    def edge_route?(obj)
+      obj.is_a? Pacer::Core::Graph::EdgesRoute
+    end
+    alias edges_route? edge_route?
+
     # Blueprints constant for manual index.
     # @return [com.tinkerpop.blueprints.pgm.Index::Type::MANUAL]
     def manual_index
