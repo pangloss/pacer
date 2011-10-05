@@ -395,6 +395,16 @@ module Pacer
         end
       end
 
+      def get_section_route(name)
+        if respond_to? :section_name and section_name == name
+          self
+        elsif @back
+          @back.get_section_route(name)
+        else
+          raise ArgumentError, "Section #{ name } not found"
+        end
+      end
+
       # Returns a HashSet of element ids from the collection, but
       # only if all elements in the collection have an element_id.
 
@@ -448,7 +458,6 @@ module Pacer
       # Return an iterator for this route loading data from all previous routes
       # in the chain.
       def iterator
-        @vars = {}
         start, end_pipe = build_pipeline
         if start
           src = source_iterator
