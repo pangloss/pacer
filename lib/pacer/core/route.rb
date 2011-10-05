@@ -305,8 +305,10 @@ module Pacer
       end
 
       def set_wrapper(wrapper)
-        wrapper.extensions.each do |ext|
-          add_extension ext, false
+        if wrapper.respond_to? :extensions
+          wrapper.extensions.each do |ext|
+            add_extension ext, false
+          end
         end
         @wrapper = wrapper
         self
