@@ -16,6 +16,7 @@ module Pacer
           super()
           @name = name
           @count = 0
+          @in_section = false
           @current = nil
           @start_procs = []
           @end_procs = []
@@ -32,17 +33,26 @@ module Pacer
         def reset
           @count = 0
           @current = nil
+          @in_section = false
           super
         end
 
         protected
 
         def processNextStart
-          fire(@end_procs) if @count != 0
-          @count += 1
+          fire(@end_procs) if @in_section
           @current = @starts.next
+          @in_section = true
+          @count += 1
           fire(@start_procs)
           @current
+        rescue NativeException => e
+          if e.cause.getClass == Pacer::NoSuchElementException.getClass
+            @in_section = false
+            raise e.cause
+          else
+            raise
+          end
         end
 
         def fire(procs)
@@ -51,9 +61,10 @@ module Pacer
       end
 
       attr_accessor :section_name
-      attr_reader :section_events
 
       protected
+
+      attr_reader :section_events
 
       def attach_pipe(end_pipe)
         @section_events = pipe = SectionPipe.new(section_name)
