@@ -33,10 +33,10 @@ module Pacer::Pipes
         if has_next
           element = @looping_pipe.next
           depth = (@expando.metadata || 0) + 1
-          @next_path = @looping_pipe.path
+          @next_path = @looping_pipe.getPath
         else
           element = @starts.next
-          @next_path = @starts.path
+          @next_path = @starts.getPath
           depth = 0
         end
         element.graph = @graph if element.respond_to? :graph=
