@@ -14,6 +14,7 @@ module Pacer
           super()
           @to_emit = []
           @section = section
+          @to_sort = []
           @block = block
           if section
             section.on_start &method(:on_start)
@@ -46,7 +47,6 @@ module Pacer
         def on_start(element, count)
           @section_element = element
           @section_number = count
-          @to_sort = []
         end
 
         def on_end(section_element, count)
@@ -56,6 +56,7 @@ module Pacer
                 @block.call element, section_element, count
               end
               @to_emit.concat sorted 
+              @to_sort = []
             else
               @to_emit.concat @to_sort.sort
             end
@@ -74,7 +75,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(@section_route.section_events, block)
+        pipe = SortSectionPipe.new(@section_route.send(:section_events), block)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
