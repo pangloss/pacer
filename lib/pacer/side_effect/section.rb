@@ -1,7 +1,7 @@
 module Pacer
   module Routes
     module RouteOperations
-      def section(section_name)
+      def section(section_name = nil)
         chain_route side_effect: :section, section_name: section_name
       end
     end
@@ -60,7 +60,12 @@ module Pacer
         end
       end
 
-      attr_accessor :section_name
+      attr_writer :section_name
+
+      def section_name
+        @section_name = "section_#{ object_id }" unless defined? @section_name
+        @section_name
+      end
 
       protected
 

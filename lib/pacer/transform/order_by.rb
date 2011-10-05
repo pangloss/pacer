@@ -1,8 +1,8 @@
 module Pacer
   module Routes
     module RouteOperations
-      def sort_section(section_name = nil, &block)
-        chain_route transform: :sort_section, block: block, section_name: section_name
+      def sort_section(section = nil, &block)
+        chain_route transform: :sort_section, block: block, section: section
       end
     end
   end
@@ -65,11 +65,18 @@ module Pacer
       end
 
       attr_accessor :block
-      attr_reader :section_name
+      attr_reader :section_name, :section_route
 
-      def section_name=(name)
-        @section_name = name
-        @section_route = @back.get_section_route(name)
+      def section=(section)
+        if section.is_a? Symbol
+          @section_name = section
+          @section_route = @back.get_section_route(section)
+        elsif section.is_a? Pacer::Route and section.respond_to? :section_name
+          @section_name = section.section_name
+          @section_route = section
+        else
+          raise ArgumentError, "Unknown section #{ section }. Provide either a name or a route created with the #section methed."
+        end
       end
 
       protected
