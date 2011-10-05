@@ -10,6 +10,8 @@ module Pacer
   module Transform
     module SortSection
       class SortSectionPipe < Pacer::Pipes::RubyPipe
+        attr_reader :block, :to_sort, :to_emit, :section
+
         def initialize(section, block)
           super()
           @to_emit = []
@@ -17,26 +19,25 @@ module Pacer
           @to_sort = []
           @block = block
           if section
-            section.on_start &method(:on_start)
-            section.on_end &method(:on_end)
+            section.visitor = self
           else
-            on_start nil, 0
+            on_element nil
           end
         end
 
         def processNextStart
-          while @to_emit.empty?
+          while to_emit.empty?
             element = @starts.next
-            @to_sort << element
+            to_sort << element
           end
-          element, sort_value = @to_emit.shift
+          element, sort_value = to_emit.shift
           element
         rescue NativeException => e
           if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            if @to_emit.empty?
+            if to_emit.empty?
               raise e.cause
             else
-              on_end(nil, 0)
+              after_element
               retry
             end
           else
@@ -44,21 +45,20 @@ module Pacer
           end
         end
 
-        def on_start(element, count)
+        def on_element(element)
           @section_element = element
-          @section_number = count
         end
 
-        def on_end(section_element, count)
-          if @to_sort.any?
-            if @block
-              sorted = @to_sort.sort_by do |element|
-                @block.call element, section_element, count
+        def after_element
+          if to_sort.any?
+            if block
+              sorted = to_sort.sort_by do |element|
+                block.call element #, @section_element
               end
-              @to_emit.concat sorted 
+              to_emit.concat sorted 
               @to_sort = []
             else
-              @to_emit.concat @to_sort.sort
+              to_emit.concat to_sort.sort
             end
           end
         end
@@ -82,7 +82,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(@section_route.send(:section_events), block)
+        pipe = SortSectionPipe.new(@section_route.send(:section_visitor), block)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
