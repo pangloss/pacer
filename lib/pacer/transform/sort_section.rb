@@ -10,18 +10,27 @@ module Pacer
   module Transform
     module SortSection
       class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :block, :to_sort, :to_emit, :section
+        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
 
         def initialize(section, block)
           super()
           @to_emit = []
           @section = section
           @to_sort = []
-          @block = block
           if section
             section.visitor = self
           else
             on_element nil
+          end
+          if block
+            if block.arity == 1
+              @block_1 = block
+              section.use_on_element = false
+            elsif block.arity == 2 or block.arity < 0
+              @block_2 = block
+            end
+          else
+            section.use_on_element = false
           end
         end
 
@@ -30,8 +39,7 @@ module Pacer
             element = @starts.next
             to_sort << element
           end
-          element, sort_value = to_emit.shift
-          element
+          to_emit.shift
         rescue NativeException => e
           if e.cause.getClass == Pacer::NoSuchElementException.getClass
             if to_emit.empty?
@@ -51,15 +59,19 @@ module Pacer
 
         def after_element
           if to_sort.any?
-            if block
+            if block_1
               sorted = to_sort.sort_by do |element|
-                block.call element #, @section_element
+                block_1.call element
               end
-              to_emit.concat sorted 
-              @to_sort = []
+            elsif block_2
+              sorted = to_sort.sort_by do |element|
+                block_2.call element, @section_element
+              end
             else
-              to_emit.concat to_sort.sort
+              sorted = to_sort.sort
             end
+            to_emit.concat sorted
+            @to_sort = []
           end
         end
       end
