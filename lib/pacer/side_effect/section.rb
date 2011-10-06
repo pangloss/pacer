@@ -9,12 +9,7 @@ module Pacer
 
   module SideEffect
     module Section
-      attr_writer :section_name
-
-      def section_name
-        @section_name = "section_#{ object_id }" unless defined? @section_name
-        @section_name
-      end
+      attr_accessor :section_name
 
       protected
 
