@@ -1,11 +1,15 @@
 module Pacer
   module Core
     module Route
-      public
-
       def loop(&block)
         chain_route :looping_route => block
       end
+    end
+  end
+
+  module ElementMixin
+    def loop(&block)
+      chain_route :looping_route => block
     end
   end
 
