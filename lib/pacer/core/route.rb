@@ -357,6 +357,10 @@ module Pacer
         self
       end
 
+      def no_extensions
+        chain_route(:extensions => nil, :wrapper => nil)
+      end
+
       # Change the source of this route.
       #
       # @note all routes derived from any route in the chain will be
