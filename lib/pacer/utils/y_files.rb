@@ -50,7 +50,7 @@ module Pacer
             xml.key 'attr.name' => "description", 'attr.type' => "string", 'for' => "node", 'id' => "d2"
             xml.key 'for' => "edge", 'id' => "y.edgegraphics", 'yfiles.type' => "edgegraphics"
             graph.v.each do |v|
-              xml.node :id => v.id do
+              xml.node :id => v.element_id do
                 xml.data :key => 'y.nodegraphics' do
                   xml['y'].ShapeNode do
                     #xml['y'].Geometry 'height' => "30.0", 'width' => "30.0", 'x' => "15.0", 'y' => "0.0"
@@ -82,7 +82,7 @@ module Pacer
               end
             end
             graph.e.each do |e|
-              xml.edge :id => e.id, :source => e.out_v.id, :target => e.in_v.id, :label => e.label do
+              xml.edge :id => e.element_id, :source => e.out_vertex.element_id, :target => e.in_vertex.element_id, :label => e.label do
                 xml.data :key => 'y.edgegraphics' do
                   xml['y'].PolyLineEdge do
                     xml['y'].LineStyle 'color' => edge_color.call(e), 'type' => 'line', 'width' => '1.0'
