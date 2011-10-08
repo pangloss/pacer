@@ -84,7 +84,7 @@ module Enumerable
                   :route_name => 'lookup',
                   :extensions => based_on.extensions,
                   :wrapper => based_on.wrapper,
-                  :info => [args[:name], based_on.info].compact.join(':'))
+                  :info => [args[:name], based_on.info].compact.join(':')).is_not(nil)
   end
 
   def group_count
