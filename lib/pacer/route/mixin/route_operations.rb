@@ -35,18 +35,18 @@ module Pacer::Routes
         each { |e| result[yield(e)] += 1 }
       elsif block_given?
         each do |e|
-          key = props.collect { |p| e.get_property(p) }
+          key = props.collect { |p| e.getProperty(p) }
           key << yield(e)
           result[key] += 1
         end
       elsif props.count == 1
         prop = props.first
         each do |e|
-          result[e.get_property(prop)] += 1
+          result[e.getProperty(prop)] += 1
         end
       elsif props.any?
         each do |e|
-          result[props.collect { |p| e.get_property(p) }] += 1
+          result[props.collect { |p| e.getProperty(p) }] += 1
         end
       else
         each do |e|
