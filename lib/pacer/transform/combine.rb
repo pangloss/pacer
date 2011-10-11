@@ -1,18 +1,20 @@
 module Pacer
   module Routes
     module RouteOperations
-      def combine(existing_multi_graph = nil, &block)
-        chain_route :transform => :combine,
+      def join(name, existing_multi_graph = nil, &block)
+        args = { :transform => :join,
           element_type: :vertex,
-          existing_multi_graph: existing_multi_graph,
           graph: (existing_multi_graph || Pacer::MultiGraph.new),
-          block: block
+          from_graph: graph
+        }
+        args[:existing_multi_graph] = existing_multi_graph if existing_multi_graph
+        chain_route(args).join(name, &block)
       end
     end
   end
 
   module Transform
-    module Combine
+    module Join
       class CombinePipe < Pacer::Pipes::RubyPipe
         import com.tinkerpop.pipes.sideeffect.SideEffectPipe
         import java.util.ArrayList
@@ -21,10 +23,11 @@ module Pacer
         include SideEffectPipe rescue nil # may raise exception on reload.
 
         attr_accessor :multi_graph, :current_keys, :current_values, :join_on
-        attr_reader :key_expando, :key_end, :values_pipes
+        attr_reader :key_expando, :key_end, :values_pipes, :from_graph
 
-        def initialize(multi_graph)
+        def initialize(from_graph, multi_graph)
           super()
+          @from_graph = from_graph
           @multi_graph = multi_graph || Pacer::MultiGraph.new
           @values_pipes = []
           @current_keys = []
@@ -49,6 +52,7 @@ module Pacer
           while true
             if current_keys.empty?
               element = starts.next
+              element.graph = from_graph if element.respond_to? :graph
               self.current_keys = get_keys(element)
               self.current_values = get_values(element) unless current_keys.empty?
             else
@@ -89,34 +93,31 @@ module Pacer
         def next_results(expando, pipe, element)
           pipe.reset
           expando.add element, ArrayList.new, nil
-          pipe.next
+          array = pipe.next
+          array.each { |element| element.graph = from_graph if element.respond_to? :graph }
+          array
         end
 
         def prepare_aggregate_pipe(from_pipe, to_pipe)
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.setStarts ArrayList.new.iterator
           from_pipe.setStarts(expando)
-          agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new LinkedList.new
-          cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
-          agg_pipe.setStarts to_pipe
-          cap_pipe.setStarts to_pipe
+          if from_pipe == to_pipe and to_pipe.is_a? Pacer::Pipes::IdentityPipe
+            cap_pipe = to_pipe
+          else
+            agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new LinkedList.new
+            cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
+            agg_pipe.setStarts to_pipe
+            cap_pipe.setStarts to_pipe
+          end
           [expando, cap_pipe]
         end
       end
 
       include Pacer::Core::SideEffect
 
-      attr_accessor :existing_multi_graph, :key_route, :values_routes
+      attr_accessor :existing_multi_graph, :key_route, :values_routes, :from_graph
       attr_writer :join_on
-
-      def block=(block)
-        if block
-          @key_route = block_route(block)
-        else
-          @key_route = nil
-        end
-        self
-      end
 
       def key(&block)
         @key_route = block_route(block)
@@ -140,7 +141,7 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        pipe = CombinePipe.new(existing_multi_graph)
+        pipe = CombinePipe.new(from_graph, existing_multi_graph)
         self.graph = pipe.multi_graph
         pipe.setKeyPipe *key_route.send(:build_pipeline) if key_route
         pipe.join_on = @join_on
