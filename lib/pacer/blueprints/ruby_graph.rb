@@ -64,10 +64,6 @@ module Pacer
     end
 
     def clear
-      if defined? @vertices
-        getEdges.each { |e| e.clear }
-        getVertices.each { |v| v.clear }
-      end
       @vertices = {}
       @edges = {}
       @next_id = 0
