@@ -119,6 +119,16 @@ module Pacer
     def getId
       @element_id
     end
+
+    protected
+
+    def extract_varargs_strings(labels)
+      if labels.first.is_a? ArrayJavaProxy
+        labels.first.map { |l| l.to_s }
+      else
+        labels
+      end
+    end
   end
 
 
@@ -130,11 +140,13 @@ module Pacer
     end
 
     def getInEdges(*labels)
+      labels = extract_varargs_strings(labels)
       edges = graph.getEdges.select { |e| e.getInVertex == self and (labels.empty? or labels.include? e.getLabel) }
       Pacer::Pipes::EnumerablePipe.new edges
     end
 
     def getOutEdges(*labels)
+      labels = extract_varargs_strings(labels)
       edges = graph.getEdges.select { |e| e.getOutVertex == self and (labels.empty? or labels.include? e.getLabel) }
       Pacer::Pipes::EnumerablePipe.new edges
     end
