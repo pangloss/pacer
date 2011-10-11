@@ -1,5 +1,5 @@
 module Pacer::Pipes
-  class ProcessPipe2 < AbstractPipe
+  class ProcessPipe < AbstractPipe
     field_reader :starts
     attr_reader :is_element, :extensions, :back, :block, :graph
 

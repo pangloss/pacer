@@ -14,7 +14,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = Pacer::Pipes::ProcessPipe2.new(back, block)
+        pipe = Pacer::Pipes::ProcessPipe.new(back, block)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
