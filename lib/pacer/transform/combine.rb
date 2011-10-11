@@ -14,6 +14,12 @@ module Pacer
   module Transform
     module Combine
       class CombinePipe < Pacer::Pipes::RubyPipe
+        import com.tinkerpop.pipes.sideeffect.SideEffectPipe
+        import java.util.ArrayList
+        import java.util.LinkedList
+
+        include SideEffectPipe rescue nil # may raise exception on reload.
+
         attr_accessor :multi_graph, :current_keys, :current_values, :join_on
         attr_reader :key_expando, :key_end, :values_pipes
 
@@ -31,6 +37,10 @@ module Pacer
 
         def addValuesPipe(name, from_pipe, to_pipe)
           values_pipes << [name, *prepare_aggregate_pipe(from_pipe, to_pipe)]
+        end
+
+        def getSideEffect
+          multi_graph
         end
 
         protected
@@ -60,7 +70,7 @@ module Pacer
         end
 
         def get_keys(element)
-          array = java.util.LinkedList.new
+          array = LinkedList.new
           if key_expando
             array.addAll next_results(key_expando, key_end, element)
           else
@@ -78,21 +88,23 @@ module Pacer
         # doesn't need to be spun out because it's a capped aggregator
         def next_results(expando, pipe, element)
           pipe.reset
-          expando.add element, java.util.ArrayList.new, nil
+          expando.add element, ArrayList.new, nil
           pipe.next
         end
 
         def prepare_aggregate_pipe(from_pipe, to_pipe)
           expando = Pacer::Pipes::ExpandablePipe.new
-          expando.setStarts java.util.ArrayList.new.iterator
+          expando.setStarts ArrayList.new.iterator
           from_pipe.setStarts(expando)
-          agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new java.util.LinkedList.new
+          agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new LinkedList.new
           cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
           agg_pipe.setStarts to_pipe
           cap_pipe.setStarts to_pipe
           [expando, cap_pipe]
         end
       end
+
+      include Pacer::Core::SideEffect
 
       attr_accessor :existing_multi_graph, :key_route, :values_routes
       attr_writer :join_on
