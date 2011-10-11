@@ -14,7 +14,7 @@ module Pacer
   module Transform
     module Combine
       class CombinePipe < Pacer::Pipes::RubyPipe
-        attr_accessor :multi_graph, :current_keys, :current_values
+        attr_accessor :multi_graph, :current_keys, :current_values, :join_on
         attr_reader :key_expando, :key_end, :values_pipes
 
         def initialize(multi_graph)
@@ -43,6 +43,7 @@ module Pacer
               self.current_values = get_values(element) unless current_keys.empty?
             else
               combined = multi_graph.create_vertex
+              combined.join_on join_on if join_on
               combined[:key] = current_keys.removeFirst
               current_values.each do |key, values|
                 combined[key] = values
@@ -94,6 +95,7 @@ module Pacer
       end
 
       attr_accessor :existing_multi_graph, :key_route, :values_routes
+      attr_writer :join_on
 
       def block=(block)
         if block
@@ -109,11 +111,15 @@ module Pacer
         self
       end
 
-      def values(name, &block)
+      def join(name, &block)
         @values_routes << [name, block_route(block)]
         self
       end
 
+      def join_on(*keys)
+        @join_on = keys
+        self
+      end
 
       protected
 
@@ -125,6 +131,7 @@ module Pacer
         pipe = CombinePipe.new(existing_multi_graph)
         self.graph = pipe.multi_graph
         pipe.setKeyPipe *key_route.send(:build_pipeline) if key_route
+        pipe.join_on = @join_on
         values_routes.each do |name, route|
           pipe.addValuesPipe name, *route.send(:build_pipeline)
         end

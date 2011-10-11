@@ -20,21 +20,23 @@ module Pacer
     def initialize(*args)
       super
       @vertex_keys = Set[]
-      @active_keys = @vertex_keys
+      @join_keys = @vertex_keys
     end
 
-    attr_accessor :vertex_keys, :active_keys
+    attr_accessor :vertex_keys, :join_keys
 
-    def set_active_keys(keys)
-      if keys
-        @active_keys = keys.map { |k| k.to_s }.to_set
+    def join_on(keys)
+      if keys.is_a? Enumerable
+        @join_keys = keys.map { |k| k.to_s }.to_set
+      elsif keys
+        @join_keys = Set[keys.to_s]
       else
-        @active_keys = Set[]
+        @join_keys = Set[]
       end
     end
 
     def vertices
-      active_keys.flat_map do |key|
+      join_keys.flat_map do |key|
         @properties[key]
       end
     end
@@ -61,17 +63,27 @@ module Pacer
     end
 
     def getOutEdges(*labels)
-      labels = extract_varargs_strings(labels)
-      p = Pacer::Pipes::IdentityPipe.new
-      p.setStarts(MultiIterator.new super(*labels), *vertices.map { |v| v.getOutEdges(*labels).iterator })
-      p
+      vs = vertices
+      if vs.any?
+        labels = extract_varargs_strings(labels)
+        p = Pacer::Pipes::IdentityPipe.new
+        p.setStarts(MultiIterator.new super(*labels), *vs.map { |v| v.getOutEdges(*labels).iterator })
+        p
+      else
+        super
+      end
     end
 
     def getInEdges(*labels)
-      labels = extract_varargs_strings(labels)
-      p = Pacer::Pipes::IdentityPipe.new
-      p.setStarts MultiIterator.new super(*labels), *vertices.map { |v| v.getInEdges(*labels).iterator }
-      p
+      vs = vertices
+      if vs.any?
+        labels = extract_varargs_strings(labels)
+        p = Pacer::Pipes::IdentityPipe.new
+        p.setStarts MultiIterator.new super(*labels), *vs.map { |v| v.getInEdges(*labels).iterator }
+        p
+      else
+        super
+      end
     end
 
     include VertexExtensions
