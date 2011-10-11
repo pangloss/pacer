@@ -101,15 +101,15 @@ module Pacer
     end
 
     def getProperty(key)
-      @properties[key]
+      @properties[key.to_s]
     end
 
     def setProperty(key, value)
-      @properties[key] = value
+      @properties[key.to_s] = value
     end
 
     def removeProperty(key)
-      @properties.delete key
+      @properties.delete key.to_s
     end
 
     def getId
