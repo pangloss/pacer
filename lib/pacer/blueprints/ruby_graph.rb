@@ -23,7 +23,11 @@ module Pacer
     end
 
     def addVertex(id)
-      id ||= next_id
+      if id
+        id = "#{ graph_id }:#{ id }"
+      else
+        id = next_id
+      end
       @vertices[id] = vertex_class.new self, id
     end
 
