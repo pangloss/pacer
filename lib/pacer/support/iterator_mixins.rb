@@ -108,7 +108,7 @@ module Pacer::Core::Route
 
     def next
       item = wrapper.new(super)
-      item.graph = graph if @set_graph
+      item.graph ||= graph if @set_graph
       item
     end
   end
