@@ -24,7 +24,7 @@ module Pacer
           within = opts[:within]
           if within
             within_v = vars[within]
-            g.create_edge nil, within_v, v, :within
+            g.create_edge nil, v, within_v, :within
           end
         end
       end
