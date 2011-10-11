@@ -1,14 +1,15 @@
 module Pacer
   module Routes
     module RouteOperations
-      def join(name, existing_multi_graph = nil, &block)
+      def join(name, options = {}, &block)
         args = { :transform => :join,
           element_type: :vertex,
-          graph: (existing_multi_graph || Pacer::MultiGraph.new),
+          graph: options.fetch(:multi_graph, Pacer::MultiGraph.new),
           from_graph: graph
         }
-        args[:existing_multi_graph] = existing_multi_graph if existing_multi_graph
-        chain_route(args).join(name, &block)
+        args[:multi_graph] = options[:multi_graph] if options[:multi_graph]
+        route = chain_route(args).route.join(options.fetch(:key, :key)) { |v| v }
+        route.join(name, &block)
       end
     end
   end
