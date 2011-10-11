@@ -154,7 +154,7 @@ module Pacer
       super(graph, id)
       @out_vertex = out_vertex
       @in_vertex = in_vertex
-      @label = label
+      @label = label.to_s
     end
 
     def getRawEdge
