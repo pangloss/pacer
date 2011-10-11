@@ -1,5 +1,5 @@
 module Pacer
-  class ReplayGraph
+  class RubyGraph
     import com.tinkerpop.blueprints.pgm.Element
     import com.tinkerpop.blueprints.pgm.Graph
 
@@ -12,30 +12,25 @@ module Pacer
       end
     end
 
-    attr_accessor :target_graph
-    attr_reader :commands
-
-    def initialize(target_graph = nil)
-      @graph_id = ReplayGraph.next_graph_id
-      @target_graph = target_graph
+    def initialize
+      @graph_id = RubyGraph.next_graph_id
       clear
     end
 
     def element_class
-      ReplayElement
+      RubyElement
     end
 
     def vertex_class
-      ReplayVertex
+      RubyVertex
     end
 
     def edge_class
-      ReplayEdge
+      RubyEdge
     end
 
     def addVertex(id)
       id ||= next_id
-      @commands << [nil, :addVertex, id]
       @vertices[id] = vertex_class.new self, id
     end
 
@@ -44,7 +39,6 @@ module Pacer
     end
 
     def removeVertex(vertex)
-      @commands << [nil, :removeVertex, vertex]
       @vertices.delete vertex.element_id
     end
 
@@ -54,7 +48,6 @@ module Pacer
 
     def addEdge(id, outVertex, inVertex, label)
       id ||= next_id
-      @commands << [nil, :addEdge, id, outVertex, inVertex, label]
       @edges[id] = edge_class.new self, id, outVertex, inVertex, label
     end
 
@@ -63,7 +56,6 @@ module Pacer
     end
 
     def removeEdge(edge)
-      @commands << [nil, :removeEdge, edge.raw_edge]
       @edges.delete edge.element_id
     end
 
@@ -78,7 +70,6 @@ module Pacer
       end
       @vertices = {}
       @edges = {}
-      @commands = []
       @next_id = 0
     end
 
@@ -87,7 +78,7 @@ module Pacer
     end
 
     def ==(other)
-      other == @target_graph or other == self
+      other.equal? self
     end
 
     include GraphExtensions
@@ -100,7 +91,7 @@ module Pacer
     end
   end
 
-  class ReplayElement
+  class RubyElement
     include com.tinkerpop.blueprints.pgm.Element
 
     def initialize(graph, element_id)
@@ -118,23 +109,20 @@ module Pacer
     end
 
     def setProperty(key, value)
-      @graph.commands << [self, :setProperty, key, value]
       @properties[key] = value
     end
 
     def removeProperty(key)
-      @graph.commands << [self, :removeProperty, key]
       @properties.delete key
     end
 
     def getId
       @element_id
     end
-
   end
 
 
-  class ReplayVertex < ReplayElement
+  class RubyVertex < RubyElement
     include com.tinkerpop.blueprints.pgm.Vertex
 
     def getRawVertex
@@ -154,7 +142,7 @@ module Pacer
     include VertexExtensions
   end
 
-  class ReplayEdge < ReplayElement
+  class RubyEdge < RubyElement
     include com.tinkerpop.blueprints.pgm.Edge
 
     def initialize(graph, id, out_vertex, in_vertex, label)
