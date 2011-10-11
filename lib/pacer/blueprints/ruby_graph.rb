@@ -5,15 +5,8 @@ module Pacer
 
     include Graph
 
-    class << self
-      def next_graph_id
-        @next_graph_id = 0 unless defined? @next_graph_id
-        @next_graph_id += 1
-      end
-    end
-
     def initialize
-      @graph_id = RubyGraph.next_graph_id
+      @graph_id = Pacer.next_graph_id
       clear
     end
 

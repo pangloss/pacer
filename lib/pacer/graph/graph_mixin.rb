@@ -16,6 +16,11 @@ module Pacer
 
     attr_accessor :in_bulk_job
 
+    def graph_id
+      @graph_id = Pacer.next_graph_id unless defined? @graph_id
+      @graph_id
+    end
+
     # Get a vertex by id.
     #
     # @overload vertex(id)
