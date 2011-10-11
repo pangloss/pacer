@@ -46,6 +46,23 @@ module Pacer
         end
       end
 
+      def map_to(collection_name, name)
+        process do |element|
+          v = vars[collection_name]
+          existing = v[name]
+          if block_given?
+            mapped = yield element, v
+          else
+            mapped = element
+          end
+          if existing
+            existing << mapped
+          else
+            v[name] = [mapped]
+          end
+        end
+      end
+
       def reduce_to(collection_name, name, starting_value)
         process do |element|
           v = vars[collection_name]
