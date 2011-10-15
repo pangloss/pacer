@@ -5,23 +5,23 @@ module Pacer
   module Routes
     module RouteOperations
       def where(str, vars = {})
-        chain_route :filter => :expression, :where => str, :vars => vars
+        chain_route :filter => :expression, :where_statement => str, :vars => vars
       end
     end
   end
 
   module Filter
     module ExpressionFilter
-      attr_reader :where, :parsed
+      attr_reader :where_statement, :parsed
       attr_accessor :vars
 
-      def where=(str)
-        @where = str
+      def where_statement=(str)
+        @where_statement = str
         @built = @parsed = nil
       end
 
       def parsed
-        @parsed ||= Parser.parse @where
+        @parsed ||= Parser.parse @where_statement
       end
 
       def build!
@@ -34,6 +34,10 @@ module Pacer
         pipe = build!
         pipe.setStarts end_pipe if end_pipe
         pipe
+      end
+
+      def inspect_string
+        "where(#@where_statement)"
       end
     end
   end
