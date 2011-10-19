@@ -21,12 +21,13 @@ module Pacer
 
     def addEdge(id, outVertex, inVertex, label)
       super.tap do |edge|
-        @commands << [nil, :addEdge, edge.id, edge.outVertex, edge.inVertex, edge.getLabel]
+        @commands << [nil, :addEdge, edge.element_id, edge.getOutVertex, edge.getInVertex, edge.getLabel]
       end
     end
 
     def removeEdge(edge)
-      @commands << [nil, :removeEdge, edge.raw_edge]
+      edge = edge.getRawEdge if edge.respond_to? :getRawEdge
+      @commands << [nil, :removeEdge, edge.getRawEdge]
       super
     end
 
