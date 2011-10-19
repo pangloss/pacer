@@ -109,7 +109,7 @@ Run.all(:read_only) do
         r = r.out_v
         r = r.out_e(:wrote) { |e| true }
         r = r.in_v
-        r = r.except(:grem)
+        r = r.is_not(:grem)
         r.inspect.should ==
           "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
       end

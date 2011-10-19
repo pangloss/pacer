@@ -66,7 +66,7 @@ Run.tg do
         it { should be_a(Pacer::Core::Route) }
         its(:element_type) { should == graph.element_type(:edge) }
         its(:count) { should == 8 }
-        its('back.element_type') { should == Object }
+        its('back.back.element_type') { should == Object }
         its('back.count') { should == 8 }
 
         specify 'all edges in rasge should exist' do

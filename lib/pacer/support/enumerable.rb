@@ -17,7 +17,7 @@ module Enumerable
 
   # Transform the enumerable into a java HashSet.
   def to_hashset(method = nil, *args)
-    return self if self.is_a? java.util.HashSet
+    return self if self.is_a? java.util.HashSet and not method
     hs = java.util.HashSet.new
     iter = self.each rescue nil
     if not iter and respond_to? :iterator
