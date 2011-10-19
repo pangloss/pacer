@@ -25,6 +25,8 @@ module Pacer
 
   module Filter
     module CollectionFilter
+      import java.util.HashSet
+
       attr_reader :var, :comparison, :ids, :objects
 
       def self.triggers
@@ -56,10 +58,14 @@ module Pacer
       def collection=(collection)
         collection = [collection] unless collection.is_a? Enumerable
         @ids = nil
-        if element_type != Object
+        if collection.is_a? HashSet
+          @objects = collection
+        elsif collection.is_a? Route and element_type != Object
           @ids = element_id_hashset(collection)
+          @objects = collection.to_hashset unless ids
+        else
+          @objects = collection.to_hashset
         end
-        @objects = collection.to_hashset unless ids
       end
 
       def element_id_hashset(collection)
