@@ -60,7 +60,7 @@ module Pacer
         @ids = nil
         if collection.is_a? HashSet
           @objects = collection
-        elsif collection.is_a? Route and element_type != Object
+        elsif element_type != Object
           @ids = element_id_hashset(collection)
           @objects = collection.to_hashset unless ids
         else

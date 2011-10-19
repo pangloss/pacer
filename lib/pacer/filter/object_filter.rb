@@ -2,16 +2,16 @@ module Pacer
   module Routes
     module RouteOperations
       def is(value)
-        if excluded.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[excluded] != v }
+        if value.is_a? Symbol
+          chain_route :filter => :property, :block => proc { |v| v.vars[value] == v }
         else
           chain_route({ :filter => :object, :value => value })
         end
       end
 
       def is_not(value)
-        if included.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[included] == v }
+        if value.is_a? Symbol
+          chain_route :filter => :property, :block => proc { |v| v.vars[value] != v }
         else
           chain_route({ :filter => :object, :value => value, :negate => true })
         end
