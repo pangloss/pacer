@@ -98,7 +98,12 @@ module Pacer
     end
 
     def getProperty(key)
-      @properties[key.to_s]
+      v = @properties[key.to_s]
+      if v.is_a? String
+        v.dup
+      else
+        v
+      end
     end
 
     def setProperty(key, value)
