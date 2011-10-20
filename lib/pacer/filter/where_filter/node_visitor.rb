@@ -121,6 +121,10 @@ module Pacer
           Value.new node.child_nodes.map { |n| n.accept self }
         end 
 
+        def visitBignumNode(node)
+          Value.new node.value.to_s
+        end
+
         def visitCallNode(node)
           a = node.receiver_node.accept(self)
           if node.args_node
