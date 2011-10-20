@@ -8,6 +8,11 @@ module Pacer
         import com.tinkerpop.pipes.filter.AndFilterPipe
         import com.tinkerpop.pipes.filter.OrFilterPipe
         import com.tinkerpop.pipes.filter.ObjectFilterPipe
+        import com.tinkerpop.pipes.transform.PropertyPipe
+        NeverPipe = Pacer::Pipes::NeverPipe
+        IdentityPipe = Pacer::Pipes::IdentityPipe
+        PropertyComparisonFilterPipe = Pacer::Pipes::PropertyComparisonFilterPipe
+        Pipeline = Pacer::Pipes::Pipeline
 
         Filters = {
           '==' => FilterPipe::Filter::EQUAL,
@@ -26,22 +31,65 @@ module Pacer
           '>=' => FilterPipe::Filter::LESS_THAN_EQUAL
         )
 
-        def pipeline(name, *pipes)
-          puts "pipeline"
-          if pipes.count > 1
-            pipe = Pacer::Pipes::Pipeline.new *pipes
-          else
-            pipe = pipes.first
+        class Pipe
+          def initialize(pipe, *args)
+            @pipe = pipe
+            @args = args
           end
-          if Pacer.debug_pipes
-            if name.is_a? Hash
-              Pacer.debug_pipes << name.merge(:pipeline => pipes, :end => pipe)
-            else
-              Pacer.debug_pipes << { :name => name, :pipeline => pipes, :end => pipe }
+
+          attr_reader :pipe
+          attr_reader :args
+
+          def inspect(depth = 0)
+            ([" " * depth + pipe.to_s] + args.map do |arg|
+              if arg.is_a? Pipe or arg.is_a? Value
+                arg.inspect(depth + 2)
+              else
+                " " * (depth + 2) + arg.to_s
+              end
+            end).join "\n"
+          end
+
+          def build
+            pipe.new *build_args
+          end
+
+          def build_args
+            args.map do |arg|
+              if arg.is_a? Pipe
+                arg.build
+              elsif arg.is_a? Value
+                arg.value
+              else
+                arg
+              end
             end
           end
-          pipe
         end
+
+        class Value
+          def initialize(value)
+            @value = value
+          end
+
+          def pipe; end
+          attr_reader :value
+
+          def inspect(depth = 0)
+            " " * depth + value.inspect
+          end
+        end
+        
+        def build_comparison(a, b, name)
+          if a.pipe == PropertyPipe and b.pipe == PropertyPipe
+            Pipe.new PropertyComparisonFilterPipe, a, b, Filters[name]
+          end
+          if b.pipe == PropertyPipe and a.is_a? Value
+            Pipe.new Pipeline, b, Pipe.new(ObjectFilterPipe, a, ReverseFilters[name])
+          else
+            Pipe.new Pipeline, a, Pipe.new(ObjectFilterPipe, b, Filters[name])
+          end
+        end 
 
         def visitAliasNode(node)
           puts "visitAliasNode"
@@ -51,15 +99,14 @@ module Pacer
           a = node.first_node.accept(self)
           b = node.second_node.accept(self)
 
-          #pipeline({ :name => 'and', :and => [a, b], :and_ends => [a, b] }, AndFilterPipe.new(a, b))
-          if a.first == :and and b.first == :and
-            [:and, *a[1..-1], *b[1..-1]]
-          elsif a.first == :and
-            [:and, *a[1..-1], b]
-          elsif b.first == :and
-            [:and, a, *b[1..-1]]
+          if a.pipe == AndFilterPipe and b.pipe == AndFilterPipe
+            Pipe.new AndFilterPipe, *a.args, *b.args
+          elsif a.pipe == AndFilterPipe
+            Pipe.new AndFilterPipe, *a.args, b
+          elsif b.pipe == AndFilterPipe
+            Pipe.new AndFilterPipe, a, *b.args
           else
-            [:and, a, b]
+            Pipe.new AndFilterPipe, a, b
           end
         end 
 
@@ -76,7 +123,7 @@ module Pacer
         end 
 
         def visitArrayNode(node)
-          node.child_nodes.map { |n| n.accept self }
+          Value.new node.child_nodes.map { |n| n.accept self }
         end 
 
         def visitAttrAssignNode(node)
@@ -116,9 +163,10 @@ module Pacer
         end 
 
         def visitCallNode(node)
-          stuff = [node.receiver_node.accept(self), node.name, node.args_node.accept(self).first]
-          stuff
-        end 
+          a = node.receiver_node.accept(self)
+          b = node.args_node.accept(self).value.first
+          build_comparison(a, b, node.name)
+        end
 
         def visitCaseNode(node)
           puts "visitCaseNode"
@@ -209,7 +257,7 @@ module Pacer
         end 
 
         def visitFalseNode(node)
-          puts "visitFalseNode"
+          Pipe.new NeverPipe
         end 
 
         def visitFCallNode(node)
@@ -217,7 +265,7 @@ module Pacer
         end 
 
         def visitFixnumNode(node)
-          [:value, node.value]
+          Value.new node.value
         end 
 
         def visitFlipNode(node)
@@ -225,7 +273,7 @@ module Pacer
         end 
 
         def visitFloatNode(node)
-          [:value, node.value]
+          Value.new node.value
         end 
 
         def visitForNode(node)
@@ -269,7 +317,9 @@ module Pacer
         end 
 
         def visitLocalAsgnNode(node)
-          [[:property, node.name], '==', node.value_node.accept(self)]
+          a = Pipe.new PropertyPipe, node.name
+          b = node.value_node.accept(self)
+          build_comparison(a, b, '==')
         end 
 
         def visitLocalVarNode(node)
@@ -309,7 +359,7 @@ module Pacer
         end 
 
         def visitNilNode(node)
-          [:value, nil]
+          nil
         end 
 
         def visitNotNode(node)
@@ -342,15 +392,14 @@ module Pacer
         def visitOrNode(node)
           a = node.first_node.accept(self)
           b = node.second_node.accept(self)
-          #pipeline({ :name => 'or', :or => [a, b]}, OrFilterPipe.new(a, b))
-          if a.first == :or and b.first == :or
-            [:or, *a[1..-1], *b[1..-1]]
-          elsif a.first == :or
-            [:or, *a[1..-1], b]
-          elsif b.first == :or
-            [:or, a, *b[1..-1]]
+          if a.pipe == OrFilterPipe and b.pipe == OrFilterPipe
+            Pipe.new OrFilterPipe, *a.args, *b.args
+          elsif a.pipe == OrFilterPipe
+            Pipe.new OrFilterPipe, *a.args, b
+          elsif b.pipe == OrFilterPipe
+            Pipe.new OrFilterPipe, a, *b.args
           else
-            [:or, a, b]
+            Pipe.new OrFilterPipe, a, b
           end
         end 
 
@@ -407,7 +456,7 @@ module Pacer
         end 
 
         def visitStrNode(node)
-          [:value, node.value]
+          Value.new node.value
         end 
 
         def visitSuperNode(node)
@@ -419,7 +468,7 @@ module Pacer
         end 
 
         def visitSymbolNode(node)
-          [:value, node.name]
+          Value.new node.name
         end 
 
         def visitToAryNode(node)
@@ -427,7 +476,7 @@ module Pacer
         end 
 
         def visitTrueNode(node)
-          puts "visitTrueNode"
+          Pipe.new IdentityPipe
         end 
 
         def visitUndefNode(node)
@@ -444,7 +493,7 @@ module Pacer
 
         def visitVCallNode(node)
           #puts "vcal child nodes should be empty: #{ node.child_nodes.inspect }"
-          [:property, node.name]
+          Pipe.new PropertyPipe, node.name
         end 
 
         def visitWhenNode(node)
