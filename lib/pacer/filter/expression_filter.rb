@@ -4,7 +4,7 @@ require 'pacer/filter/expression_filter/builder'
 module Pacer
   module Routes
     module RouteOperations
-      def where(str, vars = {})
+      def expression(str, vars = {})
         chain_route :filter => :expression, :where_statement => str, :vars => vars
       end
     end
