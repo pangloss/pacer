@@ -1,7 +1,14 @@
+Pacer::Filter::WhereFilter::NodeVisitor
 module Pacer
   module Filter
     module WhereFilter
       class NodeVisitor
+        import com.tinkerpop.pipes.filter.OrFilterPipe
+        import com.tinkerpop.pipes.filter.FilterPipe
+        import com.tinkerpop.pipes.filter.AndFilterPipe
+        import com.tinkerpop.pipes.filter.OrFilterPipe
+        import com.tinkerpop.pipes.filter.ObjectFilterPipe
+
         Filters = {
           '==' => FilterPipe::Filter::EQUAL,
           '='  => FilterPipe::Filter::EQUAL,
@@ -41,11 +48,19 @@ module Pacer
         end 
 
         def visitAndNode(node)
-          puts "visitAndNode"
-          a = node.first.visit(self)
-          b = node.last.visit(self)
+          a = node.first_node.accept(self)
+          b = node.second_node.accept(self)
 
-          pipeline({ :name => 'and', :and => [a, b], :and_ends => [a, b] }, AndFilterPipe.new(a, b))
+          #pipeline({ :name => 'and', :and => [a, b], :and_ends => [a, b] }, AndFilterPipe.new(a, b))
+          if a.first == :and and b.first == :and
+            [:and, *a[1..-1], *b[1..-1]]
+          elsif a.first == :and
+            [:and, *a[1..-1], b]
+          elsif b.first == :and
+            [:and, a, *b[1..-1]]
+          else
+            [:and, a, b]
+          end
         end 
 
         def visitArgsCatNode(node)
@@ -61,7 +76,7 @@ module Pacer
         end 
 
         def visitArrayNode(node)
-          puts "visitArrayNode"
+          node.child_nodes.map { |n| n.accept self }
         end 
 
         def visitAttrAssignNode(node)
@@ -101,7 +116,8 @@ module Pacer
         end 
 
         def visitCallNode(node)
-          puts "visitCallNode"
+          stuff = [node.receiver_node.accept(self), node.name, node.args_node.accept(self).first]
+          stuff
         end 
 
         def visitCaseNode(node)
@@ -201,7 +217,7 @@ module Pacer
         end 
 
         def visitFixnumNode(node)
-          puts "visitFixnumNode"
+          [:value, node.value]
         end 
 
         def visitFlipNode(node)
@@ -209,7 +225,7 @@ module Pacer
         end 
 
         def visitFloatNode(node)
-          puts "visitFloatNode"
+          [:value, node.value]
         end 
 
         def visitForNode(node)
@@ -253,7 +269,7 @@ module Pacer
         end 
 
         def visitLocalAsgnNode(node)
-          puts "visitLocalAsgnNode"
+          [[:property, node.name], '==', node.value_node.accept(self)]
         end 
 
         def visitLocalVarNode(node)
@@ -285,7 +301,7 @@ module Pacer
         end 
 
         def visitNewlineNode(node)
-          puts "visitNewlineNode"
+          node.next_node.accept(self)
         end 
 
         def visitNextNode(node)
@@ -293,14 +309,14 @@ module Pacer
         end 
 
         def visitNilNode(node)
-          puts "visitNilNode"
+          [:value, nil]
         end 
 
         def visitNotNode(node)
           puts "visitNotNode"
           # TODO: this only negates matches, it doesn't negate non-matches because a non-match leaves nothing to negate!
           #       It must rather be done in the same way an AndFilterPipe is, where it controls the incoming element and tests the other pipe.
-          pipeline 'not', ObjectFilterPipe.new(true, Filters['!='])
+          #pipeline 'not', ObjectFilterPipe.new(true, Filters['!='])
         end 
 
         def visitNthRefNode(node)
@@ -324,10 +340,18 @@ module Pacer
         end 
 
         def visitOrNode(node)
-          puts "visitOrNode"
-          a = node.first.visit(self)
-          b = node.last.visit(self)
-          pipeline({ :name => 'or', :or => [a, b]}, OrFilterPipe.new(a, b))
+          a = node.first_node.accept(self)
+          b = node.second_node.accept(self)
+          #pipeline({ :name => 'or', :or => [a, b]}, OrFilterPipe.new(a, b))
+          if a.first == :or and b.first == :or
+            [:or, *a[1..-1], *b[1..-1]]
+          elsif a.first == :or
+            [:or, *a[1..-1], b]
+          elsif b.first == :or
+            [:or, a, *b[1..-1]]
+          else
+            [:or, a, b]
+          end
         end 
 
         def visitPostExeNode(node)
@@ -367,7 +391,7 @@ module Pacer
         end 
 
         def visitRootNode(node)
-          puts "visitRootNode"
+          node.body_node.accept self
         end 
 
         def visitSClassNode(node)
@@ -383,7 +407,7 @@ module Pacer
         end 
 
         def visitStrNode(node)
-          puts "visitStrNode"
+          [:value, node.value]
         end 
 
         def visitSuperNode(node)
@@ -395,7 +419,7 @@ module Pacer
         end 
 
         def visitSymbolNode(node)
-          puts "visitSymbolNode"
+          [:value, node.name]
         end 
 
         def visitToAryNode(node)
@@ -419,8 +443,8 @@ module Pacer
         end 
 
         def visitVCallNode(node)
-          puts "visitVCallNode"
-          # property name
+          #puts "vcal child nodes should be empty: #{ node.child_nodes.inspect }"
+          [:property, node.name]
         end 
 
         def visitWhenNode(node)
