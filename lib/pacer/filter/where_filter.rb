@@ -3,8 +3,8 @@ require 'pacer/filter/where_filter/node_visitor'
 module Pacer
   module Routes
     module RouteOperations
-      def where(str, vars = {})
-        chain_route :filter => :where, :where_statement => str, :vars => vars
+      def where(str, values = {})
+        chain_route :filter => :where, :where_statement => str, :values => values
       end
     end
   end
@@ -12,7 +12,7 @@ module Pacer
   module Filter
     module WhereFilter
       attr_reader :where_statement
-      attr_accessor :vars
+      attr_accessor :values
 
       def where_statement=(str)
         @where_statement = str
@@ -24,7 +24,7 @@ module Pacer
       end
 
       def intermediate
-        @intermediate ||= parsed.accept(NodeVisitor)
+        @intermediate ||= parsed.accept(NodeVisitor.new(self, values || {}))
       end
 
       def build!
