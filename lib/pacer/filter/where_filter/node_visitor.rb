@@ -13,6 +13,8 @@ module Pacer
         IdentityPipe = Pacer::Pipes::IdentityPipe
         PropertyComparisonFilterPipe = Pacer::Pipes::PropertyComparisonFilterPipe
         Pipeline = Pacer::Pipes::Pipeline
+        CrossProductTransformPipe = Pacer::Pipes::CrossProductTransformPipe
+        UnaryTransformPipe = Pacer::Pipes::UnaryTransformPipe
 
         Filters = {
           '==' => FilterPipe::Filter::EQUAL,
@@ -76,31 +78,60 @@ module Pacer
           attr_reader :value
 
           def inspect(depth = 0)
-            " " * depth + value.inspect
+            " " * depth + "Value: #{ value.inspect }"
           end
 
           def build
             value
           end
+
+          def values!
+            if value.is_a? Array
+              value.map do |v|
+                if v.is_a? Value
+                  v.values!
+                else
+                  raise "Arrays may not contain other properties"
+                end
+              end
+            else
+              value
+            end
+          end
         end
 
+
+        COMPARITORS = %w[ == != > < >= <= ] 
+        METHODS = %w[ + - * / % ]
+        VALID_OPERATIONS = COMPARITORS + METHODS
 
         class << self
 
           def build_comparison(a, b, name)
-            raise "Operation not supported: #{ name }" unless %w[ == != > < >= <= ].include? name
-            if a.is_a? Value and b.is_a? Value
-              if a.value.send name, b.value
-                Pipe.new IdentityPipe
+            # TODO: support regex matches
+            regex = %w[ =~ !~ ]
+
+            raise "Operation not supported: #{ name }" unless VALID_OPERATIONS.include? name
+            if COMPARITORS.include? name
+              if a.is_a? Value and b.is_a? Value
+                if a.value.send name, b.value
+                  Pipe.new IdentityPipe
+                else
+                  Pipe.new NeverPipe
+                end
+              elsif a.pipe == PropertyPipe and b.pipe == PropertyPipe
+                Pipe.new PropertyComparisonFilterPipe, a, b, Filters[name]
+              elsif b.pipe == PropertyPipe and a.is_a? Value
+                Pipe.new Pipeline, b, Pipe.new(ObjectFilterPipe, a, ReverseFilters[name])
               else
-                Pipe.new NeverPipe
+                Pipe.new Pipeline, a, Pipe.new(ObjectFilterPipe, b, Filters[name])
               end
-            elsif a.pipe == PropertyPipe and b.pipe == PropertyPipe
-              Pipe.new PropertyComparisonFilterPipe, a, b, Filters[name]
-            elsif b.pipe == PropertyPipe and a.is_a? Value
-              Pipe.new Pipeline, b, Pipe.new(ObjectFilterPipe, a, ReverseFilters[name])
-            else
-              Pipe.new Pipeline, a, Pipe.new(ObjectFilterPipe, b, Filters[name])
+            elsif METHODS.include? name
+              if a.is_a? Value and b.is_a? Value
+                Value.new a.value.send(name, b.value)
+              else
+                Pipe.new CrossProductTransformPipe, name, a, b
+              end
             end
           end 
 
@@ -120,7 +151,7 @@ module Pacer
           end 
 
           def visitArrayNode(node)
-            Value.new node.child_nodes.map { |n| n.accept self }
+            Value.new Value.new(node.child_nodes.map { |n| n.accept self }).values!
           end 
 
           def visitBignumNode(node)
@@ -130,28 +161,22 @@ module Pacer
           def visitCallNode(node)
             a = node.receiver_node.accept(self)
             if node.args_node
-              b = node.args_node.accept(self).value.first
+              b = node.args_node.child_nodes.first.accept(self)
               build_comparison(a, b, node.name)
             else
-              case node.name
-              when '!'
-                if a.is_a? Value
-                  Value.new !a.value
-                elsif a.pipe == PropertyPipe
-                  raise 'Currently can not negate properties (need to implement a new pipe class)'
-                else
-                  Pipe.new(Pipeline, a, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
-                end
-              when '-'
-                if a.is_a? Value
-                  Value.new -a.value
-                else
-                  raise 'Currently can not negate properties or pipes (need to implement a new pipe class)'
-                end
-              when '+'
-                a
+              return a if node.name == '+'
+              if a.is_a? Value
+                Value.new a.value.send(a.name)
+              elsif a.pipe == PropertyPipe
+                Pipe.new(UnaryTransformPipe, node.name, a)
               else
-                raise "Unknown operator #{ node.name } applied to (#{ a.inspect })"
+                case node.name
+                when '!'
+                  # Special case for "a == 1 and not (b == 1)", etc.
+                  Pipe.new(Pipeline, a, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
+                else
+                  raise 'not sure'
+                end
               end
             end
           end
@@ -166,13 +191,21 @@ module Pacer
 
           def visitFloatNode(node)
             Value.new node.value
-          end 
+          end
+
+          def visitHashNode(node)
+            Value.new Hash[*node.child_nodes.first.accept(self).value.map { |v| v.value }]
+          end
 
           def visitLocalAsgnNode(node)
             a = Pipe.new PropertyPipe, node.name
             b = node.value_node.accept(self)
             build_comparison(a, b, '==')
           end 
+
+          def visitLocalVarNode(node)
+            Pipe.new PropertyPipe, node.name
+          end
 
           def visitNewlineNode(node)
             node.next_node.accept(self)
@@ -200,6 +233,12 @@ module Pacer
             pipe = node.body_node.accept self
             if pipe.pipe == AndFilterPipe or pipe.pipe == OrFilterPipe
               pipe
+            elsif pipe.is_a? Value
+              if pipe.value
+                Pipe.new IdentityPipe
+              else
+                Pipe.new NeverPipe
+              end
             else
               Pipe.new AndFilterPipe, pipe
             end
@@ -220,6 +259,10 @@ module Pacer
           def visitVCallNode(node)
             Pipe.new PropertyPipe, node.name
           end 
+
+          def visitZArrayNode(node)
+            Value.new []
+          end
         end
       end
     end
