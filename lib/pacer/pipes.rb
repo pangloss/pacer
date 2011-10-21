@@ -57,3 +57,6 @@ require 'pacer/pipe/variable_store_iterator_wrapper'
 require 'pacer/pipe/property_comparison_pipe'
 
 require 'pacer/pipe/blackbox_pipeline'
+
+require 'pacer/pipe/unary_transform_pipe'
+require 'pacer/pipe/cross_product_transform_pipe'
