@@ -33,6 +33,12 @@ module Pacer
           '>=' => FilterPipe::Filter::LESS_THAN_EQUAL
         )
 
+        COMPARITORS = %w[ == != > < >= <= ] 
+        METHODS = %w[ + - * / % ]
+        REGEX_COMPARITORS = %w[ =~ !~ ]
+
+        VALID_OPERATIONS = COMPARITORS + METHODS # + REGEX_COMPARITORS
+
         class Pipe
           def initialize(pipe, *args)
             @pipe = pipe
@@ -100,16 +106,10 @@ module Pacer
           end
         end
 
-
-        COMPARITORS = %w[ == != > < >= <= ] 
-        METHODS = %w[ + - * / % ]
-        VALID_OPERATIONS = COMPARITORS + METHODS
-
         class << self
 
           def build_comparison(a, b, name)
             # TODO: support regex matches
-            regex = %w[ =~ !~ ]
 
             raise "Operation not supported: #{ name }" unless VALID_OPERATIONS.include? name
             if COMPARITORS.include? name

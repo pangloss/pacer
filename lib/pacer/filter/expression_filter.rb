@@ -37,7 +37,7 @@ module Pacer
       end
 
       def inspect_string
-        "where(#@where_statement)"
+        "expression(#@where_statement)"
       end
     end
   end
