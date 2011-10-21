@@ -22,22 +22,29 @@ Run.tg(:read_only) do
     end
 
     context 'with number' do
+      before do
+        n = 0
+        graph.v.each { |v| v[:number] = n += 1 }
+      end
+
       context "number = 1" do
-        before do
-          n = 0
-          graph.v(:type => 'person').each { |v| v[:number] = n += 1 }
-        end
         subject { graph.v.where("number = 1") }
         its(:count) { should == 1 }
       end
 
       context "number >= 1" do
-        before do
-          n = 0
-          graph.v(:type => 'person').each { |v| v[:number] = n += 1 }
-        end
-        subject { graph.v.where("number >= 1") }
-        its(:count) { should == 2 }
+        subject { graph.v.where("number >= 2") }
+        its(:count) { should == 6 }
+      end
+
+      context "number % 2 == 0" do
+        subject { graph.v.where("number % 2 == 0") }
+        its(:count) { should == 3 }
+      end
+
+      context "number % 2 == 1" do
+        subject { graph.v.where("number % 2 == 0 + 1") }
+        its(:count) { should == 4 }
       end
     end
 
