@@ -28,15 +28,10 @@ Run.all do
       let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
       subject { route }
 
-      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>" }
-      its(:out_v) { should_not be_nil }
-    end
-
-    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
-      let(:route) { graph.v(:name => 'gremlin').as(:grem).in_e(:wrote) }
-      subject { route }
-
-      its(:inspect) { should == "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>" }
+      its(:inspect) do
+        should be_one_of "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>",
+                         "#<GraphV -> V-Property(name==\"gremlin\") -> :grem -> inE(:wrote)>"
+      end
       its(:out_v) { should_not be_nil }
     end
 
@@ -54,8 +49,6 @@ Run.all do
       before { setup_data }
       subject { graph.v(:name => 'darrick') }
 
-      its(:build_pipeline) { should == [nil, nil] }
-      its(:pipe_source) { should be_nil }
       its('iterator.next') { should == v1 }
       its(:to_a) { should == [v1] }
     end
@@ -110,16 +103,16 @@ Run.all(:read_only) do
         r = r.out_e(:wrote) { |e| true }
         r = r.in_v
         r = r.is_not(:grem)
-        r.inspect.should ==
-          "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
+        r.inspect.should be_one_of "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>",
+                                   "#<GraphV -> V-Property(name==\"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
       end
     end
 
     describe '#to_a' do
-      it { Set[*graph.v].should == Set[*graph.vertices] }
-      it { Set[*(graph.v.to_a)].should == Set[*graph.vertices] }
-      it { Set[*graph.e].should == Set[*graph.edges] }
-      it { Set[*(graph.e.to_a)].should == Set[*graph.edges] }
+      it { Set[*graph.v].should == Set[*graph.getVertices] }
+      it { Set[*(graph.v.to_a)].should == Set[*graph.getVertices] }
+      it { Set[*graph.e].should == Set[*graph.getEdges] }
+      it { Set[*(graph.e.to_a)].should == Set[*graph.getEdges] }
     end
 
     describe '#root?' do
@@ -208,14 +201,9 @@ shared_examples_for Pacer::Core::Route do
     its(:vars) { should be_a(Hash) }
 
     describe '#from_graph?' do
-      context 'current graph' do
-        subject { route.from_graph? graph }
-        it { should be_true }
-      end
-      context 'other graph' do
-        subject { route.from_graph? graph2 }
-        it { should be_false }
-      end
+      subject { route }
+      it { should be_from_graph graph }
+      it { should_not be_from_graph graph2 }
     end
 
     describe '#each' do
