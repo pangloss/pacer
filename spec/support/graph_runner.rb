@@ -34,19 +34,11 @@ class Rspec::GraphRunner
     protected
 
     def replay_graph
-      return @replay_graph if @replay_graph
-      @replay_graph = Pacer::ReplayGraph.new
+      Pacer::ReplayGraph.new
     end
 
     def replay_graph2
-      return @replay_graph2 if @replay_graph2
-      @replay_graph2 = Pacer::ReplayGraph.new
-    end
-
-    def replay_graph_no_indices
-      return @replay_graph_no_indices if @replay_graph_no_indices
-      @replay_graph_no_indices = Pacer::ReplayGraph.new
-      @replay_graph_no_indices
+      Pacer::ReplayGraph.new
     end
   end
 
