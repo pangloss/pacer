@@ -110,7 +110,7 @@ module Pacer
     end
 
     def getPropertyKeys
-      @properties.keys
+      @properties.keys.to_hashset
     end
 
     def getProperty(key)
