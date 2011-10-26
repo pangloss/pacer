@@ -5,11 +5,7 @@ module Pacer
 
     include Graph
 
-    attr_reader :id_prefix
-
     def initialize
-      @graph_id = Pacer.next_graph_id
-      @id_prefix = "#{ @graph_id }:".freeze
       clear
     end
 
@@ -26,24 +22,17 @@ module Pacer
     end
 
     def addVertex(id)
-      if id.is_a? String and id[0, id_prefix.length] == id_prefix
+      if id
         v_id = id
-      elsif id
-        v_id = id_prefix + id.to_s
       else
         v_id = next_id
       end
-      pp [v_id, @vertices.keys]
       raise Pacer::ElementExists if @vertices.key? v_id
       @vertices[v_id] = vertex_class.new self, v_id
     end
 
     def getVertex(id)
-      if id.is_a? String and id[0, id_prefix.length] == id_prefix
-        @vertices[id]
-      else
-        @vertices[id_prefix + id.to_s]
-      end
+      @vertices[id]
     end
 
     def removeVertex(vertex)
@@ -104,11 +93,10 @@ module Pacer
     
     include GraphExtensions
 
-    private
+    protected
 
     def next_id
       @next_id += 1
-      id_prefix + @next_id.to_s
     end
   end
 
