@@ -37,7 +37,7 @@ module Pacer
     end
 
     def ==(other)
-      other == @target_graph or super
+      (@target_graph and other == @target_graph) or super
     end
   end
 
