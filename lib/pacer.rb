@@ -176,7 +176,6 @@ module Pacer
       Wrappers::VertexWrapper.clear_cache
       Wrappers::EdgeWrapper.clear_cache
       Route::Helpers.clear_cache
-      Filter::ExpressionFilter::Parser.reset
     end
 
     # Is the object a vertex?
