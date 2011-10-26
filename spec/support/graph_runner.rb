@@ -24,12 +24,11 @@ class Rspec::GraphRunner
   module ReplayGraph
     def all(usage_style = :read_write, indices = true, &block)
       super
-      replay(usage_style, &block)
+      replay(usage_style, indices, &block)
     end
 
-    def replay(usage_style = :read_write, indices = false, &block)
-      return unless use_graph? 'replay'
-      for_graph('replay', usage_style, false, true, replay_graph, replay_graph2, replay_graph_no_indices, block)
+    def replay(usage_style = :read_write, indices = true, &block)
+      for_graph('replay', usage_style, indices, false, replay_graph, replay_graph2, nil, block)
     end
 
     protected

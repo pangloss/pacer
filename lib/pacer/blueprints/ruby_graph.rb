@@ -5,8 +5,11 @@ module Pacer
 
     include Graph
 
+    attr_reader :id_prefix
+
     def initialize
       @graph_id = Pacer.next_graph_id
+      @id_prefix = "#{ @graph_id }:".freeze
       clear
     end
 
@@ -23,16 +26,24 @@ module Pacer
     end
 
     def addVertex(id)
-      if id
-        id = "#{ graph_id }:#{ id }"
+      if id.is_a? String and id[0, id_prefix.length] == id_prefix
+        v_id = id
+      elsif id
+        v_id = id_prefix + id.to_s
       else
-        id = next_id
+        v_id = next_id
       end
-      @vertices[id] = vertex_class.new self, id
+      pp [v_id, @vertices.keys]
+      raise Pacer::ElementExists if @vertices.key? v_id
+      @vertices[v_id] = vertex_class.new self, v_id
     end
 
     def getVertex(id)
-      @vertices[id]
+      if id.is_a? String and id[0, id_prefix.length] == id_prefix
+        @vertices[id]
+      else
+        @vertices[id_prefix + id.to_s]
+      end
     end
 
     def removeVertex(vertex)
@@ -45,6 +56,7 @@ module Pacer
 
     def addEdge(id, outVertex, inVertex, label)
       id ||= next_id
+      raise Pacer::ElementExists if @edges.key? id
       @edges[id] = edge_class.new self, id, outVertex, inVertex, label
     end
 
@@ -74,13 +86,29 @@ module Pacer
       other.equal? self
     end
 
+    def supports_custom_element_ids?
+      true
+    end
+
+    def supports_automatic_indices?
+      false
+    end
+
+    def supports_manual_indices?
+      false
+    end
+
+    def supports_edge_indices?
+      false
+    end
+    
     include GraphExtensions
 
     private
 
     def next_id
       @next_id += 1
-      "#{@graph_id}:#{@next_id}"
+      id_prefix + @next_id.to_s
     end
   end
 

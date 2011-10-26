@@ -112,12 +112,24 @@ shared_examples_for Pacer::GraphMixin do
       context 'and an id' do
         subject { graph.create_vertex 123, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
-        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+        its('element_id.to_s') do
+          if graph.respond_to? :id_prefix
+            should == graph.id_prefix + '123'
+          elsif graph.supports_custom_element_ids?
+            should == '123' 
+          end
+        end
 
         context 'and mixins' do
           subject { graph.create_vertex 123, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
-          its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+          its('element_id.to_s') do
+            if graph.respond_to? :id_prefix
+              should == graph.id_prefix + '123'
+            elsif graph.supports_custom_element_ids?
+              should == '123' 
+            end
+          end
           it_behaves_like 'a vertex with a mixin'
         end
       end
@@ -125,11 +137,23 @@ shared_examples_for Pacer::GraphMixin do
 
     context 'with an id' do
       subject { graph.create_vertex 123 }
-      its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+      its('element_id.to_s') do
+        if graph.respond_to? :id_prefix
+          should == graph.id_prefix + '123'
+        elsif graph.supports_custom_element_ids?
+          should == '123' 
+        end
+      end
 
       context 'and mixins' do
         subject { graph.create_vertex 123, Tackle::SimpleMixin }
-        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+        its('element_id.to_s') do
+          if graph.respond_to? :id_prefix
+            should == graph.id_prefix + '123'
+          elsif graph.supports_custom_element_ids?
+            should == '123' 
+          end
+        end
         it_behaves_like 'a vertex with a mixin'
       end
     end
@@ -247,6 +271,7 @@ shared_examples_for Pacer::GraphMixin do
 
   describe '#index_name' do
 
+
     it 'should have 2 indices' do
       graph.indices.count.should == 2 if graph.supports_automatic_indices?
     end
@@ -323,7 +348,9 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     it 'should return the same object each time' do
-      graph.index_name('vertices').should equal(graph.index_name('vertices'))
+      if graph.supports_manual_indices? or graph.supports_automatic_indices?
+        graph.index_name('vertices').should equal(graph.index_name('vertices'))
+      end
     end
   end
 
@@ -347,6 +374,7 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#index_class' do
+    around { |spec| spec.run if graph.respond_to? :index_class }
     subject { graph.index_class(:vertex) }
     specify 'should be the class the index returns when queried for index_class' do
       if graph.is_a? Pacer::DexGraph
