@@ -21,29 +21,51 @@ class Rspec::GraphRunner
     end
   end
 
-  module ReplayGraph
+  module RubyGraph
     def all(usage_style = :read_write, indices = true, &block)
       super
-      replay(usage_style, indices, &block)
+      rg(usage_style, indices, &block)
     end
 
-    def replay(usage_style = :read_write, indices = true, &block)
-      for_graph('replay', usage_style, indices, false, replay_graph, replay_graph2, nil, block)
+    def rg(usage_style = :read_write, indices = true, &block)
+      for_graph('rg', usage_style, indices, false, ruby_graph, ruby_graph2, nil, block)
     end
 
     protected
 
-    def replay_graph
-      Pacer::ReplayGraph.new
+    def ruby_graph
+      Pacer::RubyGraph.new
     end
 
-    def replay_graph2
-      Pacer::ReplayGraph.new
+    def ruby_graph2
+      Pacer::RubyGraph.new
+    end
+  end
+
+  module MultiGraph
+    def all(usage_style = :read_write, indices = true, &block)
+      super
+      multigraph(usage_style, indices, &block)
+    end
+
+    def multigraph(usage_style = :read_write, indices = true, &block)
+      for_graph('multigraph', usage_style, indices, false, multi_graph, multi_graph2, nil, block)
+    end
+
+    protected
+
+    def multi_graph
+      Pacer::MultiGraph.new
+    end
+
+    def multi_graph2
+      Pacer::MultiGraph.new
     end
   end
 
   include Tg
-  include ReplayGraph
+  include RubyGraph
+  include MultiGraph
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
