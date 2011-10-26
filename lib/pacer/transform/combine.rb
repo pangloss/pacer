@@ -1,15 +1,23 @@
 module Pacer
   module Routes
     module RouteOperations
-      def join(name, options = {}, &block)
-        args = { :transform => :join,
+      def join(name = nil, options = {}, &block)
+        args = {
+          :transform => :join,
           element_type: :vertex,
           graph: options.fetch(:multi_graph, Pacer::MultiGraph.new),
           from_graph: graph
         }
         args[:multi_graph] = options[:multi_graph] if options[:multi_graph]
-        route = chain_route(args).route.join(options.fetch(:key, :key)) { |v| v }
-        route.join(name, &block)
+        route = chain_route(args)
+        route = route.key { |v| v } unless name == :key
+        if block and name == :key
+          route.key &block
+        elsif block
+          route.join(name || :values, &block)
+        else
+          route
+        end
       end
 
       def collect_with(multigraph)
@@ -182,14 +190,10 @@ module Pacer
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.setStarts ArrayList.new.iterator
           from_pipe.setStarts(expando)
-          if from_pipe == to_pipe and to_pipe.is_a? Pacer::Pipes::IdentityPipe
-            cap_pipe = to_pipe
-          else
-            agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new LinkedList.new
-            cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
-            agg_pipe.setStarts to_pipe
-            cap_pipe.setStarts to_pipe
-          end
+          agg_pipe = com.tinkerpop.pipes.sideeffect.AggregatePipe.new LinkedList.new
+          cap_pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new agg_pipe
+          agg_pipe.setStarts to_pipe
+          cap_pipe.setStarts to_pipe
           [expando, cap_pipe]
         end
       end
@@ -200,12 +204,17 @@ module Pacer
       attr_writer :join_on
 
       def key(&block)
-        @key_route = block_route(block)
+        self.key_route = block_route(block)
         self
       end
 
-      def join(name, &block)
-        @values_routes << [name, block_route(block)]
+      def join(name = nil, &block)
+        self.key_route = nil if name == :key
+        if block
+          values_routes << [(name || :values), block_route(block)]
+        else
+          values_routes << [(name || :values), block_route(proc { |v| v })]
+        end
         self
       end
 

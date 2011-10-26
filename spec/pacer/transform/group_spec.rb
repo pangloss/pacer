@@ -3,37 +3,40 @@ require 'spec_helper'
 Run.tg :read_only do
   use_pacer_graphml_data :read_only
 
-  describe Pacer::Transform::Group do
+  describe Pacer::Transform::Join do
     context 'with no key or value specified' do
-      subject { graph.v.group }
+      subject { graph.v.join }
       its(:count) { should == 7 }
       specify 'each element should be a node' do
         subject.each do |group|
-          group.key.should be_a graph.element_type(:vertex)
-          group.values.length.should == 1
-          group.values.first.should be_a graph.element_type(:vertex)
+          group[:key].should be_a graph.element_type(:vertex)
+          group.property_keys.to_a.should == ['key']
         end
       end
     end
 
-    context 'with key_route' do
-      let(:route) { graph.v.group.key_route { |r| r[:type] } }
-      subject { route }
+    context 'with key_route only' do
+      subject { graph.v.join(:key) { |r| r[:type] } }
 
       its(:count) { should == 7 }
       its(:to_a) { should_not be_empty }
       specify 'each result should have one value' do
         subject.each do |group|
-          group.key.should be_a String
-          group.values.length.should == 1
-          group.values.first.should be_a graph.element_type(:vertex)
+          group[:key].should be_a String
+          group.property_keys.to_a.should == ['key']
         end
       end
+    end
+
+    context 'with key_route and value route' do
+      let(:route) { graph.v.join(:key) { |r| r[:type] }.join }
+      subject { route }
 
       specify 'each result should reflect an element' do
         subject.each.zip(graph.v.to_a) do |group, e|
-          group.key.should == e[:type]
-          group.values.first.element_id.should == e.element_id
+          group[:key].should == e[:type]
+          group.property_keys.to_set.should == Set['key', 'values']
+          group[:values].first.element_id.should == e.element_id
         end
       end
 
