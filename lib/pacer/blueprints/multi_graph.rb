@@ -42,10 +42,14 @@ module Pacer
     end
 
     def setProperty(key, value)
-      if value.is_a? Pacer::Vertex
+      case value
+      when Pacer::Vertex
         vertex_keys << key.to_s
         super
-      elsif value.is_a? Enumerable
+      when Hash
+        vertex_keys.delete key.to_s
+        super
+      when Enumerable
         values = value.to_a
         if values.all? { |v| v.is_a? Pacer::Vertex }
           vertex_keys << key.to_s
