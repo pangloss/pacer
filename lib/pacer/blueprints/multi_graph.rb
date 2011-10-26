@@ -51,7 +51,7 @@ module Pacer
         super
       when Enumerable
         values = value.to_a
-        if values.all? { |v| v.is_a? Pacer::Vertex }
+        if values.any? and values.all? { |v| v.is_a? Pacer::Vertex }
           vertex_keys << key.to_s
         end
         super(key, values)
@@ -59,6 +59,22 @@ module Pacer
         vertex_keys.delete key.to_s
         super
       end
+    end
+
+    def append_property_array(key, value)
+      values = value.to_a
+      existing_values = getProperty(key)
+      if existing_values
+        if vertex_keys.include? key and not values.all? { |v| v.is_a? Pacer::Vertex }
+          vertex_keys.delete key.to_s
+        end
+        raise "Can't append to key #{ key } because it is not an Array" unless existing_values.is_a? Array
+      else
+        existing_values = []
+        setProperty(key, existing_values)
+        vertex_keys << key.to_s if values.all? { |v| v.is_a? Pacer::Vertex }
+      end
+      existing_values.concat values
     end
 
     def removeProperty(key)

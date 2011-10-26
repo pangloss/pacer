@@ -144,11 +144,16 @@ module Pacer
               self.current_keys = get_keys(element)
               self.current_values = get_values(element) unless current_keys.empty?
             else
-              combined = multi_graph.create_vertex
+              key = current_keys.removeFirst
+              if key
+                combined = multi_graph.send(:getVertex, key) || multi_graph.send(:addVertex, key)
+              else
+                combined = multi_graph.send(:addVertex, nil)
+              end
               combined.join_on join_on if join_on
-              combined[:key] = current_keys.removeFirst
+              combined[:key] = key
               current_values.each do |key, values|
-                combined[key] = values
+                combined.append_property_array key, values
               end
               return combined
             end
