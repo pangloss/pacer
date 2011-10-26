@@ -397,6 +397,7 @@ shared_examples_for Pacer::GraphMixin do
 
     it 'should not load the data into a graph with conflicting vertex ids' do
       if graph.supports_custom_element_ids?
+        graph.create_vertex 0 unless graph.vertex 0
         expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
