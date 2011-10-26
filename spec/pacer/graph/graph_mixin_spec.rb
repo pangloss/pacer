@@ -110,24 +110,24 @@ shared_examples_for Pacer::GraphMixin do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_vertex 123, :name => 'Steve' }
+        subject { graph.create_vertex 1234, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '123'
+            should == graph.id_prefix + '1234'
           elsif graph.supports_custom_element_ids?
-            should == '123' 
+            should == '1234' 
           end
         end
 
         context 'and mixins' do
-          subject { graph.create_vertex 123, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_vertex 1234, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its('element_id.to_s') do
             if graph.respond_to? :id_prefix
-              should == graph.id_prefix + '123'
+              should == graph.id_prefix + '1234'
             elsif graph.supports_custom_element_ids?
-              should == '123' 
+              should == '1234' 
             end
           end
           it_behaves_like 'a vertex with a mixin'
@@ -136,22 +136,22 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     context 'with an id' do
-      subject { graph.create_vertex 123 }
+      subject { graph.create_vertex 1234 }
       its('element_id.to_s') do
         if graph.respond_to? :id_prefix
-          should == graph.id_prefix + '123'
+          should == graph.id_prefix + '1234'
         elsif graph.supports_custom_element_ids?
-          should == '123' 
+          should == '1234' 
         end
       end
 
       context 'and mixins' do
-        subject { graph.create_vertex 123, Tackle::SimpleMixin }
+        subject { graph.create_vertex 1234, Tackle::SimpleMixin }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '123'
+            should == graph.id_prefix + '1234'
           elsif graph.supports_custom_element_ids?
-            should == '123' 
+            should == '1234' 
           end
         end
         it_behaves_like 'a vertex with a mixin'
@@ -184,30 +184,30 @@ shared_examples_for Pacer::GraphMixin do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_edge 123, from, to, :connects, :name => 'Steve' }
+        subject { graph.create_edge 1234, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+        its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
 
         context 'and mixins' do
-          subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+          its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
           it_behaves_like 'an edge with a mixin'
         end
       end
     end
 
     context 'with an id' do
-      subject { graph.create_edge 123, from, to, :connects }
+      subject { graph.create_edge 1234, from, to, :connects }
       its(:label) { should == 'connects' }
-      its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+      its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
 
       context 'and mixins' do
-        subject { graph.create_edge 123, from, to, :connects, Tackle::SimpleMixin }
+        subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 123 if graph.supports_custom_element_ids? }
+        its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
         it_behaves_like 'an edge with a mixin'
       end
     end
