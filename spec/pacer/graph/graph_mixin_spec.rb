@@ -3,7 +3,7 @@ require 'spec_helper'
 shared_examples_for 'an edge with a mixin' do
   its(:route_mixin_method) { should be_true }
   its(:edge_mixin_method) { should be_true }
-  it 'should not inclued the Vertex module' do
+  it 'should not include the Vertex module' do
     expect { subject.vertex_mixin_method }.to raise_error(NoMethodError)
   end
 end
@@ -11,7 +11,7 @@ end
 shared_examples_for 'a vertex with a mixin' do
   its(:route_mixin_method) { should be_true }
   its(:vertex_mixin_method) { should be_true }
-  it 'should not inclued the Edge module' do
+  it 'should not include the Edge module' do
     expect { subject.edge_mixin_method }.to raise_error(NoMethodError)
   end
 end
@@ -397,7 +397,7 @@ shared_examples_for Pacer::GraphMixin do
 
     it 'should not load the data into a graph with conflicting vertex ids' do
       if graph.supports_custom_element_ids?
-        graph.create_vertex 0 unless graph.vertex 0
+        graph.create_vertex '0' unless graph.vertex '0'
         expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
