@@ -16,6 +16,7 @@ Run.tg(:read_only) do
       end
 
       describe 'with a range' do
+        before { pending }
         let(:start) { graph.vertex(0).v }
         subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
 

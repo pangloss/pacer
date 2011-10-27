@@ -69,13 +69,13 @@ shared_examples_for Pacer::VertexMixin do
   subject { v0 }
   its(:graph) { should equal(graph) }
   its(:display_name) { should be_nil }
-  its(:inspect) { should == "#<V[#{v0.element_id}]>" }
+  its(:inspect) { should =~ /#<[VM]\[#{v0.element_id}\]>/ }
   context 'with label proc' do
     before do
       graph.vertex_name = proc { |e| "some name" }
     end
     its(:display_name) { should == "some name" }
-    its(:inspect) { should == "#<V[#{ v0.element_id }] some name>" }
+    its(:inspect) { should =~ /#<[VM]\[#{ v0.element_id }\] some name>/ }
   end
   it { should_not == v1 }
   it { should == v0 }

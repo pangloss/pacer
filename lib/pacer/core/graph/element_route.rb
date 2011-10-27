@@ -82,7 +82,7 @@ module Pacer::Core::Graph
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|
-            prop_or_subset.collect { |i| element.get_property(i.to_s) }
+            prop_or_subset.collect { |i| element.getProperty(i.to_s) }
           end
         end
       end

@@ -11,3 +11,9 @@ module RSpec
     end
   end
 end
+
+RSpec::Matchers.define :be_one_of do |*list|
+  match do |item|
+    list.include? item
+  end
+end

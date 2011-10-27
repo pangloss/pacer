@@ -248,6 +248,11 @@ module Pacer
       @open_graphs
     end
 
+    def next_graph_id
+      @next_graph_id = 0 unless defined? @next_graph_id
+      @next_graph_id += 1
+    end
+
     # Tell pacer to record that we're starting a graph.
     #
     # @param [Class] type type of graph

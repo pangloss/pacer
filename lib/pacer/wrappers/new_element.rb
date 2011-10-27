@@ -65,9 +65,10 @@ module Pacer::Wrappers
     alias in_edges getInEdges
     alias get_in_edges getInEdges
 
-    def raw_vertex
+    def getRawVertex
       self
     end
+    alias raw_vertex getRawVertex
   end
 
   class NewEdge < NewElement
@@ -97,8 +98,9 @@ module Pacer::Wrappers
     alias set_label setLabel
     alias label= setLabel
 
-    def raw_edge
+    def getRawEdge
       self
     end
+    alias raw_edge getRawEdge
   end
 end
