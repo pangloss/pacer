@@ -122,33 +122,31 @@ describe RouteOperations do
   end
 
   describe '#repeat' do
-    pending 'switch to using loop'
+    it 'should apply the route part twice' do
+      route = @g.v.repeat(2) { |tail| tail.out_e.in_v }.inspect
+      route.should == @g.v.out_e.in_v.out_e.in_v.inspect
+    end
 
-    #it 'should apply the route part twice' do
-    #  route = @g.v.repeat(2) { |tail| tail.out_e.in_v }.inspect
-    #  route.should == @g.v.out_e.in_v.out_e.in_v.inspect
-    #end
+    it 'should apply the route part 3 times' do
+      route = @g.v.repeat(3) { |tail| tail.out_e.in_v }.inspect
+      route.should == @g.v.out_e.in_v.out_e.in_v.out_e.in_v.inspect
+    end
 
-    #it 'should apply the route part 3 times' do
-    #  route = @g.v.repeat(3) { |tail| tail.out_e.in_v }.inspect
-    #  route.should == @g.v.out_e.in_v.out_e.in_v.out_e.in_v.inspect
-    #end
+    describe 'with a range' do
+      let(:start) { @g.vertex(0).v }
+      subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
 
-    #describe 'with a range' do
-    #  let(:start) { @g.vertex(0).v }
-    #  subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
+      it 'should be equivalent to executing each path separately' do
+        subject.to_a.should == [start.out_e.in_v.first,
+                                start.out_e.in_v.out_e.in_v.first,
+                                start.out_e.in_v.out_e.in_v.out_e.in_v.first]
+      end
 
-    #  it 'should be equivalent to executing each path separately' do
-    #    subject.to_a.should == [start.out_e.in_v.first,
-    #                            start.out_e.in_v.out_e.in_v.first,
-    #                            start.out_e.in_v.out_e.in_v.out_e.in_v.first]
-    #  end
-
-    #  #it { should be_a(BranchedRoute) }
-    #  its(:back) { should be_a_vertices_route }
-    #  its('back.pipe_class') { should == Pacer::Pipes::IdentityPipe }
-    #  its('back.back') { should be_nil }
-    #end
+      #it { should be_a(BranchedRoute) }
+      its(:back) { should be_a_vertices_route }
+      its('back.pipe_class') { should == Pacer::Pipes::IdentityPipe }
+      its('back.back') { should be_nil }
+    end
   end
 
   describe :delete! do

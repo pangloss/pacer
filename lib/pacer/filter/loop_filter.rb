@@ -2,24 +2,57 @@ module Pacer
   module Core
     module Route
       def loop(&block)
-        chain_route :looping_route => block
+        chain_route :filter => :loop, :looping_route => block
+      end
+
+      # Apply the given path fragment multiple times in succession. If a Range
+      # or Array of numbers is given, the results are a combination of the
+      # results from all of the specified repetition levels. That is useful if
+      # a pattern may be nested to varying depths.
+      def repeat(arg, &block)
+        case arg
+        when Fixnum
+          range = arg..arg
+          arg.to_enum(:times).inject(self) do |route_end, count|
+            yield route_end
+          end
+        when Range 
+          warn 'repeat with range may not work as expected'
+          if arg.exclude_end?
+            range = arg.begin..(arg.end - 1)
+          else
+            range = arg
+          end
+          r = self.loop(&block).while do |e, depth, p|
+            if depth < range.begin
+              :loop
+            elsif depth < range.end
+              :loop_and_emit
+            elsif depth == range.end
+              :emit
+            else
+              false
+            end
+          end
+          r.while_description = "repeat #{ arg.inspect }"
+          r
+        else
+          raise "Invalid repeat range"
+        end
       end
     end
   end
 
   module ElementMixin
     def loop(&block)
-      chain_route :looping_route => block
+      chain_route :filter => :loop, :looping_route => block
     end
   end
 
   module Filter
     module LoopFilter
-      def self.triggers
-        [:looping_route]
-      end
-
       attr_reader :looping_route
+      attr_accessor :while_description
 
       def looping_route=(route)
         if route.is_a? Proc
@@ -52,7 +85,12 @@ module Pacer
       end
 
       def inspect_string
-        "#{ inspect_class_name }(#{ @looping_route.inspect })"
+        s = "#{ inspect_class_name }(#{ @looping_route.inspect })"
+        if while_description
+          "#{ s }(#{ while_description })"
+        else
+          s
+        end
       end
     end
   end
