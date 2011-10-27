@@ -17,7 +17,6 @@ module Pacer
             yield route_end
           end
         when Range 
-          warn 'repeat with range may not work as expected'
           if arg.exclude_end?
             range = arg.begin..(arg.end - 1)
           else
