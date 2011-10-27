@@ -47,14 +47,18 @@ Run.tg(:read_only) do
 
   describe Pacer::Filter::FutureFilter, '(negative)' do
     context 'artists who did not write songs' do
-      let(:people) do
+      def people
         [ "Daryl_Hall",
           "Hall_and_Oates",
           "Peter_Krug"
         ].to_route.map(:graph => graph, :element_type => :vertex) { |name| graph.v(:name => name).first }
       end
-      let(:wrote_songs) { people.lookahead     { |v| v.in_e(:written_by) } }
-      let(:no_songs) { people.neg_lookahead { |v| v.in_e(:written_by) } }
+      def wrote_songs
+        people.lookahead { |v| v.in_e(:written_by) }
+      end
+      def no_songs
+        people.neg_lookahead { |v| v.in_e(:written_by) }
+      end
 
       it 'should have a non songwriting artist' do
         no_songs.count.should == 1
