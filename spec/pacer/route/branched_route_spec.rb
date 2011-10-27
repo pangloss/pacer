@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe BranchedRoute do
+describe Pacer::Transform::Branch do
   before :all do
     @g = Pacer.tg 'spec/data/pacer.graphml'
     @br = @g.v(:type => 'person').
@@ -11,7 +11,7 @@ describe BranchedRoute do
   describe '#inspect' do
     it 'should include both branches when inspecting' do
       @br.inspect.should ==
-        "#<V-Index(type: \"person\") -> Branched { #<V -> outE -> inV -> V-Property(type==\"project\")> | #<V -> outE -> inV -> outE> }>"
+        "#<V-Index(type: \"person\") -> Elem-Branch { #<V -> outE -> inV -> V-Property(type==\"project\")> | #<V -> outE -> inV -> outE> }>"
     end
   end
 
@@ -29,7 +29,7 @@ describe BranchedRoute do
         @g.edge(3), @g.edge(2), @g.edge(4), @g.edge(6), @g.edge(5), @g.edge(7)]
   end
 
-  it { @br.branch_count.should == 2 }
+  it { @br.branches.count.should == 2 }
   it { @br.should_not be_root }
 
   describe '#mixed' do
@@ -43,7 +43,7 @@ describe BranchedRoute do
       @ab = @linear.create_edge nil, @a, @b, 'to'
       @bc = @linear.create_edge nil, @b, @c, 'to'
       @cd = @linear.create_edge nil, @c, @d, 'to'
-      @source = Pacer::Route.from_vertex_ids @linear, ['a', 'b']
+      @source = %w[a b].id_to_element_route(based_on: @linear.v)
 
       single = @source.branch { |v| v.out_e.in_v }.branch { |v| v.out_e.in_v }
       @single_v = single.v
@@ -112,7 +112,7 @@ describe BranchedRoute do
 
   describe 'route with a custom split pipe' do
     before do
-      @r = @g.v.branch { |person| person.v{true} }.branch { |project| project.v{true} }.branch { |other| other.out_e }.split_pipe(Tackle::TypeSplitPipe).mixed
+      @r = @g.v.branch(split_pipe: Tackle::TypeSplitPipe) { |person| person.v{true} }.branch { |project| project.v{true} }.branch { |other| other.out_e }.mixed
     end
 
     describe 'vertices' do
@@ -140,9 +140,9 @@ describe BranchedRoute do
         @project = 0
         @other = 0
         vertices_path.
-          branch { |person| person.v { |x| @person += 1; true }.out_e.in_v }.
+          branch(split_pipe: Tackle::TypeSplitPipe) { |person| person.v { |x| @person += 1; true }.out_e.in_v }.
           branch { |project| project.v { |x| @project += 1;true} }.
-          branch { |other| other.v { |x| @other += 1;true}.out_e.in_v }.split_pipe(Tackle::TypeSplitPipe).v
+          branch { |other| other.v { |x| @other += 1;true}.out_e.in_v }.v
       end
 
       it 'should have elements' do
@@ -200,17 +200,17 @@ describe BranchedRoute do
       ##<E[99598]:2648-dependency-3363> #<V[2471]>                       #<E[99577]:5753-dependency-3363>
       ##<V[2959]>                       #<E[99568]:1730-dependency-3363>
       #Total: 32
-      #=> #<Vertices([{:type=>"nt"}]) -> Edges(OUT_EDGES, &block) -> Branched { #<E -> Vertices(OUT_VERTEX)> | #<E -> Vertices(IN_VERTEX) -> Edges(IN_EDGES)> }>
+      #=> #<Vertices([{:type=>"nt"}]) -> Edges(OUT_EDGES, &block) -> Elem-Branch { #<E -> Vertices(OUT_VERTEX)> | #<E -> Vertices(IN_VERTEX) -> Edges(IN_EDGES)> }>
       #>> g.v(:type => 'nt').out_e { |e| e.label != 'contained' }.branch { |b| b.out_v }.branch { |b| b.in_v.in_e }.exhaustive
       ##<V[100]>  #<V[133]>  #<V[255]>  #<V[267]>  #<V[296]>  #<V[316]>  #<V[341]>  #<V[368]>  #<V[379]>  #<V[389]>
       ##<V[404]>  #<V[406]>  #<V[1730]> #<V[2471]> #<V[2471]> #<V[2959]>
       #Total: 16
-      #=> #<Vertices([{:type=>"nt"}]) -> Edges(OUT_EDGES, &block) -> Branched { #<E -> Vertices(OUT_VERTEX)> | #<E -> Vertices(IN_VERTEX) -> Edges(IN_EDGES)> }>
+      #=> #<Vertices([{:type=>"nt"}]) -> Edges(OUT_EDGES, &block) -> Elem-Branch { #<E -> Vertices(OUT_VERTEX)> | #<E -> Vertices(IN_VERTEX) -> Edges(IN_EDGES)> }>
     end
   end
 end
 
-for_tg(:read_only) do
+Run.tg(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   describe 'chained branch routes' do
