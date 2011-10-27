@@ -121,36 +121,6 @@ module Pacer
         self
       end
 
-      # Iterates over each element resulting from traversing the route
-      # up to this point. Extends each element with
-      # {Extensions::BlockFilterElement} to make route context
-      # available.
-      #
-      # @todo move with graph-specific code or make more general.
-      #
-      # @yield [ElementMixin(Extensions::BlockFilterElement)] if a block is given
-      # @return [Enumerator(IteratorContextMixin)] if no block is given
-      def each_context
-        iter = iterator
-        if block_given?
-          g = graph
-          while true
-            item = iter.next
-            item.graph ||= g
-            item.extend Pacer::Extensions::BlockFilterElement
-            item.back = self
-            yield item
-          end
-        else
-          iter.extend IteratorContextMixin
-          iter.graph = graph
-          iter.context = self
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
       # Returns a single use pipe iterator based on this route.
       #
       # @yield [java.util.Iterator] the pipe. Very useful because this method will catch the pipe's java.util.NoSuchElementException when iteration is finished.

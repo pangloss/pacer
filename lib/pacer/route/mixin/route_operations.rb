@@ -5,10 +5,6 @@ module Pacer::Routes
   module RouteOperations
     include BulkOperations
 
-    def context
-      ContextRoute.new(self)
-    end
-
     # Return elements based on a bias:1 chance.
     #
     # If given an integer (n) > 0, bias is calcualated at 1 / n.
