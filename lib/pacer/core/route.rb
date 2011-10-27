@@ -102,13 +102,12 @@ module Pacer
         end
       end
 
-      # Iterates over each element resulting from traversing the route up to this point.
-      #
-      # @todo move with graph-specific code or make more general.
+      # Iterates over each element or object resulting from traversing the
+      # route up to this point.
       #
       # @yield [item] if a block is given
       # @return [Enumerator] if no block is given
-      def each_element
+      def each
         iter = iterator
         configure_iterator(iter)
         if block_given?
@@ -146,24 +145,6 @@ module Pacer
           iter.extend IteratorContextMixin
           iter.graph = graph
           iter.context = self
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      # Iterates over each object resulting from traversing the route up
-      # to this point.
-      #
-      # @yield [Object] if a block is given
-      # @return [Enumerator] if no block is given
-      def each_object
-        iter = iterator
-        if block_given?
-          while true
-            yield iter.next
-          end
-        else
           iter
         end
       rescue java.util.NoSuchElementException
@@ -358,21 +339,9 @@ module Pacer
         end
       end
 
-      # Determines which iterator mixin is applied to the iterator when #each is called
+      # Overridden to extend the iterator to apply mixins
+      # or wrap elements
       def configure_iterator(iter)
-        if wrapper
-          iter.extend IteratorWrapperMixin
-          iter.wrapper = wrapper
-          iter.extensions = @extensions if @extensions.any?
-          iter.graph = graph
-        elsif extensions and extensions.any?
-          iter.extend IteratorExtensionsMixin
-          iter.extensions = extensions 
-          iter.graph = graph
-        else
-          iter.extend IteratorMixin
-          iter.graph = graph
-        end
       end
 
       def get_section_route(name)

@@ -173,7 +173,6 @@ module Pacer
       @extensions = Set[]
       self.graph = args[:graph]
       self.back = args[:back]
-      @each_method = nil
       include_function args
       set_element_type args
       include_other_modules args
@@ -204,26 +203,11 @@ module Pacer
           extend Pacer::Core::Graph::EdgesRoute
         elsif @element_type == graph.element_type(:mixed)
           extend Pacer::Core::Graph::MixedRoute
-        else
-          @each_method = :each_object
         end
       elsif et == :object or et == Object
         @element_type = Object
-        @each_method = :each_object
       else
         raise "Element type #{ et.inspect } specified, but no graph specified."
-      end
-    end
-
-    # Iterate over all elements emitted from this route.
-    #
-    # @yield [element] the emitted element
-    # @return [Enumerator] only if no block is given.
-    def each(&block)
-      if @each_method
-        send(@each_method, &block)
-      else
-        each_element(&block)
       end
     end
 
