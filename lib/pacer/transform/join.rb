@@ -131,16 +131,16 @@ module Pacer
       attr_writer :join_on
 
       def key(&block)
-        self.key_route = block_route(block)
+        self.key_route = Pacer::Route.block_branch(self, block)
         self
       end
 
       def join(name = nil, &block)
         self.key_route = nil if name == :key
         if block
-          values_routes << [(name || :values), block_route(block)]
+          values_routes << [(name || :values), Pacer::Route.block_branch(self, block)]
         else
-          values_routes << [(name || :values), block_route(proc { |v| v })]
+          values_routes << [(name || :values), Pacer::Route.block_branch(self, proc { |v| v })]
         end
         self
       end
@@ -170,23 +170,6 @@ module Pacer
         end
         pipe.setStarts end_pipe if end_pipe
         pipe
-      end
-
-      def block_route(block)
-        empty = Pacer::Route.empty(self)
-        route = block.call(empty) rescue nil
-        if route == empty
-          identity_route.route
-        elsif route.is_a? Pacer::Route
-          route.route
-        else
-          empty.map(&block).route
-        end
-      end
-
-      def identity_route
-        Pacer::Route.empty(self).chain_route(:pipe_class => Pacer::Pipes::IdentityPipe,
-                                             :route_name => '@').route
       end
 
       def inspect_string

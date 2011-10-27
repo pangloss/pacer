@@ -55,8 +55,7 @@ module Pacer
 
       def looping_route=(route)
         if route.is_a? Proc
-          empty = Pacer::Route.new :filter => :empty, :back => self
-          @looping_route = route.call(empty)
+          @looping_route = Pacer::Route.block_branch(self, route)
         else
           @looping_route = route
         end

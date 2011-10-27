@@ -15,6 +15,34 @@ module Pacer
       def empty(back)
         Pacer::Route.new :filter => :empty, :back => back
       end
+
+      def block_branch(back, block, branch_start = nil)
+        if block.arity == 1
+          unless branch_start
+            if back.is_a? Pacer::Graph 
+              branch_start = back
+            else
+              branch_start = Pacer::Route.empty(back)
+            end
+          end
+          route = block.call(branch_start) rescue nil
+        else
+          route = block.call rescue nil
+        end
+        if route == branch_start
+          identity_branch(back).route
+        elsif route.is_a? Pacer::Route
+          route.route
+        else
+          empty.map(&block).route
+        end
+      end
+
+      def identity_branch(back)
+        Pacer::Route.empty(back).chain_route(:pipe_class => Pacer::Pipes::IdentityPipe,
+                                             :route_name => '@').route
+      end
+
     end
   end
 
