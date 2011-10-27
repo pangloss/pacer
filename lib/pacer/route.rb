@@ -26,7 +26,6 @@ module Pacer
       class << self
         def clear_cache
           @filter_map = nil
-          @trigger_map = nil
           @side_effect_map = nil
           @transform_map = nil
         end
@@ -41,22 +40,6 @@ module Pacer
 
         def transform_map
           @transform_map ||= Pacer::Transform.constants.group_by { |name| symbolize_module_name(name) }
-        end
-
-        def trigger_map
-          return @trigger_map if @trigger_map
-          @trigger_map = {}
-          [Pacer::Filter, Pacer::SideEffect, Pacer::Transform].each do |base_module|
-            base_module.constants.each do |name|
-              mod = base_module.const_get(name)
-              if mod.respond_to? :triggers
-                [*mod.triggers].each do |trigger|
-                  @trigger_map[trigger] = mod
-                end
-              end
-            end
-          end
-          @trigger_map
         end
 
         def symbolize_module_name(name)
@@ -233,14 +216,6 @@ module Pacer
         mod_names = Route::Helpers.transform_map[transform.to_sym]
         if mod_names
           @function = Pacer::Transform.const_get(mod_names.first)
-        end
-      else
-        args.each_key do |key|
-          mod = Route::Helpers.trigger_map[key]
-          if mod
-            @function = mod
-            break
-          end
         end
       end
       self.extend function if function

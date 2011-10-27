@@ -29,10 +29,6 @@ module Pacer
 
       attr_reader :var, :comparison, :ids, :objects
 
-      def self.triggers
-        [:except, :only]
-      end
-
       def except=(collection)
         self.collection = collection
         @comparison = Pacer::Pipes::NOT_EQUAL

@@ -66,10 +66,6 @@ module Pacer
       #import com.tinkerpop.pipes.filter.LabelCollectionFilterPipe
       import com.tinkerpop.pipes.filter.PropertyFilterPipe
 
-      def self.triggers
-        [:filters]
-      end
-
       def filters=(f)
         if f.is_a? Filters
           @filters = f

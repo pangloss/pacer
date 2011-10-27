@@ -1,10 +1,6 @@
 module Pacer
   module Filter
     module IndexFilter
-      def self.triggers
-        [:index]
-      end
-
       attr_accessor :index, :key, :value
 
       def count

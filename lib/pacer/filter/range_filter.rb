@@ -24,10 +24,6 @@ module Pacer
 
   module Filter
     module RangeFilter
-      def self.triggers
-        [:range]
-      end
-
       def limit(n = nil)
         @limit = n
         if range.begin == -1
