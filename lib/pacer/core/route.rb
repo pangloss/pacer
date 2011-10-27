@@ -151,8 +151,12 @@ module Pacer
         self
       end
 
-      def pipe(iterator_method = :each)
-        iterator = send(iterator_method) 
+      # Returns a single use pipe iterator based on this route.
+      #
+      # @yield [java.util.Iterator] the pipe. Very useful because this method will catch the pipe's java.util.NoSuchElementException when iteration is finished.
+      # @return [java.util.Iterator] the pipe.
+      def pipe
+        iterator = each
         yield iterator if block_given?
         iterator
       rescue java.util.NoSuchElementException
