@@ -1,3 +1,6 @@
+require "rubygems"
+require "bundler"
+Bundler.setup(:default, :development)
 require 'rspec'
 require 'pacer'
 require 'set'
@@ -20,7 +23,7 @@ end
 require 'pacer-neo4j'
 require 'pacer-dex'
 
-Run = Rspec::GraphRunner.new ENV['GRAPHS']
+Run = RSpec::GraphRunner.new ENV['GRAPHS']
 
 def use_simple_graph_data
   let(:setup_data) { e0; e1 }

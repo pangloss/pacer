@@ -1,4 +1,4 @@
-class Rspec::GraphRunner
+class RSpec::GraphRunner
   module Tg
     def all(usage_style = :read_write, indices = true, &block)
       tg(usage_style, indices, &block)
