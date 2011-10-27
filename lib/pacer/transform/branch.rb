@@ -88,6 +88,7 @@ module Pacer
 
       def attach_pipe(source_pipe)
         first_branch_pipe = nil
+        need_pipeline = false
         branch_pipes = []
         all_branch_pipes = []
         branches.map do |route, use_split|
@@ -104,12 +105,23 @@ module Pacer
         if branch_pipes.any?
           split = split_pipe.new branch_pipes
           first_branch_pipe.setStarts split
-          split.set_starts source_pipe if source_pipe
+          if source_pipe
+            split.setStarts source_pipe 
+          else
+            need_pipeline = true
+          end
         elsif first_branch_pipe
           first_branch_pipe.setStarts source_pipe if source_pipe
         end
-        if all_branch_pipes.any?
-          merge_pipe.new all_branch_pipes
+        if all_branch_pipes.count > 1
+          merged = merge_pipe.new all_branch_pipes
+          if need_pipeline
+            Pacer::Pipes::BlackboxPipeline.new split, merged
+          else
+            merged
+          end
+        elsif all_branch_pipes.any?
+          all_branch_pipes.first
         else
           source_pipe
         end
