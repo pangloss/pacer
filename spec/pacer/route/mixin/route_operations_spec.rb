@@ -91,26 +91,6 @@ describe RouteOperations do
     @g = Pacer.tg 'spec/data/pacer.graphml'
   end
 
-  describe '#uniq' do
-    it 'should be a route' do
-      @g.v.uniq.should be_an_instance_of(Pacer::Route)
-    end
-
-    it 'results should be unique' do
-      @g.e.in_v.group_count(:name).values.sort.last.should > 1
-      @g.e.in_v.uniq.group_count(:name).values.sort.last.should == 1
-    end
-  end
-
-  describe '#random' do
-    it { Set[*@g.v.random(1)].should == Set[*@g.v] }
-    it { @g.v.random(0).to_a.should == [] }
-    it 'should have some number of elements more than 1 and less than all' do
-      range = 1..(@g.v.count - 1)
-      range.should include(@g.v.random(0.5).count)
-    end
-  end
-
   describe '#as' do
     it 'should set the variable to the correct node' do
       vars = Set[]
