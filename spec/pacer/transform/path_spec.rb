@@ -28,7 +28,8 @@ describe Pacer::Transform::Path do
 
   describe '#transpose' do
     it 'should return the paths between people and projects' do
-      Set[*@g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose].should ==
+      transposed = @g.v(:type => 'person').out_e.in_v(:type => 'project').paths.transpose
+      Set[*transposed].should ==
         Set[[@g.vertex(0), @g.vertex(5), @g.vertex(5), @g.vertex(5)],
             [@g.edge(0), @g.edge(1), @g.edge(13), @g.edge(12)],
             [@g.vertex(1), @g.vertex(4), @g.vertex(2), @g.vertex(3)]]

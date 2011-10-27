@@ -41,7 +41,6 @@ module Pacer
 
       def configure_iterator(iter)
         if respond_to? :graph
-          puts 'set up iterator'
           iter.extend Pacer::Core::Route::IteratorPathMixin
           iter.graph = graph
         end

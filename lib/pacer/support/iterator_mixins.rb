@@ -37,8 +37,7 @@ module Pacer::Core::Route
     attr_accessor :graph
 
     def next
-      super
-      path.collect do |e|
+      super.collect do |e|
         e.graph ||= @graph if e.respond_to? :graph=
         e
       end
