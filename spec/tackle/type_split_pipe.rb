@@ -1,26 +1,27 @@
 module Tackle
-  class TypeSplitPipe < com.tinkerpop.pipes.split.AbstractSplitPipe
-    field_reader :splits
+  import com.tinkerpop.pipes.branch.CopySplitPipe
 
-    def initialize(count)
-      super(3)
-    end
+  class TypeSplitPipe < CopySplitPipe
+    field_reader :pipes
+    field_reader :pipeStarts
 
-    def route=(r)
-      @route = r
-    end
-
-    def routeNext
-      if self.hasNext
-        element = self.next
+    def processNextStart
+      while true
+        element = starts.next
         case element[:type]
         when 'person'
-          splits.get(0).add(element)
+          return element
         when 'project'
-          splits.get(1).add(element)
+          pipeStarts[0].add(element)
         else
-          splits.get(2).add(element)
+          pipeStarts[1].add(element)
         end
+      end
+    rescue NativeException => e
+      if e.cause.getClass == Pacer::NoSuchElementException.getClass
+        raise e.cause
+      else
+        raise e
       end
     end
   end
