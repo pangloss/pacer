@@ -124,10 +124,10 @@ module Pacer
       raise
     end
 
+    protected
+
     # Set the element type of this route and include the apropriate
     # mixin to support the element type.
-    #
-    # TODO should this method be protected?
     #
     # @param [:vertex, :edge, :mixed, element type, Object] et the
     #   element type to use
@@ -147,8 +147,6 @@ module Pacer
         raise "Element type #{ et.inspect } specified, but no graph specified."
       end
     end
-
-    protected
 
     # This callback may be overridden. Be sure to call super() though.
     # @return ignored
