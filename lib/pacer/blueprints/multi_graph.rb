@@ -106,6 +106,16 @@ module Pacer
       end
     end
 
+    def inspect
+      s = super
+      s[2] = 'M'
+      s
+    end
+
+    def to_s
+      "m[#{ element_id }]"
+    end
+
     include VertexExtensions
   end
 end
