@@ -68,6 +68,16 @@ module Pacer
         chain_route(pipe_class: Pacer::Pipes::IdentityPipe)
       end
 
+      def exhaustive
+        @merge_pipe = ExhaustMergePipe
+        self
+      end
+
+      def fair
+        @merge_pipe = FairMergePipe
+        self
+      end
+
       protected
 
       def after_initialize
@@ -104,10 +114,10 @@ module Pacer
           source_pipe
         end
       end
-    end
 
-    def inspect_string
-      "#{inspect_class_name} { #{ branches.collect { |r, _| r.inspect }.join(' | ') } }"
+      def inspect_string
+        "#{inspect_class_name} { #{ branches.collect { |r, _| r.inspect }.join(' | ') } }"
+      end
     end
   end
 end
