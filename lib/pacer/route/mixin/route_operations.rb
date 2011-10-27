@@ -5,22 +5,6 @@ module Pacer::Routes
   module RouteOperations
     include BulkOperations
 
-    def paths
-      PathsRoute.new(self)
-    end
-
-    def context
-      ContextRoute.new(self)
-    end
-
-    # Return elements based on a bias:1 chance.
-    #
-    # If given an integer (n) > 0, bias is calcualated at 1 / n.
-    def random(bias = 0.5)
-      bias = 1 / bias.to_f if bias.is_a? Fixnum and bias > 0
-      chain_route :pipe_class => Pacer::Pipes::RandomFilterPipe, :pipe_args => bias
-    end
-
     def has?(element)
       any? { |e| e == element }
     end
@@ -96,30 +80,6 @@ module Pacer::Routes
     # Returns true if this route countains only edges.
     def edges_route?
       self.is_a? Pacer::Core::Graph::EdgesRoute
-    end
-
-    # Apply the given path fragment multiple times in succession. If a range is given, the route
-    # is branched and each number of repeats is processed in a seperate branch before being
-    # merged back. That is useful if a pattern may be nested to varying depths.
-    def repeat(range)
-      # TODO: switch to using loop
-     #route = if range.is_a? Fixnum
-     #    range.to_enum(:times).inject(self) do |route_end, count|
-     #      yield route_end
-     #    end
-     #  else
-     #    br = BranchedRoute.new(self)
-     #    range.each do |count|
-     #      br.branch do |branch_root|
-     #        count.to_enum(:times).inject(branch_root) do |route_end, count|
-     #          yield route_end
-     #        end
-     #      end
-     #    end
-     #    br
-     #  end
-     #route.add_extensions extensions
-     #route
     end
 
     def pages(elements_per_page = 1000)

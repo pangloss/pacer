@@ -102,25 +102,14 @@ module Pacer
         end
       end
 
-      # Iterates over each element resulting from traversing the route up to this point.
-      #
-      # @todo move with graph-specific code or make more general.
+      # Iterates over each element or object resulting from traversing the
+      # route up to this point.
       #
       # @yield [item] if a block is given
       # @return [Enumerator] if no block is given
-      def each_element
+      def each
         iter = iterator
-        if wrapper
-          iter.extend IteratorWrapperMixin
-          iter.wrapper = wrapper
-          iter.extensions = @extensions if @extensions.any?
-        elsif extensions and extensions.any?
-          iter.extend IteratorExtensionsMixin
-          iter.extensions = extensions 
-        else
-          iter.extend IteratorMixin
-        end
-        iter.graph = graph
+        configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -132,87 +121,12 @@ module Pacer
         self
       end
 
-      # Iterates over each path resulting from traversing the route up
-      # to this point.
+      # Returns a single use pipe iterator based on this route.
       #
-      # The path should contain each element that has been produced by
-      # each step in the pipeline that the route constructs. That means
-      # that it is possible that single step in the overall route may
-      # produce 0..many elements in the path (though the typical number
-      # is 1). Also note that if an element is emitted by multiple steps
-      # in a row it will only appear in the route once in that position.
-      # On the other hand if a single element appears more than once in
-      # at different times during a traversal, it will appear multiple
-      # times in the path.
-      #
-      # @yield [java.util.List[Object]] if a block is given
-      # @return [Enumerator[Object]] if no block is given
-      def each_path
-        iter = iterator
-        iter.extend IteratorPathMixin
-        iter.graph = graph
-        if block_given?
-          while true
-            yield iter.next
-          end
-        else
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      # Iterates over each element resulting from traversing the route
-      # up to this point. Extends each element with
-      # {Extensions::BlockFilterElement} to make route context
-      # available.
-      #
-      # @todo move with graph-specific code or make more general.
-      #
-      # @yield [ElementMixin(Extensions::BlockFilterElement)] if a block is given
-      # @return [Enumerator(IteratorContextMixin)] if no block is given
-      def each_context
-        iter = iterator
-        if block_given?
-          g = graph
-          while true
-            item = iter.next
-            item.graph ||= g
-            item.extend Pacer::Extensions::BlockFilterElement
-            item.back = self
-            yield item
-          end
-        else
-          iter.extend IteratorContextMixin
-          iter.graph = graph
-          iter.context = self
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      # Iterates over each object resulting from traversing the route up
-      # to this point.
-      #
-      # @yield [Object] if a block is given
-      # @return [Enumerator] if no block is given
-      def each_object
-        iter = iterator
-        if block_given?
-          while true
-            item = iter.next
-            yield item
-          end
-        else
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      def pipe(iterator_method = :each)
-        iterator = send(iterator_method) 
+      # @yield [java.util.Iterator] the pipe. Very useful because this method will catch the pipe's java.util.NoSuchElementException when iteration is finished.
+      # @return [java.util.Iterator] the pipe.
+      def pipe
+        iterator = each
         yield iterator if block_given?
         iterator
       rescue java.util.NoSuchElementException
@@ -397,6 +311,11 @@ module Pacer
             @back.route_after(route)
           end
         end
+      end
+
+      # Overridden to extend the iterator to apply mixins
+      # or wrap elements
+      def configure_iterator(iter)
       end
 
       def get_section_route(name)

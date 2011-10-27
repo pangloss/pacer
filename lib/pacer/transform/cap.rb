@@ -7,6 +7,7 @@ module Pacer
 
   module Transform
     module Cap
+      import com.tinkerpop.pipes.transform.SideEffectCapPipe
 
       def with=(route)
         @side_effect = route
@@ -36,7 +37,7 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        pipe = com.tinkerpop.pipes.transform.SideEffectCapPipe.new side_effect_pipe(end_pipe)
+        pipe = SideEffectCapPipe.new side_effect_pipe(end_pipe)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end

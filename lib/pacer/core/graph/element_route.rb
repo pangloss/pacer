@@ -149,5 +149,23 @@ module Pacer::Core::Graph
       index
     end
 
+    protected
+
+    # Determines which iterator mixin is applied to the iterator when #each is called
+    def configure_iterator(iter)
+      if wrapper
+        iter.extend Pacer::Core::Route::IteratorWrapperMixin
+        iter.wrapper = wrapper
+        iter.extensions = @extensions if @extensions.any?
+        iter.graph = graph
+      elsif extensions and extensions.any?
+        iter.extend Pacer::Core::Route::IteratorExtensionsMixin
+        iter.extensions = extensions 
+        iter.graph = graph
+      else
+        iter.extend Pacer::Core::Route::IteratorMixin
+        iter.graph = graph
+      end
+    end
   end
 end

@@ -17,28 +17,11 @@ module Pacer::Core::Route
     end
   end
 
-  module IteratorContextMixin
-    attr_accessor :graph
-
-    # Set the context
-    def context=(context)
-      @context = context
-    end
-
-    def next
-      item = super
-      item.back = @context
-      item.graph ||= @graph
-      item
-    end
-  end
-
   module IteratorPathMixin
     attr_accessor :graph
 
     def next
-      super
-      path.collect do |e|
+      super.collect do |e|
         e.graph ||= @graph if e.respond_to? :graph=
         e
       end
