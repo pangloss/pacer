@@ -36,10 +36,10 @@ module Enumerable
       end
     end
   rescue StopIteration
-    return hs
+    hs
   rescue NativeException => e
     if (e.cause.kind_of?(java.util.NoSuchElementException))
-      return hs
+      hs
     else
       raise
     end

@@ -16,6 +16,11 @@ module Pacer
 
     attr_accessor :in_bulk_job
 
+    def graph_id
+      @graph_id = Pacer.next_graph_id unless defined? @graph_id
+      @graph_id
+    end
+
     # Get a vertex by id.
     #
     # @overload vertex(id)
@@ -189,6 +194,10 @@ module Pacer
       self
     end
 
+    def equals(other)
+      self == other
+    end
+
     # The proc used to name vertices.
     #
     # @return [Proc]
@@ -318,6 +327,10 @@ module Pacer
 
     def decode_property(value)
       value
+    end
+
+    def edges
+      getEdges
     end
 
     protected
