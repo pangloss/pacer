@@ -150,6 +150,10 @@ module Pacer
         self
       end
 
+      def multigraph
+        cap.first
+      end
+
       protected
 
       def after_initialize
