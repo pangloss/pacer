@@ -110,17 +110,7 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each_element
         iter = iterator
-        if wrapper
-          iter.extend IteratorWrapperMixin
-          iter.wrapper = wrapper
-          iter.extensions = @extensions if @extensions.any?
-        elsif extensions and extensions.any?
-          iter.extend IteratorExtensionsMixin
-          iter.extensions = extensions 
-        else
-          iter.extend IteratorMixin
-        end
-        iter.graph = graph
+        configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -171,8 +161,7 @@ module Pacer
         iter = iterator
         if block_given?
           while true
-            item = iter.next
-            yield item
+            yield iter.next
           end
         else
           iter
@@ -366,6 +355,23 @@ module Pacer
           elsif @back.is_a? Route
             @back.route_after(route)
           end
+        end
+      end
+
+      # Determines which iterator mixin is applied to the iterator when #each is called
+      def configure_iterator(iter)
+        if wrapper
+          iter.extend IteratorWrapperMixin
+          iter.wrapper = wrapper
+          iter.extensions = @extensions if @extensions.any?
+          iter.graph = graph
+        elsif extensions and extensions.any?
+          iter.extend IteratorExtensionsMixin
+          iter.extensions = extensions 
+          iter.graph = graph
+        else
+          iter.extend IteratorMixin
+          iter.graph = graph
         end
       end
 

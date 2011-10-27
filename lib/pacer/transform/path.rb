@@ -38,6 +38,10 @@ module Pacer
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
+
+      def configure_iterator(iter)
+        iter.extend Pacer::Core::Route::IteratorPathMixin
+      end
     end
   end
 end
