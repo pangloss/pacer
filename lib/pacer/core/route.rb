@@ -385,13 +385,13 @@ module Pacer
         if start
           src = source_iterator
           Pacer.debug_source = src if Pacer.debug_pipes
-          start.set_starts src
+          start.setStarts src
           end_pipe
         elsif end_pipe
           raise "End pipe without start pipe"
         else
           pipe = Pacer::Pipes::IdentityPipe.new
-          pipe.set_starts source_iterator
+          pipe.setStarts source_iterator
           pipe
         end
       end
@@ -424,7 +424,7 @@ module Pacer
               raise ArgumentError, "Invalid args for pipe: #{ pipe_class.inspect }.new()"
             end
           end
-          pipe.set_starts end_pipe if end_pipe
+          pipe.setStarts end_pipe if end_pipe
           pipe
         else
           end_pipe
