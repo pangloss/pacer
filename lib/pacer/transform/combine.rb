@@ -170,11 +170,13 @@ module Pacer
 
       def block_route(block)
         empty = Pacer::Route.empty(self)
-        route = block.call(empty)
+        route = block.call(empty) rescue nil
         if route == empty
           identity_route.route
-        else
+        elsif route.is_a? Pacer::Route
           route.route
+        else
+          empty.map(&block).route
         end
       end
 
