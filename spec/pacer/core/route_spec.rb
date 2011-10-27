@@ -28,13 +28,6 @@ describe Pacer::Core::Route do
     end
   end
 
-  describe '#each_path' do
-    context 'without block' do
-      subject { base_route.each_path }
-      it { should be_a com.tinkerpop.pipes.Pipe }
-    end
-  end
-
   describe '#each_object' do
     context 'without block' do
       subject { base_route.each_object }

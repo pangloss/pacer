@@ -132,36 +132,6 @@ module Pacer
         self
       end
 
-      # Iterates over each path resulting from traversing the route up
-      # to this point.
-      #
-      # The path should contain each element that has been produced by
-      # each step in the pipeline that the route constructs. That means
-      # that it is possible that single step in the overall route may
-      # produce 0..many elements in the path (though the typical number
-      # is 1). Also note that if an element is emitted by multiple steps
-      # in a row it will only appear in the route once in that position.
-      # On the other hand if a single element appears more than once in
-      # at different times during a traversal, it will appear multiple
-      # times in the path.
-      #
-      # @yield [java.util.List[Object]] if a block is given
-      # @return [Enumerator[Object]] if no block is given
-      def each_path
-        iter = iterator
-        iter.extend IteratorPathMixin
-        iter.graph = graph
-        if block_given?
-          while true
-            yield iter.next
-          end
-        else
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
       # Iterates over each element resulting from traversing the route
       # up to this point. Extends each element with
       # {Extensions::BlockFilterElement} to make route context

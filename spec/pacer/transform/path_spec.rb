@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe PathsRoute do
+describe Pacer::Transform::Path do
   before :all do
     @g = Pacer.tg 'spec/data/pacer.graphml'
   end

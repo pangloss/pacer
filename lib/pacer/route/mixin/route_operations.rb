@@ -5,10 +5,6 @@ module Pacer::Routes
   module RouteOperations
     include BulkOperations
 
-    def paths
-      PathsRoute.new(self)
-    end
-
     def context
       ContextRoute.new(self)
     end
