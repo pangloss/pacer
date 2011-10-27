@@ -52,6 +52,7 @@ module Pacer
   require 'pacer/filter'
   require 'pacer/transform'
   require 'pacer/side_effect'
+  require 'pacer/function_resolver'
 
   class << self
     # A global place for pacer to put debug info if it's tucked deep in
@@ -175,7 +176,7 @@ module Pacer
     def clear_plugin_cache
       Wrappers::VertexWrapper.clear_cache
       Wrappers::EdgeWrapper.clear_cache
-      Route::Helpers.clear_cache
+      FunctionResolver.clear_cache
     end
 
     # Is the object a vertex?
