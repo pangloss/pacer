@@ -16,6 +16,17 @@ Run.tg(:read_only) do
       end
 
       describe 'with a range' do
+        # Because the same pipe is reused for looping pipes, this will only ever return 
+        # the first element before the range pipe is exhausted. The resulting element which is emitted and looped will produce
+        # no output because the range is not reset for the new depth.
+        #
+        # A possible solution to this would be for the loop pipe to generate and maintain a separate segment of pipe for each depth. It could generate them
+        # dynamically, In fact it would be as simple as using a hash with a default proc to provide pipes for each depth. Pseudo code:
+        #   depths = Hash.new { |h, depth| h[depth] = build_pipe_segment }
+        #   pipeline = depths[depth]
+        #   pipeline.expand element
+        #   pipeline.next
+        #
         before { pending }
         let(:start) { graph.vertex(0).v }
         subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
