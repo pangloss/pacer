@@ -36,93 +36,103 @@ Run.tg :read_only do
         subject.each.zip(graph.v.to_a) do |group, e|
           group[:key].should == e[:type]
           group.property_keys.to_set.should == Set['key', 'values']
-          group[:values].first.element_id.should == e.element_id
+          group[:values].last.element_id.should == e.element_id
         end
       end
 
-      describe '#combine_all' do
-        subject { route.combine_all }
-        it { should be_a(Hash) }
-        its(:length) { should == 3 }
-        specify 'type = person should have 2 vertices' do
-          subject['project'].values.count.should == 4
-          subject['person'].values.count.should == 2
+      context '#multigraph' do
+        subject { route.multigraph }
+        it { should be_a Pacer::MultiGraph }
+
+        its('v.count') { should == 3 }
+
+
+        context 'person' do
+          subject { route.multigraph.vertex 'person' }
+          it 'should hove 2 values' do
+            subject[:values].length.should == 2
+          end
+          it { subject[:values].should == graph.v(:type => 'person').to_a }
         end
-      end
 
-      describe '#combine' do
-        subject { route.combine(:default) }
-        it { should be_a(Hash) }
-        it { should == {
-          'project' => graph.v(:type => 'project').to_a,
-          'person'  => graph.v(:type => 'person').to_a,
-          'group'   => graph.v(:type => 'group').to_a
-        } }
-      end
+        context 'project' do
+          subject { route.multigraph.vertex 'project' }
+          it 'should hove 2 values' do
+            subject[:values].length.should == 4
+          end
+          it { subject[:values].should == graph.v(:type => 'project').to_a }
+        end
 
-      describe '#reduce_all' do
-        context 'to count elements' do
-          subject { route.reduce_all(0) { |t, name, value| t + 1 } }
+        context 'reduced to a count' do
+          subject do
+            route.multigraph.v.reduce({}) do |h, v|
+              h[v.element_id] = v[:values].count
+              h
+            end
+          end
           specify 'it should have a count for values' do
-            subject['project'].values.should == 4
-            subject['person'].values.should == 2
-            subject['group'].values.should == 1
+            subject['project'].should == 4
+            subject['person'].should == 2
+            subject['group'].should == 1
           end
         end
 
-        context 'to join names' do
-          subject { route.reduce_all(nil) { |t, name, value| [t, value[:name]].compact.join ', ' } }
-          specify 'it should have a count for values' do
-            subject['project'].values.should == 'blueprints, pipes, pacer, gremlin'
-            subject['person'].values.should == 'pangloss, okram'
-            subject['group'].values.should == 'tinkerpop'
+        context 'reduced to a string' do
+          subject do
+            route.multigraph.v.reduce({}) do |h, v|
+              h[v.element_id] = v[:values].map { |v| v[:name] }.join ', '
+              h
+            end
           end
-        end
-      end
-
-      describe '#reduce' do
-        context 'to count properties' do
-          subject { route.reduce(proc { |h, k| h[k] = 0 }, :default) { |t, value| t + value.properties.count } }
-          specify 'it should have a count for values' do
-            subject['project'].should == 8
-            subject['person'].should == 4
-            subject['group'].should == 2
+          specify do
+            subject['project'].should == 'blueprints, pipes, pacer, gremlin'
+            subject['person'].should == 'pangloss, okram'
+            subject['group'].should == 'tinkerpop'
           end
         end
       end
     end
 
-    context 'with key_map' do
-      subject { graph.v.group.key_map { |r| r[:type] } }
+    context 'with a key block that returns a literal value' do
+      subject { graph.v.join { |r| r[:type] }.key { |r| r[:type].length } }
       its(:count) { should == 7 }
-      its(:to_a) { should_not be_empty }
+      specify 'each value should have a numeric key' do
+        subject.each do |v|
+          v[:key].should == v.element_id
+          v[:key].should == v[:values].first.length
+        end
+      end
     end
 
     context 'with values_maps' do
-      subject do
-        graph.v.group.
-          values_map(:count) { |r| r.out_e.count }.
-          values_route(:out_e) { |r| r.out_e }.
-          key_route { |r| r[:type] }
+      let(:counted_group) do
+        graph.v.join(:count) { |r| r.out_e.counted.cap }.
+          join(:out_e, &:out_e).
+          key { |r| r[:type] }
       end
-      its(:count) { should == 7 }
-      its(:to_a) { should_not be_empty }
+      subject do
+        counted_group.multigraph
+      end
+      its('v.count') { should == 3 }
+      specify { counted_group.count.should == 7 }
       specify 'combine(:count) should group the counts in a hash' do
-        hash = subject.combine(:count)
+        hash = Hash[subject.v[[:key, :count]].to_a]
         hash.should == {"project"=>[0, 1, 3, 2], "person"=>[1, 3], "group"=>[4]}
       end
 
       specify 'reduce summarizes edge labels for each type' do
-        result = subject.reduce(proc { |h, k| h[k] = Hash.new(0) }, :out_e) do |h, e|
-          h[e.label] += 1
-          h
-        end
+        result = Hash[subject.v.map { |v| [v.element_id, v[:out_e].group_count { |e| e.label }] }.to_a]
         result.should == {"project" => {"uses"     => 5, "modelled_on" => 1},
                           "person"  => {"wrote"    => 4},
                           "group"   => {"projects" => 3, "member"      => 1}}
       end
 
-      its(:inspect) { should == "#<GraphV -> V-Group(#<V -> Obj(type)>: {:count=>#<V -> Obj-Map>, :out_e=>#<V -> outE>})>" }
+      its(:inspect) { should == "#<MultiGraph>" }
+      
+      specify do
+        counted_group.inspect.should == 
+          "#<GraphV -> V-Join(#<V -> Obj(type)>: {:count=>#<V -> outE -> Obj-Cap(E-Counted)>, :out_e=>#<V -> outE>})>"
+      end
     end
   end
 end
