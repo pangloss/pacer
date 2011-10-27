@@ -18,28 +18,40 @@ module Pacer
   # @see Core::Route
   class Route
     # @private
-    # TODO The logic for filter, side_effect and transform is so simillar.
-    # Make it DRY
-    #
-    # TODO Is the trigger stuff worthwhile?
     module Helpers
       class << self
         def clear_cache
-          @filter_map = nil
-          @side_effect_map = nil
-          @transform_map = nil
+          @lookup_path = nil
+        end
+
+        def function(args)
+          lookup_path.each do |key, map, extension|
+            if value = args[key]
+              function = map.fetch(value, value.is_a?(Module) && value)
+              return [function, extension] if function
+            end
+          end
+          nil
+        end
+
+        def lookup_path
+          @lookup_path ||= [
+            [:filter, filter_map, nil],
+            [:transform, transform_map, nil],
+            [:side_effect, side_effect_map, Pacer::Core::SideEffect]
+          ]
         end
 
         def filter_map
-          @filter_map ||= Pacer::Filter.constants.group_by { |name| symbolize_module_name(name) }
+          Hash[Pacer::Filter.constants.map { |name| [symbolize_module_name(name), Pacer::Filter.const_get(name)] }]
         end
 
         def side_effect_map
-          @side_effect_map ||= Pacer::SideEffect.constants.group_by { |name| symbolize_module_name(name) }
+          Hash[Pacer::SideEffect.constants.map { |name| [symbolize_module_name(name), Pacer::SideEffect.const_get(name)] }]
         end
 
         def transform_map
-          @transform_map ||= Pacer::Transform.constants.group_by { |name| symbolize_module_name(name) }
+          Hash[Pacer::Transform.constants.map { |name| [symbolize_module_name(name), Pacer::Transform.const_get(name)] }]
         end
 
         def symbolize_module_name(name)
@@ -190,34 +202,8 @@ module Pacer
     # :side_effect or :transform argument given to {#initialize} and
     # extend this instance with it.
     def include_function(args)
-      if args[:side_effect]
-        extend Pacer::Core::SideEffect
-      end
-      filter = args[:filter]
-      side_effect = args[:side_effect]
-      transform = args[:transform]
-      if filter.is_a? Module
-        @function = filter
-      elsif filter.is_a? Symbol
-        mod_names = Route::Helpers.filter_map[filter.to_sym]
-        if mod_names
-          @function = Pacer::Filter.const_get(mod_names.first)
-        end
-      elsif side_effect.is_a? Module
-        @function = side_effect
-      elsif side_effect.is_a? Symbol
-        mod_names = Route::Helpers.side_effect_map[side_effect.to_sym]
-        if mod_names
-          @function = Pacer::SideEffect.const_get(mod_names.first)
-        end
-      elsif transform.is_a? Module
-        @function = transform
-      elsif transform.is_a? Symbol
-        mod_names = Route::Helpers.transform_map[transform.to_sym]
-        if mod_names
-          @function = Pacer::Transform.const_get(mod_names.first)
-        end
-      end
+      @function, extension = Route::Helpers.function(args)
+      self.extend extension if extension
       self.extend function if function
     end
 
