@@ -1,6 +1,10 @@
 module Pacer
   module Routes
     module RouteOperations
+      def key(&block)
+        join(:key, &block)
+      end
+
       def join(name = nil, options = {}, &block)
         args = {
           :transform => :join,
