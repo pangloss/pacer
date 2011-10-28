@@ -3,7 +3,7 @@ module Pacer
     module Route
       def except(excluded)
         if excluded.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[excluded] != v }
+          chain_route :filter => :collection, :except_var => excluded
         else
           chain_route :filter => :collection, :except => excluded
         end
@@ -15,7 +15,7 @@ module Pacer
 
       def only(included)
         if included.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[included] == v }
+          chain_route :filter => :collection, :only_var => included
         else
           chain_route :filter => :collection, :only => included
         end
@@ -25,12 +25,17 @@ module Pacer
 
   module Filter
     module CollectionFilter
-      def self.triggers
-        [:except, :only]
-      end
+      import java.util.HashSet
+
+      attr_reader :var, :comparison, :ids, :objects
 
       def except=(collection)
         self.collection = collection
+        @comparison = Pacer::Pipes::NOT_EQUAL
+      end
+
+      def except_var=(var)
+        @var = var
         @comparison = Pacer::Pipes::NOT_EQUAL
       end
 
@@ -39,15 +44,24 @@ module Pacer
         @comparison = Pacer::Pipes::EQUAL
       end
 
+      def only_var=(var)
+        @var = var
+        @comparison = Pacer::Pipes::EQUAL
+      end
+
       protected
 
       def collection=(collection)
         collection = [collection] unless collection.is_a? Enumerable
         @ids = nil
-        if element_type != Object
+        if collection.is_a? HashSet
+          @objects = collection
+        elsif element_type != Object
           @ids = element_id_hashset(collection)
+          @objects = collection.to_hashset unless ids
+        else
+          @objects = collection.to_hashset
         end
-        @objects = collection.to_hashset unless @ids
       end
 
       def element_id_hashset(collection)
@@ -59,10 +73,12 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        if @ids
-          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(@ids, @comparison)
+        if var
+          pipe = Pacer::Pipes::CollectionFilterPipe.new(vars[var], comparison)
+        elsif ids
+          pipe = Pacer::Pipes::IdCollectionFilterPipe.new(ids, comparison)
         else
-          pipe = Pacer::Pipes::CollectionFilterPipe.new(@objects, @comparison)
+          pipe = Pacer::Pipes::CollectionFilterPipe.new(objects, comparison)
         end
         pipe.set_starts(end_pipe) if end_pipe
         pipe
@@ -81,8 +97,12 @@ module Pacer
       end
 
       def inspect_string
-        c = (@ids || @objects)
-        "#{ inspect_class_name }(#{c.count} elements)"
+        if var
+          "#{ inspect_class_name }(#{ var.inspect })"
+        else
+          c = (ids || objects)
+          "#{ inspect_class_name }(#{c.count} elements)"
+        end
       end
     end
   end

@@ -1,26 +1,41 @@
 module Pacer::Wrappers
   class ElementWrapper
+    include Pacer::Element
     extend Forwardable
     include Comparable
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts.to_set).new(element.element)
+        wrapper_for(exts).new(element.element)
       end
 
       def extensions
-        @extensions ||= Set[]
+        @extensions ||= []
       end
 
       def clear_cache
         Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
-        @wrappers = {}
+        VertexWrapper.clear_cache
+        EdgeWrapper.clear_cache
+      end
+
+      def route_conditions
+        return @route_conditions if defined? @route_conditions
+        @route_conditions = extensions.inject({}) do |h, ext|
+          if ext.respond_to? :route_conditions
+            h.merge! ext.route_conditions
+          else
+            h
+          end
+        end
+        @route_conditions
       end
 
       protected
 
       def build_extension_wrapper(exts, mod_names, superclass)
         sc_name = superclass.to_s.split(/::/).last
+        exts = exts.uniq unless exts.is_a? Set
         classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
         eval "module ::Pacer; module Wrap; class #{classname.to_s} < #{sc_name}; end; end; end"
         wrapper = Pacer::Wrap.const_get classname
@@ -29,7 +44,7 @@ module Pacer::Wrappers
             mod_names.each do |mod_name|
               if obj.const_defined? mod_name
                 wrapper.send :include, obj.const_get(mod_name)
-                wrapper.extensions << obj
+                wrapper.extensions << obj unless wrapper.extensions.include? obj
               end
             end
           end
@@ -56,10 +71,6 @@ module Pacer::Wrappers
     end
 
     protected
-
-    def _swap_element!(element)
-      @element = element
-    end
 
     def after_initialize
     end

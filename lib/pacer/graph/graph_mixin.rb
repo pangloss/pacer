@@ -16,6 +16,11 @@ module Pacer
 
     attr_accessor :in_bulk_job
 
+    def graph_id
+      @graph_id = Pacer.next_graph_id unless defined? @graph_id
+      @graph_id
+    end
+
     # Get a vertex by id.
     #
     # @overload vertex(id)
@@ -27,6 +32,11 @@ module Pacer
     def vertex(id, *modules)
       v = getVertex(id) rescue nil
       if v
+        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
+        if wrapper
+          v = wrapper.new v
+          modules.delete wrapper
+        end
         v.graph = self
         v.add_extensions modules
       else
@@ -45,6 +55,11 @@ module Pacer
     def edge(id, *modules)
       v = getEdge(id) rescue nil
       if v
+        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
+        if wrapper
+          v = wrapper.new v
+          modules.delete wrapper
+        end
         v.graph = self
         v.add_extensions modules
       end
@@ -63,8 +78,9 @@ module Pacer
     #     added to the current vertex. A Hash will be
     #     treated as element properties.
     def create_vertex(*args)
-      id, modules, props = id_modules_properties(args)
+      id, wrapper, modules, props = id_modules_properties(args)
       vertex = creating_elements { addVertex(id) }
+      vertex = wrapper.new vertex if wrapper
       vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
       if modules.any?
@@ -86,8 +102,9 @@ module Pacer
     #
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
-      _, modules, props = id_modules_properties(args)
+      _, wrapper, modules, props = id_modules_properties(args)
       edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
+      edge = wrapper.new edge if wrapper
       edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
       if modules.any?
@@ -177,6 +194,10 @@ module Pacer
       self
     end
 
+    def equals(other)
+      self == other
+    end
+
     # The proc used to name vertices.
     #
     # @return [Proc]
@@ -260,11 +281,11 @@ module Pacer
         et
       else
         case et
-        when :vertex, com.tinkerpop.blueprints.pgm.Vertex, VertexMixin
+        when :vertex, Pacer::Vertex, VertexMixin
           vertex_class
-        when :edge, com.tinkerpop.blueprints.pgm.Edge, EdgeMixin
+        when :edge, Pacer::Edge, EdgeMixin
           edge_class
-        when :mixed, com.tinkerpop.blueprints.pgm.Element, ElementMixin
+        when :mixed, Pacer::Element, ElementMixin
           element_class
         when :object
           Object
@@ -276,9 +297,9 @@ module Pacer
               vertex_class
             elsif et == edge_class.java_class.to_java
               edge_class
-            elsif et == com.tinkerpop.blueprints.pgm.Vertex.java_class.to_java
+            elsif et == Pacer::Vertex.java_class.to_java
               vertex_class
-            elsif et == com.tinkerpop.blueprints.pgm.Edge.java_class.to_java
+            elsif et == Pacer::Edge.java_class.to_java
               edge_class
             end
           end
@@ -308,6 +329,10 @@ module Pacer
       value
     end
 
+    def edges
+      getEdges
+    end
+
     protected
 
     # Helper method to wrap element creation in exception handling.
@@ -326,9 +351,11 @@ module Pacer
     def id_modules_properties(args)
       props = args.last if args.last.is_a? Hash
       modules = args.select { |obj| obj.is_a? Module or obj.is_a? Class }
+      wrapper = modules.detect { |obj| obj.is_a? Class and obj.ancestors.include? Pacer::Wrappers::ElementWrapper }
+      modules.delete wrapper
       id = args.first
-      id = nil if id == props or modules.include? id
-      [id, modules, props]
+      id = nil if id == props or modules.include? id or id == wrapper
+      [id, wrapper, modules, props]
     end
   end
 end

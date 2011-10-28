@@ -82,7 +82,7 @@ module Pacer::Core::Graph
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|
-            prop_or_subset.collect { |i| element.get_property(i.to_s) }
+            prop_or_subset.collect { |i| element.getProperty(i.to_s) }
           end
         end
       end
@@ -149,5 +149,23 @@ module Pacer::Core::Graph
       index
     end
 
+    protected
+
+    # Determines which iterator mixin is applied to the iterator when #each is called
+    def configure_iterator(iter)
+      if wrapper
+        iter.extend Pacer::Core::Route::IteratorWrapperMixin
+        iter.wrapper = wrapper
+        iter.extensions = @extensions if @extensions.any?
+        iter.graph = graph
+      elsif extensions and extensions.any?
+        iter.extend Pacer::Core::Route::IteratorExtensionsMixin
+        iter.extensions = extensions 
+        iter.graph = graph
+      else
+        iter.extend Pacer::Core::Route::IteratorMixin
+        iter.graph = graph
+      end
+    end
   end
 end

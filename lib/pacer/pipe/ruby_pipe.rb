@@ -15,8 +15,8 @@ module Pacer::Pipes
     protected
 
     def getPathToHere
-      if starts.respond_to? :path
-        starts.path
+      if starts.respond_to? :getPath
+        starts.getPath
       else
         java.util.ArrayList.new
       end

@@ -70,7 +70,7 @@ module Pacer
 
     # Deletes the edge from its graph.
     def delete!
-      graph.remove_edge element
+      graph.removeEdge element
     end
 
     # Clones this edge into the target graph.

@@ -3,7 +3,7 @@ module Pacer
     module PropertyFilter
       class Filters
         attr_reader :properties, :extensions, :route_modules
-        attr_accessor :blocks
+        attr_accessor :wrapper, :blocks
 
         # Allow Pacer to use index counts to determine which index has
         # the least number elements for the available keys in the query.
@@ -35,6 +35,7 @@ module Pacer
           @properties = []
           @blocks = []
           @extensions = []
+          @wrapper = nil
           @route_modules = []
           @non_ext_props = []
           @best_index_value = nil
@@ -78,7 +79,11 @@ module Pacer
               self.properties << [k.to_s, v]
             end
           when Module, Class
-            self.extensions << filter
+            if filter.is_a? Class and filter.ancestors.include? Pacer::Wrappers::ElementWrapper
+              self.wrapper = filter
+            else
+              self.extensions << filter
+            end
             if filter.respond_to? :route_conditions
               add_filters filter.route_conditions, filter
             end
@@ -146,11 +151,13 @@ module Pacer
         end
 
         def extensions_only?
-          properties.none? and blocks.none? and route_modules.none? and extensions.any?
+          properties.none? and blocks.none? and route_modules.none? and (extensions.any? or wrapper)
         end
 
         def to_s
-          strings = extensions.map { |e| e.name }
+          strings = []
+          strings << [wrapper.name] if wrapper
+          strings.concat extensions.map { |e| e.name }
           strings.concat((non_ext_props - [@best_index_value]).map { |k, v| "#{ k }==#{ v.inspect }" })
           strings.concat blocks.map { '&block' }
           strings.concat route_modules.map { |mod| mod.name }

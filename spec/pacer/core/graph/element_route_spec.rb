@@ -17,7 +17,7 @@ shared_examples_for Pacer::Core::Graph::ElementRoute do
   context 'with extensions' do
     let(:route) { r.add_extension(Tackle::SimpleMixin) }
     describe '#each without a block' do
-      subject { route.each_element }
+      subject { route.each }
       specify 'elements should be wrapped' do
         subject.first.extensions.should include(Tackle::SimpleMixin)
       end

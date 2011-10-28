@@ -13,20 +13,20 @@ shared_examples_for Pacer::VertexMixin do
   describe '#add_extensions' do
     context 'no extensions' do
       subject { v0.add_extensions([]) }
-      its(:extensions) { should == Set[] }
+      its('extensions.to_a') { should == [] }
       it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
     end
 
     context 'with extensions' do
       subject { v0.add_extensions([Tackle::SimpleMixin]) }
-      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+      its('extensions.to_a') { should == [Tackle::SimpleMixin] }
       it { should be_a(Pacer::Wrappers::ElementWrapper) }
       it { should be_a(Pacer::Wrappers::VertexWrapper) }
       it { should_not be_a(Pacer::Wrappers::EdgeWrapper) }
 
       describe '#v' do
         subject { v0.add_extensions([Tackle::SimpleMixin]).v }
-        its(:extensions) { should == Set[Tackle::SimpleMixin] }
+        its('extensions.to_a') { should == [Tackle::SimpleMixin] }
         it { should be_a_vertices_route }
         it { should be_a(Tackle::SimpleMixin::Route) }
       end
@@ -69,13 +69,13 @@ shared_examples_for Pacer::VertexMixin do
   subject { v0 }
   its(:graph) { should equal(graph) }
   its(:display_name) { should be_nil }
-  its(:inspect) { should == "#<V[#{v0.element_id}]>" }
+  its(:inspect) { should =~ /#<[VM]\[#{v0.element_id}\]>/ }
   context 'with label proc' do
     before do
       graph.vertex_name = proc { |e| "some name" }
     end
     its(:display_name) { should == "some name" }
-    its(:inspect) { should == "#<V[#{ v0.element_id }] some name>" }
+    its(:inspect) { should =~ /#<[VM]\[#{ v0.element_id }\] some name>/ }
   end
   it { should_not == v1 }
   it { should == v0 }

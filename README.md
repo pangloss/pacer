@@ -65,10 +65,12 @@ follow soon as I find out about them or get requests to support them.
 To use Pacer together with the neo4j gem, get your Pacer graph instance
 as follows:
 
+```ruby
     require 'neo4j'
     require 'pacer-neo4j'
     Neo4j.db.start
     graph = Pacer.neo4j(Neo4j.db.graph)
+```
 
 After that, you can continue to use the graph as normal with *both*
 gems. Any update that's committed with one gem will be visible
@@ -86,58 +88,75 @@ automatically shut down all open databases!
 
 Friend recommendation algorithm expressed in basic traversal functions:
 
+```ruby
     friends = person.out_e(:friend).in_v(:type => 'person')
     friends.out_e(:friend).in_v(:type => 'person').except(friends).except(person).most_frequent(0...10)
+```
 
 or using Pacer's route extensions to create your own query methods:
 
+```ruby
     person.friends.friends.except(person.friends).except(person).most_frequent(0...10)
+```
 
 or to take it one step further:
 
+```ruby
     person.recommended_friends
+```
 
 ## Create and populate a graph
 
 To get started, you need to know just a few methods. First, open up a graph (if one doesn't exist it will be automatically created) and add some vertices to it:
 
+```ruby
     dex = Pacer.dex '/tmp/dex_demo'
     pangloss = dex.create_vertex :name => 'pangloss', :type => 'user'
     okram = dex.create_vertex :name => 'okram', :type => 'user'
     group = dex.create_vertex :name => 'Tinkerpop', :type => 'group'
-
+```
 
 Now, let's see what we've got:
 
+```ruby
     dex.v
+```
 
 produces:
 
+```ruby
     #<V[1024]> #<V[1025]> #<V[1026]>
     Total: 3
     => #<GraphV>
+```
 
 There are our vertices. Let's look their properties:
 
+```ruby
     dex.v.properties
 
     {"name"=>"pangloss", "type"=>"user"} {"name"=>"okram", "type"=>"user"}
     {"name"=>"Tinkerpop", "type"=>"group"}
     Total: 3
     => #<GraphV -> Obj-Map>
+```
 
 Now let's put an edge between them:
 
+```ruby
     dex.create_edge okram, pangloss, :inspired
     => #<E[2048]:1025-inspired-1024>
+```
 
 That's great for creating an edge but what if I've got lots to create? Try this method instead which can add edges to the cross product of all vertices in one route with all vertices in the other:
 
+```ruby
     group.add_edges_to :member, dex.v(:type => 'user')
 
     #<E[4097]:1026-member-1024> #<E[4098]:1026-member-1025>
     Total: 2
     => #<Obj 2 ids -> lookup>
+```
 
 There is plenty more to see as well! Please dig into the code and the spec suite to find loads of examples and edge cases. And if you think of a case that I've missed, I'll greatly appreciate your contributions!
 

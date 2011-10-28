@@ -1,6 +1,6 @@
 module Pacer::Wrappers
   class NewElement
-    include com.tinkerpop.blueprints.pgm.Element
+    include Pacer::Element
 
     def initialize
       @properties = {}
@@ -51,7 +51,7 @@ module Pacer::Wrappers
   end
 
   class NewVertex < NewElement
-    include com.tinkerpop.blueprints.pgm.Vertex
+    include Pacer::Vertex
 
     def getOutEdges(*args)
       @out_edges
@@ -65,13 +65,14 @@ module Pacer::Wrappers
     alias in_edges getInEdges
     alias get_in_edges getInEdges
 
-    def raw_vertex
+    def getRawVertex
       self
     end
+    alias raw_vertex getRawVertex
   end
 
   class NewEdge < NewElement
-    include com.tinkerpop.blueprints.pgm.Edge
+    include Pacer::Edge
 
     def getInVertex
       @in_vertex
@@ -97,8 +98,9 @@ module Pacer::Wrappers
     alias set_label setLabel
     alias label= setLabel
 
-    def raw_edge
+    def getRawEdge
       self
     end
+    alias raw_edge getRawEdge
   end
 end

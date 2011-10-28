@@ -13,10 +13,6 @@ module Pacer
 
   module Filter
     module BlockFilter
-      def self.triggers
-        [:block]
-      end
-
       attr_accessor :block, :invert
 
       def ==(other)

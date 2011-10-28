@@ -102,21 +102,14 @@ module Pacer
         end
       end
 
-      # Iterates over each element resulting from traversing the route up to this point.
-      #
-      # @todo move with graph-specific code or make more general.
+      # Iterates over each element or object resulting from traversing the
+      # route up to this point.
       #
       # @yield [item] if a block is given
       # @return [Enumerator] if no block is given
-      def each_element
+      def each
         iter = iterator
-        if extensions and extensions.any?
-          iter.extend IteratorExtensionsMixin
-          iter.extensions = extensions 
-        else
-          iter.extend IteratorMixin
-        end
-        iter.graph = graph
+        configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -128,87 +121,12 @@ module Pacer
         self
       end
 
-      # Iterates over each path resulting from traversing the route up
-      # to this point.
+      # Returns a single use pipe iterator based on this route.
       #
-      # The path should contain each element that has been produced by
-      # each step in the pipeline that the route constructs. That means
-      # that it is possible that single step in the overall route may
-      # produce 0..many elements in the path (though the typical number
-      # is 1). Also note that if an element is emitted by multiple steps
-      # in a row it will only appear in the route once in that position.
-      # On the other hand if a single element appears more than once in
-      # at different times during a traversal, it will appear multiple
-      # times in the path.
-      #
-      # @yield [java.util.List[Object]] if a block is given
-      # @return [Enumerator[Object]] if no block is given
-      def each_path
-        iter = iterator
-        iter.extend IteratorPathMixin
-        iter.graph = graph
-        if block_given?
-          while true
-            yield iter.next
-          end
-        else
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      # Iterates over each element resulting from traversing the route
-      # up to this point. Extends each element with
-      # {Extensions::BlockFilterElement} to make route context
-      # available.
-      #
-      # @todo move with graph-specific code or make more general.
-      #
-      # @yield [ElementMixin(Extensions::BlockFilterElement)] if a block is given
-      # @return [Enumerator(IteratorContextMixin)] if no block is given
-      def each_context
-        iter = iterator
-        if block_given?
-          g = graph
-          while true
-            item = iter.next
-            item.graph ||= g
-            item.extend Pacer::Extensions::BlockFilterElement
-            item.back = self
-            yield item
-          end
-        else
-          iter.extend IteratorContextMixin
-          iter.graph = graph
-          iter.context = self
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      # Iterates over each object resulting from traversing the route up
-      # to this point.
-      #
-      # @yield [Object] if a block is given
-      # @return [Enumerator] if no block is given
-      def each_object
-        iter = iterator
-        if block_given?
-          while true
-            item = iter.next
-            yield item
-          end
-        else
-          iter
-        end
-      rescue java.util.NoSuchElementException
-        self
-      end
-
-      def pipe(iterator_method = :each)
-        iterator = send(iterator_method) 
+      # @yield [java.util.Iterator] the pipe. Very useful because this method will catch the pipe's java.util.NoSuchElementException when iteration is finished.
+      # @return [java.util.Iterator] the pipe.
+      def pipe
+        iterator = each
         yield iterator if block_given?
         iterator
       rescue java.util.NoSuchElementException
@@ -287,17 +205,32 @@ module Pacer
       # @see EdgeMixin#add_extensions
       #
       # @return [self]
-      def add_extension(mod)
+      def add_extension(mod, add_to_list = true)
         return self unless mod.respond_to?(:const_defined?)
         is_extension = false
         if mod.const_defined? :Route
           is_extension = true
           extend mod::Route
         end
-        if is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge
-          extensions << mod
+        if add_to_list and (is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge)
+          @extensions << mod
         end
         self
+      end
+
+      def set_wrapper(wrapper)
+        if wrapper.respond_to? :extensions
+          wrapper.extensions.each do |ext|
+            add_extension ext, false
+          end
+        end
+        @wrapper = wrapper
+        self
+      end
+      alias wrapper= set_wrapper
+
+      def wrapper
+        @wrapper
       end
 
       # Add extensions to this route.
@@ -308,10 +241,22 @@ module Pacer
       end
 
       # Get the set of extensions currently on this route.
-      # @return [Set[extension]]
+      #
+      # The order of extensions for custom defined wrappers are
+      # guaranteed. If a wrapper is iterated with additional extensions,
+      # a new wrapper will be created dynamically with the original
+      # extensions in order followed by any additional extensions in
+      # undefined order.
+      #
+      # If a wrapper is present, returns an Array. Otherwise a Set.
+      #
+      # @return [Enumerable[extension]]
       def extensions
-        @extensions = Set[] unless defined? @extensions
-        @extensions
+        if wrapper
+          wrapper.extensions + @extensions.to_a
+        else
+          @extensions
+        end
       end
 
       # If any objects in the given array are modules that contain a Route
@@ -324,6 +269,10 @@ module Pacer
           add_extension(mod)
         end
         self
+      end
+
+      def no_extensions
+        chain_route(:extensions => nil, :wrapper => nil)
       end
 
       # Change the source of this route.
@@ -361,6 +310,21 @@ module Pacer
           elsif @back.is_a? Route
             @back.route_after(route)
           end
+        end
+      end
+
+      # Overridden to extend the iterator to apply mixins
+      # or wrap elements
+      def configure_iterator(iter)
+      end
+
+      def get_section_route(name)
+        if respond_to? :section_name and section_name == name
+          self
+        elsif @back
+          @back.get_section_route(name)
+        else
+          raise ArgumentError, "Section #{ name } not found"
         end
       end
 
@@ -417,18 +381,17 @@ module Pacer
       # Return an iterator for this route loading data from all previous routes
       # in the chain.
       def iterator
-        @vars = {}
         start, end_pipe = build_pipeline
         if start
           src = source_iterator
           Pacer.debug_source = src if Pacer.debug_pipes
-          start.set_starts src
+          start.setStarts src
           end_pipe
         elsif end_pipe
           raise "End pipe without start pipe"
         else
           pipe = Pacer::Pipes::IdentityPipe.new
-          pipe.set_starts source_iterator
+          pipe.setStarts source_iterator
           pipe
         end
       end
@@ -461,7 +424,7 @@ module Pacer
               raise ArgumentError, "Invalid args for pipe: #{ pipe_class.inspect }.new()"
             end
           end
-          pipe.set_starts end_pipe if end_pipe
+          pipe.setStarts end_pipe if end_pipe
           pipe
         else
           end_pipe

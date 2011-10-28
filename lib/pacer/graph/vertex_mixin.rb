@@ -38,7 +38,7 @@ module Pacer
 
     # Deletes the vertex from its graph along with all related edges.
     def delete!
-      graph.remove_vertex element
+      graph.removeVertex element
     end
 
     # Copies including the vertex id unless a vertex with that id

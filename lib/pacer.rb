@@ -52,6 +52,7 @@ module Pacer
   require 'pacer/filter'
   require 'pacer/transform'
   require 'pacer/side_effect'
+  require 'pacer/function_resolver'
 
   class << self
     # A global place for pacer to put debug info if it's tucked deep in
@@ -175,23 +176,32 @@ module Pacer
     def clear_plugin_cache
       Wrappers::VertexWrapper.clear_cache
       Wrappers::EdgeWrapper.clear_cache
-      Route::Helpers.clear_cache
-      Filter::ExpressionFilter::Parser.reset
+      FunctionResolver.clear_cache
     end
 
     # Is the object a vertex?
     def vertex?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Vertex or
+      element.is_a? Pacer::Vertex or
         (element.respond_to? :element and
-         element.element.is_a? com.tinkerpop.blueprints.pgm.Vertex)
+         element.element.is_a? Pacer::Vertex)
     end
 
     # Is the object an edge?
     def edge?(element)
-      element.is_a? com.tinkerpop.blueprints.pgm.Edge
+      element.is_a? Pacer::Edge
         (element.respond_to? :element and
-         element.element.is_a? com.tinkerpop.blueprints.pgm.Edge)
+         element.element.is_a? Pacer::Edge)
     end
+
+    def vertex_route?(obj)
+      obj.is_a? Pacer::Core::Graph::VerticesRoute
+    end
+    alias vertices_route? vertex_route?
+
+    def edge_route?(obj)
+      obj.is_a? Pacer::Core::Graph::EdgesRoute
+    end
+    alias edges_route? edge_route?
 
     # Blueprints constant for manual index.
     # @return [com.tinkerpop.blueprints.pgm.Index::Type::MANUAL]
@@ -237,6 +247,11 @@ module Pacer
     def open_graphs
       @open_graphs = Hash.new { |h, k| h[k] = {} } unless defined? @open_graphs
       @open_graphs
+    end
+
+    def next_graph_id
+      @next_graph_id = 0 unless defined? @next_graph_id
+      @next_graph_id += 1
     end
 
     # Tell pacer to record that we're starting a graph.

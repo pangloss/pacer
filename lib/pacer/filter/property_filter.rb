@@ -32,6 +32,7 @@ module Pacer
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
         if filters.extensions_only? and base.is_a? Route
+          base.wrapper ||= filters.wrapper if filters.wrapper
           base.add_extensions(filters.extensions)
           yield base
         elsif filters and filters.any?
@@ -45,6 +46,7 @@ module Pacer
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
         if filters.extensions_only? and base.is_a? Route
+          base.wrapper ||= filters.wrapper if filters.wrapper
           base.add_extensions(filters.extensions)
         elsif filters and filters.any?
           new(:back => base, :filter => :property, :filters => filters)
@@ -64,17 +66,14 @@ module Pacer
       #import com.tinkerpop.pipes.filter.LabelCollectionFilterPipe
       import com.tinkerpop.pipes.filter.PropertyFilterPipe
 
-      def self.triggers
-        [:filters]
-      end
-
       def filters=(f)
         if f.is_a? Filters
           @filters = f
         else
           @filters = EdgeFilters.new(f)
         end
-        add_extensions @filters.extensions
+        self.wrapper ||= f.wrapper if f.wrapper
+        add_extensions f.extensions
       end
 
       # Return an array of filter options for the current route.

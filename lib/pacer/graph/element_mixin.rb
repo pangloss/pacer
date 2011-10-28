@@ -197,5 +197,6 @@ module Pacer
     def element
       self
     end
+    alias no_extensions element
   end
 end

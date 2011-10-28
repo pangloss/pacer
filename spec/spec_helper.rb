@@ -1,3 +1,6 @@
+require "rubygems"
+require "bundler"
+Bundler.setup(:default, :development)
 require 'rspec'
 require 'pacer'
 require 'set'
@@ -20,7 +23,7 @@ end
 require 'pacer-neo4j'
 require 'pacer-dex'
 
-Run = Rspec::GraphRunner.new ENV['GRAPHS']
+Run = RSpec::GraphRunner.new ENV['GRAPHS']
 
 def use_simple_graph_data
   let(:setup_data) { e0; e1 }
@@ -44,7 +47,7 @@ def use_pacer_graphml_data(usage_style = :read_write)
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
   let(:pacer) { graph.v(:name => 'pacer', :type => 'project').first }
   let(:people) { graph.v(:type => 'person') }
-  let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer } }
+  let(:pangloss_wrote_pacer) { pangloss.out_e(:wrote) { |e| e.in_vertex == pacer }.first }
 end
 
 def use_grateful_dead_data(usage_style = :read_write)

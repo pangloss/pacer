@@ -29,4 +29,32 @@ module TP
       base.v(:name => 'pangloss')
     end
   end
+
+  module Coder
+    module Route
+      def projects
+        out(Project, Software)
+      end
+    end
+  end
+
+  module Software
+    module Route
+      def coders
+        self.in(Coder)
+      end
+    end
+  end
+
+  module Wrote
+    def self.route_conditions
+      { label: 'wrote' }
+    end
+
+    module Edge
+      def writer
+        out_vertex
+      end
+    end
+  end
 end

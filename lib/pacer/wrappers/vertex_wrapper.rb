@@ -1,5 +1,6 @@
 module Pacer::Wrappers
   class VertexWrapper < ElementWrapper
+    include Pacer::Vertex
     include Pacer::Core::Graph::VerticesRoute
     include Pacer::ElementMixin
     include Pacer::VertexMixin
@@ -7,13 +8,17 @@ module Pacer::Wrappers
     def_delegators :@element,
       :getId, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
       :getOutEdges, :getInEdges,
-      :raw_vertex,
+      :getRawVertex,
       :graph, :graph=, :<=>, :==
 
     class << self
       def wrapper_for(exts)
         @wrappers = {} unless defined? @wrappers
-        @wrappers[exts] ||= build_vertex_wrapper(exts)
+        @wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+      end
+
+      def clear_cache
+        @wrappers = {}
       end
 
       protected
@@ -33,6 +38,14 @@ module Pacer::Wrappers
     # to correctly override the method in an included module
     def element
       @element
+    end
+
+    def add_extensions(exts)
+      if exts.any?
+        self.class.wrap(element, extensions + exts.to_a)
+      else
+        self
+      end
     end
   end
 end

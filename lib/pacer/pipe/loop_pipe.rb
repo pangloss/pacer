@@ -1,12 +1,13 @@
 module Pacer::Pipes
   class LoopPipe < RubyPipe
+    import java.util.ArrayList
 
-    def initialize(looping_pipe, control_block)
+    def initialize(graph, looping_pipe, control_block)
       super()
       @control_block = control_block
 
       @expando = ExpandablePipe.new
-      empty = java.util.ArrayList.new
+      empty = ArrayList.new
       @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
       @looping_pipe = looping_pipe
@@ -24,6 +25,11 @@ module Pacer::Pipes
       @path = @next_path
     end
 
+    def setStarts(starts)
+      @starts_has_path = starts.respond_to? :getPath
+      super
+    end
+
     protected
 
     def processNextStart
@@ -33,13 +39,18 @@ module Pacer::Pipes
         if has_next
           element = @looping_pipe.next
           depth = (@expando.metadata || 0) + 1
-          @next_path = @looping_pipe.path
+          @next_path = @looping_pipe.getPath
         else
           element = @starts.next
-          @next_path = @starts.path
+          if @starts_has_path
+            @next_path = @starts.getPath
+          else
+            @next_path = ArrayList.new
+            @next_path.add element
+          end
           depth = 0
         end
-        element.graph = @graph if element.respond_to? :graph=
+        element.graph ||= @graph if element.respond_to? :graph=
         case @control_block.call element, depth, @next_path
         when :loop
           @expando.add element, depth, @next_path
@@ -63,7 +74,7 @@ module Pacer::Pipes
     end
 
     def getPathToHere
-      path = java.util.ArrayList.new
+      path = ArrayList.new
       if @path
         @path.each do |e|
           path.add e

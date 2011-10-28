@@ -49,7 +49,7 @@ Run.tg(:read_only) do
       its(:to_a) { should == graph.v(:type => 'project').to_a }
     end
 
-    context 'v(TP::Project)' do
+    context 'v(TP::Person, TP::Project)' do
       subject { graph.v(TP::Person, TP::Project) }
       its(:count) { should == 0 }
       its(:extensions) { should == Set[TP::Person, TP::Project] }
@@ -75,6 +75,37 @@ Run.tg(:read_only) do
     context 'reversed params' do
       subject { graph.v.v(TP::Pangloss) }
       its(:count) { should == 1 }
+    end
+
+    context 'with wrapper' do
+      let(:exts) { Set[Tackle::SimpleMixin, TP::Project] }
+      let(:wrapper_class) { Pacer::Wrappers::VertexWrapper.wrapper_for exts }
+
+      describe 'v(wrapper_class)' do
+        subject { graph.v(wrapper_class) }
+        its(:wrapper) { should == wrapper_class }
+        its(:extensions) { should == exts.to_a }
+        its(:first) { should be_a wrapper_class }
+      end
+
+      describe 'v(wrapper_class, Pacer::Utils::TSort)' do
+        subject { graph.v(wrapper_class, Pacer::Utils::TSort) }
+        its(:wrapper) { should == wrapper_class }
+        its(:extensions) { should == (exts.to_a + [Pacer::Utils::TSort]) }
+        it { should_not be_empty }
+        its('first.class') { should_not == wrapper_class }
+        its('first.class.extensions') { should == exts.to_a + [Pacer::Utils::TSort] }
+      end
+
+      describe 'v(wrapper_class, :name => "pacer")' do
+        subject { graph.v(wrapper_class, :name => 'pacer') }
+        its(:count) { should == 1 }
+        its(:wrapper) { should == wrapper_class }
+        its(:extensions) { should == exts.to_a }
+        its(:first) { should be_a wrapper_class }
+        its(:filters) { should_not be_nil }
+        its('filters.wrapper') { should == wrapper_class }
+      end
     end
   end
 end

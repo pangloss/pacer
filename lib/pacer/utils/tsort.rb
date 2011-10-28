@@ -2,30 +2,30 @@ require 'tsort'
 
 module Pacer
   module Utils
+    # Include this module in your traversal to use ruby's built-in TSort
+    # utility to sort your vertices according to the direction of the
+    # edges that connect them.
     module TSort
-      module Graph
-        def tsort_dependencies_route
-          @tsort_dependencies_route ||= proc { |vertices| vertices.in_e.out_v(Pacer::Utils::TSort) }
-        end
-
-        def tsort_dependencies_route=(callable)
-          @tsort_dependencies_route = callable
-        end
-      end
-
       module Route
         include ::TSort
 
-        def tsort_dependencies_route
-          return @tsort_dependencies_route if defined? @tsort_dependencies_route
-          unless graph.respond_to? :tsort_dependencies_route
-            graph.extend Pacer::Utils::TSort::Graph
-          end
-          @tsort_dependencies_route ||= graph.tsort_dependencies_route
-        end
+        attr_accessor :tsort_anon_mod
 
-        def tsort_dependencies_route=(callable)
-          @tsort_dependencies_route = callable
+        # NOTE: this is a great example of dynamically injecting a custom method
+        # into a route.
+        def dependencies(&block)
+          anon_mod = Module.new
+          anon_mod.const_set :Route, TSort::Route
+          anon_mod.const_set :Vertex, Module.new
+          anon_mod::Vertex.const_set :DependenciesBlock, block
+          anon_mod::Vertex.instance_eval do
+            def self.included(target)
+              target.const_set :DependenciesBlock, self::DependenciesBlock
+            end
+          end
+          route = v(*(extensions - [TSort] + [anon_mod]))
+          route.tsort_anon_mod = anon_mod
+          route
         end
 
         def tsort_each_node
@@ -35,9 +35,15 @@ module Pacer
         end
 
         def tsort_each_child(node)
-          node.tsort_dependencies.each do |vertex|
+          node.tsort_dependencies(tsort_anon_mod).each do |vertex|
             yield vertex
           end
+        end
+
+        def tsort
+          super.to_route(:graph => graph,
+                         :element_type => :vertex,
+                         :extensions => (extensions - [TSort, tsort_anon_mod]))
         end
       end
 
@@ -46,8 +52,12 @@ module Pacer
           yield self
         end
 
-        def tsort_dependencies
-          tsort_dependencies_route.call(self)
+        def tsort_dependencies(tsort_anon_mod = nil)
+          if self.class.const_defined? :DependenciesBlock
+            self.class::DependenciesBlock.call(self).add_extension(tsort_anon_mod)
+          else
+            self.in
+          end
         end
       end
     end

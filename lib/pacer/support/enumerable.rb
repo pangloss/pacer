@@ -17,7 +17,7 @@ module Enumerable
 
   # Transform the enumerable into a java HashSet.
   def to_hashset(method = nil, *args)
-    return self if self.is_a? java.util.HashSet
+    return self if self.is_a? java.util.HashSet and not method
     hs = java.util.HashSet.new
     iter = self.each rescue nil
     if not iter and respond_to? :iterator
@@ -36,10 +36,10 @@ module Enumerable
       end
     end
   rescue StopIteration
-    return hs
+    hs
   rescue NativeException => e
     if (e.cause.kind_of?(java.util.NoSuchElementException))
-      return hs
+      hs
     else
       raise
     end
@@ -57,16 +57,16 @@ module Enumerable
       self
     else
       based_on = opts[:based_on]
-      if opts[:unwrap] or based_on and based_on.extensions.any? and based_on.is_a? Pacer::Core::Graph::ElementRoute
+      if opts[:unwrap] or based_on and (based_on.wrapper or based_on.extensions.any?) and based_on.is_a? Pacer::Core::Graph::ElementRoute
         source = Pacer::Route.new(:source => self, :element_type => :object).map { |e| e.element }
       else
         source = self
       end
       if based_on
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info)
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info])
       end
     end
   end
@@ -83,7 +83,8 @@ module Enumerable
                   :pipe_args => [based_on.graph],
                   :route_name => 'lookup',
                   :extensions => based_on.extensions,
-                  :info => [args[:name], based_on.info].compact.join(':'))
+                  :wrapper => based_on.wrapper,
+                  :info => [args[:name], based_on.info].compact.join(':')).is_not(nil)
   end
 
   def group_count
