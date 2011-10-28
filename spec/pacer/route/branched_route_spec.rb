@@ -15,7 +15,7 @@ describe Pacer::Transform::Branch do
     end
   end
 
-  it 'should return matches in round robin order by default' do
+  it 'should return matches in fair merge order by default' do
     @br.to_a.should ==
       [@g.vertex(1), @g.edge(3),
        @g.vertex(4), @g.edge(2),
@@ -225,7 +225,9 @@ Run.tg(:read_only) do
 
     describe 'twice' do
         # the difference must be with the object that's passed to the branch method
-      let(:single) { graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
+      def single
+        graph.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }
+      end
       let(:twice_v) { single.v.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
       let(:twice_m) { single.mixed.branch { |v| v.v{true} }.branch { |v| v.v{true} } }
       let(:twice_v_e) { single.exhaustive.v.branch { |v| v.v{true} }.branch { |v| v.v{true} }.exhaustive }
