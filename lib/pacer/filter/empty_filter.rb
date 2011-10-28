@@ -17,7 +17,9 @@ module Pacer
       end
 
       def block_branch(back, block, branch_start = nil)
-        if block.arity == 1
+        if block.arity == 0
+          route = block.call rescue nil
+        else
           unless branch_start
             if back.is_a? Pacer::Graph 
               branch_start = back
@@ -26,15 +28,13 @@ module Pacer
             end
           end
           route = block.call(branch_start) rescue nil
-        else
-          route = block.call rescue nil
         end
         if route == branch_start
           identity_branch(back).route
         elsif route.is_a? Pacer::Route
           route.route
         else
-          empty.map(&block).route
+          empty(back).map(&block).route
         end
       end
 
