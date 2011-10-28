@@ -141,9 +141,21 @@ module Pacer
           end
         end 
 
+        def negate(pipe)
+          Pipe.new(Pipeline, pipe, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
+        end
+
+        def comparable_pipe(pipe)
+          if pipe.pipe == PropertyPipe
+            build_comparison(pipe, Value.new(nil), '!=')
+          else
+            pipe
+          end
+        end
+
         def visitAndNode(node)
-          a = node.first_node.accept(self)
-          b = node.second_node.accept(self)
+          a = comparable_pipe node.first_node.accept(self)
+          b = comparable_pipe node.second_node.accept(self)
 
           if a.pipe == AndFilterPipe and b.pipe == AndFilterPipe
             Pipe.new AndFilterPipe, *a.args, *b.args
@@ -174,12 +186,16 @@ module Pacer
             if a.is_a? Value
               Value.new a.value.send(a.name)
             elsif a.pipe == PropertyPipe
-              Pipe.new(UnaryTransformPipe, node.name, a)
+              if node.name == '!'
+                negate(comparable_pipe(a))
+              else
+                Pipe.new(UnaryTransformPipe, node.name, a)
+              end
             else
               case node.name
               when '!'
                 # Special case for "a == 1 and not (b == 1)", etc.
-                Pipe.new(Pipeline, a, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
+                negate a
               else
                 raise 'not sure'
               end
@@ -222,8 +238,9 @@ module Pacer
         end 
 
         def visitOrNode(node)
-          a = node.first_node.accept(self)
-          b = node.second_node.accept(self)
+          a = comparable_pipe node.first_node.accept(self)
+          b = comparable_pipe node.second_node.accept(self)
+
           if a.pipe == OrFilterPipe and b.pipe == OrFilterPipe
             Pipe.new OrFilterPipe, *a.args, *b.args
           elsif a.pipe == OrFilterPipe
@@ -246,7 +263,7 @@ module Pacer
               Pipe.new NeverPipe
             end
           else
-            Pipe.new AndFilterPipe, pipe
+            Pipe.new AndFilterPipe, comparable_pipe(pipe)
           end
         end 
 

@@ -4,7 +4,19 @@ module Pacer
   module Routes
     module RouteOperations
       def where(str, values = {})
-        chain_route :filter => :where, :where_statement => str, :values => values
+        if str and str !~ /\A\s*\Z/
+          chain_route :filter => :where, :where_statement => str.to_s, :values => values
+        else
+          self
+        end
+      end
+
+      def unless(str, values = {})
+        if str and str !~ /\A\s*\Z/
+          where "not (#{str})", values
+        else
+          self
+        end
       end
     end
   end
