@@ -84,7 +84,7 @@ Run.tg(:read_only) do
         its(:count) { should == 3 }
       end
 
-      context "number % 2 == 1" do
+      context "number % 2 == 0 + 1" do
         subject { graph.v.where("number % 2 == 0 + 1") }
         its(:count) { should == 4 }
       end
