@@ -44,6 +44,13 @@ file Pacer::JAR_PATH => 'pom.xml' do
   end
 end
 
+task :check_18_mode do
+  if RUBY_VERSION !~ /1\.8/
+    warn 'Releasing gems in 1.9 mode does not work as of JRuby 1.6.5'
+    raise 'Nooooooo!'
+  end
+end
 task :jar => Pacer::JAR_PATH
 task :build => Pacer::JAR_PATH
 task :install => Pacer::JAR_PATH
+task :release => :check_18_mode
