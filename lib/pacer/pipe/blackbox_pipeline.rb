@@ -37,6 +37,10 @@ module Pacer::Pipes
       @end_pipe.getPath
     end
 
+    def iterator
+      @end_pipe.iterator
+    end
+
     def to_s
       "[#{ @start_pipe }...#{ @end_pipe }]"
     end
