@@ -12,7 +12,7 @@ module Pacer
       e = get(key, value).first
       if e and (graph or extensions)
         e.graph = graph
-        e.add_extensions extensions
+        e.add_extensions extensions if extensions
       end
       e
     end
