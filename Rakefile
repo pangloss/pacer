@@ -6,6 +6,7 @@ require 'rspec/core/rake_task'
 require 'yard'
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.rspec_path = 'bin/rspec'
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
@@ -24,6 +25,7 @@ YARD::Rake::YardocTask.new do |t|
   t.options = ['--no-private']
 end
 
+desc 'update pom.xml with current versions from lib/pacer/version.rb'
 file 'pom.xml' => 'lib/pacer/version.rb' do
   pom = File.read 'pom.xml'
   when_writing('Update pom.xml version number') do
@@ -50,7 +52,11 @@ task :check_18_mode do
     raise 'Nooooooo!'
   end
 end
+
+desc "build the JAR at #{ Pacer::JAR_PATH }"
 task :jar => Pacer::JAR_PATH
+
+# Add dependency to bundler default tasks:
 task :build => Pacer::JAR_PATH
 task :install => Pacer::JAR_PATH
 task :release => :check_18_mode
