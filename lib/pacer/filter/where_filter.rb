@@ -36,7 +36,11 @@ module Pacer
       end
 
       def intermediate
-        @intermediate ||= parsed.accept(NodeVisitor.new(self, values || {}))
+        encoded_values = {}
+        if values
+          values.each { |k, v| encoded_values[k] = graph.encode_property(v) }
+        end
+        @intermediate ||= parsed.accept(NodeVisitor.new(self, encoded_values))
       end
 
       def build!
