@@ -38,7 +38,7 @@ module Pacer
       def intermediate
         encoded_values = {}
         if values
-          values.each { |k, v| encoded_values[k] = graph.encode_property(v) }
+          values.each { |k, v| encoded_values[k.to_sym] = graph.encode_property(v) }
         end
         @intermediate ||= parsed.accept(NodeVisitor.new(self, encoded_values))
       end
