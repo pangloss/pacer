@@ -19,7 +19,8 @@ module Pacer
         @lookup_path ||= [
           [:filter, filter_map, nil],
           [:transform, transform_map, nil],
-          [:side_effect, side_effect_map, Pacer::Core::SideEffect]
+          [:side_effect, side_effect_map, Pacer::Core::SideEffect],
+          [:visitor, visitor_map]
         ]
       end
 
@@ -29,6 +30,10 @@ module Pacer
 
       def side_effect_map
         Hash[Pacer::SideEffect.constants.map { |name| [symbolize_module_name(name), Pacer::SideEffect.const_get(name)] }]
+      end
+
+      def visitor_map
+        Hash[Pacer::Visitors.constants.map { |name| [symbolize_module_name(name), Pacer::Visitors.const_get(name)] }]
       end
 
       def transform_map

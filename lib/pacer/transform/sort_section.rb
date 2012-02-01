@@ -1,4 +1,5 @@
 module Pacer
+
   module Routes
     module RouteOperations
       def sort_section(section = nil, &block)
@@ -76,25 +77,14 @@ module Pacer
         end
       end
 
-      attr_accessor :block
-      attr_reader :section_name, :section_route
+      include Pacer::Visitors::VisitsSection
 
-      def section=(section)
-        if section.is_a? Symbol
-          @section_name = section
-          @section_route = @back.get_section_route(section)
-        elsif section.is_a? Pacer::Route and section.respond_to? :section_name
-          @section_name = section.section_name
-          @section_route = section
-        else
-          raise ArgumentError, "Unknown section #{ section }. Provide either a name or a route created with the #section methed."
-        end
-      end
+      attr_accessor :block
 
       protected
 
       def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(@section_route.send(:section_visitor), block)
+        pipe = SortSectionPipe.new(section_visitor, block)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end

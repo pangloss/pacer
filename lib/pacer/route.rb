@@ -113,7 +113,7 @@ module Pacer
       include_function args
       set_element_type args
       include_other_modules args
-      keys = args.keys - [:element_type, :modules, :graph, :back, :filter, :side_effect, :transform]
+      keys = args.keys - [:element_type, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor]
       keys.each do |key|
         send("#{key}=", args[key])
       end
