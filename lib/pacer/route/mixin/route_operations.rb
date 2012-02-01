@@ -64,7 +64,7 @@ module Pacer::Routes
     # given name so that it is accessible subsequently in the processing of the
     # route.
     def as(name)
-      chain_route :modules => VariableRouteModule, :variable_name => name
+      section(name).chain_route :modules => VariableRouteModule, :variable_name => name
     end
 
     # Returns true if this route could contain both vertices and edges.

@@ -29,8 +29,8 @@ Run.all do
       subject { route }
 
       its(:inspect) do
-        should be_one_of "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote)>",
-                         "#<GraphV -> V-Property(name==\"gremlin\") -> :grem -> inE(:wrote)>"
+        should be_one_of "#<V-Index(name: \"gremlin\") -> V-Section -> :grem -> inE(:wrote)>",
+                         "#<GraphV -> V-Property(name==\"gremlin\") -> V-Section -> :grem -> inE(:wrote)>"
       end
       its(:out_v) { should_not be_nil }
     end
@@ -103,8 +103,8 @@ Run.all(:read_only) do
         r = r.out_e(:wrote) { |e| true }
         r = r.in_v
         r = r.is_not(:grem)
-        r.inspect.should be_one_of "#<V-Index(name: \"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>",
-                                   "#<GraphV -> V-Property(name==\"gremlin\") -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
+        r.inspect.should be_one_of "#<V-Index(name: \"gremlin\") -> V-Section -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>",
+                                   "#<GraphV -> V-Property(name==\"gremlin\") -> V-Section -> :grem -> inE(:wrote) -> outV -> outE(:wrote) -> E-Property(&block) -> inV -> V-Property(&block)>"
       end
     end
 
