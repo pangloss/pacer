@@ -35,7 +35,7 @@ Run.all do
       its(:out_v) { should_not be_nil }
     end
 
-    context "graph.v(:name => 'gremlin').as(:grem).in_e(:wrote)" do
+    context "graph.v.in_e.out_v(Tackle::SimpleMixin)" do
       let(:route) { graph.v.in_e.out_v(Tackle::SimpleMixin) }
       subject { route }
 
