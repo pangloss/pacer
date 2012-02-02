@@ -17,6 +17,12 @@ Run.tg(:read_only) do
       its(:first) { should == 'blueprints' }
     end
 
+    context "{ name: 'blueprints' }" do
+      subject { graph.v.where(name: 'blueprints')[:name] }
+      its(:count) { should == 1 }
+      its(:first) { should == 'blueprints' }
+    end
+
     context "name != nil" do
       subject { graph.v.where("name != nil") }
       its(:count) { should == 7 }

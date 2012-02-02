@@ -4,7 +4,7 @@ module Pacer
   module Routes
     module RouteOperations
       def where(str, values = {}, *more, &block)
-        if str.is_a? String 
+        if str.is_a? String or str.is_a? Symbol
           if str !~ /\A\s*\Z/
             chain_route :filter => :where, :where_statement => str.to_s, :values => values
           else
