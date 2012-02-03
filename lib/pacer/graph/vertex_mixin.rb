@@ -23,6 +23,34 @@ module Pacer
       end
     end
 
+    # Checks that the given extensions can be applied to the vertex. If
+    # they can then yield the vertex correctly extended or return the extended
+    # vertex. If not then do not yield and return nil.
+    #
+    # @param [extensions] exts extensions to add if possible
+    # @yield [v] Optional block yields the vertex with the extensions added.
+    # @return nil or the result of the block or the extended vertex
+    def as(*exts)
+      missing = Set.new(exts).difference extensions.to_set
+      has_exts = missing.all? do |ext|
+        if ext.respond_to? :route_conditions
+          ext.route_conditions.all? do |k, v|
+            self[k] == v
+          end
+        else
+          true
+        end
+      end
+      if has_exts
+        extended = add_extensions missing
+        if block_given?
+          yield extended
+        else
+          extended
+        end
+      end
+    end
+
     # Returns a human-readable representation of the vertex using the
     # standard ruby console representation of an instantiated object.
     # @return [String]
