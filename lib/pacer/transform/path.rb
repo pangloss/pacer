@@ -1,8 +1,16 @@
 module Pacer
   module Core
     module Route
-      def paths
-        chain_route :transform => :path, :element_type => :object
+      def paths(*exts)
+        route = chain_route :transform => :path, :element_type => :object
+        if exts.any?
+          exts = exts.map { |e| Array.wrap(e) if e }
+          route.map do |path|
+            path.zip(exts).map { |element, ext| ext ? element.add_extensions(ext) : element }
+          end
+        else
+          route
+        end
       end
     end
   end
