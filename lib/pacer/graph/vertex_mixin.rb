@@ -31,8 +31,28 @@ module Pacer
     # @yield [v] Optional block yields the vertex with the extensions added.
     # @return nil or the result of the block or the extended vertex
     def as(*exts)
-      missing = Set.new(exts).difference extensions.to_set
-      has_exts = missing.all? do |ext|
+      exts_to_add = extensions_missing(exts)
+      if as?(exts_to_add)
+        extended = exts_to_add.empty? ? self : add_extensions(exts_to_add)
+        if block_given?
+          yield extended
+        else
+          extended
+        end
+      end
+    end
+
+    def only_as(*exts)
+      if as?(*exts)
+        extended = exts.empty? ? element : element.add_extensions(exts)
+        if block_given?
+          yield extended
+        else
+          extended
+        end
+      end
+    end
+
     # Return the extensions this vertex is missing from the given array
     def extensions_missing(exts)
       Set.new(exts).difference extensions.to_set
@@ -46,14 +66,6 @@ module Pacer
           end
         else
           true
-        end
-      end
-      if has_exts
-        extended = add_extensions missing
-        if block_given?
-          yield extended
-        else
-          extended
         end
       end
     end
