@@ -21,7 +21,11 @@ module Pacer
       protected
 
       def section_visitor
-        @section_route.section_visitor
+        section_route.section_visitor if section_route
+      end
+
+      def section_visitor_target
+        section_route.visitor_target if section_route
       end
     end
   end

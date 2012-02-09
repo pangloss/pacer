@@ -27,17 +27,6 @@ module Pacer
     module CollectionFilter
       import java.util.HashSet
 
-      class SingleElementSet < HashSet
-        def on_element(element)
-          clear
-          add element
-        end
-
-        def reset
-          clear
-        end
-      end
-
       include Pacer::Visitors::VisitsSection
 
       attr_reader :var, :comparison, :ids, :objects
@@ -88,8 +77,8 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        if var
-          element = SingleElementSet.new
+        if section_visitor_target
+          element = section_visitor_target.new
           # Will cause section_visitor to call the #on_element and #reset methods.
           section_visitor.visitor = element
           pipe = Pacer::Pipes::CollectionFilterPipe.new(element, comparison)

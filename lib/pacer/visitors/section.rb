@@ -1,15 +1,15 @@
 module Pacer
   module Routes
     module RouteOperations
-      def section(section_name = nil)
-        chain_route visitor: :section, section_name: section_name
+      def section(section_name = nil, visitor_target = nil)
+        chain_route visitor: :section, section_name: section_name, visitor_target: visitor_target
       end
     end
   end
 
   module Visitors
     module Section
-      attr_accessor :section_name
+      attr_accessor :section_name, :visitor_target
 
       def will_visit!
         @visitor_count = visitor_count + 1

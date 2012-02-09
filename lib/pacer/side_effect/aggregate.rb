@@ -1,7 +1,10 @@
 module Pacer
   module Routes::RouteOperations
     def aggregate(into = nil)
-      chain_route :side_effect => :aggregate, :into => into
+      aggregate = ::Pacer::SideEffect::Aggregate
+      r = self
+      r = section(into, aggregate::ElementSet) if into.is_a? Symbol
+      r.chain_route :side_effect => aggregate, :into => into
     end
   end
 
@@ -10,7 +13,14 @@ module Pacer
       import com.tinkerpop.pipes.sideeffect.AggregatePipe
       import java.util.HashSet
 
-      attr_accessor :into
+      include Pacer::Visitors::VisitsSection
+
+      attr_reader :into
+
+      def into=(name)
+        @into = name
+        self.section = name if name.is_a? Symbol
+      end
 
       protected
 
@@ -25,6 +35,16 @@ module Pacer
         end
         pipe.setStarts end_pipe if end_pipe
         pipe
+      end
+
+      class ElementSet < HashSet
+        def on_element(element)
+          add element
+        end
+
+        def reset
+          clear
+        end
       end
     end
   end
