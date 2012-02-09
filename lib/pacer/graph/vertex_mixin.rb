@@ -33,6 +33,13 @@ module Pacer
     def as(*exts)
       missing = Set.new(exts).difference extensions.to_set
       has_exts = missing.all? do |ext|
+    # Return the extensions this vertex is missing from the given array
+    def extensions_missing(exts)
+      Set.new(exts).difference extensions.to_set
+    end
+
+    def as?(*exts)
+      has_exts = extensions_missing(exts).all? do |ext|
         if ext.respond_to? :route_conditions
           ext.route_conditions.all? do |k, v|
             self[k] == v
