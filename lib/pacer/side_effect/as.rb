@@ -11,20 +11,14 @@ module Pacer
 
   module SideEffect
     module As
-      attr_accessor :variable_name
+      import java.util.HashSet
 
-      def root?
-        false
-      end
+      attr_accessor :variable_name
 
       protected
 
       def attach_pipe(pipe)
         Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
-      end
-
-      def has_routable_class?
-        false
       end
 
       def inspect_class_name
