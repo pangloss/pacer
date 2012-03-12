@@ -94,7 +94,19 @@ module Pacer
             add_filters(filter, extension)
           when nil
           else
-            raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
+            if filter.respond_to? :wrapper
+              self.wrapper = filter.wrapper
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            elsif filter.respond_to? :parts
+              self.extensions.concat filter.parts.to_a
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            else
+              raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
+            end
           end
         end
 
