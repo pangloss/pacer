@@ -194,30 +194,8 @@ module Pacer
           index_options = []
           yield avail, index_options if block_given?
           properties.each do |k, v|
-            if v.is_a? Hash
-              v.each do |k2, v2|
-                if (idxs = avail["name:#{k}"]).any?
-                  if choose_best_index
-                    idxs.each do |idx|
-                      index_options << [idx.count(k2, encode_value(v2)), [idx, k2, v2], [k, v]]
-                    end
-                  else
-                    @best_index_value = [k, v]
-                    return @best_index = [idxs.first, k2, v2]
-                  end
-                end
-              end
-            elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
-              if choose_best_index
-                idxs.each do |idx|
-                  index_options << [idx.count(k, encode_value(v)), [idx, k, v], [k, v]]
-                end
-              else
-                @best_index_value = [k, v]
-                return @best_index = [idxs.first, k, v]
-              end
-            else
-              nil
+            if index_for_property(avail, index_options, k, v)
+              return @best_index
             end
           end
           index_options = index_options.sort_by do |a|
@@ -233,6 +211,31 @@ module Pacer
           end
           _, @best_index, @best_index_value = index_options.first || [nil, [], []]
           @best_index
+        end
+
+        def index_for_property(avail, index_options, k, v)
+          if v.is_a? Hash
+            v.each do |k2, v2|
+              if (idxs = avail["name:#{k}"]).any?
+                return true if check_index(index_options, idxs, k2, v2, [k, v])
+              end
+            end
+          elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
+            true if check_index(index_options, idxs, k, v, [k, v])
+          end
+        end
+
+        def check_index(index_options, idxs, k, v, index_value)
+          if choose_best_index
+            idxs.each do |idx|
+              index_options << [idx.count(k, encode_value(v)), [idx, k, v], [k, v]]
+            end
+            false
+          else
+            @best_index_value = index_value
+            @best_index = [idxs.first, k, v]
+            true
+          end
         end
 
         def reset_properties
