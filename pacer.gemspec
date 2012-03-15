@@ -5,7 +5,7 @@ require "pacer/version"
 Gem::Specification.new do |s|
   s.name = "pacer"
   s.version = Pacer::VERSION
-  s.platform = 'jruby'
+  s.platform = 'java'
   s.authors = ["Darrick Wiebe"]
   s.email = "darrick@innatesoftware.com"
   s.homepage = "http://github.com/pangloss/pacer"
@@ -20,8 +20,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'yard'
   s.add_development_dependency 'rake'
 
-  s.add_development_dependency 'pacer-neo4j', '1.0.7'
-  s.add_development_dependency 'pacer-dex', '1.0.5'
+  s.add_development_dependency 'pacer-neo4j', '1.0.7.1'
   s.add_development_dependency 'autotest'
 
   s.files = `git ls-files`.split("\n") + [Pacer::JAR_PATH]
