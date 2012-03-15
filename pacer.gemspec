@@ -5,7 +5,7 @@ require "pacer/version"
 Gem::Specification.new do |s|
   s.name = "pacer"
   s.version = Pacer::VERSION
-  s.platform = 'jruby'
+  s.platform = 'java'
   s.authors = ["Darrick Wiebe"]
   s.email = "darrick@innatesoftware.com"
   s.homepage = "http://github.com/pangloss/pacer"
