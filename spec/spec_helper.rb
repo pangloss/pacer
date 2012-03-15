@@ -21,7 +21,8 @@ def in_editor?
 end
 
 require 'pacer-neo4j'
-require 'pacer-dex'
+# require 'pacer-dex'
+Pacer::DexGraph = Class.new unless defined? Pacer::DexGraph
 
 Run = RSpec::GraphRunner.new ENV['GRAPHS']
 

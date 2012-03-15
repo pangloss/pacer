@@ -19,6 +19,9 @@ class RSpec::GraphRunner
         instance_eval(&block)
       end
     end
+
+    def dex(*args)
+    end
   end
 
   module RubyGraph
