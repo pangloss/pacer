@@ -2,7 +2,7 @@ module Pacer
   module Filter
     module PropertyFilter
       class Filters
-        attr_reader :properties, :extensions, :route_modules
+        attr_reader :properties, :extensions, :route_modules, :best_index_value
         attr_accessor :wrapper, :blocks
 
         # Allow Pacer to use index counts to determine which index has
@@ -229,7 +229,7 @@ module Pacer
         def check_index(index_options, idxs, k, v, index_value)
           if choose_best_index
             idxs.each do |idx|
-              index_options << [idx.count(k, encode_value(v)), [idx, k, v], [k, v]]
+              index_options << [idx.count(k, encode_value(v)), [idx, k, v], index_value]
             end
             false
           else

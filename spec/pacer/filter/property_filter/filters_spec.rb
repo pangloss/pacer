@@ -154,6 +154,11 @@ module Pacer::Filter::PropertyFilter
             @key.should == 'short'
             @value.should == '555555'
           end
+
+          it 'should store the best_index_value' do
+            find_index
+            filters.best_index_value.should == ['tokens', short: '555555']
+          end
         end
       end
     end
