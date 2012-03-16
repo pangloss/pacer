@@ -16,6 +16,7 @@ module Pacer::Filter::PropertyFilter
         let(:filters) { Pacer::Route.filters [Tackle::SimpleMixin] }
 
         its(:any?) { should be_true }
+        its(:extensions_only?) { should be_true }
         its(:extensions) { should == [Tackle::SimpleMixin] }
         its(:route_modules) { should be_empty }
         its(:wrapper) { should be_nil }
@@ -27,6 +28,7 @@ module Pacer::Filter::PropertyFilter
         let(:filters) { Pacer::Route.filters([name: 'Darrick', nickname: 'pangloss']) }
 
         its(:any?) { should be_true }
+        its(:extensions_only?) { should be_false }
         its(:extensions) { should be_empty }
         its(:route_modules) { should be_empty }
         its(:wrapper) { should be_nil }
@@ -39,6 +41,7 @@ module Pacer::Filter::PropertyFilter
 
         its(:any?) { should be_true }
         its(:extensions) { should == [TP::Person] }
+        its(:extensions_only?) { should be_false }
         its(:route_modules) { should be_empty }
         its(:wrapper) { should be_nil }
         its(:blocks) { should be_empty }
@@ -110,6 +113,7 @@ module Pacer::Filter::PropertyFilter
         let(:filters) { Pacer::Route.filters [TP::Pangloss] }
 
         its(:any?) { should be_true }
+        its(:extensions_only?) { should be_false }
         its(:extensions) { should == [TP::Pangloss] }
         its(:route_modules) { should == [TP::Pangloss] }
         its(:wrapper) { should be_nil }
@@ -125,7 +129,7 @@ module Pacer::Filter::PropertyFilter
         its(:route_modules) { should be_empty }
         its(:wrapper) { should be_nil }
         its(:blocks) { should be_empty }
-        its(:properties) { should == [%w[ name Darrick ]] }
+        its(:properties) { should == [['tokens', short: '555555'], %w[ name Darrick ]] }
       end
     end
   end
