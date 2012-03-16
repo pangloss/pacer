@@ -70,17 +70,6 @@ module Pacer
           end
         end
 
-        def encode_value(value)
-          value = graph.encode_property(value)
-          if value.respond_to? :to_java
-            jvalue = value.to_java
-          elsif value.respond_to? :to_java_string
-            jvalue = value.to_java_string
-          else
-            jvalue = value
-          end
-        end
-
         def build_pipeline(route, start_pipe, pipe = nil)
           self.graph = route.graph
           pipe ||= start_pipe
@@ -184,6 +173,17 @@ module Pacer
             end
           else
             add_filter filters, extension
+          end
+        end
+
+        def encode_value(value)
+          value = graph.encode_property(value)
+          if value.respond_to? :to_java
+            jvalue = value.to_java
+          elsif value.respond_to? :to_java_string
+            jvalue = value.to_java_string
+          else
+            jvalue = value
           end
         end
 

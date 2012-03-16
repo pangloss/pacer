@@ -42,5 +42,18 @@ module Pacer::Filter::PropertyFilter
       its(:blocks) { should be_empty }
       its(:properties) { should == [ %w[ type person ], %w[ name Darrick ], %w[ nickname pangloss ] ] }
     end
+
+    context 'with route module' do
+      # TODO: should this feature be removed?
+      let(:filters) { Pacer::Route.filters [TP::Pangloss] }
+
+      its(:any?) { should be_true }
+      its(:extensions) { should == [TP::Pangloss] }
+      its(:route_modules) { should == [TP::Pangloss] }
+      its(:wrapper) { should be_nil }
+      its(:blocks) { should be_empty }
+      its(:properties) { should be_empty }
+
+    end
   end
 end
