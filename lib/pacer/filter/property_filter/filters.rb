@@ -25,11 +25,11 @@ module Pacer
         # @attr [Boolean] search_manual_indices
         attr_accessor :search_manual_indices
 
-        protected
+      protected
 
         attr_accessor :non_ext_props
 
-        public
+      public
 
         def initialize(filters)
           @properties = []
@@ -67,56 +67,6 @@ module Pacer
           if indices != i
             reset_properties
             @indices = i
-          end
-        end
-
-        def add_filter(filter, extension)
-          case filter
-          when Hash
-            reset_properties
-            filter.each do |k, v|
-              self.non_ext_props << [k.to_s, v] unless extension
-              self.properties << [k.to_s, v]
-            end
-          when Module, Class
-            if filter.is_a? Class and filter.ancestors.include? Pacer::Wrappers::ElementWrapper
-              self.wrapper = filter
-            else
-              self.extensions << filter
-            end
-            if filter.respond_to? :route_conditions
-              add_filters filter.route_conditions, filter
-            end
-            if filter.respond_to? :route
-              self.route_modules << filter
-            end
-          when Array
-            add_filters(filter, extension)
-          when nil
-          else
-            if filter.respond_to? :wrapper
-              self.wrapper = filter.wrapper
-              if filter.respond_to? :route_conditions
-                add_filters filter.route_conditions, filter
-              end
-            elsif filter.respond_to? :parts
-              self.extensions.concat filter.parts.to_a
-              if filter.respond_to? :route_conditions
-                add_filters filter.route_conditions, filter
-              end
-            else
-              raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
-            end
-          end
-        end
-
-        def add_filters(filters, extension)
-          if filters.is_a? Array
-            filters.each do |filter|
-              add_filter filter, extension
-            end
-          else
-            add_filter filters, extension
           end
         end
 
@@ -185,7 +135,57 @@ module Pacer
           result
         end
 
-        protected
+      protected
+
+        def add_filter(filter, extension)
+          case filter
+          when Hash
+            reset_properties
+            filter.each do |k, v|
+              self.non_ext_props << [k.to_s, v] unless extension
+              self.properties << [k.to_s, v]
+            end
+          when Module, Class
+            if filter.is_a? Class and filter.ancestors.include? Pacer::Wrappers::ElementWrapper
+              self.wrapper = filter
+            else
+              self.extensions << filter
+            end
+            if filter.respond_to? :route_conditions
+              add_filters filter.route_conditions, filter
+            end
+            if filter.respond_to? :route
+              self.route_modules << filter
+            end
+          when Array
+            add_filters(filter, extension)
+          when nil
+          else
+            if filter.respond_to? :wrapper
+              self.wrapper = filter.wrapper
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            elsif filter.respond_to? :parts
+              self.extensions.concat filter.parts.to_a
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            else
+              raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
+            end
+          end
+        end
+
+        def add_filters(filters, extension)
+          if filters.is_a? Array
+            filters.each do |filter|
+              add_filter filter, extension
+            end
+          else
+            add_filter filters, extension
+          end
+        end
 
         def find_best_index(element_type)
           return @best_index if @best_index
