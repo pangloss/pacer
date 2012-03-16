@@ -215,11 +215,12 @@ module Pacer
 
         def index_for_property(avail, index_options, k, v)
           if v.is_a? Hash
-            v.each do |k2, v2|
-              if (idxs = avail["name:#{k}"]).any?
-                return true if check_index(index_options, idxs, k2, v2, [k, v])
+            if (idxs = avail["name:#{k}"]).any?
+              v.each do |k2, v2|
+                return true if check_index(index_options, idxs, k2.to_s, v2, [k, v])
               end
             end
+            false
           elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
             true if check_index(index_options, idxs, k, v, [k, v])
           end

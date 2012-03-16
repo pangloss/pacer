@@ -130,6 +130,31 @@ module Pacer::Filter::PropertyFilter
         its(:wrapper) { should be_nil }
         its(:blocks) { should be_empty }
         its(:properties) { should == [['tokens', short: '555555'], %w[ name Darrick ]] }
+
+        context '+ indices' do
+          let!(:token_index) { graph.index_name 'tokens', :vertex, create: true }
+          before do
+            filters.graph = graph
+            filters.indices = graph.getIndices
+            filters.choose_best_index = true
+            filters.search_manual_indices = true
+          end
+
+          def find_index
+            @idx, @key, @value = filters.best_index(:vertex)
+          end
+
+          it 'should use the automatic index' do
+            find_index
+            @idx.should be token_index
+          end
+
+          it 'should use the first key and value' do
+            find_index
+            @key.should == 'short'
+            @value.should == '555555'
+          end
+        end
       end
     end
   end
