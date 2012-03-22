@@ -185,3 +185,7 @@ A great introduction to the underlying concept of pipes can be found in Marko Ro
 ## Test Coverage
 
 I'm aiming for 100% test coverage in Pacer and am currently nearly there in the core classes, but there is a way to go with the filter, transform and side effect route modules. Open coverage/index.html to see the current state of test coverage. And of course contributions would be much apreciated.
+
+## Style Guide
+
+Please follow Github's [Ruby style guide](https://github.com/styleguide/ruby) when contributing to make your patches more likely to be accepted!
