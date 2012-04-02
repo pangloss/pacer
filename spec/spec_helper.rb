@@ -5,6 +5,9 @@ require 'rspec'
 require 'pacer'
 require 'set'
 
+require 'simplecov'
+SimpleCov.start if ENV['COVERAGE']
+
 Dir['./spec/support/**/*.rb'].map {|f| require f}
 Dir['./spec/tackle/*.rb'].map {|f| require f}
 
