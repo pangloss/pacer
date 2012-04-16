@@ -283,6 +283,10 @@ module Pacer
           Pipe.new PropertyPipe, node.name
         end
 
+        def visitXStrNode(node)
+          Pipe.new PropertyPipe, node.value
+        end
+
         def visitYieldNode(node)
           block = node.args_node.child_nodes.first.accept(self)
           Pipe.new BlockFilterPipe, Value.new(route), block
