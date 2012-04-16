@@ -133,6 +133,10 @@ module Pacer
         iterator
       end
 
+      def description(join = ' -> ')
+        "#<#{inspect_strings.join(join)}>"
+      end
+
       # Returns a string representation of the route definition. If there are
       # less than Graph#inspect_limit matches, it will also output all matching
       # elements formatted in columns up to a maximum character width of
@@ -142,7 +146,7 @@ module Pacer
       # @return [String]
       def inspect(limit = nil)
         if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
-          "#<#{inspect_strings.join(' -> ')}>"
+          description
         else
           Pacer.hide_route_elements do
             count = 0
@@ -169,7 +173,7 @@ module Pacer
               end
             end
             puts "Total: #{ count }"
-            "#<#{inspect_strings.join(' -> ')}>"
+            description
           end
         end
       end
