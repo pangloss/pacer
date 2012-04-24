@@ -11,10 +11,13 @@ module Pacer
   module Transform
     module SortSection
       class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
+        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section, :extensions, :is_element, :graph
 
-        def initialize(section, block)
+        def initialize(route, section, block)
           super()
+          @is_element = route.graph.element_type?(route.element_type)
+          @extensions = route.extensions
+          @graph = route.graph
           @to_emit = []
           @section = section
           @to_sort = []
@@ -38,6 +41,10 @@ module Pacer
         def processNextStart
           while to_emit.empty?
             element = @starts.next
+            if is_element
+              element = element.add_extensions(extensions)
+              element.graph = graph
+            end
             to_sort << element
           end
           to_emit.shift
@@ -84,7 +91,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(section_visitor, block)
+        pipe = SortSectionPipe.new(self, section_visitor, block)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
