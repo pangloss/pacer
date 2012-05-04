@@ -31,8 +31,8 @@ module Pacer
     # @yield [v] Optional block yields the vertex with the extensions added.
     # @return nil or the result of the block or the extended vertex
     def as(*exts)
-      exts_to_add = extensions_missing(exts)
-      if as?(exts_to_add)
+      if as?(*exts)
+        exts_to_add = extensions_missing(exts)
         extended = exts_to_add.empty? ? self : add_extensions(exts_to_add)
         if block_given?
           yield extended
