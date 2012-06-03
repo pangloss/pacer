@@ -308,7 +308,7 @@ module Pacer
       if result
         result
       else
-        raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object' 
+        raise ArgumentError, 'Element type may be one of :vertex, :edge, :mixed or :object'
       end
     end
 
@@ -352,8 +352,21 @@ module Pacer
       props = args.last if args.last.is_a? Hash
       modules = args.select { |obj| obj.is_a? Module or obj.is_a? Class }
       wrapper = modules.detect { |obj| obj.is_a? Class and obj.ancestors.include? Pacer::Wrappers::ElementWrapper }
-      modules.delete wrapper
       id = args.first
+      if not wrapper and modules.empty?
+        args.each do |obj|
+          if obj.respond_to? :wrapper
+            wrapper = obj.wrapper
+            id = nil if id == obj
+            break
+          elsif obj.respond_to? :parts
+            modules = obj.parts
+            id = nil if id == obj
+            break
+          end
+        end
+      end
+      modules.delete wrapper
       id = nil if id == props or modules.include? id or id == wrapper
       [id, wrapper, modules, props]
     end

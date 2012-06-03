@@ -1,5 +1,25 @@
 require 'spec_helper'
 
+module VertexMixinSpec
+  module Project
+    def self.route_conditions
+      { :type => 'project' }
+    end
+
+    module Vertex
+    end
+  end
+
+  module IsRuby
+    def self.route_conditions
+      { :language => 'ruby' }
+    end
+
+    module Vertex
+    end
+  end
+end
+
 shared_examples_for Pacer::VertexMixin do
   use_simple_graph_data
 
@@ -29,6 +49,47 @@ shared_examples_for Pacer::VertexMixin do
         its('extensions.to_a') { should == [Tackle::SimpleMixin] }
         it { should be_a_vertices_route }
         it { should be_a(Tackle::SimpleMixin::Route) }
+      end
+    end
+  end
+
+  describe '#as?' do
+    let(:v) { graph.create_vertex type: 'project' }
+    context 'Project' do
+      subject { v.as?(VertexMixinSpec::Project) }
+      it { should be_true }
+    end
+    context 'IsRuby' do
+      subject { v.as?(VertexMixinSpec::IsRuby) }
+      it { should_not be_true }
+    end
+    context 'Project, IsRuby' do
+      subject { v.as?(VertexMixinSpec::Project, VertexMixinSpec::IsRuby) }
+      it { should_not be_true }
+    end
+  end
+
+  describe '#as' do
+    context 'vertex is a Project' do
+      let(:v) { graph.create_vertex type: 'project' }
+
+      it 'should yield a Project' do
+        yielded = false
+        v.as(VertexMixinSpec::Project) do |v2|
+          yielded = true
+          v2.should == v
+          v2.extensions.should include VertexMixinSpec::Project
+          v2.should be_a VertexMixinSpec::Project::Vertex
+        end
+        yielded.should be_true
+      end
+
+      it 'should not yield a IsRuby' do
+        yielded = false
+        v.as(VertexMixinSpec::IsRuby) do |v2|
+          yielded = true
+        end
+        yielded.should be_false
       end
     end
   end
@@ -94,7 +155,7 @@ shared_examples_for Pacer::VertexMixin do
         graph.create_edge nil, v, to_v, label
       end
     end
-    
+
     describe '#in_edges' do
       specify 'to_v should have 6 in edges' do
         to_v.in_edges.count.should == 6
@@ -124,7 +185,7 @@ shared_examples_for Pacer::VertexMixin do
         to_v.in_edges('a', Tackle::SimpleMixin, 'b').count.should == 5
       end
     end
-    
+
     describe '#out_edges' do
       specify 'from_v should have 6 out edges' do
         from_v.out_edges.count.should == 6
@@ -154,7 +215,7 @@ shared_examples_for Pacer::VertexMixin do
         from_v.out_edges('a', Tackle::SimpleMixin, 'b').count.should == 5
       end
     end
-    
+
     describe '#both_edges' do
       specify 'from_v should have 6 edges' do
         from_v.both_edges.count.should == 6

@@ -24,3 +24,5 @@ tmp
 lib/*.jar
 jdex.log
 bin
+.jitcache
+coverage/*

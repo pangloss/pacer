@@ -34,11 +34,11 @@ module Pacer
           '>=' => FilterPipe::Filter::LESS_THAN_EQUAL
         )
 
-        COMPARITORS = %w[ == != > < >= <= ] 
+        COMPARATORS = %w[ == != > < >= <= ]
         METHODS = %w[ + - * / % ]
-        REGEX_COMPARITORS = %w[ =~ !~ ]
+        REGEX_COMPARATORS = %w[ =~ !~ ]
 
-        VALID_OPERATIONS = COMPARITORS + METHODS # + REGEX_COMPARITORS
+        VALID_OPERATIONS = COMPARATORS + METHODS # + REGEX_COMPARATORS
 
         class Pipe
           def initialize(pipe, *args)
@@ -118,7 +118,7 @@ module Pacer
           # TODO: support regex matches
 
           raise "Operation not supported: #{ name }" unless VALID_OPERATIONS.include? name
-          if COMPARITORS.include? name
+          if COMPARATORS.include? name
             if a.is_a? Value and b.is_a? Value
               if a.value.send name, b.value
                 Pipe.new IdentityPipe
@@ -139,11 +139,23 @@ module Pacer
               Pipe.new CrossProductTransformPipe, name, a, b
             end
           end
-        end 
+        end
+
+        def negate(pipe)
+          Pipe.new(Pipeline, pipe, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
+        end
+
+        def comparable_pipe(pipe)
+          if pipe.pipe == PropertyPipe
+            build_comparison(pipe, Value.new(nil), '!=')
+          else
+            pipe
+          end
+        end
 
         def visitAndNode(node)
-          a = node.first_node.accept(self)
-          b = node.second_node.accept(self)
+          a = comparable_pipe node.first_node.accept(self)
+          b = comparable_pipe node.second_node.accept(self)
 
           if a.pipe == AndFilterPipe and b.pipe == AndFilterPipe
             Pipe.new AndFilterPipe, *a.args, *b.args
@@ -154,11 +166,11 @@ module Pacer
           else
             Pipe.new AndFilterPipe, a, b
           end
-        end 
+        end
 
         def visitArrayNode(node)
           Value.new Value.new(node.child_nodes.map { |n| n.accept self }).values!
-        end 
+        end
 
         def visitBignumNode(node)
           Value.new node.value.to_s
@@ -174,12 +186,16 @@ module Pacer
             if a.is_a? Value
               Value.new a.value.send(a.name)
             elsif a.pipe == PropertyPipe
-              Pipe.new(UnaryTransformPipe, node.name, a)
+              if node.name == '!'
+                negate(comparable_pipe(a))
+              else
+                Pipe.new(UnaryTransformPipe, node.name, a)
+              end
             else
               case node.name
               when '!'
                 # Special case for "a == 1 and not (b == 1)", etc.
-                Pipe.new(Pipeline, a, Pipe.new(HasCountPipe, -1, 0), Pipe.new(ObjectFilterPipe, true, Filters['==']))
+                negate a
               else
                 raise 'not sure'
               end
@@ -189,11 +205,11 @@ module Pacer
 
         def visitFalseNode(node)
           Pipe.new NeverPipe
-        end 
+        end
 
         def visitFixnumNode(node)
           Value.new node.value
-        end 
+        end
 
         def visitFloatNode(node)
           Value.new node.value
@@ -207,7 +223,7 @@ module Pacer
           a = Pipe.new PropertyPipe, node.name
           b = node.value_node.accept(self)
           build_comparison(a, b, '==')
-        end 
+        end
 
         def visitLocalVarNode(node)
           Pipe.new PropertyPipe, node.name
@@ -215,15 +231,16 @@ module Pacer
 
         def visitNewlineNode(node)
           node.next_node.accept(self)
-        end 
+        end
 
         def visitNilNode(node)
           Value.new nil
-        end 
+        end
 
         def visitOrNode(node)
-          a = node.first_node.accept(self)
-          b = node.second_node.accept(self)
+          a = comparable_pipe node.first_node.accept(self)
+          b = comparable_pipe node.second_node.accept(self)
+
           if a.pipe == OrFilterPipe and b.pipe == OrFilterPipe
             Pipe.new OrFilterPipe, *a.args, *b.args
           elsif a.pipe == OrFilterPipe
@@ -233,7 +250,7 @@ module Pacer
           else
             Pipe.new OrFilterPipe, a, b
           end
-        end 
+        end
 
         def visitRootNode(node)
           pipe = node.body_node.accept self
@@ -246,25 +263,29 @@ module Pacer
               Pipe.new NeverPipe
             end
           else
-            Pipe.new AndFilterPipe, pipe
+            Pipe.new AndFilterPipe, comparable_pipe(pipe)
           end
-        end 
+        end
 
         def visitStrNode(node)
           Value.new node.value
-        end 
+        end
 
         def visitSymbolNode(node)
           Value.new values.fetch(node.name.to_sym, node.name.to_sym)
-        end 
+        end
 
         def visitTrueNode(node)
           Pipe.new IdentityPipe
-        end 
+        end
 
         def visitVCallNode(node)
           Pipe.new PropertyPipe, node.name
-        end 
+        end
+
+        def visitXStrNode(node)
+          Pipe.new PropertyPipe, node.value
+        end
 
         def visitYieldNode(node)
           block = node.args_node.child_nodes.first.accept(self)

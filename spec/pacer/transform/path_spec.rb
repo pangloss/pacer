@@ -37,18 +37,30 @@ describe Pacer::Transform::Path do
   end
 
   describe '#subgraph' do
-    before do
-      @sg = @g.v(:type => 'person').out_e.in_v(:type => 'project').subgraph
+    context 'original' do
+      before do
+        @sg = @g.v(:type => 'person').out_e.in_v(:type => 'project').subgraph
 
-      @vertices = @g.v(:type => 'person').to_a + @g.v(:type => 'project').to_a
-      @edges = @g.v(:type => 'person').out_e(:wrote)
+        @vertices = @g.v(:type => 'person').to_a + @g.v(:type => 'project').to_a
+        @edges = @g.v(:type => 'person').out_e(:wrote)
+      end
+
+      it { Set[*@sg.v.element_ids].should == Set[*@vertices.collect { |v| v.element_id }] }
+      it { Set[*@sg.e.element_ids].should == Set[*@edges.collect { |e| e.element_id }] }
+
+      it { @sg.e.labels.uniq.to_a.should == ['wrote'] }
+      it { Set[*@sg.v.collect { |v| v.properties }].should == Set[*@vertices.collect { |v| v.properties }] }
     end
 
-    it { Set[*@sg.v.element_ids].should == Set[*@vertices.collect { |v| v.element_id }] }
-    it { Set[*@sg.e.element_ids].should == Set[*@edges.collect { |e| e.element_id }] }
+    context 'with both_v' do
+      before do
+        @sg = @g.v(:type => 'person').in_e.both_v.subgraph
+        @vertices = [@g.vertex(5), @g.vertex(6)]
+        @edges = [@g.edge(11)]
+      end
 
-    it { @sg.e.labels.uniq.to_a.should == ['wrote'] }
-    it { Set[*@sg.v.collect { |v| v.properties }].should == Set[*@vertices.collect { |v| v.properties }] }
+      it { Set[*@sg.v.element_ids].should == Set[*@vertices.collect { |v| v.element_id }] }
+      it { Set[*@sg.e.element_ids].should == Set[*@edges.collect { |e| e.element_id }] }
+    end
   end
 end
-

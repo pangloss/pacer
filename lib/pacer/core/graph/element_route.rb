@@ -37,8 +37,8 @@ module Pacer::Core::Graph
     # Create a new TinkerGraph based on the paths of all matching elements.
     #
     # @return [TinkerGraph] the subgraph
-    def subgraph
-      paths.subgraph
+    def subgraph opts = {}
+      paths.subgraph nil, opts
     end
 
     # Delete all matching elements.

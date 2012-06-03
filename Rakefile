@@ -6,14 +6,8 @@ require 'rspec/core/rake_task'
 require 'yard'
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
+  spec.rspec_path = 'bin/rspec'
   spec.pattern = FileList['spec/**/*_spec.rb']
-end
-
-RSpec::Core::RakeTask.new(:rcov) do |spec|
-  spec.pattern = 'spec/**/*_spec.rb'
-  spec.ruby_opts = '--debug'
-  spec.rcov = true
-  spec.rcov_opts = %w{--exclude generator_internal,jsignal_internal,gems\/,spec\/}
 end
 
 task :default => :spec
@@ -24,6 +18,7 @@ YARD::Rake::YardocTask.new do |t|
   t.options = ['--no-private']
 end
 
+desc 'update pom.xml with current versions from lib/pacer/version.rb'
 file 'pom.xml' => 'lib/pacer/version.rb' do
   pom = File.read 'pom.xml'
   when_writing('Update pom.xml version number') do
@@ -44,6 +39,17 @@ file Pacer::JAR_PATH => 'pom.xml' do
   end
 end
 
+task :check_18_mode do
+  if RUBY_VERSION !~ /1\.8/
+    warn 'Releasing gems in 1.9 mode does not work as of JRuby 1.6.5'
+    raise 'Nooooooo!'
+  end
+end
+
+desc "build the JAR at #{ Pacer::JAR_PATH }"
 task :jar => Pacer::JAR_PATH
+
+# Add dependency to bundler default tasks:
 task :build => Pacer::JAR_PATH
 task :install => Pacer::JAR_PATH
+task :release => :check_18_mode

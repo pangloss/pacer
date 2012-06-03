@@ -97,7 +97,12 @@ module Pacer
           iv ||= in_vertex.clone_into target_graph
           ov ||= out_vertex.clone_into target_graph
         end
-        raise 'vertices not found' if not iv or not ov
+        if not iv or not ov
+          message = "Vertex not found for #{ self.inspect }: #{ iv.inspect } -> #{ ov.inspect }"
+          puts message if opts[:show_missing_vertices]
+          raise message unless opts[:ignore_missing_vertices]
+          return nil
+        end
         e = target_graph.create_edge(element_id, iv, ov, label, properties)
         e_idx.put('id', element_id, e)
         yield e if block_given?

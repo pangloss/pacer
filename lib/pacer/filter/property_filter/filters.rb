@@ -2,7 +2,7 @@ module Pacer
   module Filter
     module PropertyFilter
       class Filters
-        attr_reader :properties, :extensions, :route_modules
+        attr_reader :properties, :extensions, :route_modules, :best_index_value
         attr_accessor :wrapper, :blocks
 
         # Allow Pacer to use index counts to determine which index has
@@ -25,11 +25,11 @@ module Pacer
         # @attr [Boolean] search_manual_indices
         attr_accessor :search_manual_indices
 
-        protected
+      protected
 
         attr_accessor :non_ext_props
 
-        public
+      public
 
         def initialize(filters)
           @properties = []
@@ -67,55 +67,6 @@ module Pacer
           if indices != i
             reset_properties
             @indices = i
-          end
-        end
-
-        def add_filter(filter, extension)
-          case filter
-          when Hash
-            reset_properties
-            filter.each do |k, v|
-              self.non_ext_props << [k.to_s, v] unless extension
-              self.properties << [k.to_s, v]
-            end
-          when Module, Class
-            if filter.is_a? Class and filter.ancestors.include? Pacer::Wrappers::ElementWrapper
-              self.wrapper = filter
-            else
-              self.extensions << filter
-            end
-            if filter.respond_to? :route_conditions
-              add_filters filter.route_conditions, filter
-            end
-            if filter.respond_to? :route
-              self.route_modules << filter
-            end
-          when Array
-            add_filters(filter, extension)
-          when nil
-          else
-            raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
-          end
-        end
-
-        def add_filters(filters, extension)
-          if filters.is_a? Array
-            filters.each do |filter|
-              add_filter filter, extension
-            end
-          else
-            add_filter filters, extension
-          end
-        end
-
-        def encode_value(value)
-          value = graph.encode_property(value)
-          if value.respond_to? :to_java
-            jvalue = value.to_java
-          elsif value.respond_to? :to_java_string
-            jvalue = value.to_java_string
-          else
-            jvalue = value
           end
         end
 
@@ -173,7 +124,68 @@ module Pacer
           result
         end
 
-        protected
+      protected
+
+        def add_filter(filter, extension)
+          case filter
+          when Hash
+            reset_properties
+            filter.each do |k, v|
+              self.non_ext_props << [k.to_s, v] unless extension
+              self.properties << [k.to_s, v]
+            end
+          when Module, Class
+            if filter.is_a? Class and filter.ancestors.include? Pacer::Wrappers::ElementWrapper
+              self.wrapper = filter
+            else
+              self.extensions << filter
+            end
+            if filter.respond_to? :route_conditions
+              add_filters filter.route_conditions, filter
+            end
+            if filter.respond_to? :route
+              self.route_modules << filter
+            end
+          when Array
+            add_filters(filter, extension)
+          when nil
+          else
+            if filter.respond_to? :wrapper
+              self.wrapper = filter.wrapper
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            elsif filter.respond_to? :parts
+              self.extensions.concat filter.parts.to_a
+              if filter.respond_to? :route_conditions
+                add_filters filter.route_conditions, filter
+              end
+            else
+              raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
+            end
+          end
+        end
+
+        def add_filters(filters, extension)
+          if filters.is_a? Array
+            filters.each do |filter|
+              add_filter filter, extension
+            end
+          else
+            add_filter filters, extension
+          end
+        end
+
+        def encode_value(value)
+          value = graph.encode_property(value)
+          if value.respond_to? :to_java
+            jvalue = value.to_java
+          elsif value.respond_to? :to_java_string
+            jvalue = value.to_java_string
+          else
+            jvalue = value
+          end
+        end
 
         def find_best_index(element_type)
           return @best_index if @best_index
@@ -182,30 +194,8 @@ module Pacer
           index_options = []
           yield avail, index_options if block_given?
           properties.each do |k, v|
-            if v.is_a? Hash
-              v.each do |k2, v2|
-                if (idxs = avail["name:#{k}"]).any?
-                  if choose_best_index
-                    idxs.each do |idx|
-                      index_options << [idx.count(k2, encode_value(v2)), [idx, k2, v2], [k, v]]
-                    end
-                  else
-                    @best_index_value = [k, v]
-                    return @best_index = [idxs.first, k2, v2]
-                  end
-                end
-              end
-            elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
-              if choose_best_index
-                idxs.each do |idx|
-                  index_options << [idx.count(k, encode_value(v)), [idx, k, v], [k, v]]
-                end
-              else
-                @best_index_value = [k, v]
-                return @best_index = [idxs.first, k, v]
-              end
-            else
-              nil
+            if index_for_property(avail, index_options, k, v)
+              return @best_index
             end
           end
           index_options = index_options.sort_by do |a|
@@ -221,6 +211,32 @@ module Pacer
           end
           _, @best_index, @best_index_value = index_options.first || [nil, [], []]
           @best_index
+        end
+
+        def index_for_property(avail, index_options, k, v)
+          if v.is_a? Hash
+            if (idxs = avail["name:#{k}"]).any?
+              v.each do |k2, v2|
+                return true if check_index(index_options, idxs, k2.to_s, v2, [k, v])
+              end
+            end
+            false
+          elsif (idxs = (avail["key:#{k}"] + avail[:all])).any?
+            true if check_index(index_options, idxs, k, v, [k, v])
+          end
+        end
+
+        def check_index(index_options, idxs, k, v, index_value)
+          if choose_best_index
+            idxs.each do |idx|
+              index_options << [idx.count(k, encode_value(v)), [idx, k, v], index_value]
+            end
+            false
+          else
+            @best_index_value = index_value
+            @best_index = [idxs.first, k, v]
+            true
+          end
         end
 
         def reset_properties

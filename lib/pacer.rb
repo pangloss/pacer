@@ -49,6 +49,7 @@ module Pacer
   require 'pacer/blueprints'
   require 'pacer/support'
   require 'pacer/utils'
+  require 'pacer/visitors'
   require 'pacer/filter'
   require 'pacer/transform'
   require 'pacer/side_effect'

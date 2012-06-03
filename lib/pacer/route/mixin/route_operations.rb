@@ -60,13 +60,6 @@ module Pacer::Routes
       end
     end
 
-    # Store the current intermediate element in the route's vars hash by the
-    # given name so that it is accessible subsequently in the processing of the
-    # route.
-    def as(name)
-      chain_route :modules => VariableRouteModule, :variable_name => name
-    end
-
     # Returns true if this route could contain both vertices and edges.
     def mixed_route?
       self.is_a? Pacer::Core::Graph::MixedRoute
@@ -96,12 +89,6 @@ module Pacer::Routes
       end
       yield page unless page.empty?
       results
-    end
-
-    protected
-
-    def has_routable_class?
-      true
     end
   end
 end

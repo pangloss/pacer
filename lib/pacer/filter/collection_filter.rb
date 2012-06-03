@@ -27,6 +27,8 @@ module Pacer
     module CollectionFilter
       import java.util.HashSet
 
+      include Pacer::Visitors::VisitsSection
+
       attr_reader :var, :comparison, :ids, :objects
 
       def except=(collection)
@@ -36,6 +38,7 @@ module Pacer
 
       def except_var=(var)
         @var = var
+        self.section = var
         @comparison = Pacer::Pipes::NOT_EQUAL
       end
 
@@ -46,6 +49,7 @@ module Pacer
 
       def only_var=(var)
         @var = var
+        self.section = var
         @comparison = Pacer::Pipes::EQUAL
       end
 
@@ -73,8 +77,11 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        if var
-          pipe = Pacer::Pipes::CollectionFilterPipe.new(vars[var], comparison)
+        if section_visitor_target
+          element = section_visitor_target.new
+          # Will cause section_visitor to call the #on_element and #reset methods.
+          section_visitor.visitor = element
+          pipe = Pacer::Pipes::CollectionFilterPipe.new(element, comparison)
         elsif ids
           pipe = Pacer::Pipes::IdCollectionFilterPipe.new(ids, comparison)
         else
