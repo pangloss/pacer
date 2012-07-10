@@ -12,7 +12,7 @@ module Pacer
           graph: options.fetch(:multi_graph, Pacer::MultiGraph.new),
           from_graph: graph
         }
-        args[:multi_graph] = options[:multi_graph] if options[:multi_graph]
+        args[:existing_multi_graph] = options[:multi_graph] if options[:multi_graph]
         route = chain_route(args)
         route = route.key { |v| v } unless name == :key
         if block and name == :key
@@ -37,7 +37,7 @@ module Pacer
         include SideEffectPipe rescue nil # may raise exception on reload.
 
         attr_accessor :multi_graph, :current_keys, :current_values, :join_on
-        attr_reader :key_expando, :key_end, :values_pipes, :from_graph
+        attr_reader :key_names, :keys, :values_pipes, :from_graph
 
         def initialize(from_graph, multi_graph)
           super()
@@ -46,10 +46,13 @@ module Pacer
           @values_pipes = []
           @current_keys = []
           @current_values = []
+          @key_names = []
+          @keys = []
         end
 
-        def setKeyPipe(from_pipe, to_pipe)
-          @key_expando, @key_end = prepare_aggregate_pipe(from_pipe, to_pipe)
+        def addKeyPipe(name, from_pipe, to_pipe)
+          key_names << name
+          keys << prepare_aggregate_pipe(from_pipe, to_pipe)
         end
 
         def addValuesPipe(name, from_pipe, to_pipe)
@@ -94,11 +97,12 @@ module Pacer
 
         def get_keys(element)
           array = LinkedList.new
+          keys.each do |key_expando, key_end|
           if key_expando
             array.addAll next_results(key_expando, key_end, element)
-          else
-            array.add nil
           end
+          array.add nil if array.empty?
+          
           array
         end
 
@@ -134,7 +138,7 @@ module Pacer
       attr_accessor :existing_multi_graph, :key_route, :values_routes, :from_graph
       attr_writer :join_on
 
-      def key(&block)
+      def key(name = :key, &block)
         self.key_route = Pacer::Route.block_branch(self, block)
         self
       end
@@ -167,7 +171,7 @@ module Pacer
       def attach_pipe(end_pipe)
         pipe = CombinePipe.new(from_graph, existing_multi_graph)
         self.graph = pipe.multi_graph
-        pipe.setKeyPipe *key_route.send(:build_pipeline) if key_route
+        pipe.addKeyPipe :key, *key_route.send(:build_pipeline) if key_route
         pipe.join_on = @join_on
         values_routes.each do |name, route|
           pipe.addValuesPipe name, *route.send(:build_pipeline)
