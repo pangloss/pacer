@@ -30,7 +30,10 @@ module Pacer
     #   @param [Module, Class] *modules extensions to add to the returned
     #     vertex.
     def vertex(id, *modules)
-      v = getVertex(id) rescue nil
+      begin
+        v = getVertex(id)
+      rescue java.lang.RuntimeException
+      end
       if v
         wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
         if wrapper
@@ -53,7 +56,10 @@ module Pacer
     #   @param [Module, Class] *modules extensions to add to the returned
     #     edge.
     def edge(id, *modules)
-      v = getEdge(id) rescue nil
+      begin
+        v = getEdge(id)
+      rescue Java::JavaLang::RuntimeException
+      end
       if v
         wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
         if wrapper
