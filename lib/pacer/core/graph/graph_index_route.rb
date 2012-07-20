@@ -28,13 +28,13 @@ module Pacer::Core::Graph
     attr_accessor :choose_best_index
     attr_accessor :search_manual_indices
 
-    protected
+    private
 
     def indexed_route(element_type, filters, block)
       filters.graph = self
       filters.indices = graph.getIndices
       filters.choose_best_index = choose_best_index != false
-      filters.search_manual_indices = search_manual_indices
+      filters.search_manual_indices = @search_manual_indices
       idx, key, value = filters.best_index(element_type)
       if idx and key
         route = chain_route :back => self, :element_type => element_type, :filter => :index, :index => idx, :key => key, :value => value

@@ -192,7 +192,6 @@ module Pacer
           avail = available_indices(element_type)
           return nil if avail.empty?
           index_options = []
-          yield avail, index_options if block_given?
           properties.each do |k, v|
             if index_for_property(avail, index_options, k, v)
               return @best_index
