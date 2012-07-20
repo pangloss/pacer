@@ -23,6 +23,8 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'pacer-neo4j', '2.0.0.pre'
   s.add_development_dependency 'autotest-standalone'
   s.add_development_dependency 'autotest-growl'
+  s.add_development_dependency 'pry'
+  s.add_development_dependency 'awesome_print', '0.4.0'
 
   s.files = `git ls-files`.split("\n") + [Pacer::JAR_PATH]
   s.test_files = `git ls-files -- spec/*`.split("\n")
