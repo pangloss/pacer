@@ -116,7 +116,7 @@ shared_examples_for Pacer::GraphMixin do
           if graph.respond_to? :id_prefix
             should == graph.id_prefix + '1234'
           elsif graph.supports_custom_element_ids?
-            should == '1234' 
+            should == '1234'
           end
         end
 
@@ -127,7 +127,7 @@ shared_examples_for Pacer::GraphMixin do
             if graph.respond_to? :id_prefix
               should == graph.id_prefix + '1234'
             elsif graph.supports_custom_element_ids?
-              should == '1234' 
+              should == '1234'
             end
           end
           it_behaves_like 'a vertex with a mixin'
@@ -141,7 +141,7 @@ shared_examples_for Pacer::GraphMixin do
         if graph.respond_to? :id_prefix
           should == graph.id_prefix + '1234'
         elsif graph.supports_custom_element_ids?
-          should == '1234' 
+          should == '1234'
         end
       end
 
@@ -151,7 +151,7 @@ shared_examples_for Pacer::GraphMixin do
           if graph.respond_to? :id_prefix
             should == graph.id_prefix + '1234'
           elsif graph.supports_custom_element_ids?
-            should == '1234' 
+            should == '1234'
           end
         end
         it_behaves_like 'a vertex with a mixin'
