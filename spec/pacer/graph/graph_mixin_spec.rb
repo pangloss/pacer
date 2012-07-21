@@ -257,7 +257,6 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#load_edges' do
-    before { graph.checkpoint }
     context 'invalid' do
       subject { graph.load_edges [e0.element_id, nil, e0.element_id, 'missing'] }
       it { should == [e0, e0] }
@@ -324,9 +323,7 @@ shared_examples_for Pacer::GraphMixin do
         its(:index_type) { should == Pacer.manual_index }
         its(:index_class) { should == graph.index_class(:edge) }
         after do
-          graph.transaction do
-            graph.drop_index 'missing_edge'
-          end
+          graph.drop_index 'missing_edge'
         end
       end
 
@@ -340,9 +337,7 @@ shared_examples_for Pacer::GraphMixin do
         its(:index_type) { should == Pacer.manual_index }
         its(:index_class) { should == graph.index_class(:vertex) }
         after do
-          graph.transaction do
-            graph.drop_index 'missing_vertex'
-          end
+          graph.drop_index 'missing_vertex'
         end
       end
     end
