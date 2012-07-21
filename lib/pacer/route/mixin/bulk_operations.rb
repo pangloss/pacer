@@ -19,28 +19,7 @@ module Pacer::Routes
     # +size+ records.
     def bulk_job(size = nil, target_graph = nil)
       target_graph ||= graph
-      if target_graph and not target_graph.in_bulk_job?
-        begin
-          target_graph.in_bulk_job = true
-          size ||= target_graph.bulk_job_size
-          counter = 0
-          each_slice(size) do |slice|
-            print counter if Pacer.verbose?
-            counter += size
-            target_graph.managed_manual_transaction do
-              target_graph.unmanaged_transactions do
-                slice.each do |element|
-                  yield element
-                end
-              end
-              print '.' if Pacer.verbose?
-            end
-          end
-        ensure
-          puts '!' if Pacer.verbose?
-          target_graph.in_bulk_job = false
-        end
-      elsif target_graph
+      if target_graph
         each do |element|
           yield element
         end
