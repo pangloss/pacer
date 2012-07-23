@@ -119,17 +119,13 @@ protected
           unindexed_graph.v.delete! if unindexed_graph
         end
         if transactions and spec.use_transactions?
-          graph.manual_transactions do
-            graph2.manual_transactions do
-              begin
-                graph.begin_transaction
-                graph2.begin_transaction
-                spec.run
-              ensure
-                graph.rollback_transaction rescue nil
-                graph2.rollback_transaction rescue nil
-              end
-            end
+          begin
+           #graph.begin_transaction
+           #graph2.begin_transaction
+            spec.run
+          ensure
+           #graph.rollback_transaction rescue nil
+           #graph2.rollback_transaction rescue nil
           end
         else
           spec.run

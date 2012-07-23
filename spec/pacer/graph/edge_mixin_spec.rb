@@ -37,7 +37,6 @@ shared_examples_for Pacer::EdgeMixin do
     before do
       @edge_id = e0.element_id
       e0.delete!
-      graph.checkpoint # deleted edges in neo may be looked up during the transaction
     end
     it 'should be removed' do
       graph.edge(@edge_id).should be_nil

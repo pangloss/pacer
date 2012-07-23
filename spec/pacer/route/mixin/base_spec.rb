@@ -211,7 +211,6 @@ shared_examples_for Pacer::Core::Route do
     end
 
     describe '#result' do
-      before { graph.checkpoint }
       subject { route.result }
       its(:element_type) { should == route.element_type }
     end

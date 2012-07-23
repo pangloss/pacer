@@ -71,10 +71,6 @@ module Pacer
       clear
     end
 
-    def ==(other)
-      other.equal? self
-    end
-
     def supports_custom_element_ids?
       true
     end
@@ -90,7 +86,7 @@ module Pacer
     def supports_edge_indices?
       false
     end
-    
+
     include GraphExtensions
 
     protected

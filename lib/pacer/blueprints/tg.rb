@@ -15,13 +15,10 @@ module Pacer
     graph
   end
 
-
   # Extend the java class imported from blueprints.
   class TinkerGraph
     include GraphMixin
     include GraphIndicesMixin
-    include GraphTransactionsStub
-    include ManagedTransactionsMixin
     include Pacer::Core::Route
     include Pacer::Core::Graph::GraphRoute
     include Pacer::Core::Graph::GraphIndexRoute
@@ -36,20 +33,6 @@ module Pacer
 
     def edge_class
       TinkerEdge
-    end
-
-    # Override to return an enumeration-friendly array of vertices.
-    def get_vertices
-      getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
-    end
-
-    # Override to return an enumeration-friendly array of edges.
-    def get_edges
-      getEdges.iterator.to_route(:graph => self, :element_type => :edge)
-    end
-
-    def ==(other)
-      other.class == self.class and other.object_id == self.object_id
     end
   end
 
