@@ -2,9 +2,9 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
   module EdgesRoute
-    import com.tinkerpop.pipes.transform.OutVertexPipe
-    import com.tinkerpop.pipes.transform.InVertexPipe
-    import com.tinkerpop.pipes.transform.BothVerticesPipe
+    import com.tinkerpop.gremlin.pipes.transform.OutVertexPipe
+    import com.tinkerpop.gremlin.pipes.transform.InVertexPipe
+    import com.tinkerpop.gremlin.pipes.transform.BothVerticesPipe
 
     include ElementRoute
 

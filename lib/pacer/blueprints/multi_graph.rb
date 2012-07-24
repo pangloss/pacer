@@ -15,7 +15,7 @@ module Pacer
 
 
   class MultiVertex < RubyVertex
-    import com.tinkerpop.pipes.util.MultiIterator
+    import com.tinkerpop.pipes.util.iterators.MultiIterator
 
     def initialize(*args)
       super
