@@ -2,6 +2,8 @@ module Pacer
   # NOTE these extensions modules can only be included in classes that don't include the
   # default Java method aliases generated when importing Java classes into JRuby. In those
   # classes the methods must be copied and pasted in order to overwrite the aliased methods.
+  #
+
   module GraphExtensions
     def self.included(target)
       target.class_eval do
@@ -42,6 +44,7 @@ module Pacer
   end
 
   module EdgeExtensions
+
     def self.included(target)
       target.class_eval do
         include Pacer::Core::Graph::EdgesRoute
@@ -51,7 +54,7 @@ module Pacer
     end
 
     def in_vertex(extensions = nil)
-      v = inVertex
+      v = getVertex Pacer::Pipes::IN_V
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
@@ -63,7 +66,7 @@ module Pacer
     end
 
     def out_vertex(extensions = nil)
-      v = outVertex
+      v = getVertex Pacer::Pipes::OUT_V
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
