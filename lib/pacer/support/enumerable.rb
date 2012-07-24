@@ -63,10 +63,10 @@ module Enumerable
         source = self
       end
       if based_on
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info)
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info, :route_name => opts[:route_name])
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info])
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info], :route_name => opts[:route_name])
       end
     end
   end

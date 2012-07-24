@@ -40,12 +40,12 @@ module Pacer
 
     # Override to return an enumeration-friendly array of vertices.
     def get_vertices
-      getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
+      getVertices.iterator.to_route(graph: self, element_type: :vertex, route_name: 'GraphV')
     end
 
     # Override to return an enumeration-friendly array of edges.
     def get_edges
-      getEdges.iterator.to_route(:graph => self, :element_type => :edge)
+      getEdges.iterator.to_route(graph: self, element_type: :edge, route_name: 'GraphE')
     end
 
     def ==(other)

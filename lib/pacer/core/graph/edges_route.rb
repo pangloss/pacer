@@ -58,7 +58,7 @@ module Pacer::Core::Graph
     #
     # @return [Core::Route]
     def labels
-      chain_route(:pipe_class => com.tinkerpop.pipes.transform.LabelPipe,
+      chain_route(:pipe_class => com.tinkerpop.gremlin.pipes.transform.LabelPipe,
                   :route_name => 'labels',
                   :element_type => :object)
     end
