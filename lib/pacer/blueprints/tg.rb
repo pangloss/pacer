@@ -74,7 +74,7 @@ module Pacer
     include EdgeMixin
 
     def in_vertex(extensions = nil)
-      v = inVertex
+      v = getVertex Pacer::Pipes::IN_V
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
@@ -86,7 +86,7 @@ module Pacer
     end
 
     def out_vertex(extensions = nil)
-      v = outVertex
+      v = getVertex Pacer::Pipes::OUT_V
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
