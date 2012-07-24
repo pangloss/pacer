@@ -7,8 +7,8 @@ module Pacer::Wrappers
 
     def_delegators :@element,
       :getId, :getLabel, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
-      :getInVertex, :getOutVertex,
-      :getRawEdge, 
+      :getVertex,
+      :getRawEdge,
       :graph, :graph=, :<=>, :==
 
     class << self
