@@ -36,6 +36,9 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
+require 'pacer/pipe/vertices_pipe'
+require 'pacer/pipe/edges_pipe'
+
 require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/block_filter_pipe'
 require 'pacer/pipe/collection_filter_pipe'
