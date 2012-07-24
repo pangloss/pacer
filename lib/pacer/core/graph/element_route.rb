@@ -118,7 +118,7 @@ module Pacer::Core::Graph
 
     def build_index(index, index_key = nil, property = nil, create = true)
       index_name = index
-      unless index.is_a? com.tinkerpop.blueprints.pgm.Index
+      unless index.is_a? com.tinkerpop.blueprints.Index
         index = graph.index_name index.to_s
       end
       sample_element = first
@@ -160,7 +160,7 @@ module Pacer::Core::Graph
         iter.graph = graph
       elsif extensions and extensions.any?
         iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-        iter.extensions = extensions 
+        iter.extensions = extensions
         iter.graph = graph
       else
         iter.extend Pacer::Core::Route::IteratorMixin

@@ -1,9 +1,9 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraph
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerIndex
+  import com.tinkerpop.blueprints.impls.tg.TinkerGraph
+  import com.tinkerpop.blueprints.impls.tg.TinkerVertex
+  import com.tinkerpop.blueprints.impls.tg.TinkerEdge
+  import com.tinkerpop.blueprints.impls.tg.TinkerElement
+  import com.tinkerpop.blueprints.impls.tg.TinkerIndex
 
   # Create a new TinkerGraph. If path is given, import the GraphML data from
   # the file specified.

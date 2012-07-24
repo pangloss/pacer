@@ -2,7 +2,7 @@ module Pacer::Pipes
   class IsUniquePipe < RubyPipe
     import java.util.ArrayList
     import com.tinkerpop.pipes.sideeffect.SideEffectPipe
-    import com.tinkerpop.pipes.util.ExpandableIterator
+    import com.tinkerpop.pipes.util.iterators.ExpandableIterator
     import com.tinkerpop.pipes.filter.DuplicateFilterPipe
 
     include SideEffectPipe

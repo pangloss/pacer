@@ -205,15 +205,15 @@ module Pacer
     alias edges_route? edge_route?
 
     # Blueprints constant for manual index.
-    # @return [com.tinkerpop.blueprints.pgm.Index::Type::MANUAL]
+    # @return [com.tinkerpop.blueprints.Index::Type::MANUAL]
     def manual_index
-      com.tinkerpop.blueprints.pgm.Index::Type::MANUAL
+      com.tinkerpop.blueprints.Index::Type::MANUAL
     end
 
     # Blueprints constant for automatic index.
-    # @return [com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC]
+    # @return [com.tinkerpop.blueprints.Index::Type::AUTOMATIC]
     def automatic_index
-      com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
+      com.tinkerpop.blueprints.Index::Type::AUTOMATIC
     end
 
     # If a pipe is giving you trouble, you can get all of the

@@ -61,7 +61,7 @@ module Pacer::Filter::PropertyFilter
 
           it 'should use the automatic index' do
             find_index
-            @idx.should be_a Java::ComTinkerpopBlueprintsPgmImplsTg::TinkerAutomaticIndex
+            @idx.should be_a Java::ComTinkerpopBlueprintsImplsTg::TinkerAutomaticIndex
           end
 
           it 'should use the first key and value' do

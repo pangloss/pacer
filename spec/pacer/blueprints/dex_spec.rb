@@ -13,27 +13,27 @@ Run.dex do
 
       context ':vertex' do
         subject { graph.element_type(:vertex) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexVertex }
+        it { should == com.tinkerpop.blueprints.impls.dex.DexVertex }
       end
 
       context 'a vertex' do
         subject { graph.element_type(v0) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexVertex }
+        it { should == com.tinkerpop.blueprints.impls.dex.DexVertex }
       end
 
       context ':edge' do
         subject { graph.element_type(:edge) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexEdge }
+        it { should == com.tinkerpop.blueprints.impls.dex.DexEdge }
       end
 
       context 'an edge' do
         subject { graph.element_type(e0) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexEdge }
+        it { should == com.tinkerpop.blueprints.impls.dex.DexEdge }
       end
 
       context ':mixed' do
         subject { graph.element_type(:mixed) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexElement }
+        it { should == com.tinkerpop.blueprints.impls.dex.DexElement }
       end
 
       context ':object' do
@@ -44,17 +44,17 @@ Run.dex do
       context 'from element_type' do
         context ':vertex' do
           subject { graph.element_type(graph.element_type :vertex) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexVertex }
+          it { should == com.tinkerpop.blueprints.impls.dex.DexVertex }
         end
 
         context ':edge' do
           subject { graph.element_type(graph.element_type :edge) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexEdge }
+          it { should == com.tinkerpop.blueprints.impls.dex.DexEdge }
         end
 
         context ':mixed' do
           subject { graph.element_type(graph.element_type :mixed) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexElement }
+          it { should == com.tinkerpop.blueprints.impls.dex.DexElement }
         end
 
         context ':object' do
@@ -66,7 +66,7 @@ Run.dex do
       context 'from index_class' do
         context ':vertex' do
           subject { graph.element_type(graph.index_class :vertex) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.dex.DexVertex }
+          it { should == com.tinkerpop.blueprints.impls.dex.DexVertex }
         end
       end
     end

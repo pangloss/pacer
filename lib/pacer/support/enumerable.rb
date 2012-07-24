@@ -48,7 +48,7 @@ module Enumerable
   # NOTE: if this is a collection of wrapped vertices or edges, Java pipes
   # may crash with something like:
   #
-  #   NativeException: java.lang.ClassCastException: org.jruby.RubyObject cannot be cast to com.tinkerpop.blueprints.pgm.Element
+  #   NativeException: java.lang.ClassCastException: org.jruby.RubyObject cannot be cast to com.tinkerpop.blueprints.Element
   #
   # You can work around that by passing the option :unwrap => true or
   # setting the :based_on parameter to a route that has extensions.

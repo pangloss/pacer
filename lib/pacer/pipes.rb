@@ -5,8 +5,7 @@ module Pacer
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.transform.IdentityPipe
     import com.tinkerpop.pipes.util.Pipeline
-    import com.tinkerpop.pipes.util.ExpandableIterator
-    import com.tinkerpop.pipes.util.MultiIterator
+    import com.tinkerpop.pipes.util.iterators.MultiIterator
     import com.tinkerpop.pipes.util.PipeHelper
 
     import com.tinkerpop.pipes.filter.RandomFilterPipe
@@ -14,8 +13,8 @@ module Pacer
     import com.tinkerpop.pipes.filter.RangeFilterPipe
     import com.tinkerpop.pipes.filter.FilterPipe
 
-    import com.tinkerpop.pipes.transform.IdPipe
-    import com.tinkerpop.pipes.transform.PropertyPipe
+    import com.tinkerpop.gremlin.pipes.transform.IdPipe
+    import com.tinkerpop.gremlin.pipes.transform.PropertyPipe
 
     EQUAL = FilterPipe::Filter::EQUAL
     NOT_EQUAL = FilterPipe::Filter::NOT_EQUAL

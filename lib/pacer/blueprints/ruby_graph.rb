@@ -1,7 +1,7 @@
 module Pacer
   class RubyGraph
-    import com.tinkerpop.blueprints.pgm.Element
-    import com.tinkerpop.blueprints.pgm.Graph
+    import com.tinkerpop.blueprints.Element
+    import com.tinkerpop.blueprints.Graph
 
     include Graph
 
@@ -101,7 +101,7 @@ module Pacer
   end
 
   class RubyElement
-    include com.tinkerpop.blueprints.pgm.Element
+    include com.tinkerpop.blueprints.Element
 
     def initialize(graph, element_id)
       @graph = graph
@@ -147,7 +147,7 @@ module Pacer
 
 
   class RubyVertex < RubyElement
-    include com.tinkerpop.blueprints.pgm.Vertex
+    include com.tinkerpop.blueprints.Vertex
 
     def getRawVertex
       self
@@ -169,7 +169,7 @@ module Pacer
   end
 
   class RubyEdge < RubyElement
-    include com.tinkerpop.blueprints.pgm.Edge
+    include com.tinkerpop.blueprints.Edge
 
     def initialize(graph, id, out_vertex, in_vertex, label)
       super(graph, id)

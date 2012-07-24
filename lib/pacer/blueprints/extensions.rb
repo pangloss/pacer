@@ -6,12 +6,12 @@ module Pacer
     def self.included(target)
       target.class_eval do
         include GraphMixin
-        include GraphIndicesMixin if target.ancestors.include? com.tinkerpop.blueprints.pgm.IndexableGraph
+        include GraphIndicesMixin if target.ancestors.include? com.tinkerpop.blueprints.IndexableGraph
         include GraphTransactionsStub
         include ManagedTransactionsMixin
         include Pacer::Core::Route
         include Pacer::Core::Graph::GraphRoute
-        include Pacer::Core::Graph::GraphIndexRoute if target.ancestors.include? com.tinkerpop.blueprints.pgm.IndexableGraph
+        include Pacer::Core::Graph::GraphIndexRoute if target.ancestors.include? com.tinkerpop.blueprints.IndexableGraph
       end
     end
 
