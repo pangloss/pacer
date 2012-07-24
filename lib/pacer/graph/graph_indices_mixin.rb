@@ -12,7 +12,7 @@ module Pacer
       if type
         idx = getIndices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
         if idx.nil? and opts[:create]
-          idx = createManualIndex name, element_type(type)
+          idx = createIndex name, element_type(type)
         end
       else
         idx = getIndices.detect { |i| i.index_name == name }

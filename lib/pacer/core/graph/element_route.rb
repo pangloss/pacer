@@ -125,7 +125,7 @@ module Pacer::Core::Graph
       unless index
         if sample_element
           if create
-            index = graph.createManualIndex index_name, graph.element_type(sample_element)
+            index = graph.createIndex index_name, graph.element_type(sample_element)
           else
             raise "No index found for #{ index } on #{ graph }" unless index
           end
