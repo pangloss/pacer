@@ -27,6 +27,7 @@ file 'pom.xml' => 'lib/pacer/version.rb' do
         line.sub!(%r{<gem.version>.*</gem.version>}, "<gem.version>#{ Pacer::VERSION }</gem.version>")
         line.sub!(%r{<blueprints.version>.*</blueprints.version>}, "<blueprints.version>#{ Pacer::BLUEPRINTS_VERSION }</blueprints.version>")
         line.sub!(%r{<pipes.version>.*</pipes.version>}, "<pipes.version>#{ Pacer::PIPES_VERSION }</pipes.version>")
+        line.sub!(%r{<gremlin.version>.*</gremlin.version>}, "<gremlin.version>#{ Pacer::GREMLIN_VERSION }</gremlin.version>")
         f << line
       end
     end
@@ -35,7 +36,8 @@ end
 
 file Pacer::JAR_PATH => 'pom.xml' do
   when_writing("Execute 'mvn package' task") do
-    system('mvn clean package')
+    system 'mvn', 'clean'
+    system 'mvn', 'package'
   end
 end
 
@@ -44,6 +46,11 @@ task :check_18_mode do
     warn 'Releasing gems in 1.9 mode does not work as of JRuby 1.6.5'
     raise 'Nooooooo!'
   end
+end
+
+desc 'Touch version.rb so that the jar rebuilds'
+task :touch do
+  system 'touch', 'lib/pacer/version.rb'
 end
 
 desc "build the JAR at #{ Pacer::JAR_PATH }"

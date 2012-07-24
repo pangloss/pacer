@@ -9,5 +9,6 @@ module Pacer
 
     BLUEPRINTS_VERSION = "2.1.0-SNAPSHOT"
     PIPES_VERSION = "2.1.0-SNAPSHOT"
+    GREMLIN_VERSION = "2.1.0-SNAPSHOT"
   end
 end
