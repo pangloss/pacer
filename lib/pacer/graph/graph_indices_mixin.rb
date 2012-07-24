@@ -68,26 +68,5 @@ module Pacer
     def index_class(et)
       element_type(et).java_class.to_java
     end
-
-    # Does this graph allow me to create or modify automatic indices?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_automatic_indices?
-      true
-    end
-
-    # Does this graph allow me to create or modify manual indices?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_manual_indices?
-      true
-    end
-
-    # Does this graph support indices on edges?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_edge_indices?
-      true
-    end
   end
 end

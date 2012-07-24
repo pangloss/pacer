@@ -2,8 +2,44 @@ module Pacer
   class RubyGraph
     import com.tinkerpop.blueprints.Element
     import com.tinkerpop.blueprints.Graph
+    import com.tinkerpop.blueprints.Features
 
     include Graph
+
+    FEATURES = Features.new.tap do |features|
+      features.supportsDuplicateEdges = true
+      features.supportsSelfLoops = true
+      features.supportsSerializableObjectProperty = true
+      features.supportsBooleanProperty = true
+      features.supportsDoubleProperty = true
+      features.supportsFloatProperty = true
+      features.supportsIntegerProperty = true
+      features.supportsPrimitiveArrayProperty = true
+      features.supportsUniformListProperty = true
+      features.supportsMixedListProperty = true
+      features.supportsLongProperty = true
+      features.supportsMapProperty = true
+      features.supportsStringProperty = true
+
+      features.ignoresSuppliedIds = false
+      features.isPersistent = false
+      features.isRDFModel = false
+      features.isWrapper = false
+
+      features.supportsIndices = false
+      features.supportsKeyIndices = false
+      features.supportsVertexKeyIndex = false
+      features.supportsEdgeKeyIndex = false
+      features.supportsVertexIndex = false
+      features.supportsEdgeIndex = false
+      features.supportsTransactions = false
+      features.supportsVertexIteration = true
+      features.supportsEdgeIteration = true
+      features.supportsEdgeRetrieval = true
+      features.supportsVertexProperties = true
+      features.supportsEdgeProperties = true
+      features.supportsThreadedTransactions = false
+    end
 
     def initialize
       clear
@@ -75,22 +111,10 @@ module Pacer
       other.equal? self
     end
 
-    def supports_custom_element_ids?
-      true
+    def features
+      FEATURES
     end
 
-    def supports_automatic_indices?
-      false
-    end
-
-    def supports_manual_indices?
-      false
-    end
-
-    def supports_edge_indices?
-      false
-    end
-    
     include GraphExtensions
 
     protected
