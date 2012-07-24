@@ -53,11 +53,11 @@ module Pacer
       index.graph = self
       if index_class(et) == element_type(:vertex).java_class
         v.bulk_job do |v|
-          Pacer::Utils::AutomaticIndexHelper.addElement(index, v)
+          index.addElement v
         end
       else
         e.bulk_job do |e|
-          Pacer::Utils::AutomaticIndexHelper.addElement(index, e)
+          index.addElement e
         end
       end
       index
