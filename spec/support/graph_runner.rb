@@ -66,9 +66,21 @@ class RSpec::GraphRunner
     end
   end
 
+  module Stubs
+    def neo4j(*args)
+    end
+
+    def rg(*args)
+    end
+
+    def multigraph(*args)
+    end
+  end
+
   include Tg
-  include RubyGraph
-  include MultiGraph
+  #include RubyGraph
+  #include MultiGraph
+  include Stubs
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
