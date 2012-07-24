@@ -86,7 +86,7 @@ module Pacer::Core::Graph
     protected
 
     def id_pipe_class
-      com.tinkerpop.pipes.transform.IdEdgePipe
+      com.tinkerpop.gremlin.pipes.transform.IdEdgePipe
     end
   end
 end

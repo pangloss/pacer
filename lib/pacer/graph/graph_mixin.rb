@@ -133,7 +133,7 @@ module Pacer
         stream = java.io.FileInputStream.new path
       end
       creating_elements do
-        com.tinkerpop.blueprints.util.graphml.GraphMLReader.input_graph self, stream
+        com.tinkerpop.blueprints.util.io.graphml.GraphMLReader.input_graph self, stream
       end
       true
     ensure

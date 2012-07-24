@@ -22,7 +22,7 @@ Run.tg(:read_only) do
       it 'should create a pipeline with only the pipe added to it' do
         start_pipe, end_pipe = subject.send :build_pipeline
         start_pipe.should == end_pipe
-        start_pipe.should be_a Java::ComTinkerpopPipesFilter::PropertyFilterPipe
+        start_pipe.should be_a Java::ComTinkerpopGremlinPipesFilter::PropertyFilterPipe
       end
     end
   end
