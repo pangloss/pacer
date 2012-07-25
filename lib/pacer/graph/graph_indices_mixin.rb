@@ -21,47 +21,7 @@ module Pacer
       idx
     end
 
-    # Drops and recreates an automatic index with the same keys.
-    #
-    # In some earlier graphdb versions it was possible to corrupt
-    # automatic indices. This method provided a fast way to recreate
-    # them.
-    #
-    # @param [Index] old_index this index will be dropped
-    # @return [Index] rebuilt index
-    def rebuild_automatic_index(old_index)
-      name = old_index.getIndexName
-      index_class = old_index.getIndexClass
-      keys = old_index.getAutoIndexKeys
-      drop_index name
-      build_automatic_index(name, index_class, keys)
-    end
 
-    # Creates a new automatic index.
-    #
-    # @param [#to_s] name index name
-    # @param [:vertex, :edge, element type] et element type
-    # @param [[#to_s], nil] keys The keys to be indexed. If nil then
-    #   index all keys
-    def build_automatic_index(name, et, keys = nil)
-      if keys and not keys.is_a? java.util.Set
-        set = java.util.HashSet.new
-        keys.each { |k| set.add k.to_s }
-        keys = set
-      end
-      index = createAutomaticIndex name.to_s, index_class(et), keys
-      index.graph = self
-      if index_class(et) == element_type(:vertex).java_class
-        v.bulk_job do |v|
-          index.addElement v
-        end
-      else
-        e.bulk_job do |e|
-          index.addElement e
-        end
-      end
-      index
-    end
 
     # Return an object that can be compared to the return value of
     # Index#index_class.
