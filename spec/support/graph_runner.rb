@@ -88,7 +88,7 @@ class RSpec::GraphRunner
 
 
   include Stubs
-  #include Tg
+  include Tg
   include RubyGraph
   #include MultiGraph
 

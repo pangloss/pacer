@@ -111,24 +111,24 @@ module Pacer
       v
     end
 
-    def get_edges(direction, *labels_and_extensions)
-      labels, exts = split_labels_and_extensions(labels_and_extensions)
-      edge_iterator(element.getEdges(direction, *labels).iterator, exts)
-    end
-
     def out_edges(*labels_and_extensions)
-      get_edges Pacer::Pipes::OUT, *labels_and_extensions
+      get_edges_helper Pacer::Pipes::OUT, *labels_and_extensions
     end
 
     def in_edges(*labels_and_extensions)
-      get_edges Pacer::Pipes::IN, *labels_and_extensions
+      get_edges_helper Pacer::Pipes::IN, *labels_and_extensions
     end
 
     def both_edges(*labels_and_extensions)
-      get_edges Pacer::Pipes::BOTH, *labels_and_extensions
+      get_edges_helper Pacer::Pipes::BOTH, *labels_and_extensions
     end
 
     protected
+
+    def get_edges_helper(direction, *labels_and_extensions)
+      labels, exts = split_labels_and_extensions(labels_and_extensions)
+      edge_iterator(element.getEdges(direction, *labels).iterator, exts)
+    end
 
     def split_labels_and_extensions(mixed)
       labels = Set[]
