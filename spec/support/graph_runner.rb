@@ -88,9 +88,12 @@ class RSpec::GraphRunner
 
 
   include Stubs
-  include Tg
-  include RubyGraph
+  #include Tg
+  #include RubyGraph
   #include MultiGraph
+  include Neo4j
+  #include Dex
+  #include Orient
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
@@ -116,6 +119,7 @@ protected
 
   def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)
     return unless use_graph? name
+    clear_graph = proc { |g| clear g }
     describe name do
       let(:graph) do
         if indices
@@ -129,23 +133,27 @@ protected
       end
       if usage_style == :read_only
         before(:all) do
-          source_graph_1.clear
-          source_graph_2.clear
-          unindexed_graph.v.delete! if unindexed_graph
+          if indices
+            clear_graph.call source_graph_1
+          elsif unindexed_graph
+            clear_graph.call unindexed_graph
+          end
+          clear_graph.call source_graph_2
         end
       end
       around do |spec|
         if usage_style == :read_write
-          source_graph_1.clear
-          source_graph_2.clear
-          unindexed_graph.clear if unindexed_graph
+          if indices
+            clear_graph.call source_graph_1
+          elsif unindexed_graph
+            clear_graph.call unindexed_graph
+          end
+          clear_graph.call source_graph_2
         end
         if transactions and spec.use_transactions?
-          graph.manual_transactions do
-            graph2.manual_transactions do
+          graph.transaction do
+            graph2.transaction do
               begin
-                graph.begin_transaction
-                graph2.begin_transaction
                 spec.run
               ensure
                 graph.rollback_transaction rescue nil
@@ -158,6 +166,21 @@ protected
         end
       end
       instance_eval(&block)
+    end
+  end
+
+  def clear(graph)
+    if graph.respond_to? :clear
+      graph.clear
+    else
+      graph.transaction do
+        graph.getVertices.each do |v|
+          begin
+            graph.removeVertex v
+          rescue
+          end
+        end
+      end
     end
   end
 end
