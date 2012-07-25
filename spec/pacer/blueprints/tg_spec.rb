@@ -13,27 +13,27 @@ Run.tg do
 
       context ':vertex' do
         subject { Pacer.tg.element_type(:vertex) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+        it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
       end
 
       context 'a vertex' do
         subject { graph.element_type(v0) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+        it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
       end
 
       context ':edge' do
         subject { graph.element_type(:edge) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+        it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
       end
 
       context 'an edge' do
         subject { graph.element_type(e0) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+        it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
       end
 
       context ':mixed' do
         subject { graph.element_type(:mixed) }
-        it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement }
+        it { should == com.tinkerpop.blueprints.impls.tg.TinkerElement }
       end
 
       context ':object' do
@@ -44,17 +44,17 @@ Run.tg do
       context 'from result' do
         context ':vertex' do
           subject { Pacer.tg.element_type(Pacer.tg.element_type :vertex) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+          it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
         end
 
         context ':edge' do
           subject { graph.element_type(Pacer.tg.element_type :edge) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+          it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
         end
 
         context ':mixed' do
           subject { graph.element_type(Pacer.tg.element_type :mixed) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement }
+          it { should == com.tinkerpop.blueprints.impls.tg.TinkerElement }
         end
 
         context ':object' do
@@ -66,12 +66,12 @@ Run.tg do
       context 'from index_class' do
         context ':vertex' do
           subject { graph.element_type(graph.index_class :vertex) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex }
+          it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
         end
 
         context ':edge' do
           subject { graph.element_type(graph.index_class :edge) }
-          it { should == com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge }
+          it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
         end
       end
     end
@@ -109,20 +109,6 @@ Run.tg do
         v.should == v0
         v.extensions.should include(Tackle::SimpleMixin)
       end
-    end
-
-    describe '#get_vertices' do
-      before { e0 }
-      subject { graph.get_vertices }
-      it { should be_a(Pacer::Core::Route) }
-      its(:count) { should == 2 }
-    end
-
-    describe '#get_edges' do
-      before { e0 }
-      subject { graph.get_edges }
-      it { should be_a(Pacer::Core::Route) }
-      its(:count) { should == 1 }
     end
   end
 end

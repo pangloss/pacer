@@ -37,7 +37,6 @@ shared_examples_for Pacer::EdgeMixin do
     before do
       @edge_id = e0.element_id
       e0.delete!
-      graph.checkpoint # deleted edges in neo may be looked up during the transaction
     end
     it 'should be removed' do
       graph.edge(@edge_id).should be_nil
@@ -52,11 +51,11 @@ shared_examples_for Pacer::EdgeMixin do
     let(:dest) { graph2 }
   }) do
     describe '#clone_into', :transactions => false do
-      before { pending 'support temporary hash indices for clone/copy' unless graph.supports_manual_indices? }
+      before { pending 'support temporary hash indices for clone/copy' unless graph.features.supportsIndices }
       context 'including vertices' do
         subject { e0.clone_into(dest, :create_vertices => true) }
 
-        its('element_id.to_s') { should == e0.element_id.to_s if graph.supports_custom_element_ids? }
+        its('element_id.to_s') { should == e0.element_id.to_s unless graph.features.ignoresSuppliedIds }
         its(:label) { should == 'links' }
         its(:graph) { should equal(dest) }
         its('in_vertex.properties') { should == { 'name' => 'eliza' } }
@@ -72,7 +71,7 @@ shared_examples_for Pacer::EdgeMixin do
             v0.clone_into(dest)
             v1.clone_into(dest)
           end
-          its('element_id.to_s') { should == e0.element_id.to_s if graph.supports_custom_element_ids? }
+          its('element_id.to_s') { should == e0.element_id.to_s unless graph.features.ignoresSuppliedIds }
           its(:label) { should == 'links' }
           its(:graph) { should equal(dest) }
           its('in_vertex.properties') { should == { 'name' => 'eliza' } }
@@ -82,7 +81,7 @@ shared_examples_for Pacer::EdgeMixin do
     end
 
     describe '#copy_into', :transactions => false do
-      before { pending unless graph.supports_manual_indices? }
+      before { pending unless graph.features.supportsIndices }
       subject { v0.clone_into(dest); v1.clone_into(dest); e0.copy_into(dest) }
       its(:label) { should == 'links' }
       its(:graph) { should equal(dest) }

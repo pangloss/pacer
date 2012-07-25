@@ -104,16 +104,15 @@ describe RouteOperations do
         who = v.vars[:who]
       }.paths
       r.each do |path|
-        path.to_a[0].should == @g
-        path.to_a[1].should == who
-        path.length.should == 4
+        path.to_a[0].should == who
+        path.length.should == 3
       end
     end
 
     it 'should not break path generation' do
       who_wrote_what = nil
       r = @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v|
-        who_wrote_what = [@g, v.vars[:who], v.vars[:wrote], v.vars[:what]]
+        who_wrote_what = [v.vars[:who], v.vars[:wrote], v.vars[:what]]
       }.paths
       r.each do |path|
         path.to_a.should == who_wrote_what

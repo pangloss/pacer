@@ -118,14 +118,14 @@ module Pacer::Core::Graph
 
     def build_index(index, index_key = nil, property = nil, create = true)
       index_name = index
-      unless index.is_a? com.tinkerpop.blueprints.pgm.Index
+      unless index.is_a? com.tinkerpop.blueprints.Index
         index = graph.index_name index.to_s
       end
       sample_element = first
       unless index
         if sample_element
           if create
-            index = graph.createManualIndex index_name, graph.element_type(sample_element)
+            index = graph.createIndex index_name, graph.element_type(sample_element)
           else
             raise "No index found for #{ index } on #{ graph }" unless index
           end
@@ -160,7 +160,7 @@ module Pacer::Core::Graph
         iter.graph = graph
       elsif extensions and extensions.any?
         iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-        iter.extensions = extensions 
+        iter.extensions = extensions
         iter.graph = graph
       else
         iter.extend Pacer::Core::Route::IteratorMixin

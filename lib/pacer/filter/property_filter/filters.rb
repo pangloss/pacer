@@ -1,5 +1,37 @@
 module Pacer
   module Filter
+    class KeyIndex
+      attr_reader :graph, :element_type
+
+      def initialize(graph, element_type)
+        @graph = graph
+        @element_type = element_type
+      end
+
+      # FIXME: there is no count for key indices anymore. I'm counting
+      # up to 10 elements to try to find good indices, otherwise using
+      # anything...
+      def count(key, value)
+        iter = get(key, value).iterator
+        10.times do |n|
+          if iter.hasNext
+            iter.next
+          else
+            return n
+          end
+        end
+        1_000_000 # Random high number.
+      end
+
+      def get(key, value)
+        if element_type == :vertex
+          graph.getVertices(key, value)
+        else
+          graph.getEdges(key, value)
+        end
+      end
+    end
+
     module PropertyFilter
       class Filters
         attr_reader :properties, :extensions, :route_modules, :best_index_value
@@ -258,21 +290,16 @@ module Pacer
         def available_indices(element_type)
           return @available_indices if @available_indices
           @available_indices = Hash.new { |h, k| h[k] = [] }
-          return @available_indices unless indices
           index_class = graph.index_class(element_type)
-          indices.each do |index|
-            next unless index.index_class == index_class
-            if index.index_type == Pacer.automatic_index
-              if keys = index.getAutoIndexKeys
-                keys.each do |key|
-                  @available_indices["key:#{key}"] << index
-                end
-              else
-                @available_indices[:all] << index
-              end
-            else
+          key_index = KeyIndex.new(graph, element_type)
+          graph.getIndexedKeys(index_class).each do |key|
+            @available_indices["key:#{key}"] = [key_index]
+          end
+          if search_manual_indices
+            indices.each do |index|
+              next unless index.index_class == index_class
               @available_indices["name:#{index.index_name}"] = [index]
-              @available_indices[:all] << index if search_manual_indices
+              @available_indices[:all] << index
             end
           end
           @available_indices

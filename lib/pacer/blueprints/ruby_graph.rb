@@ -1,9 +1,45 @@
 module Pacer
   class RubyGraph
-    import com.tinkerpop.blueprints.pgm.Element
-    import com.tinkerpop.blueprints.pgm.Graph
+    import com.tinkerpop.blueprints.Element
+    import com.tinkerpop.blueprints.Graph
+    import com.tinkerpop.blueprints.Features
 
     include Graph
+
+    FEATURES = Features.new.tap do |features|
+      features.supportsDuplicateEdges = true
+      features.supportsSelfLoops = true
+      features.supportsSerializableObjectProperty = true
+      features.supportsBooleanProperty = true
+      features.supportsDoubleProperty = true
+      features.supportsFloatProperty = true
+      features.supportsIntegerProperty = true
+      features.supportsPrimitiveArrayProperty = true
+      features.supportsUniformListProperty = true
+      features.supportsMixedListProperty = true
+      features.supportsLongProperty = true
+      features.supportsMapProperty = true
+      features.supportsStringProperty = true
+
+      features.ignoresSuppliedIds = false
+      features.isPersistent = false
+      features.isRDFModel = false
+      features.isWrapper = false
+
+      features.supportsIndices = false
+      features.supportsKeyIndices = false
+      features.supportsVertexKeyIndex = false
+      features.supportsEdgeKeyIndex = false
+      features.supportsVertexIndex = false
+      features.supportsEdgeIndex = false
+      features.supportsTransactions = false
+      features.supportsVertexIteration = true
+      features.supportsEdgeIteration = true
+      features.supportsEdgeRetrieval = true
+      features.supportsVertexProperties = true
+      features.supportsEdgeProperties = true
+      features.supportsThreadedTransactions = false
+    end
 
     def initialize
       clear
@@ -40,7 +76,7 @@ module Pacer
     end
 
     def getVertices
-      Pacer::Pipes::EnumerablePipe.new @vertices.values
+      @vertices.values.to_iterable
     end
 
     def addEdge(id, outVertex, inVertex, label)
@@ -58,7 +94,7 @@ module Pacer
     end
 
     def getEdges
-      Pacer::Pipes::EnumerablePipe.new @edges.values
+      @edges.values.to_iterable
     end
 
     def clear
@@ -75,22 +111,10 @@ module Pacer
       other.equal? self
     end
 
-    def supports_custom_element_ids?
-      true
+    def features
+      FEATURES
     end
 
-    def supports_automatic_indices?
-      false
-    end
-
-    def supports_manual_indices?
-      false
-    end
-
-    def supports_edge_indices?
-      false
-    end
-    
     include GraphExtensions
 
     protected
@@ -101,7 +125,7 @@ module Pacer
   end
 
   class RubyElement
-    include com.tinkerpop.blueprints.pgm.Element
+    include com.tinkerpop.blueprints.Element
 
     def initialize(graph, element_id)
       @graph = graph
@@ -147,21 +171,27 @@ module Pacer
 
 
   class RubyVertex < RubyElement
-    include com.tinkerpop.blueprints.pgm.Vertex
+    include com.tinkerpop.blueprints.Vertex
+    import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable
 
     def getRawVertex
       self
     end
 
-    def getInEdges(*labels)
-      labels = extract_varargs_strings(labels)
-      edges = graph.getEdges.select { |e| e.getInVertex == self and (labels.empty? or labels.include? e.getLabel) }
-      Pacer::Pipes::EnumerablePipe.new edges
+    def getVertices(direction, *labels)
+      VerticesFromEdgesIterable.new self, direction, *labels
     end
 
-    def getOutEdges(*labels)
+    def getEdges(direction, *labels)
       labels = extract_varargs_strings(labels)
-      edges = graph.getEdges.select { |e| e.getOutVertex == self and (labels.empty? or labels.include? e.getLabel) }
+      if direction == Pacer::Pipes::BOTH
+        edges = graph.getEdges.select do |e|
+          ( (e.getVertex(Pacer::Pipes::IN) == self or e.getVertex(Pacer::Pipes::OUT) == self) and
+            (labels.empty? or labels.include? e.getLabel) )
+        end
+      else
+        edges = graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
+      end
       Pacer::Pipes::EnumerablePipe.new edges
     end
 
@@ -169,7 +199,7 @@ module Pacer
   end
 
   class RubyEdge < RubyElement
-    include com.tinkerpop.blueprints.pgm.Edge
+    include com.tinkerpop.blueprints.Edge
 
     def initialize(graph, id, out_vertex, in_vertex, label)
       super(graph, id)
@@ -186,12 +216,12 @@ module Pacer
       @label
     end
 
-    def getOutVertex()
-      @out_vertex
-    end
-
-    def getInVertex()
-      @in_vertex
+    def getVertex(direction)
+      if direction == Pacer::Pipes::OUT
+        @out_vertex
+      else
+        @in_vertex
+      end
     end
 
     include EdgeExtensions

@@ -45,10 +45,18 @@ module Enumerable
     end
   end
 
+  def to_list
+    java.util.Arrays.asList *self
+  end
+
+  def to_iterable
+    Pacer::Pipes::EnumerablePipe.new self
+  end
+
   # NOTE: if this is a collection of wrapped vertices or edges, Java pipes
   # may crash with something like:
   #
-  #   NativeException: java.lang.ClassCastException: org.jruby.RubyObject cannot be cast to com.tinkerpop.blueprints.pgm.Element
+  #   NativeException: java.lang.ClassCastException: org.jruby.RubyObject cannot be cast to com.tinkerpop.blueprints.Element
   #
   # You can work around that by passing the option :unwrap => true or
   # setting the :based_on parameter to a route that has extensions.
@@ -63,10 +71,10 @@ module Enumerable
         source = self
       end
       if based_on
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info)
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info, :route_name => opts[:route_name])
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info])
+        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info], :route_name => opts[:route_name])
       end
     end
   end

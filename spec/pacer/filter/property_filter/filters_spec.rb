@@ -49,6 +49,9 @@ module Pacer::Filter::PropertyFilter
 
         context '+ indices' do
           before do
+            graph.createKeyIndex 'name', graph.index_class(:vertex)
+            graph.createKeyIndex 'type', graph.index_class(:vertex)
+            graph.createKeyIndex 'nickname', graph.index_class(:vertex)
             filters.graph = graph
             filters.indices = graph.getIndices
             filters.choose_best_index = true
@@ -61,7 +64,7 @@ module Pacer::Filter::PropertyFilter
 
           it 'should use the automatic index' do
             find_index
-            @idx.should be_a Java::ComTinkerpopBlueprintsPgmImplsTg::TinkerAutomaticIndex
+            @idx.should be_a Pacer::Filter::KeyIndex
           end
 
           it 'should use the first key and value' do

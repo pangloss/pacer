@@ -7,7 +7,7 @@ Run.all do
         subject { graph.v.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
+        its(:first) { should be_a(Pacer::Pipes::VerticesPipe) }
         specify { subject.first.should equal(subject.last) }
       end
 
@@ -58,7 +58,7 @@ Run.all do
         subject { graph.v.element_ids.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
+        its(:first) { should be_a(Pacer::Pipes::VerticesPipe) }
         its(:last) { should be_a(Pacer::Pipes::IdPipe) }
       end
 
@@ -84,7 +84,7 @@ Run.all do
         use_simple_graph_data
         before { setup_data }
         subject { graph.v.element_ids.to_a }
-        its(:sort) { should == [v0.element_id, v1.element_id].sort }
+        its(:sort) { should == [v0, v1].to_route(based_on: graph.v).element_ids.to_a.sort }
       end
     end
   end

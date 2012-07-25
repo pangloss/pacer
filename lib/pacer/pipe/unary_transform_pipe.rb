@@ -1,7 +1,7 @@
 module Pacer::Pipes
   class UnaryTransformPipe < RubyPipe
     import com.tinkerpop.pipes.Pipe
-    import com.tinkerpop.pipes.util.SingleIterator
+    import com.tinkerpop.pipes.util.iterators.SingleIterator
 
     attr_reader :branch_a, :method
 

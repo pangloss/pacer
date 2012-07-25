@@ -133,7 +133,7 @@ module Pacer
         stream = java.io.FileInputStream.new path
       end
       creating_elements do
-        com.tinkerpop.blueprints.pgm.util.graphml.GraphMLReader.input_graph self, stream
+        com.tinkerpop.blueprints.util.io.graphml.GraphMLReader.input_graph self, stream
       end
       true
     ensure
@@ -146,7 +146,7 @@ module Pacer
     def export(path)
       path = File.expand_path path
       stream = java.io.FileOutputStream.new path
-      com.tinkerpop.blueprints.pgm.util.graphml.GraphMLWriter.outputGraph self, stream
+      com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter.outputGraph self, stream
     ensure
       stream.close if stream
     end
@@ -242,43 +242,6 @@ module Pacer
       else
         false
       end
-    end
-
-    # Does this graph support edges where the in_vertex and the
-    # out_vertex are the same?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_circular_edges?
-      true
-    end
-
-    # When creating an element, does this graph allow me to specify the
-    # element_id?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_custom_element_ids?
-      true
-    end
-
-    # Does this graph allow me to create or modify automatic indices?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_automatic_indices?
-      false
-    end
-
-    # Does this graph allow me to create or modify manual indices?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_manual_indices?
-      false
-    end
-
-    # Does this graph support indices on edges?
-    #
-    # Specific graphs may override this method to return false.
-    def supports_edge_indices?
-      false
     end
 
     def element_type(et = nil)

@@ -98,7 +98,6 @@ shared_examples_for Pacer::VertexMixin do
     before do
       @vertex_id = v0.element_id
       v0.delete!
-      graph.checkpoint # deleted edges in neo may otherwise still be looked up during the transaction
     end
     it 'should be removed' do
       graph.vertex(@vertex_id).should be_nil
@@ -110,14 +109,14 @@ shared_examples_for Pacer::VertexMixin do
     let(:dest) { Pacer.tg }
   },
   'into graph2' => proc {
-    before { pending 'support temporary hash indices for clone/copy' unless graph.supports_manual_indices? }
+    before { pending 'support temporary hash indices for clone/copy' unless graph.features.supportsIndices }
     let(:dest) { graph2 }
   }) do
     describe '#clone_into', :transactions => false do
       subject { v0.clone_into(dest) }
       its(:properties) { should == { 'name' => 'eliza' } }
       its(:graph) { should equal(dest) }
-      its('element_id.to_s') { should == v0.element_id.to_s if graph.supports_custom_element_ids? }
+      its('element_id.to_s') { should == v0.element_id.to_s unless graph.features.ignoresSuppliedIds }
     end
 
     describe '#copy_into', :transaction => false do
