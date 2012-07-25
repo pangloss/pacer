@@ -179,7 +179,14 @@ module Pacer
 
     def getEdges(direction, *labels)
       labels = extract_varargs_strings(labels)
-      edges = graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
+      if direction == Pacer::Pipes::BOTH
+        edges = graph.getEdges.select do |e|
+          ( (e.getVertex(Pacer::Pipes::IN) == self or e.getVertex(Pacer::Pipes::OUT) == self) and
+            (labels.empty? or labels.include? e.getLabel) )
+        end
+      else
+        edges = graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
+      end
       Pacer::Pipes::EnumerablePipe.new edges
     end
 
