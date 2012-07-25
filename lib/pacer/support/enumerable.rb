@@ -45,6 +45,14 @@ module Enumerable
     end
   end
 
+  def to_list
+    java.util.Arrays.asList *self
+  end
+
+  def to_iterable
+    Pacer::Pipes::EnumerablePipe.new self
+  end
+
   # NOTE: if this is a collection of wrapped vertices or edges, Java pipes
   # may crash with something like:
   #

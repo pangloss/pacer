@@ -76,7 +76,7 @@ module Pacer
     end
 
     def getVertices
-      Pacer::Pipes::EnumerablePipe.new @vertices.values
+      @vertices.values.to_iterable
     end
 
     def addEdge(id, outVertex, inVertex, label)
@@ -94,7 +94,7 @@ module Pacer
     end
 
     def getEdges
-      Pacer::Pipes::EnumerablePipe.new @edges.values
+      @edges.values.to_iterable
     end
 
     def clear
