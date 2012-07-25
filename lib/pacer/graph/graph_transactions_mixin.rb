@@ -1,5 +1,5 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.TransactionalGraph
+  import com.tinkerpop.blueprints.TransactionalGraph
 
   # Collect a global set of graphs that are currently in a transaction.
   #

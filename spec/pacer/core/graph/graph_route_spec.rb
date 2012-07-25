@@ -76,7 +76,7 @@ Run.all(:read_only, false) do
       end
     end
 
-    context 'with vertex auto index' do
+    pending 'with vertex auto index' do
       before :all do
         graph.build_automatic_index :v_auto, :vertex, [:type] if graph
       end

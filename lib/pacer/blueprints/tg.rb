@@ -1,9 +1,9 @@
 module Pacer
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerGraph
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerVertex
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerEdge
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerElement
-  import com.tinkerpop.blueprints.pgm.impls.tg.TinkerIndex
+  import com.tinkerpop.blueprints.impls.tg.TinkerGraph
+  import com.tinkerpop.blueprints.impls.tg.TinkerVertex
+  import com.tinkerpop.blueprints.impls.tg.TinkerEdge
+  import com.tinkerpop.blueprints.impls.tg.TinkerElement
+  import com.tinkerpop.blueprints.impls.tg.TinkerIndex
 
   # Create a new TinkerGraph. If path is given, import the GraphML data from
   # the file specified.
@@ -38,16 +38,6 @@ module Pacer
       TinkerEdge
     end
 
-    # Override to return an enumeration-friendly array of vertices.
-    def get_vertices
-      getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
-    end
-
-    # Override to return an enumeration-friendly array of edges.
-    def get_edges
-      getEdges.iterator.to_route(:graph => self, :element_type => :edge)
-    end
-
     def ==(other)
       other.class == self.class and other.object_id == self.object_id
     end
@@ -74,7 +64,7 @@ module Pacer
     include EdgeMixin
 
     def in_vertex(extensions = nil)
-      v = inVertex
+      v = getVertex Pacer::Pipes::IN
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
@@ -86,7 +76,7 @@ module Pacer
     end
 
     def out_vertex(extensions = nil)
-      v = outVertex
+      v = getVertex Pacer::Pipes::OUT
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions

@@ -7,7 +7,7 @@ module Pacer
         import com.tinkerpop.pipes.filter.AndFilterPipe
         import com.tinkerpop.pipes.filter.OrFilterPipe
         import com.tinkerpop.pipes.filter.ObjectFilterPipe
-        import com.tinkerpop.pipes.transform.PropertyPipe
+        import com.tinkerpop.gremlin.pipes.transform.PropertyPipe
         import com.tinkerpop.pipes.transform.HasCountPipe
         NeverPipe = Pacer::Pipes::NeverPipe
         IdentityPipe = Pacer::Pipes::IdentityPipe
