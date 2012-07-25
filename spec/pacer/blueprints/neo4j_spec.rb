@@ -159,19 +159,5 @@ Run.neo4j do
         v.extensions.should include(Tackle::SimpleMixin)
       end
     end
-
-    describe '#get_vertices' do
-      before { e0 }
-      subject { graph.get_vertices }
-      it { should be_a(Pacer::Core::Route) }
-      its(:count) { should == 2 }
-    end
-
-    describe '#get_edges' do
-      before { e0 }
-      subject { graph.get_edges }
-      it { should be_a(Pacer::Core::Route) }
-      its(:count) { should == 1 }
-    end
   end
 end

@@ -17,20 +17,9 @@ module Pacer
       end
     end
 
-    # Override to return an enumeration-friendly array of vertices.
-    def get_vertices
-      getVertices.iterator.to_route(:graph => self, :element_type => :vertex)
-    end
-
-    # Override to return an enumeration-friendly array of edges.
-    def get_edges
-      getEdges.iterator.to_route(:graph => self, :element_type => :edge)
-    end
-
     def ==(other)
       other.class == self.class and other.object_id == self.object_id
     end
-
   end
 
   module VertexExtensions

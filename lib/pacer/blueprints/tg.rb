@@ -38,16 +38,6 @@ module Pacer
       TinkerEdge
     end
 
-    # Override to return an enumeration-friendly array of vertices.
-    def get_vertices
-      getVertices.iterator.to_route(graph: self, element_type: :vertex, route_name: 'GraphV')
-    end
-
-    # Override to return an enumeration-friendly array of edges.
-    def get_edges
-      getEdges.iterator.to_route(graph: self, element_type: :edge, route_name: 'GraphE')
-    end
-
     def ==(other)
       other.class == self.class and other.object_id == self.object_id
     end
