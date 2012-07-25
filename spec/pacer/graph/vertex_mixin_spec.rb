@@ -98,7 +98,6 @@ shared_examples_for Pacer::VertexMixin do
     before do
       @vertex_id = v0.element_id
       v0.delete!
-      graph.checkpoint # deleted edges in neo may otherwise still be looked up during the transaction
     end
     it 'should be removed' do
       graph.vertex(@vertex_id).should be_nil
