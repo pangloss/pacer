@@ -172,9 +172,14 @@ module Pacer
 
   class RubyVertex < RubyElement
     include com.tinkerpop.blueprints.Vertex
+    import com.tinkerpop.blueprints.util.VerticesFromEdgesIterable
 
     def getRawVertex
       self
+    end
+
+    def getVertices(direction, *labels)
+      VerticesFromEdgesIterable.new self, direction, *labels
     end
 
     def getEdges(direction, *labels)
