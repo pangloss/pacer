@@ -177,15 +177,9 @@ module Pacer
       self
     end
 
-    def getInEdges(*labels)
+    def getEdges(direction, *labels)
       labels = extract_varargs_strings(labels)
-      edges = graph.getEdges.select { |e| e.getInVertex == self and (labels.empty? or labels.include? e.getLabel) }
-      Pacer::Pipes::EnumerablePipe.new edges
-    end
-
-    def getOutEdges(*labels)
-      labels = extract_varargs_strings(labels)
-      edges = graph.getEdges.select { |e| e.getOutVertex == self and (labels.empty? or labels.include? e.getLabel) }
+      edges = graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
       Pacer::Pipes::EnumerablePipe.new edges
     end
 
@@ -210,12 +204,12 @@ module Pacer
       @label
     end
 
-    def getOutVertex()
-      @out_vertex
-    end
-
-    def getInVertex()
-      @in_vertex
+    def getVertex(direction)
+      if direction == Pacer::Pipes::OUT
+        @out_vertex
+      else
+        @in_vertex
+      end
     end
 
     include EdgeExtensions

@@ -16,9 +16,9 @@ module Pacer
     import com.tinkerpop.gremlin.pipes.transform.IdPipe
     import com.tinkerpop.gremlin.pipes.transform.PropertyPipe
 
-    IN_V = com.tinkerpop.blueprints.Direction::IN
-    OUT_V = com.tinkerpop.blueprints.Direction::OUT
-    BOTH_V = com.tinkerpop.blueprints.Direction::BOTH
+    IN = com.tinkerpop.blueprints.Direction::IN
+    OUT = com.tinkerpop.blueprints.Direction::OUT
+    BOTH = com.tinkerpop.blueprints.Direction::BOTH
 
     EQUAL = FilterPipe::Filter::EQUAL
     NOT_EQUAL = FilterPipe::Filter::NOT_EQUAL

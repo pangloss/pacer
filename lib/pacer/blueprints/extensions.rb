@@ -54,7 +54,7 @@ module Pacer
     end
 
     def in_vertex(extensions = nil)
-      v = getVertex Pacer::Pipes::IN_V
+      v = getVertex Pacer::Pipes::IN
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions
@@ -66,7 +66,7 @@ module Pacer
     end
 
     def out_vertex(extensions = nil)
-      v = getVertex Pacer::Pipes::OUT_V
+      v = getVertex Pacer::Pipes::OUT
       v.graph = graph
       if extensions.is_a? Enumerable
         v.add_extensions extensions

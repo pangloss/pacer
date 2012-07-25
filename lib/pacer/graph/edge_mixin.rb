@@ -26,7 +26,7 @@ module Pacer
     # The incoming vertex for this edge.
     # @return [Pacer::VertexMixin]
     def in_vertex(extensions = nil)
-      v = getVertex Pacer::Pipes::IN_V
+      v = getVertex Pacer::Pipes::IN
       v.graph = graph
       if extensions
         v.add_extensions extensions
@@ -42,7 +42,7 @@ module Pacer
     # The outgoing vertex for this edge.
     # @return [Pacer::VertexMixin]
     def out_vertex(extensions = nil)
-      v = getVertex Pacer::Pipes::OUT_V
+      v = getVertex Pacer::Pipes::OUT
       v.graph = graph
       if extensions
         v.add_extensions extensions
