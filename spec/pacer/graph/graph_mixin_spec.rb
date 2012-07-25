@@ -308,13 +308,6 @@ shared_examples_for Pacer::GraphMixin do
         end
       end
     end
-
-    it 'should return the same object each time' do
-      if graph.features.supportsIndices
-        graph.createIndex 'xyz', graph.index_class(:vertex)
-        graph.index_name('xyz').should equal(graph.index_name('xyz'))
-      end
-    end
   end
 
   describe '#graph' do
