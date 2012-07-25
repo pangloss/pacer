@@ -1,4 +1,27 @@
 class RSpec::GraphRunner
+  module Stubs
+    def all(*args)
+    end
+
+    def tg(*args)
+    end
+
+    def neo4j(*args)
+    end
+
+    def rg(*args)
+    end
+
+    def multigraph(*args)
+    end
+
+    def dex(*args)
+    end
+
+    def orient(*args)
+    end
+  end
+
   module Tg
     def all(usage_style = :read_write, indices = true, &block)
       tg(usage_style, indices, &block)
@@ -18,9 +41,6 @@ class RSpec::GraphRunner
         let(:graph2) { Pacer.tg }
         instance_eval(&block)
       end
-    end
-
-    def dex(*args)
     end
   end
 
@@ -66,21 +86,11 @@ class RSpec::GraphRunner
     end
   end
 
-  module Stubs
-    def neo4j(*args)
-    end
 
-    def rg(*args)
-    end
-
-    def multigraph(*args)
-    end
-  end
-
-  include Tg
-  #include RubyGraph
-  #include MultiGraph
   include Stubs
+  #include Tg
+  include RubyGraph
+  #include MultiGraph
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
