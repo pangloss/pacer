@@ -129,16 +129,16 @@ protected
       end
       if usage_style == :read_only
         before(:all) do
-          source_graph_1.v.delete!
-          source_graph_2.v.delete!
+          source_graph_1.clear
+          source_graph_2.clear
           unindexed_graph.v.delete! if unindexed_graph
         end
       end
       around do |spec|
         if usage_style == :read_write
-          source_graph_1.v.delete!
-          source_graph_2.v.delete!
-          unindexed_graph.v.delete! if unindexed_graph
+          source_graph_1.clear
+          source_graph_2.clear
+          unindexed_graph.clear if unindexed_graph
         end
         if transactions and spec.use_transactions?
           graph.manual_transactions do
