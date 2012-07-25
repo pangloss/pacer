@@ -82,24 +82,12 @@ module Pacer
       super
     end
 
-    def getOutEdges(*labels)
+    def getEdges(direction, *labels)
       vs = vertices
       if vs.any?
         labels = extract_varargs_strings(labels)
         p = Pacer::Pipes::IdentityPipe.new
-        p.setStarts(MultiIterator.new super(*labels), *vs.map { |v| v.getOutEdges(*labels).iterator })
-        p
-      else
-        super
-      end
-    end
-
-    def getInEdges(*labels)
-      vs = vertices
-      if vs.any?
-        labels = extract_varargs_strings(labels)
-        p = Pacer::Pipes::IdentityPipe.new
-        p.setStarts MultiIterator.new super(*labels), *vs.map { |v| v.getInEdges(*labels).iterator }
+        p.setStarts(MultiIterator.new super, *vs.map { |v| v.getEdges(direction, *labels).iterator })
         p
       else
         super
