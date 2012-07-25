@@ -1,3 +1,5 @@
+require 'pacer-neo4j/rspec'
+
 class RSpec::GraphRunner
   module Stubs
     def all(*args)
