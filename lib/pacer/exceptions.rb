@@ -10,9 +10,8 @@ module Pacer
 
         class TransactionConcludedError < ClientError; end
         class NestedTransactionRollback < ClientError; end
+        class NestedMockTransactionRollback < NestedTransactionRollback; end
         class MockTransactionRollback < ClientError; end
-        class NestedMockTransactionRollback < ClientError; end
-
         class UnsupportedOperation < ClientError; end
 
       class InternalError < LogicError; end
