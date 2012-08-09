@@ -1,11 +1,21 @@
 module Pacer
-  class ElementNotFound < StandardError
-  end
+  class Error < StandardError; end
+    class UserError < Error; end
+      class ElementNotFound < UserError; end
+      class ElementExists < UserError; end
 
-  class ElementExists < StandardError
-  end
+    class LogicError < Error; end
+      class ClientError < LogicError; end
+        class ArgumentError < ClientError; end
 
-  class UnsupportedOperation < StandardError
-  end
+        class TransactionConcludedError < ClientError; end
+        class NestedTransactionRollback < ClientError; end
+        class MockTransactionRollback < ClientError; end
+        class NestedMockTransactionRollback < ClientError; end
+
+        class UnsupportedOperation < ClientError; end
+
+      class InternalError < LogicError; end
+    class TransientError < Error; end
 end
 
