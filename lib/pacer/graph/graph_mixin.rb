@@ -16,6 +16,10 @@ module Pacer
 
     attr_accessor :in_bulk_job
 
+    def blueprints_graph
+      self
+    end
+
     def graph_id
       @graph_id = Pacer.next_graph_id unless defined? @graph_id
       @graph_id

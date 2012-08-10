@@ -37,8 +37,9 @@ module Pacer
     def transaction
       commit, rollback = start_transaction!
       begin
-        yield commit, rollback
+        r = yield commit, rollback
         commit.call
+        r
       rescue Exception => e
         rollback.call e.message
         raise
@@ -51,14 +52,14 @@ module Pacer
 
     def threadlocal_graph_info
       graphs = Thread.current[:graphs] ||= {}
-      graphs[raw_graph.object_id] ||= {}
+      graphs[blueprints_graph.object_id] ||= {}
     end
 
     def start_transaction!
       tgi = threadlocal_graph_info
       tx_depth = tgi[:tx_depth] ||= 0
       tgi[:tx_depth] += 1
-      if raw_graph.is_a? TransactionalGraph
+      if blueprints_graph.is_a? TransactionalGraph
         if tx_depth == 0
           base_tx_finalizers
         else
@@ -84,11 +85,11 @@ module Pacer
           fail InternalError
         end
         puts "transaction committed" if Pacer.verbose == :very
-        raw_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
       end
       rollback = ->(message = nil) do
         puts ["transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
-        raw_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
       end
       [commit, rollback]
     end
@@ -100,6 +101,7 @@ module Pacer
       rollback = ->(message = 'Transaction Rolled Back') do
         puts "nested transaction rolled back: #{ message }" if Pacer.verbose == :very
         unless $!
+          message ||= "Can not rollback a nested transaction"
           fail NestedTransactionRollback, message
         end
       end
@@ -113,6 +115,7 @@ module Pacer
       rollback = ->(message = nil) do
         puts ["mock transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
         unless $!
+          message ||= "Can not rollback a mock transaction"
           fail MockTransactionRollback, message
         end
       end
@@ -123,9 +126,10 @@ module Pacer
       commit = -> do
         puts "nested transaction committed (noop)" if Pacer.verbose == :very
       end
-      rollback = ->(message = 'Transaction Rolled Back') do
+      rollback = ->(message = nil) do
         puts "nested transaction rolled back: #{ message }" if Pacer.verbose == :very
         unless $!
+          message ||= "Can not rollback a mock or nested transaction"
           fail NestedMockTransactionRollback, message
         end
       end
