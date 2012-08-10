@@ -1,124 +1,139 @@
 module Pacer
   import com.tinkerpop.blueprints.TransactionalGraph
 
-  # Collect a global set of graphs that are currently in a transaction.
-  #
-  # @return [Set] graphs with an open transaction
-  def self.graphs_in_transaction
-    @graphs = Set[] unless defined? @graphs
-    @graphs
-  end
-
-  # Methods used internally to do 'managed transactions' which I define
-  # as transactions that are started and committed automatically
-  # internally, typically on operations that potentially touch a large
-  # number of elements.
-  #
-  # The reason for keeping track of these separately is to prevent them
-  # from being confused with manual transactions. Although when this was
-  # written, I had made manual transactions nestable. That has been
-  # since explicitly disallowed by Blueprints. I am not sure if this
-  # code is actually needed anymore (if it was refactored out).
-  #
-  # TODO: the method names in this module need to be cleaned up.
-  # TODO: some methods may be able to be eliminated.
-  module ManagedTransactionsMixin
-    def manage_transactions=(v)
-      @manage_transactions = v
-    end
-
-    def manage_transactions?
-      @manage_transactions = true unless defined? @manage_transactions
-      @manage_transactions
-    end
-    alias manage_transactions manage_transactions?
-
-    def unmanaged_transactions
-      old_value = manage_transactions
-      @manage_transactions = false
-      yield
-    ensure
-      @manage_transactions = old_value
-    end
-
-    def managed_transactions
-      if manage_transactions?
-        manual_transactions { yield }
-      else
-        yield
-      end
-    end
-
-    def managed_manual_transaction
-      if manage_transactions?
-        manual_transaction { yield }
-      else
-        yield
-      end
-    end
-
-    def managed_transaction
-      if manage_transactions?
-        transaction { yield }
-      else
-        yield
-      end
-    end
-
-    def managed_start_transaction
-      begin_transaction if manage_transactions?
-    end
-
-    def managed_commit_transaction
-      commit_transaction if manage_transactions?
-    end
-
-    def managed_checkpoint
-      checkpoint if manage_transactions?
-    end
-  end
-
-  # This is included into graphs that don't support transactions so that
-  # their interface is the same as for graphs that do support them.
-  #
-  # All methods in this module do nothing but yield or return values
-  # that match those in {GraphTransactionsMixin}
-  module GraphTransactionsStub
-    def in_transaction?
-      false
-    end
-
-    def manual_transaction
-      yield
-    end
-
-    def manual_transactions
-      yield
-    end
-
-    def transaction
-      yield
-    end
-
-    def begin_transaction
-    end
-
-    def commit_transaction
-    end
-
-    def rollback_transaction
-    end
-
-    def checkpoint
-    end
-  end
-
   # Add features to transactions to allow them to be more rubyish and
   # more convenient to use.
   #
   # TODO: the method names in this module need to be cleaned up.
   # TODO: some methods may be able to be eliminated.
   module GraphTransactionsMixin
-    include GraphTransactionsStub
+    def in_transaction?
+      threadlocal_graph_info[:tx_depth] > 0
+    end
+
+    # Basic usage:
+    #
+    # graph.transaction do |commit, rollback|
+    #   if problem?
+    #     rollback.call    # rolls back the most recent chunk
+    #   elsif chunk_transaction?
+    #     commit.call      # can be called multiple times, breaking the tx into chunks
+    #   elsif error?
+    #     raise "bad news" # most recent chunk is rolled back automatically
+    #   end
+    #   # will automatically commit
+    # end
+    #
+    # Note that rollback may raise a Pacer::NestedTransactionRollback exception, which
+    # if uncaught will cause the top level transaction to rollback.
+    #
+    # It might be a good idea to be able to specify a strategy for nested commits & rollbacks
+    # other than the one I've done here. I don't have any use cases I need it for but if
+    # anyone does I'd like to discuss it and have some ideas how to implement them.
+    #
+    # Also considering a 3rd callback that could be used to get info about the
+    # current transaction stack like depth, number of commits/rollbacks, possibly the number of
+    # mutations it wraps and even some event registration stuff could be made available.
+    def transaction
+      commit, rollback = start_transaction!
+      begin
+        r = yield commit, rollback
+        commit.call
+        r
+      rescue Exception => e
+        rollback.call e.message
+        raise
+      ensure
+        finish_transaction!
+      end
+    end
+
+  private
+
+    def threadlocal_graph_info
+      graphs = Thread.current[:graphs] ||= {}
+      graphs[blueprints_graph.object_id] ||= {}
+    end
+
+    def start_transaction!
+      tgi = threadlocal_graph_info
+      tx_depth = tgi[:tx_depth] ||= 0
+      tgi[:tx_depth] += 1
+      if blueprints_graph.is_a? TransactionalGraph
+        if tx_depth == 0
+          base_tx_finalizers
+        else
+          nested_tx_finalizers
+        end
+      else
+        if tx_depth == 0
+          mock_base_tx_finalizers
+        else
+          mock_nested_tx_finalizers
+        end
+      end
+    end
+
+    def finish_transaction!
+      threadlocal_graph_info[:tx_depth] -= 1
+    end
+
+    def base_tx_finalizers
+      tx_id = threadlocal_graph_info[:tx_id] = rand
+      commit = -> do
+        if tx_id != threadlocal_graph_info[:tx_id]
+          fail InternalError
+        end
+        puts "transaction committed" if Pacer.verbose == :very
+        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+      end
+      rollback = ->(message = nil) do
+        puts ["transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
+        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+      end
+      [commit, rollback]
+    end
+
+    def nested_tx_finalizers
+      commit = -> do
+        puts "nested transaction committed (noop)" if Pacer.verbose == :very
+      end
+      rollback = ->(message = 'Transaction Rolled Back') do
+        puts "nested transaction rolled back: #{ message }" if Pacer.verbose == :very
+        unless $!
+          message ||= "Can not rollback a nested transaction"
+          fail NestedTransactionRollback, message
+        end
+      end
+      [commit, rollback]
+    end
+
+    def mock_base_tx_finalizers
+      commit = -> do
+        puts "mock transaction committed" if Pacer.verbose == :very
+      end
+      rollback = ->(message = nil) do
+        puts ["mock transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
+        unless $!
+          message ||= "Can not rollback a mock transaction"
+          fail MockTransactionRollback, message
+        end
+      end
+      [commit, rollback]
+    end
+
+    def mock_nested_tx_finalizers
+      commit = -> do
+        puts "nested transaction committed (noop)" if Pacer.verbose == :very
+      end
+      rollback = ->(message = nil) do
+        puts "nested transaction rolled back: #{ message }" if Pacer.verbose == :very
+        unless $!
+          message ||= "Can not rollback a mock or nested transaction"
+          fail NestedMockTransactionRollback, message
+        end
+      end
+      [commit, rollback]
+    end
   end
 end

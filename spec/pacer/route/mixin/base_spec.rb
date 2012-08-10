@@ -211,7 +211,10 @@ shared_examples_for Pacer::Core::Route do
     end
 
     describe '#result' do
-      before { graph.checkpoint }
+      before do
+        c = example.metadata[:graph_commit]
+        c.call if c
+      end
       subject { route.result }
       its(:element_type) { should == route.element_type }
     end

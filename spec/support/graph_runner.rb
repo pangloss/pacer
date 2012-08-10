@@ -90,9 +90,9 @@ class RSpec::GraphRunner
 
 
   include Stubs
-  #include Tg
-  #include RubyGraph
-  #include MultiGraph
+  include Tg
+  include RubyGraph
+  include MultiGraph
   include Neo4j
   #include Dex
   #include Orient
@@ -153,13 +153,14 @@ protected
           clear_graph.call source_graph_2
         end
         if transactions and spec.use_transactions?
-          graph.transaction do
-            graph2.transaction do
+          graph.transaction do |g1_commit, g1_rollback|
+            graph2.transaction do |_, g2_rollback|
+              spec.metadata[:graph_commit] = g1_commit
               begin
                 spec.run
               ensure
-                graph.rollback_transaction rescue nil
-                graph2.rollback_transaction rescue nil
+                g1_rollback.call rescue nil
+                g2_rollback.call rescue nil
               end
             end
           end

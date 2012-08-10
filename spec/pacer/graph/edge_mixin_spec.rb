@@ -37,6 +37,8 @@ shared_examples_for Pacer::EdgeMixin do
     before do
       @edge_id = e0.element_id
       e0.delete!
+      c = example.metadata[:graph_commit]
+      c.call if c
     end
     it 'should be removed' do
       graph.edge(@edge_id).should be_nil

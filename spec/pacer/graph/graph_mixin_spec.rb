@@ -257,7 +257,10 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#load_edges' do
-    before { graph.checkpoint }
+    before do
+      c = example.metadata[:graph_commit]
+      c.call if c
+    end
     context 'invalid' do
       subject { graph.load_edges [e0.element_id, nil, e0.element_id, 'missing'] }
       it { should == [e0, e0] }
