@@ -48,6 +48,16 @@ task :check_18_mode do
   end
 end
 
+task :gemfile_devel do
+  File.delete 'Gemfile' if File.exists? 'Gemfile'
+  File.symlink 'Gemfile-dev', 'Gemfile'
+end
+
+task :gemfile_release do
+  File.delete 'Gemfile' if File.exists? 'Gemfile'
+  File.symlink 'Gemfile-release', 'Gemfile'
+end
+
 desc 'Touch version.rb so that the jar rebuilds'
 task :touch do
   system 'touch', 'lib/pacer/version.rb'
@@ -59,4 +69,4 @@ task :jar => Pacer::JAR_PATH
 # Add dependency to bundler default tasks:
 task :build => Pacer::JAR_PATH
 task :install => Pacer::JAR_PATH
-task :release => :check_18_mode
+task :release => [:check_18_mode, :gemfile_release]
