@@ -98,6 +98,8 @@ shared_examples_for Pacer::VertexMixin do
     before do
       @vertex_id = v0.element_id
       v0.delete!
+      c = example.metadata[:graph_commit]
+      c.call if c
     end
     it 'should be removed' do
       graph.vertex(@vertex_id).should be_nil

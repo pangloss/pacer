@@ -78,7 +78,7 @@ Run.neo4j do
 
     describe '#indices' do
       subject { graph.indices.to_a }
-      its(:count) { should == 2 }
+      its(:count) { should == 0 }
     end
 
     describe '#sanitize_properties' do
