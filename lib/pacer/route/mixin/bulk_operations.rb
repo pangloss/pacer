@@ -24,13 +24,14 @@ module Pacer::Routes
           target_graph.in_bulk_job = true
           size ||= target_graph.bulk_job_size
           counter = 0
-          each_slice(size) do |slice|
-            print counter if Pacer.verbose?
-            counter += size
-            target_graph.transaction do |commit, rollback|
+          target_graph.transaction do |commit, rollback|
+            each_slice(size) do |slice|
+              print counter if Pacer.verbose?
+              counter += size
               slice.each do |element|
                 yield element
               end
+              commit.call
             end
             print '.' if Pacer.verbose?
           end
