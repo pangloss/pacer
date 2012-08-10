@@ -1,0 +1,24 @@
+# A sample Gemfile
+source "http://rubygems.org"
+
+gemspec
+
+group :development do
+  gem 'rspec', '~> 2.10.0'
+  gem 'rr', '~> 1.0'
+  gem 'simplecov'
+  gem 'yard'
+  gem 'rake'
+
+  # pacer-* gems are required for testing pacer.
+  # Currently only neo4j is supported in the develop branch of pacer 1.0
+  gem 'pacer-neo4j', '2.0.0.pre'
+  # gem 'pacer-dex', '1.0.5'
+  # gem 'orient', '1.0.4'
+
+  gem 'autotest-standalone'
+  gem 'autotest-growl'
+  gem 'pry'
+  gem 'awesome_print', '0.4.0'
+end
+
