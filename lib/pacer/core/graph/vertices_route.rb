@@ -172,16 +172,17 @@ module Pacer::Core::Graph
       has_props = !props.empty?
       edge_ids = []
       counter = 0
-      graph.managed_transactions do
-        graph.managed_transaction do
-          each do |from_v|
-            to_vertices.each do |to_v|
-              counter += 1
-              graph.managed_checkpoint if counter % graph.bulk_job_size == 0
-              begin
-                edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
-                edge_ids << edge.element_id
-              end
+      graph.transaction do |commit, rollback|
+        each do |from_v|
+          to_vertices.each do |to_v|
+            counter += 1
+            if counter == graph.bulk_job_size
+              commit.call
+              counter = 0
+            end
+            begin
+              edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
+              edge_ids << edge.element_id
             end
           end
         end

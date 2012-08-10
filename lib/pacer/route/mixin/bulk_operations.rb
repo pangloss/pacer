@@ -27,14 +27,12 @@ module Pacer::Routes
           each_slice(size) do |slice|
             print counter if Pacer.verbose?
             counter += size
-            target_graph.managed_manual_transaction do
-              target_graph.unmanaged_transactions do
-                slice.each do |element|
-                  yield element
-                end
+            target_graph.transaction do |commit, rollback|
+              slice.each do |element|
+                yield element
               end
-              print '.' if Pacer.verbose?
             end
+            print '.' if Pacer.verbose?
           end
         ensure
           puts '!' if Pacer.verbose?
