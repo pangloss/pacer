@@ -11,11 +11,21 @@ group :development do
   gem 'rake'
 
   # pacer-* gems are required for testing pacer.
-  # Currently only neo4j is supported in the develop branch of pacer 1.0
-  gem 'pacer-neo4j', '2.0.0.pre'
-  # gem 'pacer-dex', '1.0.5'
-  # gem 'orient', '1.0.4'
+  # If you have the gem repos cloned locally, we'll use them.
+  #
+  libs = [ ['pacer-neo4j', '2.0.0.pre'],
+           ['pacer-dex', '1.0.5'],
+           ['pacer-orient', '1.0.4'] ]
 
+  libs.each do |lib, version|
+    if File.directory? "../#{lib}"
+      gem lib, :path => "../#{lib}" 
+    else
+      gem lib, version
+    end
+  end
+
+   
   gem 'autotest-standalone'
   gem 'autotest-growl'
   gem 'pry'
