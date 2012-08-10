@@ -32,14 +32,7 @@ class RSpec::GraphRunner
     def tg(usage_style = :read_write, indices = true, &block)
       return unless use_graph? 'tg'
       describe 'tg' do
-        let(:graph) do
-          g = Pacer.tg
-          unless indices
-            g.drop_index :vertices
-            g.drop_index :edges
-          end
-          g
-        end
+        let(:graph) { Pacer.tg }
         let(:graph2) { Pacer.tg }
         instance_eval(&block)
       end
@@ -182,6 +175,9 @@ protected
             graph.removeVertex v
           rescue
           end
+        end
+        graph.indices.each do |idx|
+          graph.drop_index idx.index_name
         end
       end
     end
