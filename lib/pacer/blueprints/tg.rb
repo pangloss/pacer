@@ -5,8 +5,8 @@ module Pacer
   import com.tinkerpop.blueprints.impls.tg.TinkerElement
   import com.tinkerpop.blueprints.impls.tg.TinkerIndex
 
-  # Create a new TinkerGraph. If path is given, import the GraphML data from
-  # the file specified.
+  # Create a new TinkerGraph. If path is given, use Tinkergraph in
+  # its standard simple persistant mode.
   def self.tg(path = nil)
     if path
       PacerGraph.new TinkerGraph.new(path), SimpleEncoder
@@ -14,24 +14,6 @@ module Pacer
       PacerGraph.new TinkerGraph.new, SimpleEncoder
     end
   end
-
-
-  # Extend the java class imported from blueprints.
-  class TinkerGraph
-
-    def element_class
-      TinkerElement
-    end
-
-    def vertex_class
-      TinkerVertex
-    end
-
-    def edge_class
-      TinkerEdge
-    end
-  end
-
 
   class TinkerIndex
     include IndexMixin
