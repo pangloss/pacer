@@ -255,7 +255,7 @@ module Pacer
     # @param [Class] type type of graph
     # @param [String] key address of the graph
     # @yield the block should return the instantiated graph.
-    # @return [GraphMixin] the instantiated graph
+    # @return [blueprints.Graph] the instantiated graph
     def starting_graph(type, key)
       graph = open_graphs[type][key]
       return graph if graph

@@ -153,6 +153,10 @@ module Pacer
       end.compact
     end
 
+    def features
+      raw_graph.features
+    end
+
     module Encoding
       def sanitize_properties(props)
         encoder.sanitize_properties props
@@ -236,6 +240,7 @@ module Pacer
       # @option opts [true] :create create the index if it doesn't exist
       # @return [Pacer::IndexMixin]
       def index(name, type = nil, opts = {})
+        return unless features.supportsIndices
         name = name.to_s
         if type
           idx = raw_graph.getIndices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
@@ -250,6 +255,7 @@ module Pacer
       end
 
       def drop_index(idx)
+        return unless features.supportsIndices
         if idx.is_a? String or idx.is_a? Symbol
           raw_graph.dropIndex idx
         else
@@ -269,6 +275,14 @@ module Pacer
                  fail InternalError, "Unable to determine index class from #{ et.inspect }"
                end
         type.java_class.to_java
+      end
+
+      def indices
+        if features.supportsIndices
+          raw_graph.getIndices
+        else
+          []
+        end
       end
     end
     include Indices

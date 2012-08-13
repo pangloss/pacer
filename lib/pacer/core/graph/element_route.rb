@@ -119,7 +119,7 @@ module Pacer::Core::Graph
     def build_index(index, index_key = nil, property = nil, create = true)
       index_name = index
       unless index.is_a? com.tinkerpop.blueprints.Index
-        index = graph.index_name index.to_s
+        index = graph.index index.to_s
       end
       sample_element = first
       unless index
