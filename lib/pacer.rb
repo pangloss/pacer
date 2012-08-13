@@ -39,9 +39,9 @@ module Pacer
   require JAR
 
   require 'pacer/exceptions'
-  require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/core'
+  require 'pacer/graph'
   require 'pacer/routes'
   require 'pacer/wrappers'
   require 'pacer/route'
