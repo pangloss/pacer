@@ -5,7 +5,6 @@ module Pacer
   import com.tinkerpop.blueprints.Edge
 end
 
-require 'pacer/graph/graph_mixin'
 require 'pacer/graph/element_mixin'
 require 'pacer/graph/vertex_mixin'
 require 'pacer/graph/edge_mixin'
@@ -15,3 +14,4 @@ require 'pacer/graph/graph_transactions_mixin'
 require 'pacer/graph/pacer_graph.rb'
 require 'pacer/graph/simple_encoder.rb'
 require 'pacer/graph/yaml_encoder.rb'
+require 'pacer/graph/graph_ml'
