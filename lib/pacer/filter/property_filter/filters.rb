@@ -25,9 +25,9 @@ module Pacer
 
       def get(key, value)
         if element_type == :vertex
-          graph.getVertices(key, value)
+          graph.blueprints_graph.getVertices(key, value)
         else
-          graph.getEdges(key, value)
+          graph.blueprints_graph.getEdges(key, value)
         end
       end
     end
@@ -79,7 +79,7 @@ module Pacer
         # @note this is not threadsafe if you are reusing predefined
         #   routes on multiple graphs.
         #
-        # @attr [GraphMixin] g a graph
+        # @attr [PacerGraph] g a graph
         attr_reader :graph
 
         def graph=(g)

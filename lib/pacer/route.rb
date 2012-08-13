@@ -57,7 +57,7 @@ module Pacer
     # Create a new route. It should be very rare that you would need to
     # directly create a Route object.
     #
-    # See {Core::Graph::GraphRoute} and {GraphMixin} for methods
+    # See {Core::Graph::GraphRoute} and {PacerGraph} for methods
     # to build routes based on a graph.
     #
     # See {ElementMixin}, {VertexMixin} and
@@ -65,7 +65,7 @@ module Pacer
     # individual graph element.
     #
     # @see Core::Graph::GraphRoute
-    # @see GraphMixin
+    # @see PacerGraph
     # @see ElementMixin
     # @see VertexMixin
     # @see EdgeMixin
