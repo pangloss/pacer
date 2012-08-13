@@ -45,18 +45,6 @@ module Pacer
       clear
     end
 
-    def element_class
-      RubyElement
-    end
-
-    def vertex_class
-      RubyVertex
-    end
-
-    def edge_class
-      RubyEdge
-    end
-
     def addVertex(id)
       if id
         v_id = id
@@ -116,6 +104,14 @@ module Pacer
     end
 
     protected
+
+    def vertex_class
+      RubyVertex
+    end
+
+    def edge_class
+      RubyEdge
+    end
 
     def next_id
       @next_id += 1
