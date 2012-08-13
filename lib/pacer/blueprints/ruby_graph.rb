@@ -115,8 +115,6 @@ module Pacer
       FEATURES
     end
 
-    include GraphExtensions
-
     protected
 
     def next_id
