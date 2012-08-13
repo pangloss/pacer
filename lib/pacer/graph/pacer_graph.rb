@@ -11,7 +11,12 @@ module Pacer
     alias blueprints_graph raw_graph
 
     def initialize(graph, encoder)
-      @raw_graph = graph
+      if graph.is_a? PacerGraph
+        @raw_graph = graph.raw_graph
+      else
+        @raw_graph = graph
+      end
+      @encoder = encoder
     end
 
     # The current graph
@@ -39,7 +44,7 @@ module Pacer
     #     vertex.
     def vertex(id, *modules)
       begin
-        v = getVertex(id)
+        v = raw_graph.getVertex(id)
       rescue java.lang.RuntimeException
       end
       if v
@@ -65,7 +70,7 @@ module Pacer
     #     edge.
     def edge(id, *modules)
       begin
-        v = getEdge(id)
+        v = raw_graph.getEdge(id)
       rescue Java::JavaLang::RuntimeException
       end
       if v
@@ -93,7 +98,7 @@ module Pacer
     #     treated as element properties.
     def create_vertex(*args)
       id, wrapper, modules, props = id_modules_properties(args)
-      vertex = creating_elements { addVertex(id) }
+      vertex = creating_elements { raw_graph.addVertex(id) }
       vertex = wrapper.new vertex if wrapper
       vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
@@ -117,7 +122,7 @@ module Pacer
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
       _, wrapper, modules, props = id_modules_properties(args)
-      edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
+      edge = creating_elements { raw_graph.addEdge(id, from_v.element, to_v.element, label) }
       edge = wrapper.new edge if wrapper
       edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
@@ -240,7 +245,15 @@ module Pacer
       # Return an object that can be compared to the return value of
       # Index#index_class.
       def index_class(et)
-        element_type(et).java_class.to_java
+        type = case et
+               when :vertex
+                 Pacer::Vertex
+               when :edge
+                 Pacer::Edge
+               else
+                 fail InternalError, "Unable to determine index class from #{ et.inspect }"
+               end
+        type.java_class.to_java
       end
     end
     include Indices
@@ -260,31 +273,27 @@ module Pacer
 
       def element_type(et = nil)
         return nil unless et
-        result = if et == vertex_class or et == edge_class or et == element_class
-                   et
+        result = case et
+                 when :vertex, Pacer::Vertex, VertexMixin
+                   :vertex
+                 when :edge, Pacer::Edge, EdgeMixin
+                   :edge
+                 when :mixed, Pacer::Element, ElementMixin
+                   :mixed
+                 when :object
+                   :object
                  else
-                   case et
-                   when :vertex, Pacer::Vertex, VertexMixin
-                     vertex_class
-                   when :edge, Pacer::Edge, EdgeMixin
-                     edge_class
-                   when :mixed, Pacer::Element, ElementMixin
-                     element_class
-                   when :object
-                     Object
-                   else
-                     if et == Object
-                       Object
-                     elsif vertex_class.respond_to? :java_class
-                       if et == vertex_class.java_class.to_java
-                         vertex_class
-                       elsif et == edge_class.java_class.to_java
-                         edge_class
-                       elsif et == Pacer::Vertex.java_class.to_java
-                         vertex_class
-                       elsif et == Pacer::Edge.java_class.to_java
-                         edge_class
-                       end
+                   if et == Object
+                     :object
+                   elsif vertex_class.respond_to? :java_class
+                     if et == vertex_class.java_class.to_java
+                       :vertex
+                     elsif et == edge_class.java_class.to_java
+                       :edge
+                     elsif et == Pacer::Vertex.java_class.to_java
+                       :vertex
+                     elsif et == Pacer::Edge.java_class.to_java
+                       :edge
                      end
                    end
                  end
@@ -333,6 +342,10 @@ module Pacer
           raise
         end
       end
+    end
+
+    def source_iterator
+      [raw_graph]
     end
   end
 end

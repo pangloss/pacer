@@ -292,7 +292,7 @@ module Pacer
           @available_indices = Hash.new { |h, k| h[k] = [] }
           index_class = graph.index_class(element_type)
           key_index = KeyIndex.new(graph, element_type)
-          graph.getIndexedKeys(index_class).each do |key|
+          graph.raw_graph.getIndexedKeys(index_class).each do |key|
             @available_indices["key:#{key}"] = [key_index]
           end
           if search_manual_indices
