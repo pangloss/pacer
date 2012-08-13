@@ -133,6 +133,14 @@ module Pacer
       end
     end
 
+    def remove_vertex(vertex)
+      raw_graph.removeVertex vertex
+    end
+
+    def remove_edge(edge)
+      raw_graph.removeEdge edge
+    end
+
     # Directly loads an array of vertices by id.
     #
     # @param [[vertex ids]] ids

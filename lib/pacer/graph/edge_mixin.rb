@@ -70,7 +70,7 @@ module Pacer
 
     # Deletes the edge from its graph.
     def delete!
-      graph.removeEdge element
+      graph.remove_edge element
     end
 
     # Clones this edge into the target graph.
@@ -78,7 +78,7 @@ module Pacer
     # This differs from the {#copy_into} in that it tries to set
     # the new element_id the same as the original element_id.
     #
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @param [Hash] opts
     # @option opts :create_vertices [true] Create the vertices
     #   associated to this edge if they don't already exist.
@@ -113,7 +113,7 @@ module Pacer
     # Copies this edge into the target graph with the next available
     # edge id.
     #
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @yield [e] Optional block yields the edge after it has been created.
     # @return [Pacer::EdgeMixin] the new edge
     #
