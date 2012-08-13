@@ -8,22 +8,16 @@ module Pacer
   # Create a new TinkerGraph. If path is given, import the GraphML data from
   # the file specified.
   def self.tg(path = nil)
-    graph = TinkerGraph.new
     if path
-      graph.import(path)
+      PacerGraph.new TinkerGraph.new(path), SimpleEncoder
+    else
+      PacerGraph.new TinkerGraph.new, SimpleEncoder
     end
-    graph
   end
 
 
   # Extend the java class imported from blueprints.
   class TinkerGraph
-    include GraphMixin
-    include GraphIndicesMixin
-    include GraphTransactionsMixin
-    include Pacer::Core::Route
-    include Pacer::Core::Graph::GraphRoute
-    include Pacer::Core::Graph::GraphIndexRoute
 
     def element_class
       TinkerElement
@@ -35,10 +29,6 @@ module Pacer
 
     def edge_class
       TinkerEdge
-    end
-
-    def ==(other)
-      other.class == self.class and other.object_id == self.object_id
     end
   end
 

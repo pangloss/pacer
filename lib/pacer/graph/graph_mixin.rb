@@ -5,17 +5,6 @@ module Pacer
   # Adds more convenient/rubyish methods and adds support for extensions
   # to some methods where needed.
   module GraphMixin
-    def self.included(target)
-      target.class_eval do
-        protected :addVertex, :addEdge
-        protected :add_vertex, :add_edge rescue nil
-        protected :getVertex, :getEdge
-        protected :get_vertex, :get_edge rescue nil
-      end
-    end
-
-    attr_accessor :in_bulk_job
-
     def blueprints_graph
       self
     end
@@ -23,105 +12,6 @@ module Pacer
     def graph_id
       @graph_id = Pacer.next_graph_id unless defined? @graph_id
       @graph_id
-    end
-
-    # Get a vertex by id.
-    #
-    # @overload vertex(id)
-    #   @param [element id] id
-    # @overload vertex(id, *modules)
-    #   @param [element id] id
-    #   @param [Module, Class] *modules extensions to add to the returned
-    #     vertex.
-    def vertex(id, *modules)
-      begin
-        v = getVertex(id)
-      rescue java.lang.RuntimeException
-      end
-      if v
-        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
-        if wrapper
-          v = wrapper.new v
-          modules.delete wrapper
-        end
-        v.graph = self
-        v.add_extensions modules
-      else
-        v
-      end
-    end
-
-    # Get an edge by id.
-    #
-    # @overload edge(id)
-    #   @param [element id] id
-    # @overload edge(id, *modules)
-    #   @param [element id] id
-    #   @param [Module, Class] *modules extensions to add to the returned
-    #     edge.
-    def edge(id, *modules)
-      begin
-        v = getEdge(id)
-      rescue Java::JavaLang::RuntimeException
-      end
-      if v
-        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
-        if wrapper
-          v = wrapper.new v
-          modules.delete wrapper
-        end
-        v.graph = self
-        v.add_extensions modules
-      end
-    end
-
-    # Create a vertex in the graph.
-    #
-    # @overload create_vertex(*args)
-    #   @param [extension, Hash] *args extension (Module/Class) arguments will be
-    #     added to the current vertex. A Hash will be
-    #     treated as element properties.
-    # @overload create_vertex(id, *args)
-    #   @param [element id] id the desired element id. Some graphs
-    #     ignore this.
-    #   @param [extension, Hash] *args extension (Module/Class) arguments will be
-    #     added to the current vertex. A Hash will be
-    #     treated as element properties.
-    def create_vertex(*args)
-      id, wrapper, modules, props = id_modules_properties(args)
-      vertex = creating_elements { addVertex(id) }
-      vertex = wrapper.new vertex if wrapper
-      vertex.graph = self
-      props.each { |k, v| vertex[k.to_s] = v } if props
-      if modules.any?
-        vertex.add_extensions modules
-      else
-        vertex
-      end
-    end
-
-    # Create an edge in the graph.
-    #
-    # @param [element id] id some graphs allow you to specify your own edge id.
-    # @param [Pacer::VertexMixin] from_v the new edge's out_vertex
-    # @param [Pacer::VertexMixin] to_v the new edge's in_vertex
-    # @param [#to_s] label the edge label
-    # @param [extension, Hash] *args extension (Module/Class) arguments will be
-    #   added to the returned edge. A Hash will be
-    #   treated as element properties.
-    #
-    # @todo make id param optional
-    def create_edge(id, from_v, to_v, label, *args)
-      _, wrapper, modules, props = id_modules_properties(args)
-      edge = creating_elements { addEdge(id, from_v.element, to_v.element, label) }
-      edge = wrapper.new edge if wrapper
-      edge.graph = self
-      props.each { |k, v| edge[k.to_s] = v } if props
-      if modules.any?
-        edge.add_extensions modules
-      else
-        edge
-      end
     end
 
     # Import the data in a GraphML file.
@@ -153,87 +43,6 @@ module Pacer
       com.tinkerpop.blueprints.util.io.graphml.GraphMLWriter.outputGraph self, stream
     ensure
       stream.close if stream
-    end
-
-    # Set how many elements should go into each transaction in a bulk
-    # job.
-    #
-    # @param [Fixnum] size number of elements
-    def bulk_job_size=(size)
-      @bulk_job_size = size
-    end
-
-    # The currently configured bulk job size.
-    def bulk_job_size
-      if defined? @bulk_job_size
-        @bulk_job_size
-      else
-        5000
-      end
-    end
-
-    # Are we currently in the midst of a bulk job?
-    def in_bulk_job?
-      @in_bulk_job if defined? @in_bulk_job
-    end
-
-    # Directly loads an array of vertices by id.
-    #
-    # @param [[vertex ids]] ids
-    # @return [[Pacer::VertexMixin]]
-    def load_vertices(ids)
-      ids.map do |id|
-        vertex id
-      end.compact
-    end
-
-    # Directly loads an array of edges by id.
-    #
-    # @param [[edge ids]] ids
-    # @return [[Pacer::EdgeMixin]]
-    def load_edges(ids)
-      ids.map do |id|
-        edge id
-      end.compact
-    end
-
-    # The current graph
-    #
-    # @return [Graph] returns self
-    def graph
-      self
-    end
-
-    def equals(other)
-      self == other
-    end
-
-    # The proc used to name vertices.
-    #
-    # @return [Proc]
-    def vertex_name
-      @vertex_name if defined? @vertex_name
-    end
-
-    # Set the proc used to name vertices.
-    #
-    # @param [Proc(vertex)] a_proc returns a string given a vertex
-    def vertex_name=(a_proc)
-      @vertex_name = a_proc
-    end
-
-    # The proc used to name edges.
-    #
-    # @return [Proc]
-    def edge_name
-      @edge_name if defined? @edge_name
-    end
-
-    # Set the proc used to name edges.
-    #
-    # @param [Proc(edge)] a_proc returns a string given an edge
-    def edge_name=(a_proc)
-      @edge_name = a_proc
     end
 
     # Is the element type given supported by this graph?
@@ -285,63 +94,11 @@ module Pacer
       end
     end
 
-    def sanitize_properties(props)
-      props
-    end
-
-    def encode_property(value)
-      if value.is_a? String
-        value = value.strip
-        value unless value == ''
-      else
-        value
-      end
-    end
-
-    def decode_property(value)
-      value
-    end
-
     def edges
       getEdges
     end
 
     protected
 
-    # Helper method to wrap element creation in exception handling.
-    def creating_elements
-      begin
-        yield
-      rescue NativeException => e
-        if e.message =~ /already exists/
-          raise ElementExists, e.message
-        else
-          raise
-        end
-      end
-    end
-
-    def id_modules_properties(args)
-      props = args.last if args.last.is_a? Hash
-      modules = args.select { |obj| obj.is_a? Module or obj.is_a? Class }
-      wrapper = modules.detect { |obj| obj.is_a? Class and obj.ancestors.include? Pacer::Wrappers::ElementWrapper }
-      id = args.first
-      if not wrapper and modules.empty?
-        args.each do |obj|
-          if obj.respond_to? :wrapper
-            wrapper = obj.wrapper
-            id = nil if id == obj
-            break
-          elsif obj.respond_to? :parts
-            modules = obj.parts
-            id = nil if id == obj
-            break
-          end
-        end
-      end
-      modules.delete wrapper
-      id = nil if id == props or modules.include? id or id == wrapper
-      [id, wrapper, modules, props]
-    end
   end
 end
