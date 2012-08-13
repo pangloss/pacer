@@ -16,7 +16,7 @@ shared_examples_for 'a vertex with a mixin' do
   end
 end
 
-shared_examples_for Pacer::GraphMixin do
+shared_examples_for Pacer::RubyGraph do
   let(:v0) { graph.create_vertex }
   let(:v1) { graph.create_vertex }
   let(:e0) { graph.create_edge nil, v0, v1, :links }
@@ -346,7 +346,7 @@ shared_examples_for Pacer::GraphMixin do
 
     it 'should load the data into an empty graph' do
       graph2.v.count.should == 0
-      graph2.import 'spec/data/pacer.graphml'
+      GraphML.import graph2, 'spec/data/pacer.graphml'
       graph2.v.count.should == 7
       graph2.e.count.should == 14
     end
@@ -354,7 +354,7 @@ shared_examples_for Pacer::GraphMixin do
     it 'should not load the data into a graph with conflicting vertex ids' do
       unless graph.features.ignoresSuppliedIds
         graph.create_vertex '0' unless graph.vertex '0'
-        expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
+        expect { GraphML.import graph, 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
   end
@@ -363,7 +363,7 @@ shared_examples_for Pacer::GraphMixin do
     before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
       graph.export 'tmp/graph_mixin_spec_export.graphml'
-      graph2.import 'tmp/graph_mixin_spec_export.graphml'
+      GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
       graph2.v.count.should == graph.v.count
       graph2.e.count.should == graph.e.count
     end
@@ -382,7 +382,7 @@ Run.all :read_only, false do
   let(:e0) { graph.create_edge nil, v0, v1, :links }
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 
-  describe Pacer::GraphMixin do
+  describe Pacer::RubyGraph do
     before do
       e0 # force edge and vertices to be created.
     end
@@ -453,7 +453,7 @@ Run.all :read_only, false do
 end
 
 Run.all do
-  it_uses Pacer::GraphMixin
+  it_uses Pacer::RubyGraph
 end
 
 Run.neo4j do
