@@ -362,7 +362,7 @@ shared_examples_for Pacer::RubyGraph do
   describe '#export' do
     before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
-      graph.export 'tmp/graph_mixin_spec_export.graphml'
+      GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
       GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
       graph2.v.count.should == graph.v.count
       graph2.e.count.should == graph.e.count
