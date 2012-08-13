@@ -52,11 +52,11 @@ class RSpec::GraphRunner
     protected
 
     def ruby_graph
-      Pacer::RubyGraph.new
+      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
     end
 
     def ruby_graph2
-      Pacer::RubyGraph.new
+      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
     end
   end
 
@@ -73,11 +73,11 @@ class RSpec::GraphRunner
     protected
 
     def multi_graph
-      Pacer::MultiGraph.new
+      Pacer::MultiGraph.blank
     end
 
     def multi_graph2
-      Pacer::MultiGraph.new
+      Pacer::MultiGraph.blank
     end
   end
 
@@ -170,9 +170,9 @@ protected
       graph.clear
     else
       graph.transaction do
-        graph.getVertices.each do |v|
+        graph.blueprints_graph.getVertices.each do |v|
           begin
-            graph.removeVertex v
+            graph.remove_vertex v
           rescue
           end
         end
