@@ -153,6 +153,21 @@ module Pacer
       end.compact
     end
 
+    module Encoding
+      def sanitize_properties(props)
+        encoder.sanitize_properties props
+      end
+
+      def encode_property(value)
+        encoder.encode_property value
+      end
+
+      def decode_property(value)
+        encoder.decode_property value
+      end
+    end
+    include Encoding
+
     module Naming
       # The proc used to name vertices.
       #
