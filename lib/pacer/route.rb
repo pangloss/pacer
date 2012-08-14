@@ -141,8 +141,8 @@ module Pacer
         elsif @element_type == graph.element_type(:mixed)
           extend Pacer::Core::Graph::MixedRoute
         end
-      elsif et == :object or et == Object
-        @element_type = Object
+      elsif et == :object
+        @element_type = et
       else
         raise "Element type #{ et.inspect } specified, but no graph specified."
       end

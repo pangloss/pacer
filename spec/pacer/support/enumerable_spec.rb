@@ -74,14 +74,14 @@ describe Enumerable do
         context 'with no arguments' do
           subject { [1, 'a'].to_route }
           it { should be_a Pacer::Core::Route }
-          its(:element_type) { should == Object }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
 
         context 'based on an object route' do
           subject { [1, 'a'].to_route(:based_on => graph.v[:name]) }
           it { should be_a Pacer::Core::Route }
-          its(:element_type) { should == Object }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
 
@@ -89,7 +89,7 @@ describe Enumerable do
           subject { [1, 'a'].to_route(:based_on => graph.v[:name].add_extension(Tackle::SimpleMixin)) }
           it { should be_a Pacer::Core::Route }
           its(:extensions) { should == Set[Tackle::SimpleMixin] }
-          its(:element_type) { should == Object }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
       end
