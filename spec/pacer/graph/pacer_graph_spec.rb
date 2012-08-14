@@ -96,6 +96,8 @@ shared_examples_for Pacer::RubyGraph do
   end
 
   describe '#create_vertex' do
+    let(:use_id) { rand 1000000 }
+
     context 'existing' do
       it 'should raise an exception' do
         unless graph.features.ignoresSuppliedIds
@@ -110,24 +112,24 @@ shared_examples_for Pacer::RubyGraph do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_vertex 1234, :name => 'Steve' }
+        subject { graph.create_vertex use_id, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '1234'
+            should == graph.id_prefix + use_id.to_s
           elsif not graph.features.ignoresSuppliedIds
-            should == '1234'
+            should == use_id.to_s
           end
         end
 
         context 'and mixins' do
-          subject { graph.create_vertex 1234, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_vertex use_id, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its('element_id.to_s') do
             if graph.respond_to? :id_prefix
-              should == graph.id_prefix + '1234'
+              should == graph.id_prefix + use_id.to_s
             elsif not graph.features.ignoresSuppliedIds
-              should == '1234'
+              should == use_id.to_s
             end
           end
           it_behaves_like 'a vertex with a mixin'
@@ -136,22 +138,22 @@ shared_examples_for Pacer::RubyGraph do
     end
 
     context 'with an id' do
-      subject { graph.create_vertex 1234 }
+      subject { graph.create_vertex use_id }
       its('element_id.to_s') do
         if graph.respond_to? :id_prefix
-          should == graph.id_prefix + '1234'
+          should == graph.id_prefix + use_id.to_s
         elsif not graph.features.ignoresSuppliedIds
-          should == '1234'
+          should == use_id.to_s
         end
       end
 
       context 'and mixins' do
-        subject { graph.create_vertex 1234, Tackle::SimpleMixin }
+        subject { graph.create_vertex use_id, Tackle::SimpleMixin }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '1234'
+            should == graph.id_prefix + use_id.to_s
           elsif not graph.features.ignoresSuppliedIds
-            should == '1234'
+            should == use_id.to_s
           end
         end
         it_behaves_like 'a vertex with a mixin'
@@ -166,6 +168,7 @@ shared_examples_for Pacer::RubyGraph do
 
 
   describe '#create_edge' do
+    let(:use_id) { rand 1000000 }
     let(:from) { graph.vertex v0.element_id }
     let(:to) { graph.vertex v1.element_id }
 
@@ -184,30 +187,30 @@ shared_examples_for Pacer::RubyGraph do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_edge 1234, from, to, :connects, :name => 'Steve' }
+        subject { graph.create_edge use_id, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 1234 unless graph.features.ignoresSuppliedIds }
+        its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
 
         context 'and mixins' do
-          subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_edge use_id, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its('element_id.to_i') { should == 1234 unless graph.features.ignoresSuppliedIds }
+          its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
           it_behaves_like 'an edge with a mixin'
         end
       end
     end
 
     context 'with an id' do
-      subject { graph.create_edge 1234, from, to, :connects }
+      subject { graph.create_edge use_id, from, to, :connects }
       its(:label) { should == 'connects' }
-      its('element_id.to_i') { should == 1234 unless graph.features.ignoresSuppliedIds }
+      its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
 
       context 'and mixins' do
-        subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin }
+        subject { graph.create_edge use_id, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 1234 unless graph.features.ignoresSuppliedIds }
+        its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
         it_behaves_like 'an edge with a mixin'
       end
     end
