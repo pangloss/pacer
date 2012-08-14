@@ -272,21 +272,21 @@ shared_examples_for Pacer::RubyGraph do
     end
   end
 
-  describe '#index_name' do
+  describe '#index' do
     it 'should have no indices' do
       graph.indices.count.should == 0 if graph.features.supportsKeyIndices
     end
 
     context 'missing' do
       around { |spec| spec.run if graph.features.supportsIndices }
-      subject { graph.index_name 'invalid' }
+      subject { graph.index 'invalid' }
       it { should be_nil }
       context 'edge' do
         before do
           graph.drop_index 'missing_edge' rescue nil
-          graph.index_name('missing_edge').should be_nil
+          graph.index('missing_edge').should be_nil
         end
-        subject { graph.index_name 'missing_edge', :edge, :create => true }
+        subject { graph.index 'missing_edge', :edge, :create => true }
         its(:index_name) { should == 'missing_edge' }
         its(:index_class) { should == graph.index_class(:edge) }
         after do
@@ -299,9 +299,9 @@ shared_examples_for Pacer::RubyGraph do
       context 'vertex' do
         before do
           graph.drop_index 'missing_vertex' rescue nil
-          graph.index_name('missing_vertex').should be_nil
+          graph.index('missing_vertex').should be_nil
         end
-        subject { graph.index_name 'missing_vertex', :vertex, :create => true }
+        subject { graph.index 'missing_vertex', :vertex, :create => true }
         its(:index_name) { should == 'missing_vertex' }
         its(:index_class) { should == graph.index_class(:vertex) }
         after do
@@ -335,7 +335,7 @@ shared_examples_for Pacer::RubyGraph do
   describe '#index_class' do
     around { |spec| spec.run if graph.respond_to? :index_class }
     let(:index_class) { graph.index_class(:vertex) }
-    let(:index) { graph.createIndex 'abc', index_class }
+    let(:index) { graph.index 'abc', index_class, create: true }
     specify 'should be the class the index returns when queried for index_class' do
       index.index_class.should == index_class
     end
@@ -346,7 +346,7 @@ shared_examples_for Pacer::RubyGraph do
 
     it 'should load the data into an empty graph' do
       graph2.v.count.should == 0
-      GraphML.import graph2, 'spec/data/pacer.graphml'
+      Pacer::GraphML.import graph2, 'spec/data/pacer.graphml'
       graph2.v.count.should == 7
       graph2.e.count.should == 14
     end
@@ -354,7 +354,7 @@ shared_examples_for Pacer::RubyGraph do
     it 'should not load the data into a graph with conflicting vertex ids' do
       unless graph.features.ignoresSuppliedIds
         graph.create_vertex '0' unless graph.vertex '0'
-        expect { GraphML.import graph, 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
+        expect { Pacer::GraphML.import graph, 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
   end
@@ -362,8 +362,8 @@ shared_examples_for Pacer::RubyGraph do
   describe '#export' do
     before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
-      GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
-      GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
+      Pacer::GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
+      Pacer::GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
       graph2.v.count.should == graph.v.count
       graph2.e.count.should == graph.e.count
     end
@@ -406,9 +406,9 @@ Run.all :read_only, false do
           subject { @new_idx }
           it { should_not equal(orig_idx) }
           it 'should not use the old vertices index' do
-            graph.index_name('vertices').should_not equal(orig_idx)
+            graph.index('vertices').should_not equal(orig_idx)
           end
-          it { should equal(graph.index_name('vertices')) }
+          it { should equal(graph.index('vertices')) }
           it 'should have 2 persons' do
             subject.count('type', 'person').should == 2
           end
@@ -437,9 +437,9 @@ Run.all :read_only, false do
           subject { @new_idx }
           it { should_not equal(orig_idx) }
           it 'should not use the old edges index' do
-            graph.index_name('edges').should_not equal(orig_idx)
+            graph.index('edges').should_not equal(orig_idx)
           end
-          it { should equal(graph.index_name('edges')) }
+          it { should equal(graph.index('edges')) }
           it 'should have 1 edge' do
             subject.count('label', 'links').should == 1
           end

@@ -251,9 +251,10 @@ module Pacer
         return unless features.supportsIndices
         name = name.to_s
         if type
-          idx = raw_graph.getIndices.detect { |i| i.index_name == name and i.index_class == index_class(type) }
+          type = index_class element_type type
+          idx = raw_graph.getIndices.detect { |i| i.index_name == name and i.index_class == type }
           if idx.nil? and opts[:create]
-            idx = raw_graph.createIndex name, element_type(type)
+            idx = raw_graph.createIndex name, type
           end
         else
           idx = raw_graph.getIndices.detect { |i| i.index_name == name }
@@ -301,11 +302,7 @@ module Pacer
       # @param [:edge, :vertex, :mixed, element_type, Object] et the
       #   object we're testing
       def element_type?(et)
-        if [element_type(:vertex), element_type(:edge), element_type(:mixed)].include?  element_type(et)
-          true
-        else
-          false
-        end
+        [:vertex, :edge, :mixed].include?  element_type(et)
       end
 
       def element_type(et = nil)
@@ -322,16 +319,10 @@ module Pacer
                  else
                    if et == Object
                      :object
-                   elsif vertex_class.respond_to? :java_class
-                     if et == vertex_class.java_class.to_java
-                       :vertex
-                     elsif et == edge_class.java_class.to_java
-                       :edge
-                     elsif et == Pacer::Vertex.java_class.to_java
-                       :vertex
-                     elsif et == Pacer::Edge.java_class.to_java
-                       :edge
-                     end
+                   elsif et == index_class(:vertex)
+                     :vertex
+                   elsif et == index_class(:edge)
+                     :edge
                    end
                  end
         if result
