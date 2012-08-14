@@ -90,7 +90,7 @@ module Pacer
     # @yield [v] Optional block yields the vertex after it has been created.
     # @return [Pacer::VertexMixin] the new vertex
     def clone_into(target_graph, opts = nil)
-      v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
+      v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
       v = target_graph.vertex(element_id) || v_idx.get('id', element_id).first
       unless v
         v = target_graph.create_vertex element_id, properties

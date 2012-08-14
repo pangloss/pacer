@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Pacer::Transform::Path do
   before :all do
-    @g = Pacer.tg 'spec/data/pacer.graphml'
+    @g = Pacer.tg
+    Pacer::GraphML.import @g, 'spec/data/pacer.graphml'
   end
 
   describe '#paths' do

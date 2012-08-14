@@ -77,7 +77,7 @@ Run.tg do
         end
 
         after do
-          graph.dropIndex 'new_index'
+          graph.drop_index 'new_index'
         end
       end
     end
@@ -88,7 +88,8 @@ end
 # Modernize these old tests:
 describe RouteOperations do
   before :all do
-    @g = Pacer.tg 'spec/data/pacer.graphml'
+    @g = Pacer.tg
+    Pacer::GraphML.import @g, 'spec/data/pacer.graphml'
   end
 
   describe '#as' do

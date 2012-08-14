@@ -252,7 +252,7 @@ module Pacer
         name = name.to_s
         if type
           type = index_class element_type type
-          idx = raw_graph.getIndices.detect { |i| i.index_name == name and i.index_class == type }
+          idx = raw_graph.getIndices.detect { |i| i.index_name == name }
           if idx.nil? and opts[:create]
             idx = raw_graph.createIndex name, type
           end
@@ -295,6 +295,19 @@ module Pacer
       end
     end
     include Indices
+
+    module KeyIndices
+      def create_key_index(name, type)
+        if features.supportsKeyIndices
+          if element_type(type) == :vertex and features.supportsVertexKeyIndex
+            raw_graph.createKeyIndex name, index_class(:vertex)
+          elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
+            raw_graph.createKeyIndex name, index_class(:edge)
+          end
+        end
+      end
+    end
+    include KeyIndices
 
     module ElementType
       # Is the element type given supported by this graph?
