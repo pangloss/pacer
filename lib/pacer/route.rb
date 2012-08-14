@@ -219,7 +219,16 @@ module Pacer
     # element type, function and info.
     # @return [String]
     def inspect_class_name
-      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
+      s = case element_type
+      when :vertex
+        'V'
+      when :edge
+        'E'
+      when :object
+        'Obj'
+      when :mixed
+        'Elem'
+      end
       s = "#{s}-#{function.name.split('::').last.sub(/Filter|Route$/, '')}" if function
       s = "#{s} #{ @info }" if @info
       s
