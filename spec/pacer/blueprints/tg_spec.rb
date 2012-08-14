@@ -13,66 +13,32 @@ Run.tg do
 
       context ':vertex' do
         subject { Pacer.tg.element_type(:vertex) }
-        it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
+        it { should == :vertex }
       end
 
       context 'a vertex' do
         subject { graph.element_type(v0) }
-        it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
+        it { should == :vertex }
       end
 
       context ':edge' do
         subject { graph.element_type(:edge) }
-        it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
+        it { should == :edge }
       end
 
       context 'an edge' do
         subject { graph.element_type(e0) }
-        it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
+        it { should == :edge }
       end
 
       context ':mixed' do
         subject { graph.element_type(:mixed) }
-        it { should == com.tinkerpop.blueprints.impls.tg.TinkerElement }
+        it { should == :mixed }
       end
 
       context ':object' do
         subject { graph.element_type(:object) }
-        it { should == Object }
-      end
-
-      context 'from result' do
-        context ':vertex' do
-          subject { Pacer.tg.element_type(Pacer.tg.element_type :vertex) }
-          it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
-        end
-
-        context ':edge' do
-          subject { graph.element_type(Pacer.tg.element_type :edge) }
-          it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
-        end
-
-        context ':mixed' do
-          subject { graph.element_type(Pacer.tg.element_type :mixed) }
-          it { should == com.tinkerpop.blueprints.impls.tg.TinkerElement }
-        end
-
-        context ':object' do
-          subject { graph.element_type(Pacer.tg.element_type :object) }
-          it { should == Object }
-        end
-      end
-
-      context 'from index_class' do
-        context ':vertex' do
-          subject { graph.element_type(graph.index_class :vertex) }
-          it { should == com.tinkerpop.blueprints.impls.tg.TinkerVertex }
-        end
-
-        context ':edge' do
-          subject { graph.element_type(graph.index_class :edge) }
-          it { should == com.tinkerpop.blueprints.impls.tg.TinkerEdge }
-        end
+        it { should == :object }
       end
     end
 
