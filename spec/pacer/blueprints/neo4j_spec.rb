@@ -13,65 +13,65 @@ Run.neo4j do
 
       context ':vertex' do
         subject { graph.element_type(:vertex) }
-        it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jVertex }
+        it { should == :vertex }
       end
 
       context 'a vertex' do
         subject { graph.element_type(v0) }
-        it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jVertex }
+        it { should == :vertex }
       end
 
       context ':edge' do
         subject { graph.element_type(:edge) }
-        it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jEdge }
+        it { should == :edge }
       end
 
       context 'an edge' do
         subject { graph.element_type(e0) }
-        it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jEdge }
+        it { should == :edge }
       end
 
       context ':mixed' do
         subject { graph.element_type(:mixed) }
-        it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jElement }
+        it { should == :mixed }
       end
 
       context ':object' do
         subject { graph.element_type(:object) }
-        it { should == Object }
+        it { should == :object }
       end
 
       context 'from element_type' do
         context ':vertex' do
           subject { graph.element_type(graph.element_type :vertex) }
-          it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jVertex }
+          it { should == :vertex }
         end
 
         context ':edge' do
           subject { graph.element_type(graph.element_type :edge) }
-          it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jEdge }
+          it { should == :edge }
         end
 
         context ':mixed' do
           subject { graph.element_type(graph.element_type :mixed) }
-          it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jElement }
+          it { should == :mixed }
         end
 
         context ':object' do
           subject { graph.element_type(graph.element_type :object) }
-          it { should == Object }
+          it { should == :object }
         end
       end
 
       context 'from index_class' do
         context ':vertex' do
           subject { graph.element_type(graph.index_class :vertex) }
-          it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jVertex }
+          it { should == :vertex }
         end
 
         context ':edge' do
           subject { graph.element_type(graph.index_class :edge) }
-          it { should == com.tinkerpop.blueprints.impls.neo4j.Neo4jEdge }
+          it { should == :edge }
         end
       end
     end
