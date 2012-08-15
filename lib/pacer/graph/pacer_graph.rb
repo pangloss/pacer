@@ -6,15 +6,13 @@ module Pacer
     include Pacer::Core::Graph::GraphRoute
     include Pacer::Core::Graph::GraphIndexRoute
 
-    attr_reader :raw_graph, :encoder
-
-    alias blueprints_graph raw_graph
+    attr_reader :blueprints_graph, :encoder
 
     def initialize(graph, encoder)
       if graph.is_a? PacerGraph
-        @raw_graph = graph.raw_graph
+        @blueprints_graph = graph.blueprints_graph
       else
-        @raw_graph = graph
+        @blueprints_graph = graph
       end
       @encoder = encoder
     end
@@ -27,7 +25,7 @@ module Pacer
     end
 
     def graph_id
-      raw_graph.object_id
+      blueprints_graph.object_id
     end
 
     def equals(other)
@@ -44,7 +42,7 @@ module Pacer
     #     vertex.
     def vertex(id, *modules)
       begin
-        v = raw_graph.getVertex(id)
+        v = blueprints_graph.getVertex(id)
       rescue java.lang.RuntimeException
       end
       if v
@@ -70,7 +68,7 @@ module Pacer
     #     edge.
     def edge(id, *modules)
       begin
-        v = raw_graph.getEdge(id)
+        v = blueprints_graph.getEdge(id)
       rescue Java::JavaLang::RuntimeException
       end
       if v
@@ -98,7 +96,7 @@ module Pacer
     #     treated as element properties.
     def create_vertex(*args)
       id, wrapper, modules, props = id_modules_properties(args)
-      vertex = creating_elements { raw_graph.addVertex(id) }
+      vertex = creating_elements { blueprints_graph.addVertex(id) }
       vertex = wrapper.new vertex if wrapper
       vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
@@ -122,7 +120,7 @@ module Pacer
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
       _, wrapper, modules, props = id_modules_properties(args)
-      edge = creating_elements { raw_graph.addEdge(id, from_v.element, to_v.element, label) }
+      edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label) }
       edge = wrapper.new edge if wrapper
       edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
@@ -134,11 +132,11 @@ module Pacer
     end
 
     def remove_vertex(vertex)
-      raw_graph.removeVertex vertex
+      blueprints_graph.removeVertex vertex
     end
 
     def remove_edge(edge)
-      raw_graph.removeEdge edge
+      blueprints_graph.removeEdge edge
     end
 
     # Directly loads an array of vertices by id.
@@ -162,7 +160,7 @@ module Pacer
     end
 
     def features
-      raw_graph.features
+      blueprints_graph.features
     end
 
     module Encoding
@@ -252,12 +250,12 @@ module Pacer
         name = name.to_s
         if type
           type = index_class element_type type
-          idx = raw_graph.getIndices.detect { |i| i.index_name == name }
+          idx = blueprints_graph.getIndices.detect { |i| i.index_name == name }
           if idx.nil? and opts[:create]
-            idx = raw_graph.createIndex name, type
+            idx = blueprints_graph.createIndex name, type
           end
         else
-          idx = raw_graph.getIndices.detect { |i| i.index_name == name }
+          idx = blueprints_graph.getIndices.detect { |i| i.index_name == name }
         end
         idx.graph = self if idx
         idx
@@ -266,9 +264,9 @@ module Pacer
       def drop_index(idx)
         return unless features.supportsIndices
         if idx.is_a? String or idx.is_a? Symbol
-          raw_graph.dropIndex idx
+          blueprints_graph.dropIndex idx
         else
-          raw_graph.dropIndex idx.indexName
+          blueprints_graph.dropIndex idx.indexName
         end
       end
 
@@ -296,7 +294,7 @@ module Pacer
 
       def indices
         if features.supportsIndices
-          raw_graph.getIndices
+          blueprints_graph.getIndices
         else
           []
         end
@@ -308,9 +306,9 @@ module Pacer
       def create_key_index(name, type)
         if features.supportsKeyIndices
           if element_type(type) == :vertex and features.supportsVertexKeyIndex
-            raw_graph.createKeyIndex name, index_class(:vertex)
+            blueprints_graph.createKeyIndex name, index_class(:vertex)
           elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
-            raw_graph.createKeyIndex name, index_class(:edge)
+            blueprints_graph.createKeyIndex name, index_class(:edge)
           end
         end
       end
@@ -318,10 +316,10 @@ module Pacer
       def key_indices(type = nil)
         if features.supportsKeyIndices
           if type
-            raw_graph.getIndexedKeys(index_class(type)).to_set
+            blueprints_graph.getIndexedKeys(index_class(type)).to_set
           else
-            raw_graph.getIndexedKeys(index_class(:vertex)).to_set +
-              raw_graph.getIndexedKeys(index_class(:vertex))
+            blueprints_graph.getIndexedKeys(index_class(:vertex)).to_set +
+              blueprints_graph.getIndexedKeys(index_class(:vertex))
           end
         else
           []
@@ -407,7 +405,7 @@ module Pacer
     end
 
     def source_iterator
-      [raw_graph]
+      [blueprints_graph]
     end
   end
 end
