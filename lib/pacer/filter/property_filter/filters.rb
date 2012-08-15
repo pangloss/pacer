@@ -25,9 +25,9 @@ module Pacer
 
       def get(key, value)
         if element_type == :vertex
-          graph.getVertices(key, value)
+          graph.blueprints_graph.getVertices(key, value)
         else
-          graph.getEdges(key, value)
+          graph.blueprints_graph.getEdges(key, value)
         end
       end
     end
@@ -79,7 +79,7 @@ module Pacer
         # @note this is not threadsafe if you are reusing predefined
         #   routes on multiple graphs.
         #
-        # @attr [GraphMixin] g a graph
+        # @attr [PacerGraph] g a graph
         attr_reader :graph
 
         def graph=(g)
@@ -292,7 +292,7 @@ module Pacer
           @available_indices = Hash.new { |h, k| h[k] = [] }
           index_class = graph.index_class(element_type)
           key_index = KeyIndex.new(graph, element_type)
-          graph.getIndexedKeys(index_class).each do |key|
+          graph.raw_graph.getIndexedKeys(index_class).each do |key|
             @available_indices["key:#{key}"] = [key_index]
           end
           if search_manual_indices

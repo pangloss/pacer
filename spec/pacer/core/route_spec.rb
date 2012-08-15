@@ -178,7 +178,7 @@ describe Pacer::Core::Route do
     end
   end
 
-  its(:element_type) { should == Object }
+  its(:element_type) { should == :object }
 
   describe 'custom pipe' do
     context 'with pipe args' do

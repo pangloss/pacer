@@ -51,7 +51,7 @@ module Pacer
     # accidentally associated, as well as to get graph-specific data for
     # the element.
     #
-    # @return [GraphMixin]
+    # @return [PacerGraph]
     def graph
       @graph
     end

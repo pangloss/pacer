@@ -57,7 +57,7 @@ module Pacer
     # Create a new route. It should be very rare that you would need to
     # directly create a Route object.
     #
-    # See {Core::Graph::GraphRoute} and {GraphMixin} for methods
+    # See {Core::Graph::GraphRoute} and {PacerGraph} for methods
     # to build routes based on a graph.
     #
     # See {ElementMixin}, {VertexMixin} and
@@ -65,7 +65,7 @@ module Pacer
     # individual graph element.
     #
     # @see Core::Graph::GraphRoute
-    # @see GraphMixin
+    # @see PacerGraph
     # @see ElementMixin
     # @see VertexMixin
     # @see EdgeMixin
@@ -141,8 +141,8 @@ module Pacer
         elsif @element_type == graph.element_type(:mixed)
           extend Pacer::Core::Graph::MixedRoute
         end
-      elsif et == :object or et == Object
-        @element_type = Object
+      elsif et == :object
+        @element_type = et
       else
         raise "Element type #{ et.inspect } specified, but no graph specified."
       end
@@ -219,7 +219,16 @@ module Pacer
     # element type, function and info.
     # @return [String]
     def inspect_class_name
-      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
+      s = case element_type
+      when :vertex
+        'V'
+      when :edge
+        'E'
+      when :object
+        'Obj'
+      when :mixed
+        'Elem'
+      end
       s = "#{s}-#{function.name.split('::').last.sub(/Filter|Route$/, '')}" if function
       s = "#{s} #{ @info }" if @info
       s

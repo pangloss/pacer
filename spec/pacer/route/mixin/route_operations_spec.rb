@@ -24,7 +24,7 @@ Run.tg(:read_only) do
       context '(0..1)' do
         subject { graph.v[:type].most_frequent(0..1) }
         it { should be_a Pacer::Core::Route }
-        its(:element_type) { should == Object }
+        its(:element_type) { should == :object }
         its(:to_a) { should == ['project', 'person'] }
       end
 
@@ -77,7 +77,7 @@ Run.tg do
         end
 
         after do
-          graph.dropIndex 'new_index'
+          graph.drop_index 'new_index'
         end
       end
     end
@@ -88,7 +88,8 @@ end
 # Modernize these old tests:
 describe RouteOperations do
   before :all do
-    @g = Pacer.tg 'spec/data/pacer.graphml'
+    @g = Pacer.tg
+    Pacer::GraphML.import @g, 'spec/data/pacer.graphml'
   end
 
   describe '#as' do

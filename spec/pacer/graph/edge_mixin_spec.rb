@@ -6,8 +6,7 @@ shared_examples_for Pacer::EdgeMixin do
   describe '#e' do
     subject { e0.e }
     it { should be_an_edges_route }
-    it { should_not be_a(graph.element_type(:edge)) }
-    it { should_not be_an_instance_of(graph.element_type(:edge)) }
+    its(:element_type) { should == :edge }
   end
 
   describe '#add_extensions' do

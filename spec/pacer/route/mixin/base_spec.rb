@@ -109,10 +109,10 @@ Run.all(:read_only) do
     end
 
     describe '#to_a' do
-      it { Set[*graph.v].should == Set[*graph.getVertices] }
-      it { Set[*(graph.v.to_a)].should == Set[*graph.getVertices] }
-      it { Set[*graph.e].should == Set[*graph.getEdges] }
-      it { Set[*(graph.e.to_a)].should == Set[*graph.getEdges] }
+      it { Set[*graph.v].should == Set[*graph.blueprints_graph.getVertices] }
+      it { Set[*(graph.v.to_a)].should == Set[*graph.blueprints_graph.getVertices] }
+      it { Set[*graph.e].should == Set[*graph.blueprints_graph.getEdges] }
+      it { Set[*(graph.e.to_a)].should == Set[*graph.blueprints_graph.getEdges] }
     end
 
     describe '#root?' do

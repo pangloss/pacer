@@ -35,7 +35,7 @@ Run.all(:read_only) do
     describe '#labels' do
       subject { graph.e.labels }
       it { should be_a Pacer::Core::Route }
-      its(:element_type) { should == Object }
+      its(:element_type) { should == :object }
       its(:count) { should == 14 }
     end
 

@@ -5,8 +5,10 @@ module Pacer::Core::Graph
   module GraphIndexRoute
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
-      filters = Pacer::Route.filters(filters)
-      route = indexed_route(:vertex, filters, block)
+      if features.supportsIndices
+        filters = Pacer::Route.filters(filters)
+        route = indexed_route(:vertex, filters, block)
+      end
       if route
         route
       else
@@ -16,8 +18,10 @@ module Pacer::Core::Graph
 
     # Returns a new route to all graph edges. Standard filter options.
     def e(*filters, &block)
-      filters = Pacer::Route.edge_filters(filters)
-      route = indexed_route(:edge, filters, block)
+      if features.supportsIndices
+        filters = Pacer::Route.edge_filters(filters)
+        route = indexed_route(:edge, filters, block)
+      end
       if route
         route
       else
@@ -32,7 +36,7 @@ module Pacer::Core::Graph
 
     def indexed_route(element_type, filters, block)
       filters.graph = self
-      filters.indices = graph.getIndices
+      filters.indices = graph.raw_graph.getIndices
       filters.choose_best_index = choose_best_index != false
       filters.search_manual_indices = @search_manual_indices
       idx, key, value = filters.best_index(element_type)

@@ -49,11 +49,11 @@ module Pacer::Filter::PropertyFilter
 
         context '+ indices' do
           before do
-            graph.createKeyIndex 'name', graph.index_class(:vertex)
-            graph.createKeyIndex 'type', graph.index_class(:vertex)
-            graph.createKeyIndex 'nickname', graph.index_class(:vertex)
+            graph.create_key_index 'name', :vertex
+            graph.create_key_index 'type', :vertex
+            graph.create_key_index 'nickname', :vertex
             filters.graph = graph
-            filters.indices = graph.getIndices
+            filters.indices = graph.indices
             filters.choose_best_index = true
             filters.search_manual_indices = true
           end
@@ -135,10 +135,10 @@ module Pacer::Filter::PropertyFilter
         its(:properties) { should == [['tokens', short: '555555'], %w[ name Darrick ]] }
 
         context '+ indices' do
-          let!(:token_index) { graph.index_name 'tokens', :vertex, create: true }
+          let!(:token_index) { graph.index 'tokens', :vertex, create: true }
           before do
             filters.graph = graph
-            filters.indices = graph.getIndices
+            filters.indices = graph.indices
             filters.choose_best_index = true
             filters.search_manual_indices = true
           end

@@ -9,7 +9,7 @@ Run.tg :read_only do
       its(:count) { should == 7 }
       specify 'each element should be a node' do
         subject.each do |group|
-          group[:key].should be_a graph.element_type(:vertex)
+          group[:key].should be_a Pacer::Vertex
           group.property_keys.to_a.should == ['key']
         end
       end
@@ -42,7 +42,8 @@ Run.tg :read_only do
 
       context '#multigraph' do
         subject { route.multigraph }
-        it { should be_a Pacer::MultiGraph }
+        it { should be_a Pacer::PacerGraph }
+        its(:blueprints_graph) { should be_a Pacer::MultiGraph }
 
         its('v.count') { should == 3 }
 
@@ -128,9 +129,9 @@ Run.tg :read_only do
       end
 
       its(:inspect) { should == "#<MultiGraph>" }
-      
+
       specify do
-        counted_group.inspect.should == 
+        counted_group.inspect.should ==
           "#<GraphV -> V-Join(#<V -> Obj(type)>: {:count=>#<V -> outE -> Obj-Cap(E-Counted)>, :out_e=>#<V -> outE>})>"
       end
     end

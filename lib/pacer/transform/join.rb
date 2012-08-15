@@ -9,7 +9,7 @@ module Pacer
         args = {
           :transform => :join,
           element_type: :vertex,
-          graph: options.fetch(:multi_graph, Pacer::MultiGraph.new),
+          graph: options.fetch(:multi_graph, Pacer::MultiGraph.blank),
           from_graph: graph
         }
         args[:multi_graph] = options[:multi_graph] if options[:multi_graph]
@@ -42,7 +42,7 @@ module Pacer
         def initialize(from_graph, multi_graph)
           super()
           @from_graph = from_graph
-          @multi_graph = multi_graph || Pacer::MultiGraph.new
+          @multi_graph = multi_graph || Pacer::MultiGraph.blank
           @values_pipes = []
           @current_keys = []
           @current_values = []
@@ -72,9 +72,9 @@ module Pacer
             else
               key = current_keys.removeFirst
               if key
-                combined = multi_graph.send(:getVertex, key) || multi_graph.send(:addVertex, key)
+                combined = multi_graph.vertex(key) || multi_graph.create_vertex(key)
               else
-                combined = multi_graph.send(:addVertex, nil)
+                combined = multi_graph.create_vertex
               end
               combined.join_on join_on if join_on
               combined[:key] = key
@@ -182,4 +182,4 @@ module Pacer
     end
   end
 end
-    
+

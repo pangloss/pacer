@@ -88,7 +88,7 @@ module Enumerable
     r.chain_route(:graph => based_on.graph,
                   :element_type => based_on.element_type,
                   :pipe_class => based_on.send(:id_pipe_class),
-                  :pipe_args => [based_on.graph],
+                  :pipe_args => [based_on.graph.blueprints_graph],
                   :route_name => 'lookup',
                   :extensions => based_on.extensions,
                   :wrapper => based_on.wrapper,
