@@ -286,6 +286,14 @@ module Pacer
         type.java_class.to_java
       end
 
+      def index_class?(et, thing)
+        if thing.interface?
+          index_class(et) == thing
+        else
+          thing.interfaces.include? index_class(et)
+        end
+      end
+
       def indices
         if features.supportsIndices
           raw_graph.getIndices
