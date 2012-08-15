@@ -35,7 +35,7 @@ module Pacer
       #
       # @todo move this to graph routes.
       #
-      # @return [GraphMixin]
+      # @return [PacerGraph]
       def graph
         @graph = nil unless defined? @graph
         @graph ||= (@back || @source).graph rescue nil
@@ -297,7 +297,7 @@ module Pacer
 
       # Set the previous route in the chain.
       def back=(back)
-        if back.is_a? Route and not back.is_a? GraphMixin
+        if back.is_a? Route and not back.is_a? PacerGraph
           @back = back
         else
           @source = back
@@ -367,9 +367,9 @@ module Pacer
 
       # Return an iterator for a variety of source object types.
       def iterator_from_source(src)
-        if src.is_a? Pacer::GraphMixin
+        if src.is_a? PacerGraph
           al = java.util.ArrayList.new
-          al << src
+          al << src.blueprints_graph
           al.iterator
         elsif src.is_a? Pacer::Wrappers::ElementWrapper
           Pacer::Pipes::EnumerablePipe.new src.element

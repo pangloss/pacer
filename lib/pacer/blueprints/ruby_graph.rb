@@ -45,18 +45,6 @@ module Pacer
       clear
     end
 
-    def element_class
-      RubyElement
-    end
-
-    def vertex_class
-      RubyVertex
-    end
-
-    def edge_class
-      RubyEdge
-    end
-
     def addVertex(id)
       if id
         v_id = id
@@ -72,6 +60,9 @@ module Pacer
     end
 
     def removeVertex(vertex)
+      vertex.getEdges(Pacer::Pipes::BOTH).each do |e|
+        removeEdge e
+      end
       @vertices.delete vertex.element_id
     end
 
@@ -115,9 +106,15 @@ module Pacer
       FEATURES
     end
 
-    include GraphExtensions
-
     protected
+
+    def vertex_class
+      RubyVertex
+    end
+
+    def edge_class
+      RubyEdge
+    end
 
     def next_id
       @next_id += 1
@@ -127,8 +124,8 @@ module Pacer
   class RubyElement
     include com.tinkerpop.blueprints.Element
 
-    def initialize(graph, element_id)
-      @graph = graph
+    def initialize(raw_graph, element_id)
+      @raw_graph = raw_graph
       @element_id = element_id
       @properties = {}
     end
@@ -160,6 +157,8 @@ module Pacer
 
     protected
 
+    attr_reader :raw_graph
+
     def extract_varargs_strings(labels)
       if labels.first.is_a? ArrayJavaProxy
         labels.first.map { |l| l.to_s }
@@ -185,12 +184,12 @@ module Pacer
     def getEdges(direction, *labels)
       labels = extract_varargs_strings(labels)
       if direction == Pacer::Pipes::BOTH
-        edges = graph.getEdges.select do |e|
+        edges = raw_graph.getEdges.select do |e|
           ( (e.getVertex(Pacer::Pipes::IN) == self or e.getVertex(Pacer::Pipes::OUT) == self) and
             (labels.empty? or labels.include? e.getLabel) )
         end
       else
-        edges = graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
+        edges = raw_graph.getEdges.select { |e| e.getVertex(direction) == self and (labels.empty? or labels.include? e.getLabel) }
       end
       Pacer::Pipes::EnumerablePipe.new edges
     end
@@ -201,8 +200,8 @@ module Pacer
   class RubyEdge < RubyElement
     include com.tinkerpop.blueprints.Edge
 
-    def initialize(graph, id, out_vertex, in_vertex, label)
-      super(graph, id)
+    def initialize(raw_graph, id, out_vertex, in_vertex, label)
+      super(raw_graph, id)
       @out_vertex = out_vertex
       @in_vertex = in_vertex
       @label = label.to_s

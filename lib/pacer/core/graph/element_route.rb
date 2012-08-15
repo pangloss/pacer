@@ -119,13 +119,13 @@ module Pacer::Core::Graph
     def build_index(index, index_key = nil, property = nil, create = true)
       index_name = index
       unless index.is_a? com.tinkerpop.blueprints.Index
-        index = graph.index_name index.to_s
+        index = graph.index index.to_s
       end
       sample_element = first
       unless index
         if sample_element
           if create
-            index = graph.createIndex index_name, graph.element_type(sample_element)
+            index = graph.index index_name, graph.element_type(sample_element), create: true
           else
             raise "No index found for #{ index } on #{ graph }" unless index
           end

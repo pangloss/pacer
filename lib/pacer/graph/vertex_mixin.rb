@@ -80,17 +80,17 @@ module Pacer
 
     # Deletes the vertex from its graph along with all related edges.
     def delete!
-      graph.removeVertex element
+      graph.remove_vertex element
     end
 
     # Copies including the vertex id unless a vertex with that id
     # already exists.
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @param opts for compatibility with {Pacer::EdgeMixin#clone_into}
     # @yield [v] Optional block yields the vertex after it has been created.
     # @return [Pacer::VertexMixin] the new vertex
     def clone_into(target_graph, opts = nil)
-      v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
+      v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
       v = target_graph.vertex(element_id) || v_idx.get('id', element_id).first
       unless v
         v = target_graph.create_vertex element_id, properties
@@ -102,7 +102,7 @@ module Pacer
 
     # Make a new copy of the element with the next available vertex id.
     #
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @yield [v] Optional block yields the vertex after it has been created.
     # @return [Pacer::VertexMixin] the new vertex
     def copy_into(target_graph)

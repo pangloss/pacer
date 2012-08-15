@@ -26,8 +26,7 @@ shared_examples_for Pacer::VertexMixin do
   describe '#v' do
     subject { v0.v }
     it { should be_a_vertices_route }
-    it { should_not be_a(graph.element_type(:vertex)) }
-    it { should_not be_an_instance_of(graph.element_type(:vertex)) }
+    its(:element_type) { should == :vertex }
   end
 
   describe '#add_extensions' do

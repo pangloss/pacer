@@ -4,7 +4,7 @@ shared_examples_for Pacer::Core::Graph::ElementRoute do
   describe '#properties' do
     subject { r.properties }
     its(:count) { should == r.count }
-    its(:element_type) { should == Object }
+    its(:element_type) { should == :object }
     specify 'should all be hashes' do
       props = subject.each
       elements = r.each

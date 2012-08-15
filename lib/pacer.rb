@@ -39,9 +39,9 @@ module Pacer
   require JAR
 
   require 'pacer/exceptions'
-  require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/core'
+  require 'pacer/graph'
   require 'pacer/routes'
   require 'pacer/wrappers'
   require 'pacer/route'
@@ -250,17 +250,12 @@ module Pacer
       @open_graphs
     end
 
-    def next_graph_id
-      @next_graph_id = 0 unless defined? @next_graph_id
-      @next_graph_id += 1
-    end
-
     # Tell pacer to record that we're starting a graph.
     #
     # @param [Class] type type of graph
     # @param [String] key address of the graph
     # @yield the block should return the instantiated graph.
-    # @return [GraphMixin] the instantiated graph
+    # @return [blueprints.Graph] the instantiated graph
     def starting_graph(type, key)
       graph = open_graphs[type][key]
       return graph if graph

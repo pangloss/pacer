@@ -1,8 +1,10 @@
 module Pacer
   class MultiGraph < RubyGraph
-    def element_class
-      RubyElement
+    def self.blank
+      PacerGraph.new MultiGraph.new, SimpleEncoder
     end
+
+    protected
 
     def vertex_class
       MultiVertex

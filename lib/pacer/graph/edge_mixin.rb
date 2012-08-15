@@ -70,7 +70,7 @@ module Pacer
 
     # Deletes the edge from its graph.
     def delete!
-      graph.removeEdge element
+      graph.remove_edge element
     end
 
     # Clones this edge into the target graph.
@@ -78,7 +78,7 @@ module Pacer
     # This differs from the {#copy_into} in that it tries to set
     # the new element_id the same as the original element_id.
     #
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @param [Hash] opts
     # @option opts :create_vertices [true] Create the vertices
     #   associated to this edge if they don't already exist.
@@ -87,10 +87,10 @@ module Pacer
     #
     # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
-      e_idx = target_graph.index_name("tmp:e:#{graph.to_s}", :edge, :create => true)
+      e_idx = target_graph.index("tmp:e:#{graph.to_s}", :edge, :create => true)
       e = target_graph.edge(element_id) || e_idx.get('id', element_id).first
       unless e
-        v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
+        v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
         iv = target_graph.vertex(in_vertex.element_id) || v_idx.get('id', in_vertex.element_id).first
         ov = target_graph.vertex(out_vertex.element_id) || v_idx.get('id', out_vertex.element_id).first
         if opts[:create_vertices]
@@ -113,13 +113,13 @@ module Pacer
     # Copies this edge into the target graph with the next available
     # edge id.
     #
-    # @param [Pacer::GraphMixin] target_graph
+    # @param [PacerGraph] target_graph
     # @yield [e] Optional block yields the edge after it has been created.
     # @return [Pacer::EdgeMixin] the new edge
     #
     # @raise [StandardError] If this the associated vertices don't exist
     def copy_into(target_graph)
-      v_idx = target_graph.index_name("tmp:v:#{graph.to_s}", :vertex, :create => true)
+      v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
       iv = v_idx.get('id', in_vertex.element_id).first || target_graph.vertex(in_vertex.element_id)
       ov = v_idx.get('id', out_vertex.element_id).first || target_graph.vertex(out_vertex.element_id)
 

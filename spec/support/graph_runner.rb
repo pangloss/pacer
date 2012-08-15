@@ -52,11 +52,11 @@ class RSpec::GraphRunner
     protected
 
     def ruby_graph
-      Pacer::RubyGraph.new
+      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
     end
 
     def ruby_graph2
-      Pacer::RubyGraph.new
+      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
     end
   end
 
@@ -73,11 +73,11 @@ class RSpec::GraphRunner
     protected
 
     def multi_graph
-      Pacer::MultiGraph.new
+      Pacer::MultiGraph.blank
     end
 
     def multi_graph2
-      Pacer::MultiGraph.new
+      Pacer::MultiGraph.blank
     end
   end
 
@@ -166,21 +166,26 @@ protected
   end
 
   def clear(graph)
-    if graph.respond_to? :clear
-      graph.clear
-    else
-      graph.transaction do
-        graph.getVertices.each do |v|
-          begin
-            graph.removeVertex v
-          rescue
-          end
-        end
-        graph.indices.each do |idx|
-          graph.drop_index idx.index_name
+    graph.transaction do
+      graph.blueprints_graph.getVertices.each do |v|
+        begin
+          graph.remove_vertex v
+        rescue
         end
       end
+      graph.indices.each do |idx|
+        graph.drop_index idx.index_name
+      end
     end
+    #if graph.v.any?
+    #  fail "Graph still has vertices"
+    #elsif graph.e.any?
+    #  fail "Graph still has edges"
+    #elsif graph.indices.any?
+    #  fail "Graph still has indices"
+    #elsif graph.key_indices.any?
+    #  fail "Graph still has key indices"
+    #end
   end
 end
 

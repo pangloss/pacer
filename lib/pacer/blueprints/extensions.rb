@@ -4,23 +4,6 @@ module Pacer
   # classes the methods must be copied and pasted in order to overwrite the aliased methods.
   #
 
-  module GraphExtensions
-    def self.included(target)
-      target.class_eval do
-        include GraphMixin
-        include GraphIndicesMixin if target.ancestors.include? com.tinkerpop.blueprints.IndexableGraph
-        include GraphTransactionsMixin
-        include Pacer::Core::Route
-        include Pacer::Core::Graph::GraphRoute
-        include Pacer::Core::Graph::GraphIndexRoute if target.ancestors.include? com.tinkerpop.blueprints.IndexableGraph
-      end
-    end
-
-    def ==(other)
-      other.class == self.class and other.object_id == self.object_id
-    end
-  end
-
   module VertexExtensions
     def self.included(target)
       target.class_eval do
