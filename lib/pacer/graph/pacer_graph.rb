@@ -306,6 +306,19 @@ module Pacer
           end
         end
       end
+
+      def key_indices(type = nil)
+        if features.supportsKeyIndices
+          if type
+            raw_graph.getIndexedKeys(index_class(type)).to_set
+          else
+            raw_graph.getIndexedKeys(index_class(:vertex)).to_set +
+              raw_graph.getIndexedKeys(index_class(:vertex))
+          end
+        else
+          []
+        end
+      end
     end
     include KeyIndices
 

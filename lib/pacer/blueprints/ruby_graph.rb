@@ -60,6 +60,9 @@ module Pacer
     end
 
     def removeVertex(vertex)
+      vertex.getEdges(Pacer::Pipes::BOTH).each do |e|
+        removeEdge e
+      end
       @vertices.delete vertex.element_id
     end
 

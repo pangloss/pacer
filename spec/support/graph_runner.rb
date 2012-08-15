@@ -166,21 +166,26 @@ protected
   end
 
   def clear(graph)
-    if graph.respond_to? :clear
-      graph.clear
-    else
-      graph.transaction do
-        graph.blueprints_graph.getVertices.each do |v|
-          begin
-            graph.remove_vertex v
-          rescue
-          end
-        end
-        graph.indices.each do |idx|
-          graph.drop_index idx.index_name
+    graph.transaction do
+      graph.blueprints_graph.getVertices.each do |v|
+        begin
+          graph.remove_vertex v
+        rescue
         end
       end
+      graph.indices.each do |idx|
+        graph.drop_index idx.index_name
+      end
     end
+    #if graph.v.any?
+    #  fail "Graph still has vertices"
+    #elsif graph.e.any?
+    #  fail "Graph still has edges"
+    #elsif graph.indices.any?
+    #  fail "Graph still has indices"
+    #elsif graph.key_indices.any?
+    #  fail "Graph still has key indices"
+    #end
   end
 end
 

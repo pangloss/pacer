@@ -291,7 +291,6 @@ shared_examples_for Pacer::RubyGraph do
         end
         subject { graph.index 'missing_edge', :edge, :create => true }
         its(:index_name) { should == 'missing_edge' }
-        its(:index_class) { should == graph.index_class(:edge) }
         after do
           graph.transaction do
             graph.drop_index 'missing_edge'
@@ -306,7 +305,6 @@ shared_examples_for Pacer::RubyGraph do
         end
         subject { graph.index 'missing_vertex', :vertex, :create => true }
         its(:index_name) { should == 'missing_vertex' }
-        its(:index_class) { should == graph.index_class(:vertex) }
         after do
           graph.transaction do
             graph.drop_index 'missing_vertex'
@@ -335,15 +333,6 @@ shared_examples_for Pacer::RubyGraph do
     after { graph.edge_name = nil }
   end
 
-  describe '#index_class' do
-    around { |spec| spec.run if graph.respond_to? :index_class }
-    let(:index_class) { graph.index_class(:vertex) }
-    let(:index) { graph.index 'abc', index_class, create: true }
-    specify 'should be the class the index returns when queried for index_class' do
-      index.index_class.should == index_class
-    end
-  end
-
   describe '#import' do
     before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
 
@@ -365,10 +354,17 @@ shared_examples_for Pacer::RubyGraph do
   describe '#export' do
     before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
+      graph.v.count.should == 2
+      graph.e.count.should == 1
+      graph2.e.delete!
+      graph2.v.delete!
+      graph2.v.count.should == 0
+      graph2.e.count.should == 0
       Pacer::GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
       Pacer::GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
-      graph2.v.count.should == graph.v.count
-      graph2.e.count.should == graph.e.count
+      puts File.read 'tmp/graph_mixin_spec_export.graphml'
+      graph2.v.count.should == 2
+      graph2.e.count.should == 1
     end
   end
 
@@ -455,7 +451,7 @@ Run.all :read_only, false do
   end
 end
 
-Run.all do
+Run.all :read_write do
   it_uses Pacer::RubyGraph
 end
 
