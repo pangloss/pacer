@@ -53,6 +53,8 @@ module Pacer::Wrappers
       end
     end
 
+    attr_accessor :graph
+
     def initialize(element)
       @element = element
       after_initialize

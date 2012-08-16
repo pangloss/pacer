@@ -9,7 +9,7 @@ module Pacer::Wrappers
       :getId, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
       :getEdges,
       :getRawVertex,
-      :graph, :graph=, :<=>, :==
+      :<=>, :==
 
     class << self
       def wrapper_for(exts)
