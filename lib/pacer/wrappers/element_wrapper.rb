@@ -65,15 +65,11 @@ module Pacer::Wrappers
     end
 
     def element_id
-      @element.get_id
+      element.get_id
     end
 
     def hash
-      @element.hash
-    end
-
-    def eql?(other)
-      @element.eql?(other)
+      element.hash
     end
 
     protected

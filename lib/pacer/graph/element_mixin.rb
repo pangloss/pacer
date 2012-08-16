@@ -150,13 +150,7 @@ module Pacer
     # @see #eql?
     # @param other
     def ==(other)
-      if other.respond_to?(:element) and other.element.class == element.class and other.element_id == element_id
-        if graph and other.graph
-          other.graph == graph
-        else
-          true
-        end
-      end
+      other.element_type == element_type and other.element_id == element_id and other.graph == graph
     end
 
     # Test object equality of the element instance.
