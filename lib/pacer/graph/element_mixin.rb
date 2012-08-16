@@ -149,9 +149,7 @@ module Pacer
     #
     # @see #eql?
     # @param other
-    def ==(other)
-      other.element_type == element_type and other.element_id == element_id and other.graph == graph
-    end
+    #
 
     # Test object equality of the element instance.
     #
@@ -165,9 +163,9 @@ module Pacer
     # @param other
     def eql?(other)
       if other.respond_to? :element
-        super(other.element)
+        element.object_id == other.element.object_id
       else
-        super
+        element.object_id == other.object_id
       end
     end
 

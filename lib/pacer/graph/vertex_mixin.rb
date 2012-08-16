@@ -123,6 +123,14 @@ module Pacer
       get_edges_helper Pacer::Pipes::BOTH, *labels_and_extensions
     end
 
+    def ==(other)
+      if other.is_a? VertexMixin
+        element_id == other.element_id and graph == other.graph
+      elsif other.is_a? Pacer::Vertex
+        element_id == other.getId and element.class == other.class
+      end
+    end
+
     protected
 
     def get_edges_helper(direction, *labels_and_extensions)

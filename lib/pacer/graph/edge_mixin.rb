@@ -128,5 +128,13 @@ module Pacer
       yield e if block_given?
       e
     end
+
+    def ==(other)
+      if other.is_a? EdgeMixin
+        element_id == other.element_id and graph == other.graph
+      elsif other.is_a? Pacer::Edge
+        element_id == other.getId and element.class == other.class
+      end
+    end
   end
 end
