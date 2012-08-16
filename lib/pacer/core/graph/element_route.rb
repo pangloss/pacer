@@ -164,6 +164,7 @@ module Pacer::Core::Graph
         iter.graph = graph
       else
         iter.extend Pacer::Core::Route::IteratorMixin
+        iter.element_type = element_type
         iter.graph = graph
       end
     end

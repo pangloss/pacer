@@ -17,9 +17,12 @@ describe Pacer::Transform::Path do
 
     it 'should include all elements traversed' do
       @g.v.out_e.in_v.paths.each do |path|
-        path[0].should be_a(Pacer::TinkerVertex)
-        path[1].should be_a(Pacer::TinkerEdge)
-        path[2].should be_a(Pacer::TinkerVertex)
+        path[0].should be_a(Pacer::Wrappers::VertexWrapper)
+        path[1].should be_a(Pacer::Wrappers::EdgeWrapper)
+        path[2].should be_a(Pacer::Wrappers::VertexWrapper)
+        path[0].element.should be_a(Pacer::TinkerVertex)
+        path[1].element.should be_a(Pacer::TinkerEdge)
+        path[2].element.should be_a(Pacer::TinkerVertex)
         path.length.should == 3
       end
     end

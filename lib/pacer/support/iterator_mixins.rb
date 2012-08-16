@@ -1,9 +1,45 @@
 module Pacer::Core::Route
+  class WrapperSelector
+    import com.tinkerpop.blueprints.Vertex
+    import com.tinkerpop.blueprints.Edge
+
+    def self.build(element_type)
+      if element_type == :vertex
+        Pacer::Wrappers::VertexWrapper
+      elsif element_type == :edge
+        Pacer::Wrappers::EdgeWrapper
+      else
+        new
+      end
+    end
+
+    def new(element)
+      if element.is_a? Vertex
+        Pacer::Wrappers::VertexWrapper.new element
+      elsif element.is_a? Edge
+        Pacer::Wrappers::EdgeWrapper.new element
+      else
+        element
+      end
+    end
+  end
+
+
   # This mixin allows an iterator to be returned from methods that perform a
   # transformation on the elements in their collection. Set the block property
   # to the proc that does the transformation.
   module IteratorBlockMixin
-    attr_accessor :graph
+    attr_reader :graph, :wrapper, :element_type
+    attr_reader :block
+
+    def element_type=(element_type)
+      @wrapper = WrapperSelector.build element_type
+    end
+
+    def graph=(g)
+      @graph = g
+      @wrapper ||= WrapperSelector.new
+    end
 
     # Set the block that does the transformation.
     def block=(block)
@@ -11,18 +47,24 @@ module Pacer::Core::Route
     end
 
     def next
-      item = super
-      item.graph ||= @graph
-      @block.call(item)
+      item = wrapper.new super
+      item.graph = graph
+      block.call(item)
     end
   end
 
   module IteratorPathMixin
-    attr_accessor :graph
+    attr_reader :graph, :wrapper
+
+    def graph=(g)
+      @graph = g
+      @wrapper = WrapperSelector.new
+    end
 
     def next
       super.collect do |e|
-        e.graph ||= @graph if e.respond_to? :graph=
+        e = wrapper.new e
+        e.graph = graph if e.respond_to? :graph=
         e
       end
     end
@@ -75,7 +117,8 @@ module Pacer::Core::Route
       elsif @base_wrapper
         @wrapper = @base_wrapper
       elsif @extensions
-        # We don't know what type of wrapper to create
+        # FIXME: use WrapperSelector here + the extensions?
+        # ... We don't know what type of wrapper to create
       end
     end
 
@@ -97,13 +140,20 @@ module Pacer::Core::Route
   end
 
   module IteratorMixin
-    attr_accessor :graph
+    attr_reader :graph, :wrapper
+
+    def element_type=(element_type)
+      @wrapper = WrapperSelector.build element_type
+    end
+
+    def graph=(g)
+      @graph = g
+      @wrapper ||= WrapperSelector.new
+    end
 
     def next
-      item = super
-      if item.respond_to? :graph=
-        item.graph ||= @graph
-      end
+      item = wrapper.new super
+      item.graph = graph
       item
     end
   end
