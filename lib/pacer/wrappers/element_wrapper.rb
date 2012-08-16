@@ -6,7 +6,11 @@ module Pacer::Wrappers
 
     class << self
       def wrap(element, exts)
-        wrapper_for(exts).new(element.element)
+        if element.respond_to? :element
+          wrapper_for(exts).new(element.element)
+        else
+          wrapper_for(exts).new(element)
+        end
       end
 
       def extensions

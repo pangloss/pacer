@@ -25,7 +25,7 @@ Run.all :read_only do
 
       describe 'with more extensions added' do
         subject { v_wrapper_class.new(pacer).add_extensions([Pacer::Utils::TSort]) }
-        its(:class) { should_not == v_wrapper_class }
+        its(:class) { should == Pacer::Wrappers::VertexWrapper }
         its(:extensions) { should == v_exts + [Pacer::Utils::TSort] }
       end
     end
