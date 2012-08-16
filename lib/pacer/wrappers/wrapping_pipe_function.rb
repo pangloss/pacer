@@ -15,8 +15,10 @@ module Pacer
 
       def compute(element)
         e = wrapper.new element
-        e.graph = graph
-        e.back = back
+        if e.is_a? Pacer::Extensions::BlockFilterElement
+          e.graph = graph
+          e.back = back
+        end
         block.call e
       end
 
