@@ -60,7 +60,11 @@ module Pacer::Wrappers
     attr_accessor :graph
 
     def initialize(element)
-      @element = element
+      if element.is_a? ElementWrapper
+        @element = element.element
+      else
+        @element = element
+      end
       after_initialize
     end
 
