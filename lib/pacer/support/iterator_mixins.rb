@@ -1,36 +1,10 @@
 module Pacer::Core::Route
-  class WrapperSelector
-    import com.tinkerpop.blueprints.Vertex
-    import com.tinkerpop.blueprints.Edge
-
-    def self.build(element_type)
-      if element_type == :vertex
-        Pacer::Wrappers::VertexWrapper
-      elsif element_type == :edge
-        Pacer::Wrappers::EdgeWrapper
-      else
-        new
-      end
-    end
-
-    def new(element)
-      if element.is_a? Vertex
-        Pacer::Wrappers::VertexWrapper.new element
-      elsif element.is_a? Edge
-        Pacer::Wrappers::EdgeWrapper.new element
-      else
-        element
-      end
-    end
-  end
-
-
   module IteratorPathMixin
     attr_reader :graph, :wrapper
 
     def graph=(g)
       @graph = g
-      @wrapper = WrapperSelector.new
+      @wrapper = Pacer::Wrappers::WrapperSelector.new
     end
 
     def next
@@ -115,12 +89,12 @@ module Pacer::Core::Route
     attr_reader :graph, :wrapper
 
     def element_type=(element_type)
-      @wrapper = WrapperSelector.build element_type
+      @wrapper = Pacer::Wrappers::WrapperSelector.build element_type
     end
 
     def graph=(g)
       @graph = g
-      @wrapper ||= WrapperSelector.new
+      @wrapper ||= Pacer::Wrappers::WrapperSelector.new
     end
 
     def next
