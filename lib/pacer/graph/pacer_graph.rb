@@ -50,6 +50,8 @@ module Pacer
         if wrapper
           v = wrapper.new v
           modules.delete wrapper
+        else
+          v = Pacer::Wrappers::VertexWrapper.new v
         end
         v.graph = self
         v.add_extensions modules
@@ -76,6 +78,8 @@ module Pacer
         if wrapper
           v = wrapper.new v
           modules.delete wrapper
+        else
+          v = Pacer::Wrappers::EdgeWrapper.new v
         end
         v.graph = self
         v.add_extensions modules
@@ -96,15 +100,18 @@ module Pacer
     #     treated as element properties.
     def create_vertex(*args)
       id, wrapper, modules, props = id_modules_properties(args)
-      vertex = creating_elements { blueprints_graph.addVertex(id) }
-      vertex = wrapper.new vertex if wrapper
+      raw_vertex = creating_elements { blueprints_graph.addVertex(id) }
+      if wrapper
+        vertex = wrapper.new raw_vertex
+      else
+        vertex = Pacer::Wrappers::VertexWrapper.new raw_vertex
+      end
+      if modules.any?
+        vertex = vertex.add_extensions modules
+      end
       vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
-      if modules.any?
-        vertex.add_extensions modules
-      else
-        vertex
-      end
+      vertex
     end
 
     # Create an edge in the graph.
@@ -120,15 +127,18 @@ module Pacer
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
       _, wrapper, modules, props = id_modules_properties(args)
-      edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label) }
-      edge = wrapper.new edge if wrapper
+      raw_edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label) }
+      if wrapper
+        edge = wrapper.new raw_edge
+      else
+        edge = Pacer::Wrappers::EdgeWrapper.new raw_edge
+      end
+      if modules.any?
+        edge = edge.add_extensions modules
+      end
       edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
-      if modules.any?
-        edge.add_extensions modules
-      else
-        edge
-      end
+      edge
     end
 
     def remove_vertex(vertex)
