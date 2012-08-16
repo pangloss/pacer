@@ -25,34 +25,6 @@ module Pacer::Core::Route
   end
 
 
-  # This mixin allows an iterator to be returned from methods that perform a
-  # transformation on the elements in their collection. Set the block property
-  # to the proc that does the transformation.
-  module IteratorBlockMixin
-    attr_reader :graph, :wrapper, :element_type
-    attr_reader :block
-
-    def element_type=(element_type)
-      @wrapper = WrapperSelector.build element_type
-    end
-
-    def graph=(g)
-      @graph = g
-      @wrapper ||= WrapperSelector.new
-    end
-
-    # Set the block that does the transformation.
-    def block=(block)
-      @block = block
-    end
-
-    def next
-      item = wrapper.new super
-      item.graph = graph
-      block.call(item)
-    end
-  end
-
   module IteratorPathMixin
     attr_reader :graph, :wrapper
 
