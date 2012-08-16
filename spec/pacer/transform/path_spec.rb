@@ -20,9 +20,9 @@ describe Pacer::Transform::Path do
         path[0].should be_a(Pacer::Wrappers::VertexWrapper)
         path[1].should be_a(Pacer::Wrappers::EdgeWrapper)
         path[2].should be_a(Pacer::Wrappers::VertexWrapper)
-        path[0].element.should be_a(Pacer::TinkerVertex)
-        path[1].element.should be_a(Pacer::TinkerEdge)
-        path[2].element.should be_a(Pacer::TinkerVertex)
+        path[0].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerVertex)
+        path[1].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerEdge)
+        path[2].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerVertex)
         path.length.should == 3
       end
     end

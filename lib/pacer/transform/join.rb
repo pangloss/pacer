@@ -79,7 +79,7 @@ module Pacer
               combined.join_on join_on if join_on
               combined[:key] = key
               current_values.each do |key, values|
-                combined.append_property_array key, values
+                combined.element.append_property_array key, values
               end
               return combined
             end
