@@ -263,12 +263,7 @@ shared_examples_for Pacer::ElementMixin do
 
     subject { element }
     its(:element_id) { should_not be_nil }
-    context '', :transactions => false do
-      # FIXME: Neo4j edges are flaky sometimes when inside a
-      # transaction. If you look them up by id, they are not found.
-      its(:to_a) { should == [element] }
-      its(:element) { should == element }
-    end
+    #its(:to_a) { should == [element] }
   end
 end
 end
