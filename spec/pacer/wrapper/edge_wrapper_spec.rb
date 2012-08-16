@@ -15,7 +15,11 @@ Run.all :read_only do
     its(:extensions) { should == e_exts }
 
     describe 'instance' do
-      subject { e_wrapper_class.new pangloss_wrote_pacer }
+      subject do
+        e = e_wrapper_class.new pangloss_wrote_pacer
+        e.graph = graph
+        e
+      end
       it               { should_not be_nil }
       its(:element)    { should_not be_nil }
       it               { should == pangloss_wrote_pacer }

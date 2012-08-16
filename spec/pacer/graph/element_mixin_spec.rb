@@ -284,7 +284,7 @@ Run.all do
   context 'vertex' do
     let(:v0) { graph.create_vertex :name => 'eliza' }
     subject { v0 }
-    it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
+    its(:class) { should == Pacer::Wrappers::VertexWrapper  }
   end
 
   context 'edge' do
@@ -292,6 +292,6 @@ Run.all do
     let(:v1) { graph.create_vertex :name => 'darrick' }
     let(:e0) { graph.create_edge nil, v0, v1, :links }
     subject { e0 }
-    it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
+    its(:class) { should == Pacer::Wrappers::EdgeWrapper }
   end
 end

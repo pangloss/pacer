@@ -15,7 +15,11 @@ Run.all :read_only do
     its(:extensions) { should == v_exts }
 
     describe 'instance' do
-      subject { v_wrapper_class.new pacer }
+      subject do
+        v = v_wrapper_class.new pacer
+        v.graph = graph
+        v
+      end
       it               { should_not be_nil }
       its(:element)    { should_not be_nil }
       it               { should == pacer }
@@ -25,7 +29,7 @@ Run.all :read_only do
 
       describe 'with more extensions added' do
         subject { v_wrapper_class.new(pacer).add_extensions([Pacer::Utils::TSort]) }
-        its(:class) { should == Pacer::Wrappers::VertexWrapper }
+        its(:class) { should_not == v_wrapper_class }
         its(:extensions) { should == v_exts + [Pacer::Utils::TSort] }
       end
     end
