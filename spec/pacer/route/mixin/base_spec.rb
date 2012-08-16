@@ -49,7 +49,8 @@ Run.all do
       before { setup_data }
       subject { graph.v(:name => 'darrick') }
 
-      its('iterator.next') { should == v1 }
+      # iterator is a protected method... It is the raw iterator before wrapping stuff is added.
+      its('iterator.next') { should == v1.element }
       its(:to_a) { should == [v1] }
     end
 
@@ -131,6 +132,7 @@ Run.all(:read_only) do
     describe 'block filter' do
       it { graph.v { false }.count.should == 0 }
       it { graph.v { true }.count.should == graph.v.count }
+      it { graph.v { |v| v.graph.should == graph }.first }
       it { graph.v { |v| v.out_e.none? }[:name].to_a.should == ['blueprints'] }
 
       it 'should work with paths' do
