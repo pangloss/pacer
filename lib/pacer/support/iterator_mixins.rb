@@ -4,7 +4,7 @@ module Pacer::Core::Route
 
     def graph=(g)
       @graph = g
-      @wrapper = Pacer::Wrappers::WrapperSelector.new
+      @wrapper = Pacer::Wrappers::WrapperSelector.build
     end
 
     def next
@@ -17,20 +17,35 @@ module Pacer::Core::Route
   end
 
   module IteratorExtensionsMixin
-    attr_accessor :graph, :extensions
+    attr_reader :graph, :wrapper, :extensions, :element_type
+
+    def element_type=(element_type)
+      @element_type = element_type
+      build_wrapper
+    end
+
+    def graph=(g)
+      @graph = g
+      build_wrapper
+    end
+
+    def extensions=(e)
+      @extensions = e
+      build_wrapper
+    end
 
     def next
-      item = super
-      # TODO: optimize this (and other) check:
-      #   - exception?
-      #   - type check?
-      #   - method check?
-      #   - ...?
+      item = wrapper.new super
       if item.respond_to? :graph=
-        item = item.add_extensions @extensions
-        item.graph ||= @graph
+        item.graph = @graph
       end
       item
+    end
+
+    private
+
+    def build_wrapper
+      @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, extensions
     end
   end
 
@@ -39,23 +54,31 @@ module Pacer::Core::Route
 
     def wrapper=(w)
       @base_wrapper = w
-      @wrapper = build_wrapper?
+      @wrapper = build_wrapper
       @set_graph = set_graph?
     end
 
     def graph=(g)
       @graph = g
-      @wrapper = build_wrapper?
+      @wrapper = build_wrapper
       @set_graph = set_graph?
     end
 
     def extensions=(exts)
       @extensions = exts
-      @wrapper = build_wrapper?
+      @wrapper = build_wrapper
       @set_graph = set_graph?
     end
 
-    def build_wrapper?
+    def next
+      item = wrapper.new(super)
+      item.graph ||= graph if @set_graph
+      item
+    end
+
+    private
+
+    def build_wrapper
       @base_wrapper = nil unless defined? @base_wrapper
       @extensions = nil unless defined? @extensions
       if @base_wrapper and @extensions
@@ -78,11 +101,6 @@ module Pacer::Core::Route
       end
     end
 
-    def next
-      item = wrapper.new(super)
-      item.graph ||= graph if @set_graph
-      item
-    end
   end
 
   module IteratorMixin
@@ -94,7 +112,7 @@ module Pacer::Core::Route
 
     def graph=(g)
       @graph = g
-      @wrapper ||= Pacer::Wrappers::WrapperSelector.new
+      @wrapper ||= Pacer::Wrappers::WrapperSelector.build
     end
 
     def next
