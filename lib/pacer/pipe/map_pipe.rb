@@ -2,28 +2,18 @@ module Pacer::Pipes
   class MapPipe < AbstractPipe
     field_reader :starts
 
+    attr_reader :block
+
     def initialize(back, block)
       super()
-      @block = block
-      @back = back
-      @graph = back.graph if back
-      @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
-      @is_element = @graph.element_type?(back.element_type) if @graph
+      @block = Pacer::Wrappers::WrappingPipeFunction.new back, block
+      @block = Pacer::Wrappers::UnwrappingPipeFunction.new @block
     end
 
     def processNextStart
       while true
         obj = starts.next
-        begin
-          if @is_element
-            obj = obj.add_extensions(@extensions)
-            obj.back = @back
-            obj.graph = @back.graph
-          end
-        rescue
-        end
-        result = @block.call(obj)
-        return result
+        return block.call(obj)
       end
     rescue NativeException => e
       if e.cause.getClass == Pacer::NoSuchElementException.getClass
