@@ -3,7 +3,7 @@ module Pacer::Wrappers
     import com.tinkerpop.blueprints.Vertex
     import com.tinkerpop.blueprints.Edge
 
-    def self.build(element_type, extensions = Set[])
+    def self.build(element_type = nil, extensions = Set[])
       if element_type == :vertex
         Pacer::Wrappers::VertexWrapper.wrapper_for extensions
       elsif element_type == :edge
