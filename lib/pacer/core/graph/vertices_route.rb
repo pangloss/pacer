@@ -130,7 +130,7 @@ module Pacer::Core::Graph
     # @return [element_type(:vertex)] The actual type varies based on
     # which graph is in use.
     def element_type
-      graph.element_type(:vertex)
+      :vertex
     end
 
     # Delete all matching vertices and all edges which link to this

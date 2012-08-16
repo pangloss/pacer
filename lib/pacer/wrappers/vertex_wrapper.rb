@@ -8,8 +8,7 @@ module Pacer::Wrappers
     def_delegators :@element,
       :getId, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
       :getEdges,
-      :getRawVertex,
-      :<=>, :==
+      :getRawVertex
 
     class << self
       def wrapper_for(exts)
@@ -30,14 +29,12 @@ module Pacer::Wrappers
 
     # This method must be defined here rather than in the superclass in order
     # to correctly override the method in an included module
-    def extensions
-      self.class.extensions
-    end
+    attr_reader :element
 
     # This method must be defined here rather than in the superclass in order
     # to correctly override the method in an included module
-    def element
-      @element
+    def extensions
+      self.class.extensions
     end
 
     def add_extensions(exts)

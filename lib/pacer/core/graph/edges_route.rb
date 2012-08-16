@@ -80,7 +80,7 @@ module Pacer::Core::Graph
     # @return [element_type(:edge)] The actual type varies based on
     # which graph is in use.
     def element_type
-      graph.element_type(:edge)
+      :edge
     end
 
     protected
