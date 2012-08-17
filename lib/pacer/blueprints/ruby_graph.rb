@@ -193,8 +193,6 @@ module Pacer
       end
       Pacer::Pipes::EnumerablePipe.new edges
     end
-
-    include VertexExtensions
   end
 
   class RubyEdge < RubyElement
@@ -222,7 +220,5 @@ module Pacer
         @in_vertex
       end
     end
-
-    include EdgeExtensions
   end
 end
