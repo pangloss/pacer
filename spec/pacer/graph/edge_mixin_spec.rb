@@ -13,7 +13,7 @@ shared_examples_for Pacer::EdgeMixin do
     context 'no extensions' do
       subject { e0.add_extensions([]) }
       its('extensions.to_a') { should == [] }
-      it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
+      its(:class) { should == Pacer::Wrappers::EdgeWrapper }
     end
 
     context 'with extensions' do

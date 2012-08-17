@@ -34,9 +34,9 @@ module Pacer::Wrappers
     def in_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::IN
       if extensions.is_a? Enumerable
-        v = v.add_extensions extensions
+        v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = v.add_extensions [extensions]
+        v = VertexWrapper.wrapper_for(Set[extensions]).new v
       else
         v = VertexWrapper.new v
       end
@@ -47,9 +47,9 @@ module Pacer::Wrappers
     def out_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::OUT
       if extensions.is_a? Enumerable
-        v = v.add_extensions extensions
+        v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = v.add_extensions [extensions]
+        v = VertexWrapper.wrapper_for(Set[extensions]).new v
       else
         v = VertexWrapper.new v
       end
@@ -65,7 +65,9 @@ module Pacer::Wrappers
 
     def add_extensions(exts)
       if exts.any?
-        self.class.wrap(element, extensions + exts.to_a)
+        e = self.class.wrap(element, extensions + exts.to_a)
+        e.graph = graph
+        e
       else
         self
       end

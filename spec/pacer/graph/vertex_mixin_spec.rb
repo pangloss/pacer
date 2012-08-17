@@ -33,7 +33,7 @@ shared_examples_for Pacer::VertexMixin do
     context 'no extensions' do
       subject { v0.add_extensions([]) }
       its('extensions.to_a') { should == [] }
-      it { should_not be_a(Pacer::Wrappers::ElementWrapper) }
+      its(:class) { should == Pacer::Wrappers::VertexWrapper }
     end
 
     context 'with extensions' do

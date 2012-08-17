@@ -39,7 +39,9 @@ module Pacer::Wrappers
 
     def add_extensions(exts)
       if exts.any?
-        self.class.wrap(element, extensions + exts.to_a)
+        e = self.class.wrap(element, extensions + exts.to_a)
+        e.graph = graph
+        e
       else
         self
       end
