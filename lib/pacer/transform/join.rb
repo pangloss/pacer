@@ -37,11 +37,12 @@ module Pacer
         include SideEffectPipe rescue nil # may raise exception on reload.
 
         attr_accessor :multi_graph, :current_keys, :current_values, :join_on
-        attr_reader :key_expando, :key_end, :values_pipes, :from_graph
+        attr_reader :key_expando, :key_end, :values_pipes, :from_graph, :wrapper
 
         def initialize(from_graph, multi_graph)
           super()
           @from_graph = from_graph
+          @wrapper = Pacer::Wrappers::WrapperSelector.build
           @multi_graph = multi_graph || Pacer::MultiGraph.blank
           @values_pipes = []
           @current_keys = []
@@ -65,7 +66,7 @@ module Pacer
         def processNextStart
           while true
             if current_keys.empty?
-              element = starts.next
+              element = wrapper.new starts.next
               element.graph = from_graph if element.respond_to? :graph
               self.current_keys = get_keys(element)
               self.current_values = get_values(element) unless current_keys.empty?
@@ -113,8 +114,11 @@ module Pacer
           pipe.reset
           expando.add element, ArrayList.new, nil
           array = pipe.next
-          array.each { |element| element.graph = from_graph if element.respond_to? :graph }
-          array
+          array.map do |element|
+            element = wrapper.new element
+            element.graph = from_graph if element.respond_to? :graph
+            element
+          end
         end
 
         def prepare_aggregate_pipe(from_pipe, to_pipe)
