@@ -72,6 +72,7 @@ shared_examples_for Pacer::EdgeMixin do
             v0.clone_into(dest)
             v1.clone_into(dest)
           end
+          subject { e0.clone_into(dest) }
           its('element_id.to_s') { should == e0.element_id.to_s unless graph.features.ignoresSuppliedIds }
           its(:label) { should == 'links' }
           its(:graph) { should equal(dest) }

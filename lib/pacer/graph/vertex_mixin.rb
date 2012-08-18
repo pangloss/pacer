@@ -96,7 +96,7 @@ module Pacer
       v = target_graph.vertex(element_id) || v_idx.get('id', element_id).first
       unless v
         v = target_graph.create_vertex element_id, properties
-        v_idx.put('id', element_id, v)
+        v_idx.put('id', element_id, v.element)
         yield v if block_given?
       end
       v

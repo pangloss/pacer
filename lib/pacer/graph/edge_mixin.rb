@@ -88,7 +88,14 @@ module Pacer
     # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
       e_idx = target_graph.index("tmp:e:#{graph.to_s}", :edge, :create => true)
-      e = target_graph.edge(element_id) || e_idx.get('id', element_id).first
+      e = target_graph.edge(element_id)
+      unless e
+        e = e_idx.get('id', element_id).first
+        if e
+          e = Pacer::Wrappers::EdgeWrapper.new(e)
+          e.graph = target_graph
+        end
+      end
       unless e
         v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
         iv = target_graph.vertex(in_vertex.element_id) || v_idx.get('id', in_vertex.element_id).first
@@ -103,8 +110,8 @@ module Pacer
           raise message unless opts[:ignore_missing_vertices]
           return nil
         end
-        e = target_graph.create_edge(element_id, iv, ov, label, properties)
-        e_idx.put('id', element_id, e)
+        e = target_graph.create_edge(element_id, Pacer::Wrappers::VertexWrapper.new(iv), Pacer::Wrappers::VertexWrapper.new(ov), label, properties)
+        e_idx.put('id', element_id, e.element)
         yield e if block_given?
       end
       e
@@ -124,7 +131,8 @@ module Pacer
       ov = v_idx.get('id', out_vertex.element_id).first || target_graph.vertex(out_vertex.element_id)
 
       raise 'vertices not found' if not iv or not ov
-      e = target_graph.create_edge nil, iv, ov, label, properties
+      # FIXME: move wrapping into a wrapped index object
+      e = target_graph.create_edge nil, Pacer::Wrappers::VertexWrapper.new(iv), Pacer::Wrappers::VertexWrapper.new(ov), label, properties
       yield e if block_given?
       e
     end
