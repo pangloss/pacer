@@ -7,7 +7,7 @@ module Pacer::Core::Graph
     # Attach a filter to the current route.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [ElementMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [ElementWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [ElementRoute] the same type and extensions as the source route.
     def filter(*filters, &block)
       Pacer::Route.property_filter(self, filters, block)

@@ -134,6 +134,7 @@ module Pacer
     def element_type=(et)
       if graph
         @element_type = graph.element_type(et)
+        extend Pacer::Core::Graph::ElementRoute
         if @element_type == graph.element_type(:vertex)
           extend Pacer::Core::Graph::VerticesRoute
         elsif @element_type == graph.element_type(:edge)
