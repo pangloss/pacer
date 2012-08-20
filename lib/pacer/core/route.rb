@@ -205,8 +205,8 @@ module Pacer
       # or edges emitted from this route will be extended with with the
       # extension as well.
       #
-      # @see VertexMixin#add_extensions
-      # @see EdgeMixin#add_extensions
+      # @see VertexWrapper#add_extensions
+      # @see EdgeWrapper#add_extensions
       #
       # @return [self]
       def add_extension(mod, add_to_list = true)

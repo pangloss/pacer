@@ -117,8 +117,8 @@ module Pacer
     # Create an edge in the graph.
     #
     # @param [element id] id some graphs allow you to specify your own edge id.
-    # @param [Pacer::VertexMixin] from_v the new edge's out_vertex
-    # @param [Pacer::VertexMixin] to_v the new edge's in_vertex
+    # @param [Pacer::Wrappers::VertexWrapper] from_v the new edge's out_vertex
+    # @param [Pacer::Wrappers::VertexWrapper] to_v the new edge's in_vertex
     # @param [#to_s] label the edge label
     # @param [extension, Hash] *args extension (Module/Class) arguments will be
     #   added to the returned edge. A Hash will be
@@ -152,7 +152,7 @@ module Pacer
     # Directly loads an array of vertices by id.
     #
     # @param [[vertex ids]] ids
-    # @return [[Pacer::VertexMixin]]
+    # @return [[Pacer::Wrappers::VertexWrapper]]
     def load_vertices(ids)
       ids.map do |id|
         vertex id
@@ -162,7 +162,7 @@ module Pacer
     # Directly loads an array of edges by id.
     #
     # @param [[edge ids]] ids
-    # @return [[Pacer::EdgeMixin]]
+    # @return [[Pacer::Wrappers::EdgeWrapper]]
     def load_edges(ids)
       ids.map do |id|
         edge id
@@ -350,11 +350,11 @@ module Pacer
       def element_type(et = nil)
         return nil unless et
         result = case et
-                 when :vertex, Pacer::Vertex, VertexMixin
+                 when :vertex, Pacer::Vertex
                    :vertex
-                 when :edge, Pacer::Edge, EdgeMixin
+                 when :edge, Pacer::Edge
                    :edge
-                 when :mixed, Pacer::Element, ElementMixin
+                 when :mixed, Pacer::Element
                    :mixed
                  when :object
                    :object
