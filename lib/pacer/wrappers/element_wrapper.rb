@@ -3,6 +3,8 @@ module Pacer::Wrappers
     include Pacer::Element
     extend Forwardable
     include Comparable
+    include Enumerable
+    include Pacer::Core::Graph::ElementRoute
 
     class << self
       def wrap(element, exts)
@@ -57,10 +59,21 @@ module Pacer::Wrappers
       end
     end
 
+    # For internal use only.
+    #
+    # The graph the element belongs to.
+    #
+    # Used to help prevent objects from different graphs from being
+    # accidentally associated, as well as to get graph-specific data for
+    # the element.
+    #
+    # @return [PacerGraph]
     attr_accessor :graph
+    attr_reader :element
 
     def initialize(element)
       if element.is_a? ElementWrapper
+        puts 'double wrapping'
         @element = element.element
       else
         @element = element
@@ -68,17 +81,208 @@ module Pacer::Wrappers
       after_initialize
     end
 
-    def element_id
-      element.get_id
+    def hash
+      puts "ew hash #{ super } or #{ element.hash } -- #{ element.getId }"
+      element.hash
     end
 
-    def hash
-      element.hash
+    def eql?(x)
+      puts "ew eql?"
+      super
+    end
+
+    def equal?(x)
+      puts "ew equal?"
+      super
+    end
+
+    def equal(x)
+      puts "ew equal"
+      super
+    end
+
+    def ==(x)
+      puts 'ew =='
+      super
     end
 
     protected
 
     def after_initialize
     end
+
+
+
+
+    public
+
+
+    # ------- why are these defined at the element level?
+
+    # See {Core::Graph::VerticesRoute#v}
+    # @return [Route]
+    def v(*args)
+      p c: self.class, g: graph
+      route = super
+      if args.empty? and not block_given?
+        route.add_extensions extensions
+      end
+      route.each { |v| p v.class.to_s }
+      route
+    end
+
+    # See {Core::Graph::EdgesRoute#e}
+    # @return [Route]
+    def e(*args)
+      route = super
+      if args.empty? and not block_given?
+        route.add_extensions extensions
+      end
+      route
+    end
+
+
+    # ------------
+
+    # Convenience method to retrieve a property by name.
+    #
+    # @param [#to_s] key the property name
+    # @return [Object]
+    def [](key)
+      if key.is_a? Array
+        key.map { |k| self[k] }
+      else
+        value = element.getProperty(key.to_s)
+        if graph
+          graph.decode_property(value)
+        else
+          value
+        end
+      end
+    end
+
+    # Convenience method to set a property by name to the given value.
+    # @param [#to_s] key the property name
+    # @param [Object] value the value to set the property to
+    def []=(key, value)
+      value = graph.encode_property(value) if graph
+      key = key.to_s
+      if value
+        if value != element.getProperty(key)
+          element.setProperty(key, value)
+        end
+      else
+        element.removeProperty(key) if element.getPropertyKeys.include? key
+      end
+    end
+
+    # Specialize result to return self for elements.
+    # @return [ElementWrapper] self
+    def result(name = nil)
+      self
+    end
+
+    # Query whether the current node belongs to the given graph.
+    #
+    # @param [Object] g the object to compare to {#graph}
+    def from_graph?(g)
+      g.equal? graph
+    end
+
+    # Returns a hash of property values by name.
+    #
+    # @return [Hash]
+    def properties
+      element.getPropertyKeys.inject({}) { |h, name| h[name] = element.getProperty(name); h }
+    end
+
+    # Replace the element's properties with the given hash
+    #
+    # @param [Hash] props the element's new properties
+    def properties=(props)
+      (element.getPropertyKeys - props.keys.collect { |k| k.to_s }).each do |key|
+        element.removeProperty key
+      end
+      props.each do |key, value|
+        self[key] = value
+      end
+    end
+
+    def property_keys
+      getPropertyKeys
+    end
+
+    # The id of the current element
+    # @return [Object] element id (type varies by graph implementation.
+    def element_id
+      element.getId
+    end
+
+    # Sort objects semi arbitrarily based on {VertexWrapper#display_name}
+    # or {EdgeWrapper#display_name}.
+    # @param other
+    #
+    # @return [Fixnum]
+    def <=>(other)
+      puts 'ew <=>'
+      display_name.to_s <=> other.display_name.to_s
+    end
+
+    # Test equality to another object.
+    #
+    # Elements are equal if they are the same type and have the same id
+    # and the same graph, regardless of extensions.
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return true when comparing them.
+    #
+    # @see #eql?
+    # @param other
+    #
+
+    # Test object equality of the element instance.
+    #
+    # Wrappers/extensions (if any) are ignored, the underlying element
+    # only is compared
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return false when comparing them.
+    #
+    # @see #==
+    # @param other
+    def eql?(other)
+      puts 'ew eqs? 2'
+      if other.respond_to? :element_id
+        other.graph == graph and other.element_id == element_id
+      else
+        element.equals other
+      end
+    end
+
+    # Yields the element once or returns an enumerator if no block is
+    # given. Follows Ruby conventions and is meant to be used along
+    # with the Enumerable mixin.
+    #
+    # @yield [ElementWrapper] this element
+    # @return [Enumerator] only if no block is given
+    def each
+      if block_given?
+        yield self
+      else
+        [self].to_enum
+      end
+    end
+
+    # Returns the underlying element. For unwrapped elements, returns
+    # self.
+    # @return [ElementWrapper]
+    alias no_extensions element
+
+
+
+
+
+
+
   end
 end
