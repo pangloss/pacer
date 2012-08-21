@@ -1,18 +1,26 @@
 module Pacer
   module Pipes
     class WrappingPipe < RubyPipe
-      attr_reader :graph, :element_type
-      attr_accessor :wrapper
+      attr_reader :graph, :element_type, :extensions, :wrapper
 
       def initialize(graph, element_type = nil, extensions = Set[])
         super()
         @graph = graph
         @element_type = element_type
-        @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, extensions || Set[]
+        @extensions = extensions || Set[]
+        @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, @extensions
       end
 
       def getCurrentPath
         starts.getCurrentPath
+      end
+
+      def wrapper=(w)
+        if extensions.any? and w.respond_to? :add_extensions
+          @wrapper = w.add_extensions extensions
+        else
+          @wrapper = w
+        end
       end
 
       def processNextStart

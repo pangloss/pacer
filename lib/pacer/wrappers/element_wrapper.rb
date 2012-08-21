@@ -19,6 +19,10 @@ module Pacer::Wrappers
         @extensions ||= []
       end
 
+      def add_extensions(exts)
+        wrapper_for(extensions + exts.to_a)
+      end
+
       def clear_cache
         Pacer.send :remove_const, :Wrap if Pacer.const_defined? :Wrap
         VertexWrapper.clear_cache
