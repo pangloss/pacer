@@ -161,12 +161,23 @@ module Pacer::Wrappers
       get_edges_helper Pacer::Pipes::BOTH, *labels_and_extensions
     end
 
+    # Test equality to another object.
+    #
+    # Elements are equal if they are the same type and have the same id
+    # and the same graph, regardless of extensions.
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return true when comparing them.
+    #
+    # If the other instance is an unwrapped vertex, this will always return
+    # false because otherwise the == method would not be symetrical.
+    #
+    # @see #eql?
+    # @param other
     def ==(other)
-      if other.is_a? VertexWrapper
-        element_id == other.element_id and graph == other.graph
-      elsif other.is_a? Pacer::Vertex
-        element_id == other.getId and element.class == other.class
-      end
+      other.is_a? VertexWrapper and
+        element_id == other.element_id and
+        graph == other.graph
     end
 
     protected

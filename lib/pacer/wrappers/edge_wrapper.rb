@@ -180,12 +180,23 @@ module Pacer::Wrappers
       e
     end
 
+    # Test equality to another object.
+    #
+    # Elements are equal if they are the same element type and have the same id
+    # and the same graph, regardless of extensions/wrappers.
+    #
+    # If the graphdb instantiates multiple copies of the same element
+    # this method will return true when comparing them.
+    #
+    # If the other instance is an unwrapped edge, this will always return
+    # false because otherwise the == method would not be symetrical.
+    #
+    # @see #eql?
+    # @param other
     def ==(other)
-      if other.is_a? EdgeWrapper
-        element_id == other.element_id and graph == other.graph
-      elsif other.is_a? Pacer::Edge
-        element_id == other.getId and element.class == other.class
-      end
+      other.is_a? EdgeWrapper and
+        element_id == other.element_id and
+        graph == other.graph
     end
   end
 end

@@ -207,18 +207,6 @@ module Pacer::Wrappers
       display_name.to_s <=> other.display_name.to_s
     end
 
-    # Test equality to another object.
-    #
-    # Elements are equal if they are the same type and have the same id
-    # and the same graph, regardless of extensions.
-    #
-    # If the graphdb instantiates multiple copies of the same element
-    # this method will return true when comparing them.
-    #
-    # @see #eql?
-    # @param other
-    #
-
     # Test object equality of the element instance.
     #
     # Wrappers/extensions (if any) are ignored, the underlying element
