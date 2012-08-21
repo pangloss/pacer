@@ -4,11 +4,11 @@ module Pacer
       attr_reader :graph, :element_type
       attr_accessor :wrapper
 
-      def initialize(graph, element_type = nil, extensions = [])
+      def initialize(graph, element_type = nil, extensions = Set[])
         super()
         @graph = graph
         @element_type = element_type
-        @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, extensions
+        @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, extensions || Set[]
       end
 
       def processNextStart

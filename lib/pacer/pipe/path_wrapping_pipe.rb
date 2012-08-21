@@ -7,8 +7,8 @@ module Pacer
       def initialize(graph, vertex_extensions = [], edge_extensions = [])
         super()
         @graph = graph
-        @vertex_wrapper = Pacer::Wrappers::WrapperSelector.build :vertex, vertex_extensions
-        @edge_wrapper = Pacer::Wrappers::WrapperSelector.build :edge, edge_extensions
+        @vertex_wrapper = Pacer::Wrappers::WrapperSelector.build :vertex, vertex_extensions || Set[]
+        @edge_wrapper = Pacer::Wrappers::WrapperSelector.build :edge, edge_extensions || Set[]
       end
 
       def processNextStart
