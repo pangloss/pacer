@@ -300,6 +300,7 @@ module Pacer
         if back.is_a? Route and not back.is_a? PacerGraph
           @back = back
         else
+          @back = nil
           @source = back
         end
       end

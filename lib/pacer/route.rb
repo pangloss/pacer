@@ -105,7 +105,7 @@ module Pacer
     # {#after_initialize} method is called to allow mixins to do any
     # additional setup.
     def initialize(args = {})
-      @@graph = @back = @source = nil
+      @source = nil
       @wrapper = nil
       @extensions = Set[]
       self.graph = args[:graph]
