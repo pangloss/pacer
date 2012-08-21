@@ -6,7 +6,7 @@ module Pacer::Pipes
       when Enumerator
         starts = enumerable
       when Pacer::Wrappers::ElementWrapper
-        starts = [enumerable].to_enum
+        starts = [enumerable.element].to_enum
       when Enumerable
         starts = enumerable.to_enum
       else
