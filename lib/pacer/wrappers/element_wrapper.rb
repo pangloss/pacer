@@ -73,7 +73,6 @@ module Pacer::Wrappers
 
     def initialize(element)
       if element.is_a? ElementWrapper
-        puts 'double wrapping'
         @element = element.element
       else
         @element = element
