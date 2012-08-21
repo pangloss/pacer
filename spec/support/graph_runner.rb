@@ -84,8 +84,8 @@ class RSpec::GraphRunner
 
   include Stubs
   include Tg
-  include RubyGraph
-  include MultiGraph
+  #include RubyGraph
+  #include MultiGraph
   include Neo4j
   #include Dex
   #include Orient
