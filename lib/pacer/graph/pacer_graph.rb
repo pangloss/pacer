@@ -267,8 +267,7 @@ module Pacer
         else
           idx = blueprints_graph.getIndices.detect { |i| i.index_name == name }
         end
-        idx.graph = self if idx
-        idx
+        Pacer::Wrappers::IndexWrapper.new self, idx, type if idx
       end
 
       def drop_index(idx)
