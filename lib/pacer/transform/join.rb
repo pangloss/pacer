@@ -115,8 +115,10 @@ module Pacer
           expando.add element, ArrayList.new, nil
           array = pipe.next
           array.map do |element|
-            element = wrapper.new element
-            element.graph = from_graph if element.respond_to? :graph
+            if element.is_a? Pacer::Element
+              element = wrapper.new element
+              element.graph = from_graph if element.respond_to? :graph
+            end
             element
           end
         end
