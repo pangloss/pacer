@@ -29,11 +29,12 @@ module Pacer::Wrappers
     def all(key, value, extensions = nil)
       iter = index.get(key, value)
       if graph or extensions
-        iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-        iter.graph = graph
-        iter.extensions = extensions
+        pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, extensions
+        pipe.setStarts iter.iterator
+        pipe
+      else
+        iter
       end
-      iter
     end
 
     def put(key, value, element)

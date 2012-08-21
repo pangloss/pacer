@@ -184,10 +184,9 @@ module Pacer::Wrappers
     end
 
     def edge_iterator(iter, exts)
-      iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-      iter.graph = self.graph
-      iter.extensions = exts
-      iter
+      pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
+      pipe.setStarts iter
+      pipe
     end
 
     # Return the extensions this vertex is missing from the given array

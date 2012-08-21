@@ -65,3 +65,6 @@ require 'pacer/pipe/blackbox_pipeline'
 
 require 'pacer/pipe/unary_transform_pipe'
 require 'pacer/pipe/cross_product_transform_pipe'
+
+require 'pacer/pipe/wrapping_pipe'
+require 'pacer/pipe/path_wrapping_pipe'

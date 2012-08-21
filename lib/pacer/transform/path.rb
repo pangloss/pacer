@@ -62,8 +62,11 @@ module Pacer
 
       def configure_iterator(iter)
         if respond_to? :graph
-          iter.extend Pacer::Core::Route::IteratorPathMixin
-          iter.graph = graph
+          pipe = Pacer::Pipes::PathWrappingPipe.new(graph)
+          pipe.setStarts iter
+          pipe
+        else
+          iter
         end
       end
     end

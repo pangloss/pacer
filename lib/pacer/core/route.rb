@@ -109,7 +109,7 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each
         iter = iterator
-        configure_iterator(iter)
+        iter = configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -321,6 +321,7 @@ module Pacer
       # Overridden to extend the iterator to apply mixins
       # or wrap elements
       def configure_iterator(iter)
+        iter
       end
 
       def get_section_route(name)
