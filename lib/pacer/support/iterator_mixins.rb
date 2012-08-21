@@ -117,7 +117,7 @@ module Pacer::Core::Route
 
     def next
       item = wrapper.new super
-      item.graph = graph
+      item.graph = graph if item.respond_to? :graph=
       item
     end
   end
