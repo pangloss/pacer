@@ -133,7 +133,7 @@ module Pacer::Core::Graph
           return nil
         end
       end
-      index_key ||= index.index_name
+      index_key ||= index.name
       property ||= index_key
       if block_given?
         bulk_job do |element|

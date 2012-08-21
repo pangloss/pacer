@@ -60,14 +60,14 @@ Run.tg do
           count = 0
           index = graph.v.build_index('new_index', 'k', 'name')
           index.should_not be_nil
-          index.get('k', 'pangloss').count.should == 1
+          index.all('k', 'pangloss').count.should == 1
         end
 
         it 'should build the index with wrapped elements' do
           count = 0
           index = graph.v(TP::Person).build_index('new_index', 'k', 'name')
           index.should_not be_nil
-          index.get('k', 'pangloss').count.should == 1
+          index.all('k', 'pangloss').count.should == 1
         end
 
         it 'should do nothing if there are no elements' do

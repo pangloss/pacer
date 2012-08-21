@@ -13,7 +13,7 @@ module Pacer::Wrappers
     end
 
     def wrapper
-      Pacer::WrapperSelector.build element_type
+      WrapperSelector.build element_type
     end
 
     def first(key, value, extensions = nil)
@@ -34,6 +34,13 @@ module Pacer::Wrappers
         iter.extensions = extensions
       end
       iter
+    end
+
+    def put(key, value, element)
+      if element.is_a? ElementWrapper
+        element = element.element
+      end
+      index.put key, value, element
     end
   end
 end

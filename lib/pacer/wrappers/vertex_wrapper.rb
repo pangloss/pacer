@@ -123,7 +123,7 @@ module Pacer::Wrappers
     # @return [Pacer::Wrappers::VertexWrapper] the new vertex
     def clone_into(target_graph, opts = nil)
       v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
-      v = target_graph.vertex(element_id) || v_idx.first('id', element_id).first
+      v = target_graph.vertex(element_id) || v_idx.first('id', element_id)
       unless v
         v = target_graph.create_vertex element_id, properties
         v_idx.put('id', element_id, v.element)
