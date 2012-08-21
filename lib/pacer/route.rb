@@ -134,12 +134,14 @@ module Pacer
     def element_type=(et)
       if graph
         @element_type = graph.element_type(et)
-        extend Pacer::Core::Graph::ElementRoute
         if @element_type == graph.element_type(:vertex)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::VerticesRoute
         elsif @element_type == graph.element_type(:edge)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::EdgesRoute
         elsif @element_type == graph.element_type(:mixed)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::MixedRoute
         end
       elsif et == :object
