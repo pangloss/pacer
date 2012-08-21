@@ -97,11 +97,7 @@ module Pacer::Wrappers
         key.map { |k| self[k] }
       else
         value = element.getProperty(key.to_s)
-        if graph
-          graph.decode_property(value)
-        else
-          value
-        end
+        graph.decode_property(value)
       end
     end
 
@@ -109,7 +105,7 @@ module Pacer::Wrappers
     # @param [#to_s] key the property name
     # @param [Object] value the value to set the property to
     def []=(key, value)
-      value = graph.encode_property(value) if graph
+      value = graph.encode_property(value)
       key = key.to_s
       if value
         if value != element.getProperty(key)
