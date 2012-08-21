@@ -106,9 +106,7 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
     describe '#eql?', :transactions => false do
       subject { Hash.new(0) }
       before do
-        puts "set e0"
         subject[e0] += 1
-        puts "set graph.e.first"
         subject[graph.e.first] += 1
       end
 
