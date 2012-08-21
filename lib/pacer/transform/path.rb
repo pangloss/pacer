@@ -28,11 +28,10 @@ module Pacer
           target_graph.vertex_name ||= graph.vertex_name
           missing_edges = Set[]
           bulk_job(nil, target_graph) do |path|
-            path_route = path.to_route(:graph => graph, :element_type => :mixed)
-            path_route.v.each do |vertex|
+            path.select { |e| e.is_a? Pacer::Vertex }.each do |vertex|
               vertex.clone_into target_graph
             end
-            path_route.e.each do |edge|
+            path.select { |e| e.is_a? Pacer::Edge }.each do |edge|
               unless edge.clone_into target_graph, ignore_missing_vertices: true
                 missing_edges << edge
               end

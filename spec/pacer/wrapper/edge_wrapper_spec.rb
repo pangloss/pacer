@@ -16,7 +16,7 @@ Run.all :read_only do
 
     describe 'instance' do
       subject do
-        e = e_wrapper_class.new pangloss_wrote_pacer
+        e = e_wrapper_class.new pangloss_wrote_pacer.element
         e.graph = graph
         e
       end
@@ -28,7 +28,7 @@ Run.all :read_only do
       its(:extensions) { should == e_exts }
 
       describe 'with more extensions added' do
-        subject { e_wrapper_class.new(pacer).add_extensions([Pacer::Utils::TSort]) }
+        subject { e_wrapper_class.new(pacer.element).add_extensions([Pacer::Utils::TSort]) }
         its(:class) { should_not == e_wrapper_class }
         its(:extensions) { should == e_exts + [Pacer::Utils::TSort] }
       end
