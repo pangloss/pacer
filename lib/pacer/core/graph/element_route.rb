@@ -7,7 +7,7 @@ module Pacer::Core::Graph
     # Attach a filter to the current route.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [ElementMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [ElementWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [ElementRoute] the same type and extensions as the source route.
     def filter(*filters, &block)
       Pacer::Route.property_filter(self, filters, block)
@@ -133,7 +133,7 @@ module Pacer::Core::Graph
           return nil
         end
       end
-      index_key ||= index.index_name
+      index_key ||= index.name
       property ||= index_key
       if block_given?
         bulk_job do |element|
@@ -151,21 +151,11 @@ module Pacer::Core::Graph
 
     protected
 
-    # Determines which iterator mixin is applied to the iterator when #each is called
     def configure_iterator(iter)
-      if wrapper
-        iter.extend Pacer::Core::Route::IteratorWrapperMixin
-        iter.wrapper = wrapper
-        iter.extensions = @extensions if @extensions.any?
-        iter.graph = graph
-      elsif extensions and extensions.any?
-        iter.extend Pacer::Core::Route::IteratorExtensionsMixin
-        iter.extensions = extensions
-        iter.graph = graph
-      else
-        iter.extend Pacer::Core::Route::IteratorMixin
-        iter.graph = graph
-      end
+      pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, @extensions
+      pipe.wrapper = wrapper if wrapper
+      pipe.setStarts iter
+      pipe
     end
   end
 end

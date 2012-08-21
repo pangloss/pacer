@@ -4,7 +4,9 @@ module Pacer::Pipes
 
     def initialize(graph, looping_pipe, control_block)
       super()
+      @graph = graph
       @control_block = control_block
+      @wrapper = Pacer::Wrappers::WrapperSelector.build
 
       @expando = ExpandablePipe.new
       empty = ArrayList.new
@@ -26,42 +28,45 @@ module Pacer::Pipes
     end
 
     def setStarts(starts)
-      @starts_has_path = starts.respond_to? :getPath
+      starts_has_path = starts.respond_to? :getPath
       super
     end
 
     protected
 
+    attr_reader :wrapper, :control_block, :expando, :looping_pipe, :graph, :starts_has_path
+
     def processNextStart
       while true
         # FIXME: hasNext shouldn't be raising an exception...
-        has_next = @looping_pipe.hasNext rescue nil
+        has_next = looping_pipe.hasNext rescue nil
         if has_next
-          element = @looping_pipe.next
-          depth = (@expando.metadata || 0) + 1
-          @next_path = @looping_pipe.getPath
+          element = looping_pipe.next
+          depth = (expando.metadata || 0) + 1
+          @next_path = looping_pipe.getPath
         else
-          element = @starts.next
-          if @starts_has_path
-            @next_path = @starts.getPath
+          element = starts.next
+          if starts_has_path
+            @next_path = starts.getPath
           else
             @next_path = ArrayList.new
             @next_path.add element
           end
           depth = 0
         end
-        element.graph ||= @graph if element.respond_to? :graph=
-        case @control_block.call element, depth, @next_path
+        wrapped = wrapper.new(element)
+        wrapped.graph = graph if wrapped.respond_to? :graph=
+        case control_block.call wrapped, depth, @next_path
         when :loop
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
         when :emit
           return element
         when :emit_and_loop, :loop_and_emit
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
           return element
         when false, nil
         else
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
           return element
         end
       end

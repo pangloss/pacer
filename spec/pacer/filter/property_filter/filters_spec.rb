@@ -149,7 +149,7 @@ module Pacer::Filter::PropertyFilter
 
           it 'should use the automatic index' do
             find_index
-            @idx.should be token_index
+            @idx.should be token_index.index
           end
 
           it 'should use the first key and value' do

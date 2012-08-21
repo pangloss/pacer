@@ -109,7 +109,7 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each
         iter = iterator
-        configure_iterator(iter)
+        iter = configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -205,8 +205,8 @@ module Pacer
       # or edges emitted from this route will be extended with with the
       # extension as well.
       #
-      # @see VertexMixin#add_extensions
-      # @see EdgeMixin#add_extensions
+      # @see VertexWrapper#add_extensions
+      # @see EdgeWrapper#add_extensions
       #
       # @return [self]
       def add_extension(mod, add_to_list = true)
@@ -300,6 +300,7 @@ module Pacer
         if back.is_a? Route and not back.is_a? PacerGraph
           @back = back
         else
+          @back = nil
           @source = back
         end
       end
@@ -320,6 +321,7 @@ module Pacer
       # Overridden to extend the iterator to apply mixins
       # or wrap elements
       def configure_iterator(iter)
+        iter
       end
 
       def get_section_route(name)

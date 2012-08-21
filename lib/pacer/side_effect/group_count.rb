@@ -17,9 +17,6 @@ module Pacer
       end
 
       def to_h
-        c = 0
-        each { c = c + 1 }
-        puts c
         h = {}
         min = @min || 0
         side_effect.each do |k,v|

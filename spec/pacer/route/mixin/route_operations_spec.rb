@@ -60,14 +60,14 @@ Run.tg do
           count = 0
           index = graph.v.build_index('new_index', 'k', 'name')
           index.should_not be_nil
-          index.get('k', 'pangloss').count.should == 1
+          index.all('k', 'pangloss').count.should == 1
         end
 
         it 'should build the index with wrapped elements' do
           count = 0
           index = graph.v(TP::Person).build_index('new_index', 'k', 'name')
           index.should_not be_nil
-          index.get('k', 'pangloss').count.should == 1
+          index.all('k', 'pangloss').count.should == 1
         end
 
         it 'should do nothing if there are no elements' do
@@ -81,47 +81,5 @@ Run.tg do
         end
       end
     end
-  end
-end
-
-
-# Modernize these old tests:
-describe RouteOperations do
-  before :all do
-    @g = Pacer.tg
-    Pacer::GraphML.import @g, 'spec/data/pacer.graphml'
-  end
-
-  describe '#as' do
-    it 'should set the variable to the correct node' do
-      vars = Set[]
-      @g.v.as(:a_vertex).in_e(:wrote) { |edge| vars << edge.vars[:a_vertex] }.count
-      vars.should == Set[*@g.e.e(:wrote).in_v]
-    end
-
-    it 'should not break path generation (simple)' do
-      who = nil
-      r = @g.v.as(:who).in_e(:wrote).out_v.v { |v|
-        who = v.vars[:who]
-      }.paths
-      r.each do |path|
-        path.to_a[0].should == who
-        path.length.should == 3
-      end
-    end
-
-    it 'should not break path generation' do
-      who_wrote_what = nil
-      r = @g.v.as(:who).in_e(:wrote).as(:wrote).out_v.as(:what).v { |v|
-        who_wrote_what = [v.vars[:who], v.vars[:wrote], v.vars[:what]]
-      }.paths
-      r.each do |path|
-        path.to_a.should == who_wrote_what
-      end
-    end
-  end
-
-  describe :delete! do
-    it 'should not try to delete an element twice'
   end
 end
