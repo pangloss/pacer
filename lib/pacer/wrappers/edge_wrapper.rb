@@ -128,7 +128,7 @@ module Pacer::Wrappers
       e_idx = target_graph.index("tmp:e:#{graph.to_s}", :edge, :create => true)
       e = target_graph.edge(element_id)
       unless e
-        e = e_idx.get('id', element_id).first
+        e = e_idx.first('id', element_id)
         if e
           e = EdgeWrapper.new(e)
           e.graph = target_graph
@@ -136,8 +136,8 @@ module Pacer::Wrappers
       end
       unless e
         v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
-        iv = target_graph.vertex(in_vertex.element_id) || v_idx.get('id', in_vertex.element_id).first
-        ov = target_graph.vertex(out_vertex.element_id) || v_idx.get('id', out_vertex.element_id).first
+        iv = target_graph.vertex(in_vertex.element_id) || v_idx.first('id', in_vertex.element_id)
+        ov = target_graph.vertex(out_vertex.element_id) || v_idx.first('id', out_vertex.element_id)
         if opts[:create_vertices]
           iv ||= in_vertex.clone_into target_graph
           ov ||= out_vertex.clone_into target_graph
@@ -148,8 +148,8 @@ module Pacer::Wrappers
           raise message unless opts[:ignore_missing_vertices]
           return nil
         end
-        e = target_graph.create_edge(element_id, VertexWrapper.new(iv), VertexWrapper.new(ov), label, properties)
-        e_idx.put('id', element_id, e.element)
+        e = target_graph.create_edge(element_id, iv, ov, label, properties)
+        e_idx.put('id', element_id, e)
         yield e if block_given?
       end
       e
@@ -165,12 +165,11 @@ module Pacer::Wrappers
     # @raise [StandardError] If this the associated vertices don't exist
     def copy_into(target_graph)
       v_idx = target_graph.index("tmp:v:#{graph.to_s}", :vertex, :create => true)
-      iv = v_idx.get('id', in_vertex.element_id).first || target_graph.vertex(in_vertex.element_id)
-      ov = v_idx.get('id', out_vertex.element_id).first || target_graph.vertex(out_vertex.element_id)
+      iv = v_idx.first('id', in_vertex.element_id) || target_graph.vertex(in_vertex.element_id)
+      ov = v_idx.first('id', out_vertex.element_id) || target_graph.vertex(out_vertex.element_id)
 
       raise 'vertices not found' if not iv or not ov
-      # FIXME: move wrapping into a wrapped index object
-      e = target_graph.create_edge nil, VertexWrapper.new(iv), VertexWrapper.new(ov), label, properties
+      e = target_graph.create_edge nil, iv, ov, label, properties
       yield e if block_given?
       e
     end
