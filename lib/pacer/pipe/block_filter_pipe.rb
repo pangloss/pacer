@@ -2,27 +2,16 @@ module Pacer::Pipes
   class BlockFilterPipe < AbstractPipe
     field_reader :starts
 
+    attr_reader :block
+
     def initialize(back, block, invert = false)
       super()
-      @back = back
-      @block = block
-      @graph = back.graph
-      @invert = invert
-
-      @exts = @back.extensions + [Pacer::Extensions::BlockFilterElement]
-      @is_element = @graph.element_type?(back.element_type) if @graph
+      @block = Pacer::Wrappers::WrappingPipeFunction.new back, block
     end
 
     def processNextStart()
       while raw_element = starts.next
-        if @is_element
-          extended_element = raw_element.add_extensions(@exts)
-          extended_element.back = @back
-          extended_element.graph = @back.graph
-          ok = @block.call extended_element
-        else
-          ok = @block.call raw_element
-        end
+        ok = block.call raw_element
         ok = !ok if @invert
         return raw_element if ok
       end

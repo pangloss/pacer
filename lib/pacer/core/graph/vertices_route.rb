@@ -9,15 +9,13 @@ module Pacer::Core::Graph
     import com.tinkerpop.gremlin.pipes.transform.BothEdgesPipe
     import com.tinkerpop.gremlin.pipes.transform.BothPipe
 
-    include ElementRoute
-
     # Extends the route with out edges from this route's matching vertices.
     #
     # @param [Array<Hash, String, Symbol, extension>, Hash, String, Symbol, extension] filter see {Pacer::Route#property_filter}
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
       filters = extract_labels(filters)
@@ -34,7 +32,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def out(*filters, &block)
       filters = extract_labels(filters)
@@ -51,7 +49,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
       filters = extract_labels(filters)
@@ -68,7 +66,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def in(*filters, &block)
       filters = extract_labels(filters)
@@ -85,7 +83,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
       filters = extract_labels(filters)
@@ -102,7 +100,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def both(*filters, &block)
       filters = extract_labels(filters)
@@ -119,7 +117,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def v(*filters, &block)
       filter(*filters, &block)
@@ -130,7 +128,7 @@ module Pacer::Core::Graph
     # @return [element_type(:vertex)] The actual type varies based on
     # which graph is in use.
     def element_type
-      graph.element_type(:vertex)
+      :vertex
     end
 
     # Delete all matching vertices and all edges which link to this

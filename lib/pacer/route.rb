@@ -1,4 +1,4 @@
-[Pacer::Core::Route, Pacer::ElementMixin, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
+[Pacer::Core::Route, Pacer::Wrappers::ElementWrapper, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
   klass.class_eval %{
     def chain_route(args_hash)
       Pacer::Route.new({ :back => self }.merge(args_hash))
@@ -60,15 +60,15 @@ module Pacer
     # See {Core::Graph::GraphRoute} and {PacerGraph} for methods
     # to build routes based on a graph.
     #
-    # See {ElementMixin}, {VertexMixin} and
-    # {EdgeMixin} for methods to build routes based on an
+    # See {ElementWrapper}, {VertexWrapper} and
+    # {EdgeWrapper} for methods to build routes based on an
     # individual graph element.
     #
     # @see Core::Graph::GraphRoute
     # @see PacerGraph
-    # @see ElementMixin
-    # @see VertexMixin
-    # @see EdgeMixin
+    # @see ElementWrapper
+    # @see VertexWrapper
+    # @see EdgeWrapper
     #
     # See Pacer's {Enumerable#to_route} method to create a route based
     # on an Array, a Set or any other Enumerable type.
@@ -105,13 +105,13 @@ module Pacer
     # {#after_initialize} method is called to allow mixins to do any
     # additional setup.
     def initialize(args = {})
-      @@graph = @back = @source = nil
+      @source = nil
       @wrapper = nil
       @extensions = Set[]
       self.graph = args[:graph]
       self.back = args[:back]
-      include_function args
       set_element_type args
+      include_function args
       include_other_modules args
       keys = args.keys - [:element_type, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor]
       keys.each do |key|
@@ -135,10 +135,13 @@ module Pacer
       if graph
         @element_type = graph.element_type(et)
         if @element_type == graph.element_type(:vertex)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::VerticesRoute
         elsif @element_type == graph.element_type(:edge)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::EdgesRoute
         elsif @element_type == graph.element_type(:mixed)
+          extend Pacer::Core::Graph::ElementRoute
           extend Pacer::Core::Graph::MixedRoute
         end
       elsif et == :object

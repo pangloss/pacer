@@ -57,7 +57,6 @@ require 'pacer/pipe/type_filter_pipe'
 require 'pacer/pipe/label_collection_filter_pipe'
 require 'pacer/pipe/id_collection_filter_pipe'
 require 'pacer/pipe/label_prefix_pipe'
-require 'pacer/pipe/variable_store_iterator_wrapper'
 
 require 'pacer/pipe/property_comparison_pipe'
 
@@ -65,3 +64,7 @@ require 'pacer/pipe/blackbox_pipeline'
 
 require 'pacer/pipe/unary_transform_pipe'
 require 'pacer/pipe/cross_product_transform_pipe'
+
+require 'pacer/pipe/wrapping_pipe'
+require 'pacer/pipe/path_wrapping_pipe'
+require 'pacer/pipe/unwrapping_pipe'

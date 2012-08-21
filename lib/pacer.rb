@@ -279,7 +279,7 @@ at_exit do
       begin
         graph.shutdown
       rescue Exception, StandardError => e
-        pp e
+        puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
       end
     end
   end

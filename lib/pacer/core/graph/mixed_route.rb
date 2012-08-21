@@ -3,13 +3,11 @@ module Pacer::Core::Graph
   # Basic methods for routes that may contain both vertices and edges. That can
   # happen as the result of a branched route, for example.
   module MixedRoute
-    include ElementRoute
-
     # Pass through only vertices.
     def v(*args, &block)
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => Pacer::VertexMixin,
+        :pipe_args => Pacer::Wrappers::VertexWrapper,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
@@ -19,7 +17,7 @@ module Pacer::Core::Graph
     def e(*args, &block)
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => Pacer::EdgeMixin,
+        :pipe_args => Pacer::Wrappers::EdgeWrapper,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
@@ -76,7 +74,7 @@ module Pacer::Core::Graph
     # Calculate and save result.
     def result(name = nil)
       ids = collect do |element|
-        if element.is_a? Pacer::VertexMixin
+        if element.is_a? Pacer::Wrappers::VertexWrapper
           [:vertex, element.element_id]
         else
           [:edge, element.element_id]

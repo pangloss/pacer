@@ -5,8 +5,8 @@ module Pacer::Pipes
       case enumerable
       when Enumerator
         starts = enumerable
-      when Pacer::ElementMixin
-        starts = [enumerable].to_enum
+      when Pacer::Wrappers::ElementWrapper
+        starts = [enumerable.element].to_enum
       when Enumerable
         starts = enumerable.to_enum
       else

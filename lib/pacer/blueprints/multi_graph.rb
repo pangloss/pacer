@@ -105,7 +105,5 @@ module Pacer
     def to_s
       "m[#{ element_id }]"
     end
-
-    include VertexExtensions
   end
 end

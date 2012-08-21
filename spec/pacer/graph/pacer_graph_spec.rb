@@ -290,7 +290,7 @@ shared_examples_for Pacer::RubyGraph do
           graph.index('missing_edge').should be_nil
         end
         subject { graph.index 'missing_edge', :edge, :create => true }
-        its(:index_name) { should == 'missing_edge' }
+        its(:name) { should == 'missing_edge' }
         after do
           graph.transaction do
             graph.drop_index 'missing_edge'
@@ -304,7 +304,7 @@ shared_examples_for Pacer::RubyGraph do
           graph.index('missing_vertex').should be_nil
         end
         subject { graph.index 'missing_vertex', :vertex, :create => true }
-        its(:index_name) { should == 'missing_vertex' }
+        its(:name) { should == 'missing_vertex' }
         after do
           graph.transaction do
             graph.drop_index 'missing_vertex'

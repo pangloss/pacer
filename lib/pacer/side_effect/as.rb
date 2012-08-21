@@ -11,6 +11,36 @@ module Pacer
 
   module SideEffect
     module As
+      class AsPipe < Pacer::Pipes::AbstractPipe
+
+        field_reader :starts
+        attr_accessor :vars
+
+        def initialize(pipe, vars, variable_name)
+          super()
+          setStarts pipe if pipe
+          @vars = vars
+          @variable_name = variable_name
+        end
+
+        def getCurrentPath
+          starts.getCurrentPath
+        end
+
+        protected
+
+        def processNextStart
+          @vars[@variable_name] = starts.next
+        rescue NativeException => e
+          if e.cause.getClass == Pacer::NoSuchElementException.getClass
+            raise e.cause
+          else
+            raise e
+          end
+        end
+      end
+
+
       import java.util.HashSet
 
       attr_accessor :variable_name
@@ -18,7 +48,16 @@ module Pacer
       protected
 
       def attach_pipe(pipe)
-        Pacer::Pipes::VariableStoreIteratorWrapper.new(pipe, vars, @variable_name)
+        if element_type == :vertex or element_type == :edge or element_type == :mixed
+          wrapped = Pacer::Pipes::WrappingPipe.new graph, element_type, extensions
+          wrapped.setStarts pipe
+          as_pipe = AsPipe.new(wrapped, vars, variable_name)
+          unwrapped = Pacer::Pipes::UnwrappingPipe.new
+          unwrapped.setStarts as_pipe
+          unwrapped
+        else
+          AsPipe.new(pipe, vars, variable_name)
+        end
       end
 
       def inspect_class_name

@@ -13,7 +13,9 @@ module Pacer
   end
 end
 
-require 'pacer/wrappers/new_element'
 require 'pacer/wrappers/element_wrapper'
 require 'pacer/wrappers/vertex_wrapper'
 require 'pacer/wrappers/edge_wrapper'
+require 'pacer/wrappers/index_wrapper'
+require 'pacer/wrappers/wrapper_selector'
+require 'pacer/wrappers/wrapping_pipe_function'
