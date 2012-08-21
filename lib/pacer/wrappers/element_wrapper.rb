@@ -88,42 +88,6 @@ module Pacer::Wrappers
       element.hash
     end
 
-    protected
-
-    def after_initialize
-    end
-
-
-
-
-    public
-
-
-    # ------- why are these defined at the element level?
-
-    # See {Core::Graph::VerticesRoute#v}
-    # @return [Route]
-    def v(*args)
-      route = super
-      if args.empty? and not block_given?
-        route.add_extensions extensions
-      end
-      route
-    end
-
-    # See {Core::Graph::EdgesRoute#e}
-    # @return [Route]
-    def e(*args)
-      route = super
-      if args.empty? and not block_given?
-        route.add_extensions extensions
-      end
-      route
-    end
-
-
-    # ------------
-
     # Convenience method to retrieve a property by name.
     #
     # @param [#to_s] key the property name
@@ -166,7 +130,7 @@ module Pacer::Wrappers
     #
     # @param [Object] g the object to compare to {#graph}
     def from_graph?(g)
-      g.equal? graph
+      g.blueprints_graph.equal? graph.blueprints_graph
     end
 
     # Returns a hash of property values by name.
@@ -198,8 +162,7 @@ module Pacer::Wrappers
       element.getId
     end
 
-    # Sort objects semi arbitrarily based on {VertexWrapper#display_name}
-    # or {EdgeWrapper#display_name}.
+    # Sort objects semi arbitrarily based on {#display_name}.
     # @param other
     #
     # @return [Fixnum]
@@ -237,6 +200,11 @@ module Pacer::Wrappers
       else
         [self].to_enum
       end
+    end
+
+    protected
+
+    def after_initialize
     end
   end
 end
