@@ -55,6 +55,12 @@ module Pacer::Wrappers
       end
     end
 
+    # Returns the element with a new simple wrapper.
+    # @return [VertexWrapper]
+    def no_extensions
+      VertexWrapper.new element
+    end
+
     # Checks that the given extensions can be applied to the vertex. If
     # they can then yield the vertex correctly extended or return the extended
     # vertex. If not then do not yield and return nil.

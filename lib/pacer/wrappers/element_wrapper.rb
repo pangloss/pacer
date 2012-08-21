@@ -250,17 +250,5 @@ module Pacer::Wrappers
         [self].to_enum
       end
     end
-
-    # Returns the underlying element. For unwrapped elements, returns
-    # self.
-    # @return [ElementWrapper]
-    alias no_extensions element
-
-
-
-
-
-
-
   end
 end

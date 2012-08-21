@@ -89,6 +89,12 @@ module Pacer::Wrappers
       end
     end
 
+    # Returns the element with a new simple wrapper.
+    # @return [EdgeWrapper]
+    def no_extensions
+      EdgeWrapper.new element
+    end
+
     # Returns a human-readable representation of the edge using the
     # standard ruby console representation of an instantiated object.
     # @return [String]
