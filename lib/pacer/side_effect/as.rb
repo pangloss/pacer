@@ -23,6 +23,10 @@ module Pacer
           @variable_name = variable_name
         end
 
+        def getCurrentPath
+          starts.getCurrentPath
+        end
+
         protected
 
         def processNextStart

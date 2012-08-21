@@ -11,6 +11,10 @@ module Pacer
         @edge_wrapper = Pacer::Wrappers::WrapperSelector.build :edge, edge_extensions || Set[]
       end
 
+      def getCurrentPath
+        starts.getCurrentPath
+      end
+
       def processNextStart
         path = starts.next
         path.collect do |item|

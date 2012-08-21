@@ -11,6 +11,10 @@ module Pacer
         @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, extensions || Set[]
       end
 
+      def getCurrentPath
+        starts.getCurrentPath
+      end
+
       def processNextStart
         e = wrapper.new starts.next
         if element_type == :vertex or element_type == :edge or element_type == :mixed

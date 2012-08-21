@@ -10,6 +10,10 @@ module Pacer
           raise e
         end
       end
+
+      def getCurrentPath
+        starts.getCurrentPath
+      end
     end
   end
 end
