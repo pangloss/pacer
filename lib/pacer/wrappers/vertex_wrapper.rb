@@ -156,7 +156,6 @@ module Pacer::Wrappers
     end
 
     def ==(other)
-      puts "vw =="
       if other.is_a? VertexWrapper
         element_id == other.element_id and graph == other.graph
       elsif other.is_a? Pacer::Vertex

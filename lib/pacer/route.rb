@@ -60,15 +60,15 @@ module Pacer
     # See {Core::Graph::GraphRoute} and {PacerGraph} for methods
     # to build routes based on a graph.
     #
-    # See {ElementMixin}, {VertexMixin} and
-    # {EdgeMixin} for methods to build routes based on an
+    # See {ElementWrapper}, {VertexWrapper} and
+    # {EdgeWrapper} for methods to build routes based on an
     # individual graph element.
     #
     # @see Core::Graph::GraphRoute
     # @see PacerGraph
-    # @see ElementMixin
-    # @see VertexMixin
-    # @see EdgeMixin
+    # @see ElementWrapper
+    # @see VertexWrapper
+    # @see EdgeWrapper
     #
     # See Pacer's {Enumerable#to_route} method to create a route based
     # on an Array, a Set or any other Enumerable type.

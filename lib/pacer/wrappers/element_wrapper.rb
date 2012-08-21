@@ -82,28 +82,7 @@ module Pacer::Wrappers
     end
 
     def hash
-      puts "ew hash #{ super } or #{ element.hash } -- #{ element.getId }"
       element.hash
-    end
-
-    def eql?(x)
-      puts "ew eql?"
-      super
-    end
-
-    def equal?(x)
-      puts "ew equal?"
-      super
-    end
-
-    def equal(x)
-      puts "ew equal"
-      super
-    end
-
-    def ==(x)
-      puts 'ew =='
-      super
     end
 
     protected
@@ -122,12 +101,10 @@ module Pacer::Wrappers
     # See {Core::Graph::VerticesRoute#v}
     # @return [Route]
     def v(*args)
-      p c: self.class, g: graph
       route = super
       if args.empty? and not block_given?
         route.add_extensions extensions
       end
-      route.each { |v| p v.class.to_s }
       route
     end
 
@@ -224,7 +201,6 @@ module Pacer::Wrappers
     #
     # @return [Fixnum]
     def <=>(other)
-      puts 'ew <=>'
       display_name.to_s <=> other.display_name.to_s
     end
 
@@ -251,7 +227,6 @@ module Pacer::Wrappers
     # @see #==
     # @param other
     def eql?(other)
-      puts 'ew eqs? 2'
       if other.respond_to? :element_id
         other.graph == graph and other.element_id == element_id
       else

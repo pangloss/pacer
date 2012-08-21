@@ -176,7 +176,6 @@ module Pacer::Wrappers
     end
 
     def ==(other)
-      puts "ew == 2"
       if other.is_a? EdgeWrapper
         element_id == other.element_id and graph == other.graph
       elsif other.is_a? Pacer::Edge

@@ -16,7 +16,7 @@ module Pacer
           arg.to_enum(:times).inject(self) do |route_end, count|
             yield route_end
           end
-        when Range 
+        when Range
           if arg.exclude_end?
             range = arg.begin..(arg.end - 1)
           else
@@ -42,11 +42,6 @@ module Pacer
     end
   end
 
-  module ElementMixin
-    def loop(&block)
-      chain_route :filter => :loop, :looping_route => block
-    end
-  end
 
   module Filter
     module LoopFilter

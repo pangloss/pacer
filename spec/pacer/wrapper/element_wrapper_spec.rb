@@ -186,7 +186,6 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
         end
 
         it '(nil)' do
-          p e: element, n: element[:name].class
           element[:name] = nil
           element[:name].should be_nil
           element.property_keys.should_not include('name')
