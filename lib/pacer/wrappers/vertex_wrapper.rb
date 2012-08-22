@@ -82,7 +82,7 @@ module Pacer::Wrappers
 
     def only_as(*exts)
       if as?(*exts)
-        extended = exts.empty? ? element : element.add_extensions(exts)
+        extended = exts.empty? ? no_extensions : no_extensions.add_extensions(exts)
         if block_given?
           yield extended
         else
