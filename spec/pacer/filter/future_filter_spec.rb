@@ -51,7 +51,7 @@ Run.tg(:read_only) do
         [ "Daryl_Hall",
           "Hall_and_Oates",
           "Peter_Krug"
-        ].to_route.map(:graph => graph, :element_type => :vertex) { |name| graph.v(:name => name).first }
+        ].to_route.map(graph: graph, element_type: :vertex) { |name| graph.v(name: name).first }
       end
       def wrote_songs
         people.lookahead { |v| v.in_e(:written_by) }
@@ -67,9 +67,12 @@ Run.tg(:read_only) do
       it 'should have 3 people' do
         people.count.should == 3
       end
-      
+
       it 'should have 2 songwriters' do
         wrote_songs.count.should == 2
+        wrote_songs[:name].to_set.should == Set[
+          "Daryl_Hall",
+          "Peter_Krug"]
       end
 
       it 'should combine the two types of artists to get the full list' do
@@ -85,12 +88,12 @@ Run.tg(:read_only) do
     let!(:x) { graph.create_vertex :type => 'b' }
     let!(:y) { graph.create_vertex :type => 'b' }
     before do
-      x.add_edges_to :has, [a,b,c] 
-      y.add_edges_to :has, c 
+      x.add_edges_to :has, [a,b,c]
+      y.add_edges_to :has, c
     end
 
     subject do
-      graph.v(type:'b').lookahead { |r| r.out(:has).only([a,b]) } 
+      graph.v(type:'b').lookahead { |r| r.out(:has).only([a,b]) }
     end
     its(:to_a) { should == [x] }
   end

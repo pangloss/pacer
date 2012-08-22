@@ -18,11 +18,11 @@ module Pacer
       attr_accessor :min, :max
 
       def block=(block)
-        @future_filter = [block, true]
+        @future_filter = [block, false]
       end
 
       def neg_block=(block)
-        @future_filter = [block, false]
+        @future_filter = [block, true]
       end
 
       protected
@@ -41,14 +41,14 @@ module Pacer
 
       def lookahead_route
         if @future_filter
-          block, has_elements = @future_filter
+          block, negate = @future_filter
           @future_filter = nil
           route = block.call(Pacer::Route.empty(self))
           if min or max
             route = route.has_count_route(:min => min, :max => max).is(true)
           end
-          unless has_elements
-            route = route.chain_route(:element_type => :object, :pipe_class => Pacer::Pipes::IsEmptyPipe, :route_name => 'negate')
+          if negate
+            route = route.chain_route(pipe_class: Pacer::Pipes::IsEmptyPipe, :route_name => 'negate')
           end
           @route = route
         elsif @route
