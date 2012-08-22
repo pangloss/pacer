@@ -9,7 +9,7 @@ module Pacer::Pipes
       raise EmptyPipe.instance if @raise
       starts.next
       @raise = true
-    rescue EmptyPipe
+    rescue EmptyPipe, java.util.NoSuchElementException
       true
     else
       raise EmptyPipe.instance

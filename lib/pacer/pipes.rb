@@ -26,12 +26,6 @@ module Pacer
   end
 
   import java.util.Iterator
-  begin
-    java.util.ArrayList.new.iterator.next
-  rescue NativeException => e
-    NoSuchElementException = e.cause
-    Pipes::NoSuchElementException = e.cause
-  end
 
   EmptyPipe = com.tinkerpop.pipes.util.FastNoSuchElementException
   Pipes::EmptyPipe = EmptyPipe

@@ -10,13 +10,7 @@ module Pacer::Pipes
         s = @starts.next
         return s if s.is_a? @type
       end
-      raise Pacer::NoSuchElementException
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
+      raise EmptyPipe.instance
     end
   end
 end

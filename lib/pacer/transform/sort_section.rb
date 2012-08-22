@@ -48,16 +48,12 @@ module Pacer
             to_sort << element
           end
           to_emit.shift
-        rescue NativeException => e
-          if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            if to_emit.empty?
-              raise e.cause
-            else
-              after_element
-              retry
-            end
+        rescue EmptyPipe, java.util.NoSuchElementException
+          if to_emit.empty?
+            raise EmptyPipe.instance
           else
-            raise e
+            after_element
+            retry
           end
         end
 

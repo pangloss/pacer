@@ -117,7 +117,7 @@ module Pacer
         else
           iter
         end
-      rescue java.util.NoSuchElementException
+      rescue Pacer::EmptyPipe, java.util.NoSuchElementException
         self
       end
 
@@ -129,7 +129,7 @@ module Pacer
         iterator = each
         yield iterator if block_given?
         iterator
-      rescue java.util.NoSuchElementException
+      rescue Pacer::EmptyPipe, java.util.NoSuchElementException
         iterator
       end
 

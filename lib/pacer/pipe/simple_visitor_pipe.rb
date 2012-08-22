@@ -24,13 +24,9 @@ module Pacer
         @in_section = true unless in_section
         visitor.on_element(current) if use_on_element
         return current
-      rescue NativeException => e
-        if e.cause.getClass == Pacer::NoSuchElementException.getClass
-          @in_section = false
-          raise e.cause
-        else
-          raise
-        end
+      rescue EmptyPipe, java.util.NoSuchElementException
+        @in_section = false
+        raise EmptyPipe.instance
       end
 
       def reset

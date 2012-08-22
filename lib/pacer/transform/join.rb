@@ -85,12 +85,6 @@ module Pacer
               return combined
             end
           end
-        rescue NativeException => e
-          if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            raise e.cause
-          else
-            raise e
-          end
         end
 
         def get_keys(element)

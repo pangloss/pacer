@@ -9,12 +9,6 @@ module Pacer::Pipes
 
     def processNextStart
       iter.next
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     end
 
     def reset

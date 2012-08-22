@@ -35,14 +35,8 @@ module Enumerable
         e = iter.next
       end
     end
-  rescue StopIteration
+  rescue StopIteration, Pacer::EmptyPipe, java.util.NoSuchElementException
     hs
-  rescue NativeException => e
-    if (e.cause.kind_of?(java.util.NoSuchElementException))
-      hs
-    else
-      raise
-    end
   end
 
   def to_list

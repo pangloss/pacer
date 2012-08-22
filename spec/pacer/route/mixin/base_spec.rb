@@ -75,8 +75,9 @@ Run.all do
           begin
             subject.next
             fail 'expected exception to be raised'
-          rescue NativeException => e
-            e.cause.inspect.should == 'java.util.NoSuchElementException'
+          rescue Pacer::EmptyPipe, java.util.NoSuchElementException
+          else
+            'Got the wrong kind of exception.'.should be_false
           end
         end
       end

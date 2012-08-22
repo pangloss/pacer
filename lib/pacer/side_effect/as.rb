@@ -31,12 +31,6 @@ module Pacer
 
         def processNextStart
           @vars[@variable_name] = starts.next
-        rescue NativeException => e
-          if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            raise e.cause
-          else
-            raise e
-          end
         end
       end
 

@@ -17,12 +17,6 @@ module Pacer::Pipes
 
     def next
       super
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     ensure
       @path = @next_path
     end
@@ -69,12 +63,6 @@ module Pacer::Pipes
           expando.add element, depth, @next_path
           return element
         end
-      end
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
       end
     end
 
