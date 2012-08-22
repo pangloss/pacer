@@ -32,6 +32,9 @@ module Pacer
     NoSuchElementException = e.cause
     Pipes::NoSuchElementException = e.cause
   end
+
+  EmptyPipe = com.tinkerpop.pipes.util.FastNoSuchElementException
+  Pipes::EmptyPipe = EmptyPipe
 end
 
 require 'pacer/pipe/ruby_pipe'
