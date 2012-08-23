@@ -120,8 +120,12 @@ module Pacer
       include_extensions args
       after_initialize
     rescue Exception => e
-      puts "Exception creating Route with #{ args.inspect }" if Pacer.verbose?
-      raise
+      begin
+        puts "Exception #{ e.class } #{ e.message } ..." if Pacer.verbose?
+        puts "... creating Route with #{ args.inspect }" if Pacer.verbose?
+      rescue Exception
+      end
+      raise e
     end
 
     protected
