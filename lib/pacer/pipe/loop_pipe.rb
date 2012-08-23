@@ -12,6 +12,7 @@ module Pacer::Pipes
       empty = ArrayList.new
       @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
+      looping_pipe.enablePath true if looping_pipe.respond_to? :enablePath
       @looping_pipe = looping_pipe
     end
 
@@ -22,7 +23,10 @@ module Pacer::Pipes
     end
 
     def setStarts(starts)
-      starts_has_path = starts.respond_to? :getPath
+      if starts.respond_to? :getCurrentPath
+        @starts_has_path = true
+        starts.enablePath true
+      end
       super
     end
 
@@ -37,11 +41,11 @@ module Pacer::Pipes
         if has_next
           element = looping_pipe.next
           depth = (expando.metadata || 0) + 1
-          @next_path = looping_pipe.getPath
+          @next_path = looping_pipe.getCurrentPath
         else
           element = starts.next
           if starts_has_path
-            @next_path = starts.getPath
+            @next_path = starts.getCurrentPath
           else
             @next_path = ArrayList.new
             @next_path.add element
