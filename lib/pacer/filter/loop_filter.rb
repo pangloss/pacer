@@ -1,6 +1,6 @@
 module Pacer
-  module Core
-    module Route
+  module Routes
+    module RouteOperations
       def loop(&block)
         chain_route :filter => :loop, :looping_route => block
       end
@@ -36,16 +36,8 @@ module Pacer
           r.while_description = "repeat #{ arg.inspect }"
           r
         else
-          raise "Invalid repeat range"
+          fail ArgumentError, "Invalid repeat range"
         end
-      end
-    end
-  end
-
-  module Wrappers
-    class ElementWrapper
-      def loop(&block)
-        chain_route :filter => :loop, :looping_route => block
       end
     end
   end
@@ -73,7 +65,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         unless @control_block
-          raise 'No loop control block specified. Use either #while or #until after #loop.'
+          fail ClientError, 'No loop control block specified. Use either #while or #until after #loop.'
         end
         pipe = Pacer::Pipes::LoopPipe.new(graph, looping_pipe, @control_block)
         pipe.setStarts(end_pipe) if end_pipe

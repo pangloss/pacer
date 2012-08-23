@@ -4,6 +4,20 @@ Run.tg(:read_only) do
   use_pacer_graphml_data(:read_only)
 
   describe Pacer::Filter::LoopFilter do
+    describe '#loop' do
+      it 'is a ClientError if no control block is specified' do
+        lambda do
+          graph.v.loop { |v| v.out }.in.to_a
+        end.should raise_error Pacer::ClientError
+      end
+
+      it 'is a ClientError if no control block is specified' do
+        lambda do
+          graph.v.loop { |v| v.out }.to_a
+        end.should raise_error Pacer::ClientError
+      end
+    end
+
     describe '#repeat' do
       it 'should apply the route part twice' do
         route = graph.v.repeat(2) { |tail| tail.out_e.in_v }.inspect
