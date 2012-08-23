@@ -127,10 +127,13 @@ module Pacer
       # @return [java.util.Iterator] the pipe.
       def pipe
         iterator = each
-        yield iterator if block_given?
-        iterator
+        if block_given?
+          yield iterator if block_given?
+        else
+          iterator
+        end
       rescue Pacer::EmptyPipe, java.util.NoSuchElementException
-        iterator
+        nil
       end
 
       def description(join = ' -> ')
