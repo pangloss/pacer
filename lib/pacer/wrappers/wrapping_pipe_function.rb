@@ -13,6 +13,10 @@ module Pacer
         @wrapper = WrapperSelector.build back.element_type, extensions
       end
 
+      def arity
+        block.arity
+      end
+
       def compute(element)
         e = wrapper.new element
         e.graph = graph if e.respond_to? :graph=
@@ -21,6 +25,13 @@ module Pacer
       end
 
       alias call compute
+
+      def call_with_args(element, *args)
+        e = wrapper.new element
+        e.graph = graph if e.respond_to? :graph=
+        e.back = back if e.respond_to? :back=
+        block.call e, *args
+      end
     end
 
     class UnwrappingPipeFunction
@@ -30,6 +41,10 @@ module Pacer
 
       def initialize(block)
         @block = block
+      end
+
+      def arity
+        block.arity
       end
 
       def compute(element)
@@ -42,6 +57,15 @@ module Pacer
       end
 
       alias call compute
+
+      def call_with_args(element, *args)
+        e = block.call element, *args
+        if e.is_a? ElementWrapper
+          e.element
+        else
+          e
+        end
+      end
     end
   end
 end
