@@ -58,7 +58,9 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [VertexWrapper]
     def no_extensions
-      VertexWrapper.new element
+      e = VertexWrapper.new element
+      e.graph = graph
+      e
     end
 
     # Checks that the given extensions can be applied to the vertex. If
