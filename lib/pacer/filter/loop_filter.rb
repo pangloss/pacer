@@ -42,6 +42,13 @@ module Pacer
     end
   end
 
+  module Wrappers
+    class ElementWrapper
+      def loop(&block)
+        chain_route :filter => :loop, :looping_route => block
+      end
+    end
+  end
 
   module Filter
     module LoopFilter
