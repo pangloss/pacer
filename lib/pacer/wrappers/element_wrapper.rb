@@ -47,8 +47,19 @@ module Pacer::Wrappers
         sc_name = superclass.to_s.split(/::/).last
         exts = exts.uniq unless exts.is_a? Set
         classname = "#{sc_name}#{exts.map { |m| m.to_s }.join('')}".gsub(/::/, '_').gsub(/\W/, '')
-        eval "module ::Pacer; module Wrap; class #{classname.to_s} < #{sc_name}; end; end; end"
-        wrapper = Pacer::Wrap.const_get classname
+        begin
+          wrapper = Pacer::Wrap.const_get classname
+        rescue NameError
+          eval %{
+            module ::Pacer
+              module Wrap
+                class #{classname.to_s} < #{sc_name}
+                end
+              end
+            end
+          }
+          wrapper = Pacer::Wrap.const_get classname
+        end
         exts.each do |obj|
           if obj.is_a? Module or obj.is_a? Class
             mod_names.each do |mod_name|
