@@ -11,13 +11,10 @@ module Pacer
   module Transform
     module SortSection
       class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section, :extensions, :is_element, :graph
+        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
 
         def initialize(route, section, block)
           super()
-          @is_element = route.graph.element_type?(route.element_type)
-          @extensions = route.extensions
-          @graph = route.graph
           @to_emit = []
           @section = section
           @to_sort = []
@@ -40,12 +37,7 @@ module Pacer
 
         def processNextStart
           while to_emit.empty?
-            element = @starts.next
-            if is_element
-              element = element.add_extensions(extensions)
-              element.graph = graph
-            end
-            to_sort << element
+            to_sort << starts.next
           end
           to_emit.shift
         rescue EmptyPipe, java.util.NoSuchElementException
@@ -69,7 +61,7 @@ module Pacer
               end
             elsif block_2
               sorted = to_sort.sort_by do |element|
-                block_2.call element, @section_element
+                block_2.call_with_args element, @section_element
               end
             else
               sorted = to_sort.sort
@@ -87,7 +79,8 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(self, section_visitor, block)
+        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block
+        pipe = SortSectionPipe.new(self, section_visitor, pf)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
