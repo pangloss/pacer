@@ -4,6 +4,10 @@ module Pacer::Wrappers
     extend Forwardable
     include Comparable
     include Enumerable
+
+    # Why does this cause problems in Pacer-model?
+    include Pacer::Routes::RouteOperations
+
     include Pacer::Core::Graph::ElementRoute
 
     class << self

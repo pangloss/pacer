@@ -50,6 +50,7 @@ module Pacer
         end
 
         def on_element(element)
+          puts "on element with #{ element.class }"
           @section_element = element
         end
 
