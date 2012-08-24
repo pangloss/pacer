@@ -186,7 +186,9 @@ module Pacer::Wrappers
 
     def get_edges_helper(direction, *labels_and_extensions)
       labels, exts = split_labels_and_extensions(labels_and_extensions)
-      edge_iterator(element.getEdges(direction, *labels).iterator, exts)
+      pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
+      pipe.setStarts element.getEdges(direction, *labels).iterator
+      pipe
     end
 
     def split_labels_and_extensions(mixed)
@@ -200,12 +202,6 @@ module Pacer::Wrappers
         end
       end
       [labels, exts]
-    end
-
-    def edge_iterator(iter, exts)
-      pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
-      pipe.setStarts iter
-      pipe
     end
 
     # Return the extensions this vertex is missing from the given array
