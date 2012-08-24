@@ -1,11 +1,11 @@
-if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-5]|1\.6\.[0-3])/
+if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-6])/
   # NOTE: This is because JRuby 1.6.4 fixes a bug that made it impossible to
   # instantiate Java classes with a varargs constructor signature  with 0
   # arguments. Marko would not accept a patch to create a 0 args constructor to
   # work around the problem, therefore this version of Pacer will not work
   # under any older versions of JRuby. The oldest Pacer version that will work
   # is 0.8.1.
-  raise Exception, 'Pacer >= 0.8.2 requires JRuby version 1.6.4 or higher. It is strongly recommended that you use the latest JRuby release.'
+  raise Exception, 'Pacer >= 1.0.0 requires JRuby version 1.7.0 preview or higher. It is strongly recommended that you use the latest JRuby release.'
 end
 
 if RUBY_VERSION == '1.8.7'
@@ -15,6 +15,7 @@ WARNING: Pacer is developed using JRuby in 1.9 mode. I recommend you
   defaulting to 1.9 mode by setting the environment variable
   JRUBY_OPTS=--1.9
 WARNING
+  raise Exception, "Pacer must be run in JRuby 1.9 mode"
 end
 
 require 'java'
