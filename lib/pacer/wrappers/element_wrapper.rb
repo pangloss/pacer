@@ -3,7 +3,6 @@ module Pacer::Wrappers
     include Pacer::Element
     extend Forwardable
     include Comparable
-    include Enumerable
 
     # Why does this cause problems in Pacer-model?
     include Pacer::Routes::RouteOperations
@@ -196,20 +195,6 @@ module Pacer::Wrappers
         other.graph == graph and other.element_id == element_id
       else
         element.equals other
-      end
-    end
-
-    # Yields the element once or returns an enumerator if no block is
-    # given. Follows Ruby conventions and is meant to be used along
-    # with the Enumerable mixin.
-    #
-    # @yield [ElementWrapper] this element
-    # @return [Enumerator] only if no block is given
-    def each
-      if block_given?
-        yield self
-      else
-        [self].to_enum
       end
     end
 

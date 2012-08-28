@@ -171,7 +171,7 @@ module Pacer::Core::Graph
       edge_ids = []
       counter = 0
       graph.transaction do |commit, rollback|
-        each do |from_v|
+        v.each do |from_v|
           to_vertices.each do |to_v|
             counter += 1
             if counter == graph.bulk_job_size
