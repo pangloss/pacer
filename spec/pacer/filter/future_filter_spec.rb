@@ -48,10 +48,7 @@ Run.tg(:read_only) do
   describe Pacer::Filter::FutureFilter, '(negative)' do
     context 'artists who did not write songs' do
       def people
-        [ "Daryl_Hall",
-          "Hall_and_Oates",
-          "Peter_Krug"
-        ].to_route.map(graph: graph, element_type: :vertex) { |name| graph.v(name: name).first }
+        graph.v.lookahead { |v| v[:name].only [ "Daryl_Hall", "Hall_and_Oates", "Peter_Krug" ]  }
       end
       def wrote_songs
         people.lookahead { |v| v.in_e(:written_by) }
