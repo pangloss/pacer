@@ -8,9 +8,12 @@ module Pacer
       def initialize(back, block)
         @back = back
         @block = block
-        @graph = back.graph
-        @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
-        @wrapper = WrapperSelector.build back.element_type, extensions
+        if back
+          @graph = back.graph
+          @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
+          element_type = back.element_type
+        end
+        @wrapper = WrapperSelector.build element_type, extensions
       end
 
       def arity
