@@ -2,7 +2,7 @@ module Pacer
   module Routes
     module RouteOperations
       def map(opts = {}, &block)
-        chain_route({:transform => :map, :block => block, :element_type => :object}.merge(opts))
+        chain_route({:transform => :map, :block => block, :element_type => :object, :extensions => []}.merge(opts))
       end
     end
   end
