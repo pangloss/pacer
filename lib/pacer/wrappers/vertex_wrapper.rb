@@ -206,7 +206,7 @@ module Pacer::Wrappers
 
     # Return the extensions this vertex is missing from the given array
     def extensions_missing(exts)
-      Set.new(exts).difference extensions.to_set
+      Set.new(exts.flatten).difference extensions.to_set
     end
   end
 end
