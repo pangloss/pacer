@@ -16,7 +16,7 @@ module Pacer
       def attach_pipe(end_pipe)
         # Must wrap based on parent pipe because the element in the block has
         # not yet been affected by any of this block's transforms.
-        pf = Pacer::Wrappers::WrappingPipeFunction.new back, block
+        pf = Pacer::Wrappers::WrappingPipeFunction.new back || source, block
         pf = Pacer::Wrappers::UnwrappingPipeFunction.new pf
         pipe = com.tinkerpop.pipes.transform.TransformFunctionPipe.new pf
         pipe.setStarts end_pipe if end_pipe

@@ -171,7 +171,9 @@ module Pacer
 
     # @return [Route, nil] the previous route in the chain
     def back_object(args)
-      back || args[:back]
+      obj = back || args[:back]
+      obj = source if not obj and source.is_a? Pacer::Wrappers::ElementWrapper
+      obj
     end
 
     # Get element type from the previous route in the chain.
