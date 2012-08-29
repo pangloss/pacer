@@ -11,7 +11,11 @@ module Pacer::Wrappers
     class << self
       def wrapper_for(exts)
         @wrappers = {} unless defined? @wrappers
-        @wrappers[exts.to_set] ||= build_edge_wrapper(exts)
+        if exts and not exts.empty?
+          @wrappers[exts.to_set] ||= build_edge_wrapper(exts)
+        else
+          fail Pacer::LogicError, "Extensions should not be nil"
+        end
       end
 
       def clear_cache
