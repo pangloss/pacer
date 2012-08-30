@@ -23,10 +23,8 @@ Run.tg :read_only do
 
   describe 'sort with more info' do
     let(:unsorted) { graph.v.out.out }
-    let(:yielded) { [] }
     let(:with_path) do
       graph.v.section(:x).out.out.sort_section(:x) do |v, section, path|
-        yielded << [v, section, path]
         [path[-2][:name], v[:name]]
       end
     end
@@ -42,8 +40,22 @@ Run.tg :read_only do
     end
 
     it 'should yield' do
-      with_path.first.should_not be_nil
-      yielded.length.should == 1
+      yielded = false
+      graph.v.section(:x).out_e.in_v.sort_section(:x) do |v, section, path|
+        yielded = true
+        path.should be_a Array
+        path.length.should == 3
+        a, b, c = path
+        path.each { |e| e.graph.should_not be_nil }
+        section.graph.should_not be_nil
+        p a: a.element_id, s: section.element_id
+        a.should == section
+        a.should be_a Pacer::Wrappers::VertexWrapper
+        b.should be_a Pacer::Wrappers::EdgeWrapper
+        c.should == v
+        c.should be_a Pacer::Wrappers::VertexWrapper
+      end.first
+      yielded.should be_true
     end
   end
 
