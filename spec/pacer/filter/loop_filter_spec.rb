@@ -103,6 +103,19 @@ Run.tg(:read_only) do
             paths
           route.collect { |p| p.map { |e| e[:name] } }.should == paths
         end
+
+        it 'should loop or emit or loop_and_emit as needed' do
+          route = pangloss.loop { |v| v.out }.while do |el, depth|
+            if el[:name] == 'pacer'
+              :loop_and_emit
+            elsif depth == 4
+              :emit
+            else
+              :loop
+            end
+          end
+          route[:name].to_a.should == %w[ pacer blueprints ]
+        end
       end
     end
 
@@ -118,14 +131,13 @@ Run.tg(:read_only) do
       end
 
       describe 'with a range' do
-        let(:start) { graph.vertex(0).v }
-        subject { start.repeat(1..3) { |tail| tail.out_e.in_v[0] } }
+        let(:start) { graph.vertex(0) }
+        subject { start.repeat(1..3) { |tail| tail.out_e.in_v }[:name] }
 
         it 'should be equivalent to executing each path separately' do
-          pending
-          subject.to_a.should == [start.out_e.in_v.first,
-                                  start.out_e.in_v.out_e.in_v.first,
-                                  start.out_e.in_v.out_e.in_v.out_e.in_v.first]
+          subject.to_a.should == [start.out_e.in_v[:name].to_a,
+                                  start.out_e.in_v.out_e.in_v[:name].to_a,
+                                  start.out_e.in_v.out_e.in_v.out_e.in_v[:name].to_a].flatten
         end
       end
     end
