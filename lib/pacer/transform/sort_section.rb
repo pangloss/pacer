@@ -28,10 +28,10 @@ module Pacer
 
 
       class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
+        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section
         attr_reader :getPathToHere
 
-        def initialize(route, section, block)
+        def initialize(route, section, pipe_function)
           super()
           @to_emit = []
           @section = section
@@ -42,16 +42,21 @@ module Pacer
           else
             on_element nil
           end
-          if block
-            if block.arity == 1
-              @block_1 = block
+          if pipe_function
+            if pipe_function.arity == 1
+              @pf_1 = pipe_function
               section.use_on_element = false
-            elsif block.arity == 2 or block.arity < 0
-              @block_2 = block
+            else
+              @pf_2 = pipe_function
             end
           else
             section.use_on_element = false
           end
+        end
+
+        def setStarts(starts)
+          super
+          enablePath(true) if pf_2
         end
 
         def processNextStart
@@ -81,15 +86,16 @@ module Pacer
 
         def after_element
           if to_sort.any?
-            if block_1
+            if pf_1
               sorted = to_sort.sort_by do |element, path|
-                block_1.call element
+                pf_1.call element
               end
-            elsif block_2
+            elsif pf_2
               sorted = to_sort.sort_by do |element, path|
                 block_2.call_with_args element, @section_element, path
               end
             else
+              p to_sort.map { |e, p| e }
               sorted = to_sort.sort_by do |element, path|
                 element
               end
