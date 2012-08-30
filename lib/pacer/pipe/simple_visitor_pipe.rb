@@ -1,14 +1,14 @@
 module Pacer
   module Pipes
     class SimpleVisitorPipe < Pacer::Pipes::RubyPipe
-      attr_reader :visitor, :in_section
+      attr_reader :visitor, :in_section, :wrapper
 
       attr_accessor :use_on_element, :use_after_element, :use_reset
 
-      def initialize(visitor = nil)
+      def initialize(wrapper)
         super()
-        self.visitor = visitor if visitor
         @in_section = false
+        @wrapper = wrapper
       end
 
       def visitor=(visitor)
@@ -22,7 +22,7 @@ module Pacer
         visitor.after_element if use_after_element and in_section
         current = starts.next
         @in_section = true unless in_section
-        visitor.on_element(current) if use_on_element
+        visitor.on_element(wrapper.new current) if use_on_element
         return current
       rescue EmptyPipe, java.util.NoSuchElementException
         @in_section = false
