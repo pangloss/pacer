@@ -1,4 +1,5 @@
 require 'pacer/filter/where_filter/node_visitor'
+require 'jruby' # for JRuby.parse
 
 module Pacer
   module Routes

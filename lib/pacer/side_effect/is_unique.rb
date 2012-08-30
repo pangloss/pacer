@@ -15,17 +15,18 @@ module Pacer
   module SideEffect
     module IsUnique
       def unique?
-        pipe do |pipe|
-          pipe.next while pipe.unique?
-        end.unique?
+        checked = Pacer::Pipes::IsUniquePipe.new
+        checked.setStarts pipe
+        checked.next while checked.unique?
+        false
+      rescue Pacer::EmptyPipe, java.util.NoSuchElementException
+        true
       end
 
       protected
 
       def attach_pipe(end_pipe)
-        @pipe = Pacer::Pipes::IsUniquePipe.new
-        @pipe.setStarts(end_pipe) if end_pipe
-        @pipe
+        end_pipe
       end
     end
   end

@@ -26,6 +26,10 @@ module Pacer
           end
         end
       end
+
+      def compact
+        is_not nil
+      end
     end
   end
 

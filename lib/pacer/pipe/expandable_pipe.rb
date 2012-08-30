@@ -26,8 +26,8 @@ module Pacer::Pipes
       if @queue.isEmpty
         @next_metadata = nil
         r = @starts.next
-        if @starts.respond_to? :getPath
-          @next_path = @starts.getPath
+        if pathEnabled and @starts.respond_to? :getCurrentPath
+          @next_path = @starts.getCurrentPath
         else
           @next_path = java.util.ArrayList.new
         end
