@@ -42,28 +42,66 @@ Run.tg(:read_only) do
           yielded.should be_true
         end
 
-        it 'should have the right depth' do
-          current_depth = 0
-          depths = [
-            0,       # pangloss
-            1,       # pacer
-            2, 2, 2, # gremlin, pipes, blueprints
-            3, 3, 3, # gremlin>blueprints, gremlin>pipes, pipes>blueprints
-            4        # gremlin>pipes>blueprints
-          ]
-          results = pangloss.loop { |v| v.out }.while do |el, depth, path|
-            depth.should == depths.shift
-            path.length.should == depth + 1
-            true
-          end[:name].to_a
-          depths.should be_empty
-          results.should == %w[
-            pangloss
-            pacer
-            gremlin pipes blueprints
-            blueprints pipes blueprints
-            blueprints
-          ]
+        context 'project tree' do
+          let(:depths) do
+            [ 0,       # pangloss
+              1,       # pacer
+              2, 2, 2, # gremlin, pipes, blueprints
+              3, 3, 3, # gremlin>blueprints, gremlin>pipes, pipes>blueprints
+              4        # gremlin>pipes>blueprints
+            ]
+          end
+
+          let(:route) do
+            pangloss.loop { |v| v.out }.while do |el, depth, path|
+              depth.should == depths.shift
+              path.length.should == depth + 1
+              true
+            end
+          end
+
+          it 'should exhaust the depths list' do
+            route.to_a
+            depths.should be_empty
+          end
+
+          it 'should have the right results' do
+            route[:name].to_a.should == %w[
+              pangloss
+              pacer
+              gremlin pipes blueprints
+              blueprints pipes blueprints
+              blueprints
+            ]
+          end
+        end
+
+        let(:paths) do
+          [ %w[ pangloss ],
+            %w[ pangloss pacer ],
+            %w[ pangloss pacer gremlin ],
+            %w[ pangloss pacer pipes ],
+            %w[ pangloss pacer blueprints ],
+            %w[ pangloss pacer gremlin blueprints ],
+            %w[ pangloss pacer gremlin pipes ],
+            %w[ pangloss pacer pipes blueprints ],
+            %w[ pangloss pacer gremlin pipes blueprints ] ]
+        end
+
+        it 'should have correct paths with control block paths' do
+          route = pangloss.
+            loop { |v| v.out }.
+            while { |el, depth, path| true }.
+            paths
+          route.collect { |p| p.map { |e| e[:name] } }.should == paths
+        end
+
+        it 'should have correct paths without control block paths' do
+          route = pangloss.
+            loop { |v| v.out }.
+            while { |el| true }.
+            paths
+          route.collect { |p| p.map { |e| e[:name] } }.should == paths
         end
       end
     end
