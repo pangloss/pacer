@@ -55,8 +55,7 @@ module Pacer
         end
       end
 
-      def while(yield_paths = false, &block)
-        @yield_paths = yield_paths
+      def while(&block)
         @control_block = block
         self
       end
@@ -67,6 +66,7 @@ module Pacer
         unless @control_block
           fail ClientError, 'No loop control block specified. Use either #while or #until after #loop.'
         end
+
         pipe = Pacer::Pipes::LoopPipe.new(graph, looping_pipe, @control_block)
         pipe.setStarts(end_pipe) if end_pipe
         pipe
