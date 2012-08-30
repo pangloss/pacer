@@ -12,7 +12,10 @@ module Pacer::Pipes
       empty = ArrayList.new
       @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
-      looping_pipe.enablePath true if looping_pipe.respond_to? :enablePath
+      #if control_block.arity < 0 and 1 < control_block.arity
+        @yield_paths = true
+        looping_pipe.enablePath true
+      #end
       @looping_pipe = looping_pipe
     end
 
@@ -23,28 +26,25 @@ module Pacer::Pipes
     end
 
     def setStarts(starts)
-      if starts.respond_to? :getCurrentPath
-        @starts_has_path = true
-        starts.enablePath true
-      end
       super
+      enablePath true if yield_paths
     end
 
     protected
 
-    attr_reader :wrapper, :control_block, :expando, :looping_pipe, :graph, :starts_has_path
+    attr_reader :wrapper, :control_block, :expando, :looping_pipe, :graph, :yield_paths
 
     def processNextStart
       while true
         # FIXME: hasNext shouldn't be raising an exception...
-        has_next = looping_pipe.hasNext rescue nil
+        has_next = looping_pipe.hasNext
         if has_next
           element = looping_pipe.next
           depth = (expando.metadata || 0) + 1
-          @next_path = looping_pipe.getCurrentPath
+          @next_path = looping_pipe.getCurrentPath if yield_paths
         else
           element = starts.next
-          if starts_has_path
+          if pathEnabled
             @next_path = starts.getCurrentPath
           else
             @next_path = ArrayList.new
@@ -54,7 +54,12 @@ module Pacer::Pipes
         end
         wrapped = wrapper.new(element)
         wrapped.graph = graph if wrapped.respond_to? :graph=
-        case control_block.call wrapped, depth, @next_path
+        path = @next_path.map do |e|
+          w = wrapper.new e
+          w.graph = graph if w.respond_to? :graph=
+          w
+        end
+        case control_block.call wrapped, depth, path
         when :loop
           expando.add element, depth, @next_path
         when :emit

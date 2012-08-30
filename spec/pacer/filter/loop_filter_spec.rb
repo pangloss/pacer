@@ -16,6 +16,49 @@ Run.tg(:read_only) do
           graph.v.loop { |v| v.out }.to_a
         end.should raise_error Pacer::ClientError
       end
+
+      describe 'control block' do
+        it 'should wrap elements' do
+          yielded = false
+          graph.v.loop { |v| v.out }.while do |el|
+            el.should be_a Pacer::Wrappers::VertexWrapper
+            yielded = true
+          end.first
+          yielded.should be_true
+        end
+
+        it 'should wrap path elements' do
+          yielded = false
+          graph.v.loop { |v| v.out }.while do |el, depth, path|
+            el.should be_a Pacer::Wrappers::VertexWrapper
+            depth.should == 0
+            path.should be_a Array
+            path.length.should == 1
+            path.each do |e|
+              e.should be_a Pacer::Wrappers::VertexWrapper
+            end
+            yielded = true
+          end.first
+          yielded.should be_true
+        end
+
+        it 'should have the right depth' do
+          current_depth = 0
+          depths = [
+            0,       # pangloss
+            1,       # pacer
+            2, 2, 2, # gremlin, pipes, blueprints
+            3, 3, 3, # gremlin>blueprints, gremlin>pipes, pipes>blueprints
+            4        # gremlin>pipes>blueprints
+          ]
+          pangloss.loop { |v| v.out }.while do |el, depth, path|
+            depth.should == depths.shift
+            path.length.should == depth + 1
+            true
+          end.to_a
+          depths.should be_empty
+        end
+      end
     end
 
     describe '#repeat' do
