@@ -59,7 +59,6 @@ module Pacer
         end
 
         def on_element(element)
-          puts "on element with #{ element.class }"
           @section_element = element
         end
 
@@ -84,6 +83,9 @@ module Pacer
         end
       end
 
+      # VisitsSection module provides:
+      #  section=
+      #  section_visitor
       include Pacer::Visitors::VisitsSection
 
       attr_accessor :block
@@ -91,7 +93,7 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block
+        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block if block
         pipe = SortSectionPipe.new(self, section_visitor, pf)
         pipe.setStarts end_pipe if end_pipe
         pipe
