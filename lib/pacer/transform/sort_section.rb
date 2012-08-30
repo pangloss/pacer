@@ -12,12 +12,14 @@ module Pacer
     module SortSection
       class SortSectionPipe < Pacer::Pipes::RubyPipe
         attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
+        attr_reader :getPathToHere
 
         def initialize(route, section, block)
           super()
           @to_emit = []
           @section = section
           @to_sort = []
+          @paths = []
           if section
             section.visitor = self
           else
@@ -36,10 +38,17 @@ module Pacer
         end
 
         def processNextStart
-          while to_emit.empty?
-            to_sort << starts.next
+          if pathEnabled
+            while to_emit.empty?
+              to_sort << [starts.next, starts.getCurrentPath]
+            end
+          else
+            while to_emit.empty?
+              to_sort << [starts.next, nil]
+            end
           end
-          to_emit.shift
+          element, @getPathToHere = to_emit.shift
+          element
         rescue EmptyPipe, java.util.NoSuchElementException
           if to_emit.empty?
             raise EmptyPipe.instance
@@ -57,15 +66,17 @@ module Pacer
         def after_element
           if to_sort.any?
             if block_1
-              sorted = to_sort.sort_by do |element|
+              sorted = to_sort.sort_by do |element, path|
                 block_1.call element
               end
             elsif block_2
-              sorted = to_sort.sort_by do |element|
-                block_2.call_with_args element, @section_element
+              sorted = to_sort.sort_by do |element, path|
+                block_2.call_with_args element, @section_element, path
               end
             else
-              sorted = to_sort.sort
+              sorted = to_sort.sort_by do |element, path|
+                element
+              end
             end
             to_emit.concat sorted
             @to_sort = []
