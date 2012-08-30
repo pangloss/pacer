@@ -2,7 +2,7 @@ module Pacer
   module Routes
     module RouteOperations
       def has_count_route(opts = {})
-        chain_route({ :transform => :has_count_cap }.merge(opts))
+        chain_route({ :transform => :has_count_cap, element_type: :object }.merge(opts))
       end
 
       def has_count?(opts = {})

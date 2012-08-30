@@ -11,7 +11,11 @@ module Pacer::Wrappers
     class << self
       def wrapper_for(exts)
         @wrappers = {} unless defined? @wrappers
-        @wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+        if exts
+          @wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+        else
+          fail Pacer::LogicError, "Extensions should not be nil"
+        end
       end
 
       def clear_cache
@@ -58,7 +62,9 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [VertexWrapper]
     def no_extensions
-      VertexWrapper.new element
+      e = VertexWrapper.new element
+      e.graph = graph
+      e
     end
 
     # Checks that the given extensions can be applied to the vertex. If
@@ -82,7 +88,7 @@ module Pacer::Wrappers
 
     def only_as(*exts)
       if as?(*exts)
-        extended = exts.empty? ? element : element.add_extensions(exts)
+        extended = exts.empty? ? no_extensions : no_extensions.add_extensions(exts)
         if block_given?
           yield extended
         else
@@ -184,7 +190,9 @@ module Pacer::Wrappers
 
     def get_edges_helper(direction, *labels_and_extensions)
       labels, exts = split_labels_and_extensions(labels_and_extensions)
-      edge_iterator(element.getEdges(direction, *labels).iterator, exts)
+      pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
+      pipe.setStarts element.getEdges(direction, *labels).iterator
+      pipe
     end
 
     def split_labels_and_extensions(mixed)
@@ -200,15 +208,9 @@ module Pacer::Wrappers
       [labels, exts]
     end
 
-    def edge_iterator(iter, exts)
-      pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
-      pipe.setStarts iter
-      pipe
-    end
-
     # Return the extensions this vertex is missing from the given array
     def extensions_missing(exts)
-      Set.new(exts).difference extensions.to_set
+      Set.new(exts.flatten).difference extensions.to_set
     end
   end
 end

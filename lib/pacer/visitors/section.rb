@@ -31,7 +31,7 @@ module Pacer
       def attach_pipe(end_pipe)
         pipe = end_pipe
         @section_visitors = (1..visitor_count).map do
-          pipe = Pacer::Pipes::SimpleVisitorPipe.new
+          pipe = Pacer::Pipes::SimpleVisitorPipe.new Pacer::Wrappers::WrapperSelector.build(element_type, extensions), graph
           pipe.setStarts end_pipe if end_pipe
           end_pipe = pipe
         end

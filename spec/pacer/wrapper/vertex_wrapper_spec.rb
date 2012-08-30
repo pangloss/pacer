@@ -129,6 +129,37 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
     end
   end
 
+  describe '#only_as' do
+    context 'able' do
+      subject { graph.create_vertex VertexWrapperSpec::IsRuby, type: 'project', language: 'ruby' }
+
+      its(:extensions) { should include VertexWrapperSpec::IsRuby }
+
+      it 'should yield a Project' do
+        yielded = false
+        subject.only_as(VertexWrapperSpec::Project) do |v2|
+          yielded = true
+          v2.should == subject
+          v2.extensions.should == [VertexWrapperSpec::Project]
+          v2.should be_a VertexWrapperSpec::Project::Vertex
+        end
+        yielded.should be_true
+      end
+    end
+
+    context 'unable' do
+      subject { graph.create_vertex VertexWrapperSpec::IsRuby, language: 'ruby' }
+
+      it 'should not yield a Project' do
+        yielded = false
+        subject.only_as(VertexWrapperSpec::Project) do |v2|
+          yielded = true
+        end
+        yielded.should be_false
+      end
+    end
+  end
+
   describe '#delete!' do
     before do
       @vertex_id = v0.element_id

@@ -165,6 +165,11 @@ Run.tg do
           result = pangloss.add_edges_to(:likes, nil)
           result.should be_nil
         end
+
+        it 'should work if the source is a simple vertex' do
+          result = pangloss.first.add_edges_to(:likes, pacer)
+          result.should_not be_empty
+        end
       end
     end
   end

@@ -6,8 +6,10 @@ module Pacer::Pipes
   # pass it on to a pipe like FutureFilterPipe that only
   # knows how to act on a single pipe.
   class BlackboxPipeline
-    include com.tinkerpop.pipes.Pipe 
-    
+    include com.tinkerpop.pipes.Pipe
+
+    attr_reader :pathEnabled
+
     def initialize(start_pipe, end_pipe)
       @start_pipe = start_pipe
       @end_pipe = end_pipe
@@ -33,8 +35,13 @@ module Pacer::Pipes
       @end_pipe.reset
     end
 
-    def getPath
-      @end_pipe.getPath
+    def enablePath(b)
+      @pathEnabled = b
+      @end_pipe.enablePath b
+    end
+
+    def getCurrentPath
+      @end_pipe.getCurrentPath
     end
 
     def iterator

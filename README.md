@@ -31,6 +31,14 @@ If you like, you can also use the documentation locally via
   gem install yard
   yard server
 
+## JRuby 1.7 Required
+
+As of Pacer 1.0.0, [JRuby](http://jruby.org/) 1.7 is required because it is both faster and
+fixes some problems that I previously had to work around in Pacer.
+
+The easiest way (ie. the way I do it) to get the most recent version of
+JRuby is to use [RVM](https://rvm.io/)
+
 ## Installation
 
 The easiest way to get Pacer is `gem install pacer`.
