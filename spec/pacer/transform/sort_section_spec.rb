@@ -48,7 +48,6 @@ Run.tg :read_only do
         a, b, c = path
         path.each { |e| e.graph.should_not be_nil }
         section.graph.should_not be_nil
-        p a: a.element_id, s: section.element_id
         a.should == section
         a.should be_a Pacer::Wrappers::VertexWrapper
         b.should be_a Pacer::Wrappers::EdgeWrapper

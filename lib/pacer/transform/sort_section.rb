@@ -102,7 +102,6 @@ module Pacer
                 pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
               end
             else
-              p to_sort.map { |e, p| e }
               sorted = to_sort.sort_by do |element, path|
                 element
               end
