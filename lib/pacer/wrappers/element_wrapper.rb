@@ -3,10 +3,7 @@ module Pacer::Wrappers
     include Pacer::Element
     extend Forwardable
     include Comparable
-
-    # Why does this cause problems in Pacer-model?
     include Pacer::Routes::RouteOperations
-
     include Pacer::Core::Graph::ElementRoute
 
     class << self
