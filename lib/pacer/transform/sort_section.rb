@@ -92,7 +92,7 @@ module Pacer
               end
             elsif pf_2
               sorted = to_sort.sort_by do |element, path|
-                block_2.call_with_args element, @section_element, path
+                pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
               end
             else
               p to_sort.map { |e, p| e }

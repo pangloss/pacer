@@ -35,6 +35,22 @@ module Pacer
         e.back = back if e.respond_to? :back=
         block.call e, *args
       end
+
+      def wrap_path(path)
+        path.collect do |item|
+          if item.is_a? Pacer::Vertex
+            wrapped = Pacer::Wrappers::VertexWrapper.new item
+            wrapped.graph = graph
+            wrapped
+          elsif item.is_a? Pacer::Edge
+            wrapped = Pacer::Wrappers::EdgeWrapper.new item
+            wrapped.graph = graph
+            wrapped
+          else
+            item
+          end
+        end
+      end
     end
 
     class UnwrappingPipeFunction
