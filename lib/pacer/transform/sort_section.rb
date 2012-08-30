@@ -1,5 +1,4 @@
 module Pacer
-
   module Routes
     module RouteOperations
       def sort_section(section = nil, &block)
@@ -8,8 +7,26 @@ module Pacer
     end
   end
 
+
   module Transform
     module SortSection
+      # VisitsSection module provides:
+      #  section=
+      #  section_visitor
+      include Pacer::Visitors::VisitsSection
+
+      attr_accessor :block
+
+      protected
+
+      def attach_pipe(end_pipe)
+        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block if block
+        pipe = SortSectionPipe.new(self, section_visitor, pf)
+        pipe.setStarts end_pipe if end_pipe
+        pipe
+      end
+
+
       class SortSectionPipe < Pacer::Pipes::RubyPipe
         attr_reader :block_1, :block_2, :to_sort, :to_emit, :section
         attr_reader :getPathToHere
@@ -81,22 +98,6 @@ module Pacer
             @to_sort = []
           end
         end
-      end
-
-      # VisitsSection module provides:
-      #  section=
-      #  section_visitor
-      include Pacer::Visitors::VisitsSection
-
-      attr_accessor :block
-
-      protected
-
-      def attach_pipe(end_pipe)
-        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block if block
-        pipe = SortSectionPipe.new(self, section_visitor, pf)
-        pipe.setStarts end_pipe if end_pipe
-        pipe
       end
     end
   end
