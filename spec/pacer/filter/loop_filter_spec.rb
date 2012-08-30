@@ -51,12 +51,19 @@ Run.tg(:read_only) do
             3, 3, 3, # gremlin>blueprints, gremlin>pipes, pipes>blueprints
             4        # gremlin>pipes>blueprints
           ]
-          pangloss.loop { |v| v.out }.while do |el, depth, path|
+          results = pangloss.loop { |v| v.out }.while do |el, depth, path|
             depth.should == depths.shift
             path.length.should == depth + 1
             true
-          end.to_a
+          end[:name].to_a
           depths.should be_empty
+          results.should == %w[
+            pangloss
+            pacer
+            gremlin pipes blueprints
+            blueprints pipes blueprints
+            blueprints
+          ]
         end
       end
     end
