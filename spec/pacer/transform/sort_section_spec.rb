@@ -66,4 +66,17 @@ Run.tg :read_only do
       by_value.to_a.should_not be_empty
     end
   end
+
+  it 'should put groups into the correct order' do
+    # depends on the order of graph.v(type: 'project') ...
+    route = graph.v(type: 'project').section(:proj).out[:name].sort_section(:proj)
+    route.to_a.should == %w[
+      blueprints
+      blueprints
+      gremlin
+      pipes
+      blueprints
+      pipes
+    ]
+  end
 end

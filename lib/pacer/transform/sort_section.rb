@@ -29,7 +29,7 @@ module Pacer
 
       class SortSectionPipe < Pacer::Pipes::RubyPipe
         attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section
-        attr_reader :getPathToHere, :ready_to_sort
+        attr_reader :getPathToHere
 
         def initialize(route, section, pipe_function)
           super()
@@ -61,15 +61,14 @@ module Pacer
 
         def processNextStart
           if pathEnabled
-            while not ready_to_sort
+            while to_emit.empty?
               to_sort << [starts.next, starts.getCurrentPath]
             end
           else
-            while not ready_to_sort
+            while to_emit.empty?
               to_sort << [starts.next, nil]
             end
           end
-          sort_section if ready_to_sort
           raise EmptyPipe.instance if to_emit.empty?
           element, @getPathToHere = to_emit.shift
           element
@@ -87,12 +86,7 @@ module Pacer
         end
 
         def after_element
-          @ready_to_sort = true
-        end
-
-        def sort_section
           if to_sort.any?
-            @ready_to_sort = false
             if pf_1
               sorted = to_sort.sort_by do |element, path|
                 pf_1.call element
@@ -107,7 +101,7 @@ module Pacer
               end
             end
             to_emit.concat sorted
-            @to_sort = []
+            @to_sort.clear
           end
         end
       end
