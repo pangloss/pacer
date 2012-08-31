@@ -11,12 +11,7 @@ module Pacer
     def initialize(encoder, open, shutdown = nil)
       @reopen = open
       @shutdown = shutdown
-      graph = open.call
-      if graph.is_a? PacerGraph
-        @blueprints_graph = graph.blueprints_graph
-      else
-        @blueprints_graph = graph
-      end
+      reopen
       @encoder = encoder
     end
 
@@ -28,11 +23,18 @@ module Pacer
     end
 
     def reopen
-      @reopen.call
+      graph = @reopen.call
+      if graph.is_a? PacerGraph
+        @blueprints_graph = graph.blueprints_graph
+      else
+        @blueprints_graph = graph
+      end
+      self
     end
 
     def shutdown
-      @shutdown.call if @shutdown
+      @shutdown.call self if @shutdown
+      self
     end
 
     def graph_id
