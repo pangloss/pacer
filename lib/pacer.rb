@@ -247,21 +247,8 @@ module Pacer
     # or a url or address.
     # @return [Hash] address => graph
     def open_graphs
-      @open_graphs = Hash.new { |h, k| h[k] = {} } unless defined? @open_graphs
+      @open_graphs = {} unless defined? @open_graphs
       @open_graphs
-    end
-
-    # Tell pacer to record that we're starting a graph.
-    #
-    # @param [Class] type type of graph
-    # @param [String] key address of the graph
-    # @yield the block should return the instantiated graph.
-    # @return [blueprints.Graph] the instantiated graph
-    def starting_graph(type, key)
-      graph = open_graphs[type][key]
-      return graph if graph
-      graph = yield
-      open_graphs[type][key] = graph
     end
 
     # Used internally to collect debug information while using
@@ -275,13 +262,11 @@ end
 
 at_exit do
   # Close all open graphs
-  Pacer.open_graphs.each do |type, graphs|
-    graphs.each do |path, graph|
-      begin
-        graph.shutdown
-      rescue Exception, StandardError => e
-        puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
-      end
+  Pacer.open_graphs.each do |path, graph|
+    begin
+      graph.shutdown
+    rescue Exception, StandardError => e
+      puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
     end
   end
 end
