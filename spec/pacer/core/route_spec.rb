@@ -185,7 +185,7 @@ describe Pacer::Core::Route do
       let(:mock_type) { Pacer::Pipes::EnumerablePipe }
       let(:pipe_args) { [['a', 1]] }
 
-      subject { Pacer::Route.new :element_type => :object,
+      subject { Pacer::RouteBuilder.current.chain nil, :element_type => :object,
                   :pipe_class => mock_type, :pipe_args => pipe_args }
 
       it 'should create the pipe' do

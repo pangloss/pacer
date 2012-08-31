@@ -13,7 +13,7 @@ module Pacer
       # @param [Route] back the route the new route is based on.
       # @return [Route]
       def empty(back)
-        Pacer::Route.new :filter => :empty, :back => back
+        back.chain_route :filter => :empty
       end
 
       def block_branch(back, block, branch_start = nil)

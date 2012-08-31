@@ -7,10 +7,10 @@ class Proc
       source = self
     end
     if based_on
-      Pacer::Route.new(:source => source, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
+      Pacer::RouteBuilder.current.chain(source, :element_type => :mixed, :graph => based_on.graph, :extensions => based_on.extensions, :info => based_on.info)
     else
       graph = opts[:graph] if opts[:graph]
-      Pacer::Route.new(:source => source, :element_type => (opts[:element_type] || :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
+      Pacer::RouteBuilder.current.chain(source, :element_type => (opts[:element_type] || :object), :graph => graph, :extensions => opts[:extensions], :info => opts[:info])
     end
   end
 end

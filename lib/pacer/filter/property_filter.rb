@@ -45,15 +45,16 @@ module Pacer
       def property_filter(base, filters, block)
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
+        puts self.class
         if filters.extensions_only? and base.is_a? Route
           base.wrapper ||= filters.wrapper if filters.wrapper
           base.add_extensions(filters.extensions)
         elsif filters and filters.any?
-          new(:back => base, :filter => :property, :filters => filters)
+          base.chain_route(:filter => :property, :filters => filters)
         elsif Pacer.vertex? base
-          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
+          base.chain_route(:pipe_class => Pacer::Pipes::IdentityPipe)
         elsif Pacer.edge? base
-          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
+          base.chain_route(:pipe_class => Pacer::Pipes::IdentityPipe)
         else
           base
         end
