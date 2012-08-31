@@ -116,8 +116,10 @@ module Pacer
         exts.to_a
       elsif exts.is_a? Module
         [exts]
-      else
+      elsif exts.is_a? Array
         exts.uniq
+      else
+        []
       end
     end
 
