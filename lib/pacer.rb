@@ -183,16 +183,12 @@ module Pacer
 
     # Is the object a vertex?
     def vertex?(element)
-      element.is_a? Pacer::Vertex or
-        (element.respond_to? :element and
-         element.element.is_a? Pacer::Vertex)
+      element.is_a? Pacer::Wrappers::VertexWrapper
     end
 
     # Is the object an edge?
     def edge?(element)
-      element.is_a? Pacer::Edge
-        (element.respond_to? :element and
-         element.element.is_a? Pacer::Edge)
+      element.is_a? Pacer::Wrappers::EdgeWrapper
     end
 
     def vertex_route?(obj)
@@ -204,18 +200,6 @@ module Pacer
       obj.is_a? Pacer::Core::Graph::EdgesRoute
     end
     alias edges_route? edge_route?
-
-    # Blueprints constant for manual index.
-    # @return [com.tinkerpop.blueprints.Index::Type::MANUAL]
-    def manual_index
-      com.tinkerpop.blueprints.Index::Type::MANUAL
-    end
-
-    # Blueprints constant for automatic index.
-    # @return [com.tinkerpop.blueprints.Index::Type::AUTOMATIC]
-    def automatic_index
-      com.tinkerpop.blueprints.Index::Type::AUTOMATIC
-    end
 
     # If a pipe is giving you trouble, you can get all of the
     # intermediate pipes by using this method.
