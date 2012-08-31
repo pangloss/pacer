@@ -5,9 +5,9 @@ module Pacer
   # its standard simple persistant mode.
   def self.tg(path = nil)
     if path
-      PacerGraph.new TinkerGraph.new(path), SimpleEncoder
+      PacerGraph.new SimpleEncoder, proc { TinkerGraph.new(path) }
     else
-      PacerGraph.new TinkerGraph.new, SimpleEncoder
+      PacerGraph.new SimpleEncoder, proc { TinkerGraph.new }
     end
   end
 end

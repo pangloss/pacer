@@ -52,11 +52,11 @@ class RSpec::GraphRunner
     protected
 
     def ruby_graph
-      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
+      Pacer::PacerGraph.new Pacer::SimpleEncoder, proc { Pacer::RubyGraph.new }
     end
 
     def ruby_graph2
-      Pacer::PacerGraph.new Pacer::RubyGraph.new, Pacer::SimpleEncoder
+      Pacer::PacerGraph.new Pacer::SimpleEncoder, proc { Pacer::RubyGraph.new }
     end
   end
 

@@ -1,7 +1,7 @@
 module Pacer
   class MultiGraph < RubyGraph
     def self.blank
-      PacerGraph.new MultiGraph.new, SimpleEncoder
+      PacerGraph.new SimpleEncoder, proc { MultiGraph.new }
     end
 
     protected

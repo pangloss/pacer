@@ -8,7 +8,10 @@ module Pacer
 
     attr_reader :blueprints_graph, :encoder
 
-    def initialize(graph, encoder)
+    def initialize(encoder, open, shutdown = nil)
+      @reopen = open
+      @shutdown = shutdown
+      graph = open.call
       if graph.is_a? PacerGraph
         @blueprints_graph = graph.blueprints_graph
       else
@@ -19,9 +22,17 @@ module Pacer
 
     # The current graph
     #
-    # @return [Graph] returns self
+    # @return [PacerGraph] returns self
     def graph
       self
+    end
+
+    def reopen
+      @reopen.call
+    end
+
+    def shutdown
+      @shutdown.call if @shutdown
     end
 
     def graph_id
