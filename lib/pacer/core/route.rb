@@ -258,13 +258,7 @@ module Pacer
       # If a wrapper is present, returns an Array. Otherwise a Set.
       #
       # @return [Enumerable[extension]]
-      def extensions
-        if wrapper
-          wrapper.extensions + @extensions.to_a
-        else
-          @extensions
-        end
-      end
+      attr_reader :extensions
 
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
