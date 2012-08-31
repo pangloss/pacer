@@ -34,6 +34,7 @@ module Pacer
 
     def shutdown
       @shutdown.call self if @shutdown
+      @blueprints_graph = nil
       self
     end
 
