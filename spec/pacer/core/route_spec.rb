@@ -121,48 +121,43 @@ describe Pacer::Core::Route do
 
   its(:extensions) { should == [] }
 
-  describe '#extensions=' do
-    before :all do
-      JRuby.objectspace = true
-    end
-    after :all do
-      JRuby.objectspace = false
-    end
-    it 'should add one extension' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      subject.extensions = Tackle::SimpleMixin
-    end
-    it 'should add multiple extensions' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      mock(subject).add_extension(TP::Person)
-      subject.extensions = [Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should accumulate extensions' do
-      subject.add_extension TP::Person
-      subject.extensions.should == Set[TP::Person]
-      subject.extensions = Tackle::SimpleMixin
-      subject.extensions.should == Set[TP::Person, Tackle::SimpleMixin]
-    end
-  end
+  context 'mocked' do
+    before(:all) { JRuby.objectspace = true }
+    after(:all) { JRuby.objectspace = false }
 
-  describe '#add_extensions' do
-    before :all do
-      JRuby.objectspace = true
+    subject { base_route.add_extensions([TP::Person]) }
+
+    describe '#extensions=' do
+      it 'should add multiple extensions' do
+        subject.add_extensions [Tackle::SimpleMixin, TP::Person]
+      end
     end
-    after :all do
-      JRuby.objectspace = false
+
+    describe '#add_extensions' do
+      it 'should add multiple extensions' do
+        mock(subject).chain_route(extensions: [Tackle::SimpleMixin, TP::Person])
+        subject.add_extensions [Tackle::SimpleMixin, TP::Person]
+      end
+      it 'should be chainable' do
+        subject.add_extensions([Tackle::SimpleMixin]).should be_a Pacer::Route
+      end
+      it 'should accumulate extensions' do
+        subject.extensions.should == [TP::Person]
+        r = subject.add_extensions [Tackle::SimpleMixin]
+        subject.extensions.should == [TP::Person]
+        r.extensions.should == [TP::Person, Tackle::SimpleMixin]
+      end
     end
-    it 'should add use add_extension' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      mock(subject).add_extension(TP::Person)
-      result = subject.add_extensions [Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should add multiple extensions' do
-      subject.add_extensions [Tackle::SimpleMixin, TP::Person]
-      subject.extensions.should == Set[Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should be chainable' do
-      subject.add_extensions([Tackle::SimpleMixin]).should be subject
+
+    describe '#set_extensions' do
+      it 'should be chainable' do
+        subject.set_extensions([Tackle::SimpleMixin]).should be_a Pacer::Route
+      end
+      it 'should replace extensions' do
+        r = subject.set_extensions Tackle::SimpleMixin
+        subject.extensions.should == [TP::Person]
+        r.extensions.should == [Tackle::SimpleMixin]
+      end
     end
   end
 

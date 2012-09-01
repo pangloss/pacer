@@ -84,24 +84,27 @@ Run.tg(:read_only) do
       describe 'v(wrapper_class)' do
         subject { graph.v(wrapper_class) }
         its(:wrapper) { should == wrapper_class }
-        its(:extensions) { should == exts.to_a }
+        its(:extensions) { should == [] }
+        its(:all_extensions) { should ==  exts }
         its(:first) { should be_a wrapper_class }
       end
 
       describe 'v(wrapper_class, Pacer::Utils::TSort)' do
         subject { graph.v(wrapper_class, Pacer::Utils::TSort) }
         its(:wrapper) { should == wrapper_class }
-        its(:extensions) { should == (exts.to_a + [Pacer::Utils::TSort]) }
+        its(:extensions) { should == [Pacer::Utils::TSort] }
+        its(:all_extensions) { should == (exts + [Pacer::Utils::TSort]) }
         it { should_not be_empty }
         its('first.class') { should_not == wrapper_class }
-        its('first.class.extensions') { should == exts.to_a + [Pacer::Utils::TSort] }
+        its('first.class.extensions') { should == exts + [Pacer::Utils::TSort] }
       end
 
       describe 'v(wrapper_class, :name => "pacer")' do
         subject { graph.v(wrapper_class, :name => 'pacer') }
         its(:count) { should == 1 }
         its(:wrapper) { should == wrapper_class }
-        its(:extensions) { should == exts.to_a }
+        its(:all_extensions) { should == exts }
+        its(:extensions) { should == [] }
         its(:first) { should be_a wrapper_class }
         its(:filters) { should_not be_nil }
         its('filters.wrapper') { should == wrapper_class }

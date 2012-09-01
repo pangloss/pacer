@@ -32,11 +32,10 @@ module Pacer
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
         if filters.extensions_only? and base.is_a? Route
-          base.wrapper ||= filters.wrapper if filters.wrapper
-          base.add_extensions(filters.extensions)
-          yield base
+          yield base.chain_route(extensions: filters.extensions, wrapper: filters.wrapper)
         elsif filters and filters.any?
-          yield new(:back => base, :filter => :property, :filters => filters)
+          yield base.chain_route(filter: :property, filters: filters,
+                                 extensions: filters.extensions, wrapper: filters.wrapper)
         else
           yield base
         end
@@ -46,14 +45,12 @@ module Pacer
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
         if filters.extensions_only? and base.is_a? Route
-          base.wrapper ||= filters.wrapper if filters.wrapper
-          base.add_extensions(filters.extensions)
+          base.chain_route(extensions: filters.extensions, wrapper: filters.wrapper)
         elsif filters and filters.any?
-          base.chain_route(:filter => :property, :filters => filters)
-        elsif Pacer.vertex? base
-          base.chain_route(:pipe_class => Pacer::Pipes::IdentityPipe)
-        elsif Pacer.edge? base
-          base.chain_route(:pipe_class => Pacer::Pipes::IdentityPipe)
+          base.chain_route(filter: :property, filters: filters,
+                           extensions: filters.extensions, wrapper: filters.wrapper)
+        elsif base.is_a? Pacer::Wrappers::ElementWrapper
+          base.chain_route({})
         else
           base
         end
@@ -72,8 +69,6 @@ module Pacer
         else
           @filters = EdgeFilters.new(f)
         end
-        self.wrapper ||= f.wrapper if f.wrapper
-        add_extensions f.extensions
       end
 
       # Return an array of filter options for the current route.
