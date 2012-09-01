@@ -62,7 +62,7 @@ module Pacer
 
     def arguments(source, args)
       args.reject do |key, val|
-        [:element_type, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor].include? key
+        [:element_type, :wrapper, :extensions, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor].include? key
       end
     end
 
