@@ -5,8 +5,7 @@ Run.tg(:read_only) do
 
   describe Pacer::Filter::EmptyFilter do
     let(:origin) { graph.v(Tackle::SimpleMixin) }
-    let(:empty) { Pacer::Route.empty(origin) }
-    subject { empty }
+    subject { Pacer::Route.empty(origin) }
 
     its(:graph) { should == graph }
     its(:element_type) { should == graph.element_type(:vertex) }
@@ -14,7 +13,7 @@ Run.tg(:read_only) do
     its(:build_pipeline) { should be_nil }
 
     context 'with route built on it' do
-      subject { empty.filter(name: 'joe') }
+      subject { Pacer::Route.empty(origin).filter(name: 'joe') }
       its(:graph) { should == graph }
       its(:element_type) { should == graph.element_type(:vertex) }
       its(:extensions) { should == [Tackle::SimpleMixin] }
