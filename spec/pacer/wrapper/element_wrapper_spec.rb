@@ -31,7 +31,8 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
         subject { v0.v(Tackle::SimpleMixin) }
         its(:to_a) { should == [v0] }
         it { should be_a_vertices_route }
-        its(:extensions) { should == Set[Tackle::SimpleMixin] }
+        its(:extensions) { should == [Tackle::SimpleMixin] }
+        its(:element_type) { should == :vertex }
       end
     end
 
@@ -93,7 +94,7 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
         subject { e0.e(Tackle::SimpleMixin) }
         its(:to_a) { should == [e0] }
         it { should be_an_edges_route }
-        its(:extensions) { should == Set[Tackle::SimpleMixin] }
+        its(:extensions) { should == [Tackle::SimpleMixin] }
       end
     end
 
@@ -289,7 +290,7 @@ end
 Run.all do
   # This runs about 500 specs, basically it should test all the ways
   # that wrappers act the same as native elements
-  describe Pacer::Wrappers::ElementWrapper do
+  describe 'wrapped elements' do
     it_uses Pacer::Wrappers::ElementWrapper do
       let(:v0) { graph.create_vertex(Tackle::SimpleMixin, :name => 'eliza') }
       let(:v1) { graph.create_vertex(Tackle::SimpleMixin, :name => 'darrick') }

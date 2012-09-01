@@ -119,7 +119,7 @@ describe Pacer::Core::Route do
     end
   end
 
-  its(:extensions) { should == Set[] }
+  its(:extensions) { should == [] }
 
   describe '#extensions=' do
     before :all do
