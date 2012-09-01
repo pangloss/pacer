@@ -55,7 +55,8 @@ module Pacer
         element_type: element_type(source, args),
         graph: graph(source, args),
         extensions: extensions(source, args),
-        wrapper: wrapper(source, args)
+        wrapper: wrapper(source, args),
+        function: function_modules(source, args).first
       }
     end
 
@@ -179,11 +180,25 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
-    # The function mixed into this instance
-    attr_reader :function
+    attr_reader :config
+
+    def wrapper
+      config[:wrapper]
+    end
+
+    def extensions
+      config[:extensions]
+    end
 
     # The type of object that this route emits.
-    attr_reader :element_type
+    def element_type
+      config[:element_type]
+    end
+
+    # The function mixed into this instance
+    def function
+      config[:function]
+    end
 
     # Additional info to include after the class name when generating a
     # name for this route.
@@ -252,10 +267,8 @@ module Pacer
       else
         @source = source
       end
-      @wrapper = config[:wrapper]
-      @extensions = config[:extensions]
-      @graph = config[:graph]
-      @element_type = config[:element_type]
+      @config = config
+      @args = args
 
       args.each do |key, value|
         send("#{key}=", value)
