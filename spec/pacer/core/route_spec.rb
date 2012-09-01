@@ -101,24 +101,6 @@ describe Pacer::Core::Route do
     [].to_route.should be_empty
   end
 
-  describe '#add_extension' do
-    context 'Object' do
-      subject { base_route.add_extension Object }
-      its(:extensions) { should be_empty }
-    end
-
-    context 'SimpleMixin' do
-      subject { base_route.add_extension Tackle::SimpleMixin }
-      its(:extensions) { should include(Tackle::SimpleMixin) }
-      its('extensions.count') { should == 1 }
-      it 'should have extension method' do
-        subject.route_mixin_method.should be_true
-      end
-      it { should be_a Tackle::SimpleMixin::Route }
-      its(:first) { should == 1 }
-    end
-  end
-
   its(:extensions) { should == [] }
 
   context 'mocked' do

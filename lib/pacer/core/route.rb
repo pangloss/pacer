@@ -199,32 +199,6 @@ module Pacer
         none?
       end
 
-      # Add an extension to the route.
-      #
-      # If the extension has a Route module inside it, this route will
-      # be extended with the extension's Route module.
-      #
-      # If the extension has a Vertex or Edge module inside it, any vertices
-      # or edges emitted from this route will be extended with with the
-      # extension as well.
-      #
-      # @see VertexWrapper#add_extensions
-      # @see EdgeWrapper#add_extensions
-      #
-      # @return [self]
-      def add_extension(mod, add_to_list = true)
-        return self unless mod.respond_to?(:const_defined?)
-        is_extension = false
-        if mod.const_defined? :Route
-          is_extension = true
-          extend mod::Route
-        end
-        if add_to_list and (is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge)
-          @extensions << mod
-        end
-        self
-      end
-
       def set_wrapper(wrapper)
         chain_route wrapper: wrapper
       end
@@ -489,11 +463,11 @@ module Pacer
       # Return the class name of the current route.
       # @return [String]
       def inspect_class_name
+        puts 'r icn'
         s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
         s = "#{s} #{ info }" if info
         s
       end
-
     end
   end
 end

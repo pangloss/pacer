@@ -341,13 +341,13 @@ shared_examples_for Pacer::Core::Route do
       its(:element_type) { should == graph.element_type(result_type) }
     end
 
-    describe '#add_extension' do
+    describe '#add_extensions' do
       # Note that this mixin doesn't need to include
       # versions of each test with extensions applied because
       context '(SimpleMixin)' do
         before do
           @orig_ancestors = route.class.ancestors
-          r = route.add_extension Tackle::SimpleMixin
+          r = route.add_extensions [Tackle::SimpleMixin]
           r.should equal(route)
         end
         its(:extensions) { should include(Tackle::SimpleMixin) }
@@ -357,7 +357,7 @@ shared_examples_for Pacer::Core::Route do
       context '(Object)' do
         before do
           @orig_ancestors = route.class.ancestors
-          route.add_extension Object
+          route.add_extensions [Object]
         end
         its(:extensions) { should_not include(Object) }
       end
@@ -365,7 +365,7 @@ shared_examples_for Pacer::Core::Route do
       context '(invalid)' do
         before do
           @orig_ancestors = route.class.ancestors
-          route.add_extension :invalid
+          route.add_extensions [:invalid]
         end
         its(:extensions) { should_not include(:invalid) }
       end
