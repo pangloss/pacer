@@ -28,8 +28,8 @@ module Pacer
         filters.is_a? Pacer::Filter::PropertyFilter::Filters
       end
 
-      def property_filter_before(base, filters, block)
-        filters = Pacer::Route.edge_filters(filters)
+      def property_filter_before(base, args, block)
+        filters = Pacer::Route.edge_filters(args)
         filters.blocks = [block] if block
         args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
@@ -41,13 +41,13 @@ module Pacer
         end
       end
 
-      def property_filter(base, filters, block)
-        filters = Pacer::Route.edge_filters(filters)
+      def property_filter(base, args, block)
+        filters = Pacer::Route.edge_filters(args)
         filters.blocks = [block] if block
         args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
           base.chain_route(args)
-        elsif filters and filters.any?
+        elsif filters.any?
           base.chain_route(args.merge!(filter: :property, filters: filters))
         elsif base.is_a? Pacer::Wrappers::ElementWrapper
           base.chain_route({})

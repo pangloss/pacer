@@ -70,7 +70,7 @@ Run.all(:read_only, false) do
 
       context 'extension search 2' do
         subject { graph.v(TP::Pangloss) }
-        it { should be_a(Pacer::Filter::IndexFilter) }
+        its(:back) { should be_a(Pacer::Filter::IndexFilter) }
         its(:to_a) { should_not be_empty }
         its(:count) { should == 1 }
       end
