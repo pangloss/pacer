@@ -463,7 +463,6 @@ module Pacer
       # Return the class name of the current route.
       # @return [String]
       def inspect_class_name
-        puts 'r icn'
         s = "#{self.class.name.split('::').last.sub(/Route$/, '')}"
         s = "#{s} #{ info }" if info
         s

@@ -12,9 +12,6 @@ shared_examples_for '#process' do
 
   describe 'with extensions' do
     let(:extended) { source.add_extensions([Tackle::SimpleMixin]) }
-    it 'should be the same type' do
-      extended.should be_a source.class
-    end
     let(:exts) { Set[] }
 
     subject { extended.process { |v| exts << v.extensions } }
