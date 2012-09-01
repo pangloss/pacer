@@ -31,11 +31,11 @@ module Pacer
       def property_filter_before(base, filters, block)
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
+        args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
-          yield base.chain_route(extensions: filters.extensions, wrapper: filters.wrapper)
+          yield base.chain_route(args)
         elsif filters and filters.any?
-          yield base.chain_route(filter: :property, filters: filters,
-                                 extensions: filters.extensions, wrapper: filters.wrapper)
+          yield base.chain_route(args.merge!(filter: :property, filters: filters))
         else
           yield base
         end
@@ -44,15 +44,23 @@ module Pacer
       def property_filter(base, filters, block)
         filters = Pacer::Route.edge_filters(filters)
         filters.blocks = [block] if block
+        args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
-          base.chain_route(extensions: filters.extensions, wrapper: filters.wrapper)
+          base.chain_route(args)
         elsif filters and filters.any?
-          base.chain_route(filter: :property, filters: filters,
-                           extensions: filters.extensions, wrapper: filters.wrapper)
+          base.chain_route(args.merge!(filter: :property, filters: filters))
         elsif base.is_a? Pacer::Wrappers::ElementWrapper
           base.chain_route({})
         else
           base
+        end
+      end
+
+      def chain_args(filters)
+        if filters.wrapper or (filters.extensions and not filters.extensions.empty?)
+          { extensions: filters.extensions, wrapper: filters.wrapper }
+        else
+          {}
         end
       end
     end
