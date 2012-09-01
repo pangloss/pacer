@@ -22,7 +22,6 @@ module Pacer
     def initialize
       @types = Hash.new do |h, type_def|
         h[type_def] = Class.new(Route) do
-          pp type_def
           type_def.each do |mods|
             mods.each do |mod|
               include mod

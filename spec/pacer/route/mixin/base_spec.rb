@@ -41,7 +41,7 @@ Run.all do
 
       its(:in_e) { should_not be_nil }
       its(:to_a) { should == [] }
-      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+      its(:extensions) { should == [Tackle::SimpleMixin] }
     end
 
     context "graph.v(:name => 'darrick')" do
@@ -186,7 +186,7 @@ shared_examples_for Pacer::Core::Route do
   let(:result_type) { raise 'specify :vertex, :edge, :mixed or :object' }
   let(:back) { nil }
   let(:info) { nil }
-  let(:route_extensions) { Set[] }
+  let(:route_extensions) { [] }
 
   context 'without data' do
     subject { route }
@@ -392,11 +392,11 @@ Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
     it_uses Pacer::Core::Route do
-      let(:back) { nil }
-      let(:route) { graph.v.filter(Tackle::SimpleMixin) }
+      let(:back) { graph.v }
+      let(:route) { back.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
-      let(:route_extensions) { Set[Tackle::SimpleMixin] }
+      let(:route_extensions) { [Tackle::SimpleMixin] }
     end
   end
 end

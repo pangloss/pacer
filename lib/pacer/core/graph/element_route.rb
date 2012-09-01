@@ -152,7 +152,7 @@ module Pacer::Core::Graph
     protected
 
     def configure_iterator(iter)
-      pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, @extensions
+      pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, extensions
       pipe.wrapper = wrapper if wrapper
       pipe.setStarts iter
       pipe

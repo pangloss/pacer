@@ -10,14 +10,14 @@ Run.tg(:read_only) do
 
     its(:graph) { should == graph }
     its(:element_type) { should == graph.element_type(:vertex) }
-    its(:extensions) { should == Set[Tackle::SimpleMixin] }
+    its(:extensions) { should == [Tackle::SimpleMixin] }
     its(:build_pipeline) { should be_nil }
 
     context 'with route built on it' do
       subject { empty.filter(name: 'joe') }
       its(:graph) { should == graph }
       its(:element_type) { should == graph.element_type(:vertex) }
-      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+      its(:extensions) { should == [Tackle::SimpleMixin] }
       its(:inspect) { should == '#<V -> V-Property(name=="joe")>' }
       it 'should create a pipeline with only the pipe added to it' do
         start_pipe, end_pipe = subject.send :build_pipeline

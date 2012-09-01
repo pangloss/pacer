@@ -44,7 +44,7 @@ module Pacer::Wrappers
       if extensions.is_a? Enumerable
         v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = VertexWrapper.wrapper_for(Set[extensions]).new v
+        v = VertexWrapper.wrapper_for([extensions]).new v
       else
         v = VertexWrapper.new v
       end
@@ -59,7 +59,7 @@ module Pacer::Wrappers
       if extensions.is_a? Enumerable
         v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = VertexWrapper.wrapper_for(Set[extensions]).new v
+        v = VertexWrapper.wrapper_for([extensions]).new v
       else
         v = VertexWrapper.new v
       end

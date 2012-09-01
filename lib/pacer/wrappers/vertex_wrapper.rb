@@ -197,7 +197,7 @@ module Pacer::Wrappers
 
     def split_labels_and_extensions(mixed)
       labels = Set[]
-      exts = Set[]
+      exts = []
       mixed.each do |obj|
         if obj.is_a? Symbol or obj.is_a? String
           labels << obj
@@ -205,7 +205,7 @@ module Pacer::Wrappers
           exts << obj
         end
       end
-      [labels, exts]
+      [labels, exts.uniq]
     end
 
     # Return the extensions this vertex is missing from the given array
