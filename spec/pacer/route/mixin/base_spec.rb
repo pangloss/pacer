@@ -345,29 +345,26 @@ shared_examples_for Pacer::Core::Route do
       # Note that this mixin doesn't need to include
       # versions of each test with extensions applied because
       context '(SimpleMixin)' do
-        before do
-          @orig_ancestors = route.class.ancestors
-          r = route.add_extensions [Tackle::SimpleMixin]
-          r.should equal(route)
+        subject do
+          route.add_extensions [Tackle::SimpleMixin]
         end
+        its(:back) { should equal(route) }
         its(:extensions) { should include(Tackle::SimpleMixin) }
         it { should respond_to(:route_mixin_method) }
       end
 
       context '(Object)' do
-        before do
-          @orig_ancestors = route.class.ancestors
+        subject do
           route.add_extensions [Object]
         end
-        its(:extensions) { should_not include(Object) }
+        its(:extensions) { should include(Object) }
       end
 
-      context '(invalid)' do
-        before do
-          @orig_ancestors = route.class.ancestors
+      context '(:invalid)' do
+        subject do
           route.add_extensions [:invalid]
         end
-        its(:extensions) { should_not include(:invalid) }
+        its(:extensions) { should include(:invalid) }
       end
     end
 
