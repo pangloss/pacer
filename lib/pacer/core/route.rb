@@ -230,7 +230,6 @@ module Pacer
 
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
-      # @see #add_extension
       # @return [self]
       def add_extensions(exts)
         chain_route extensions: (extensions - exts) + exts

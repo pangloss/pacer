@@ -44,8 +44,6 @@ module Pacer::Wrappers
     # If any extension has a Vertex module within it, this vertex will
     # be extended with the extension's Vertex module.
     #
-    # @see Core::Route#add_extension
-    #
     # @param [[extensions]] exts the extensions to add
     # @return [Pacer::EdgeWrapper] this vertex wrapped up and including
     #   the extensions
