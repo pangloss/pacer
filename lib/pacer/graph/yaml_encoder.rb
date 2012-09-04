@@ -1,3 +1,5 @@
+require 'yaml'
+
 module Pacer
   # This encoder was originally part of pacer-neo4j. It uses native data where
   # Neo4j could and for everything else it uses (slow (but easy))
