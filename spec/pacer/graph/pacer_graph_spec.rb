@@ -334,8 +334,6 @@ shared_examples_for Pacer::RubyGraph do
   end
 
   describe '#import' do
-    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
-
     it 'should load the data into an empty graph' do
       graph2.v.count.should == 0
       Pacer::GraphML.import graph2, 'spec/data/pacer.graphml'
@@ -352,7 +350,6 @@ shared_examples_for Pacer::RubyGraph do
   end
 
   describe '#export' do
-    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
       graph.v.count.should == 2
       graph.e.count.should == 1

@@ -2,28 +2,18 @@ module Pacer
   module Routes
     module RouteOperations
       def is(value)
-        if value.nil? and graph and defined? Pacer::DexGraph and graph.is_a? Pacer::DexGraph
-          # NOTE: This is a workaround for https://github.com/tinkerpop/blueprints/issues/178
-          only(value)
+        if value.is_a? Symbol
+          chain_route :filter => :property, :block => proc { |v| v.vars[value] == v }
         else
-          if value.is_a? Symbol
-            chain_route :filter => :property, :block => proc { |v| v.vars[value] == v }
-          else
-            chain_route({ :filter => :object, :value => value })
-          end
+          chain_route({ :filter => :object, :value => value })
         end
       end
 
       def is_not(value)
-        if value.nil? and graph and defined? Pacer::DexGraph and graph.is_a? Pacer::DexGraph
-          # NOTE: This is a workaround for https://github.com/tinkerpop/blueprints/issues/178
-          except(value)
+        if value.is_a? Symbol
+          chain_route :filter => :property, :block => proc { |v| v.vars[value] != v }
         else
-          if value.is_a? Symbol
-            chain_route :filter => :property, :block => proc { |v| v.vars[value] != v }
-          else
-            chain_route({ :filter => :object, :value => value, :negate => true })
-          end
+          chain_route({ :filter => :object, :value => value, :negate => true })
         end
       end
 
