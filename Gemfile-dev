@@ -13,12 +13,14 @@ group :development do
   # pacer-* gems are required for testing pacer.
   # If you have the gem repos cloned locally, we'll use them.
   #
-  libs = [ ['pacer-neo4j', '2.0.0.pre'] ] 
+  libs = [
+    ['pacer-neo4j', '2.0.0.pre'],
+    ['pacer-orient', '2.0.0.pre'],
+    ['pacer-dex', '2.0.0.pre']
+  ] 
   libs.each do |lib, version|
     if File.directory? "../#{lib}"
       gem lib, :path => "../#{lib}" 
-    else
-      gem lib, version
     end
   end
 

@@ -1,3 +1,9 @@
+def maybe_require(file)
+  require file
+rescue LoadError
+  puts "Not using #{ file }"
+end
+
 require "rubygems"
 require "bundler"
 Bundler.setup(:default, :development)
@@ -23,9 +29,9 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-require 'pacer-neo4j'
-# require 'pacer-dex'
-Pacer::DexGraph = Class.new unless defined? Pacer::DexGraph
+maybe_require 'pacer-neo4j'
+maybe_require 'pacer-orient'
+maybe_require 'pacer-dex'
 
 Run = RSpec::GraphRunner.new ENV['GRAPHS']
 
