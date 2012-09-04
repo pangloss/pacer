@@ -187,14 +187,10 @@ module Pacer
     end
 
     def extensions
-      config[:extensions]
-    end
-
-    def all_extensions
       if wrapper
-        (wrapper.extensions + extensions).uniq
+        (wrapper.extensions + config[:extensions]).uniq
       else
-        extensions
+        config[:extensions]
       end
     end
 
