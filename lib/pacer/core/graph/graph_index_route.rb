@@ -4,9 +4,9 @@ module Pacer::Core::Graph
   # blueprints library.
   module GraphIndexRoute
     # Returns a new route to all graph vertices. Standard filter options.
-    def v(*filters, &block)
+    def v(*args, &block)
+      filters = Pacer::Route.filters(args)
       if features.supportsIndices
-        filters = Pacer::Route.filters(filters)
         route = indexed_route(:vertex, filters, block)
       end
       if route
@@ -17,9 +17,9 @@ module Pacer::Core::Graph
     end
 
     # Returns a new route to all graph edges. Standard filter options.
-    def e(*filters, &block)
+    def e(*args, &block)
+      filters = Pacer::Route.edge_filters(args)
       if features.supportsIndices
-        filters = Pacer::Route.edge_filters(filters)
         route = indexed_route(:edge, filters, block)
       end
       if route

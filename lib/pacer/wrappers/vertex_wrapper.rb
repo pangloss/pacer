@@ -44,8 +44,6 @@ module Pacer::Wrappers
     # If any extension has a Vertex module within it, this vertex will
     # be extended with the extension's Vertex module.
     #
-    # @see Core::Route#add_extension
-    #
     # @param [[extensions]] exts the extensions to add
     # @return [Pacer::EdgeWrapper] this vertex wrapped up and including
     #   the extensions
@@ -197,7 +195,7 @@ module Pacer::Wrappers
 
     def split_labels_and_extensions(mixed)
       labels = Set[]
-      exts = Set[]
+      exts = []
       mixed.each do |obj|
         if obj.is_a? Symbol or obj.is_a? String
           labels << obj
@@ -205,7 +203,7 @@ module Pacer::Wrappers
           exts << obj
         end
       end
-      [labels, exts]
+      [labels, exts.uniq]
     end
 
     # Return the extensions this vertex is missing from the given array

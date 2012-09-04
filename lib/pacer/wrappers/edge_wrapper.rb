@@ -44,7 +44,7 @@ module Pacer::Wrappers
       if extensions.is_a? Enumerable
         v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = VertexWrapper.wrapper_for(Set[extensions]).new v
+        v = VertexWrapper.wrapper_for([extensions]).new v
       else
         v = VertexWrapper.new v
       end
@@ -59,7 +59,7 @@ module Pacer::Wrappers
       if extensions.is_a? Enumerable
         v = VertexWrapper.wrapper_for(extensions).new v
       elsif extensions
-        v = VertexWrapper.wrapper_for(Set[extensions]).new v
+        v = VertexWrapper.wrapper_for([extensions]).new v
       else
         v = VertexWrapper.new v
       end
@@ -77,8 +77,6 @@ module Pacer::Wrappers
     #
     # If any extension has a Edge module within it, this edge will
     # be extended with the extension's Edge module.
-    #
-    # @see Core::Route#add_extension
     #
     # @param [[extensions]] exts the extensions to add
     # @return [Pacer::Wrappers::EdgeWrapper] this edge wrapped up and including

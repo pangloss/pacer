@@ -3,11 +3,11 @@ module Pacer
     class WrappingPipe < RubyPipe
       attr_reader :graph, :element_type, :extensions, :wrapper
 
-      def initialize(graph, element_type = nil, extensions = Set[])
+      def initialize(graph, element_type = nil, extensions = [])
         super()
         @graph = graph
         @element_type = element_type
-        @extensions = extensions || Set[]
+        @extensions = extensions || []
         @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, @extensions
       end
 

@@ -1,0 +1,1165 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.8	//
+-	lib/pacer/filter/collection_filter.rb	/^      def -(other)$/;"	f	class:Pacer.Core.Route
+<=>	lib/pacer/wrappers/element_wrapper.rb	/^    def <=>(other)$/;"	f
+==	lib/pacer/blueprints/ruby_graph.rb	/^    def ==(other)$/;"	f	class:Pacer.RubyGraph
+==	lib/pacer/core/graph/graph_route.rb	/^    def ==(other)$/;"	f	class:Pacer.GraphRoute
+==	lib/pacer/core/route.rb	/^      def ==(other)$/;"	f	class:Pacer.Core
+==	lib/pacer/filter/block_filter.rb	/^      def ==(other)$/;"	f	class:Pacer.Filter.BlockFilter
+==	lib/pacer/wrappers/edge_wrapper.rb	/^    def ==(other)$/;"	f	class:Pacer
+==	lib/pacer/wrappers/vertex_wrapper.rb	/^    def ==(other)$/;"	f	class:Pacer
+Aggregate	lib/pacer/side_effect/aggregate.rb	/^    module Aggregate$/;"	m	class:Pacer.SideEffect
+Artist	samples/grateful_dead.rb	/^  module Artist$/;"	m	class:GD
+As	lib/pacer/side_effect/as.rb	/^    module As$/;"	m	class:Pacer.SideEffect
+AsPipe	lib/pacer/side_effect/as.rb	/^      class AsPipe < Pacer::Pipes::AbstractPipe$/;"	c	class:Pacer.SideEffect.As
+BlackboxPipeline	lib/pacer/pipe/blackbox_pipeline.rb	/^  class BlackboxPipeline$/;"	c	class:Pacer
+BlockFilter	lib/pacer/filter/block_filter.rb	/^    module BlockFilter$/;"	m	class:Pacer.Filter
+BlockFilterElement	lib/pacer/extensions/block_filter_element.rb	/^    module BlockFilterElement$/;"	m	class:Pacer.Extensions
+BlockFilterPipe	lib/pacer/pipe/block_filter_pipe.rb	/^  class BlockFilterPipe < AbstractPipe$/;"	c	class:Pacer
+BulkJob	lib/pacer/graph/pacer_graph.rb	/^    module BulkJob$/;"	m	class:Pacer.PacerGraph.load_vertices.load_edges
+BulkOperations	lib/pacer/route/mixin/bulk_operations.rb	/^  module BulkOperations$/;"	m	class:Pacer
+Cap	lib/pacer/transform/cap.rb	/^    module Cap$/;"	m	class:Pacer.Transform
+ClientError	lib/pacer/exceptions.rb	/^      class ClientError < LogicError; end$/;"	c	class:Pacer
+Coder	spec/tackle/tinkerpop_graph_mixins.rb	/^  module Coder$/;"	m	class:TP
+CollectionFilter	lib/pacer/filter/collection_filter.rb	/^    module CollectionFilter$/;"	m	class:Pacer.Filter
+CollectionFilterPipe	lib/pacer/pipe/collection_filter_pipe.rb	/^    class CollectionFilterPipe < Renamed::AbstractCollectionFilterPipe$/;"	c	class:Pacer.Pipes
+CombinePipe	lib/pacer/transform/join.rb	/^      class CombinePipe < Pacer::Pipes::RubyPipe$/;"	c	class:Pacer.Transform.Join
+Core	lib/pacer/core.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/core/graph.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/core/route.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/core/side_effect.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/filter/collection_filter.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/filter/random_filter.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/transform/cap.rb	/^  module Core::SideEffect$/;"	m	class:Pacer
+Core	lib/pacer/transform/gather.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/transform/path.rb	/^  module Core$/;"	m	class:Pacer
+Core	lib/pacer/transform/scatter.rb	/^  module Core$/;"	m	class:Pacer
+Core	spec/support/contexts.rb	/^  module Core$/;"	m	class:RSpec
+Core	spec/support/matchers.rb	/^  module Core$/;"	m	class:RSpec
+Core	spec/support/use_transactions.rb	/^  module Core$/;"	m	class:RSpec
+Counted	lib/pacer/side_effect/counted.rb	/^    module Counted$/;"	m	class:Pacer.SideEffect
+CrossProductTransformPipe	lib/pacer/pipe/cross_product_transform_pipe.rb	/^  class CrossProductTransformPipe < UnaryTransformPipe$/;"	c	class:Pacer
+Edge	spec/tackle/simple_mixin.rb	/^    module Edge$/;"	m	class:Tackle.SimpleMixin
+Edge	spec/tackle/tinkerpop_graph_mixins.rb	/^    module Edge$/;"	m	class:TP.Wrote
+EdgeFilters	lib/pacer/filter/property_filter/edge_filters.rb	/^      class EdgeFilters < Filters$/;"	c	class:Pacer.Filter.PropertyFilter
+EdgeWrapper	lib/pacer/wrappers/edge_wrapper.rb	/^  class EdgeWrapper < ElementWrapper$/;"	c	class:Pacer
+Edges	lib/pacer/utils/graph_analysis.rb	/^      module Edges$/;"	m	class:Pacer.Utils.Vertices.Route
+EdgesPipe	lib/pacer/pipe/edges_pipe.rb	/^  class EdgesPipe < AbstractPipe$/;"	c	class:Pacer
+EdgesRoute	lib/pacer/core/graph/edges_route.rb	/^  module EdgesRoute$/;"	m	class:Pacer
+ElementExists	lib/pacer/exceptions.rb	/^      class ElementExists < UserError; end$/;"	c	class:Pacer
+ElementNotFound	lib/pacer/exceptions.rb	/^      class ElementNotFound < UserError; end$/;"	c	class:Pacer
+ElementRoute	lib/pacer/core/graph/element_route.rb	/^  module ElementRoute$/;"	m	class:Pacer
+ElementSet	lib/pacer/side_effect/aggregate.rb	/^      class ElementSet < HashSet$/;"	c	class:Pacer.SideEffect.Aggregate
+ElementType	lib/pacer/graph/pacer_graph.rb	/^    module ElementType$/;"	m	class:Pacer.PacerGraph.load_vertices
+ElementWrapper	lib/pacer/wrappers/element_wrapper.rb	/^  class ElementWrapper$/;"	c	class:Pacer
+EmptyFilter	lib/pacer/filter/empty_filter.rb	/^    module EmptyFilter$/;"	m	class:Filter
+Encoding	lib/pacer/graph/pacer_graph.rb	/^    module Encoding$/;"	m	class:Pacer.PacerGraph.load_vertices.load_edges
+Enumerable	lib/pacer/support/enumerable.rb	/^module Enumerable$/;"	m
+EnumerablePipe	lib/pacer/pipe/enumerable_pipe.rb	/^  class EnumerablePipe < RubyPipe$/;"	c	class:Pacer
+Error	lib/pacer/exceptions.rb	/^  class Error < StandardError; end$/;"	c	class:Pacer
+Example	spec/support/use_transactions.rb	/^    class Example$/;"	c	class:RSpec.Core
+ExpandablePipe	lib/pacer/pipe/expandable_pipe.rb	/^  class ExpandablePipe < RubyPipe$/;"	c	class:Pacer
+Extensions	lib/pacer/extensions.rb	/^  module Extensions$/;"	m	class:Pacer
+Extensions	lib/pacer/extensions/block_filter_element.rb	/^  module Extensions$/;"	m	class:Pacer
+Filter	lib/pacer/filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/block_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/collection_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/empty_filter.rb	/^  module Filter$/;"	m
+Filter	lib/pacer/filter/future_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/index_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/loop_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/object_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/property_filter.rb	/^  module Filter$/;"	m
+Filter	lib/pacer/filter/property_filter/edge_filters.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/property_filter/filters.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/range_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/where_filter.rb	/^  module Filter$/;"	m	class:Pacer
+Filter	lib/pacer/filter/where_filter/node_visitor.rb	/^  module Filter$/;"	m	class:Pacer
+Filters	lib/pacer/filter/property_filter/filters.rb	/^      class Filters$/;"	c	class:Pacer.Filter.PropertyFilter
+FunctionResolver	lib/pacer/function_resolver.rb	/^  module FunctionResolver$/;"	m	class:Pacer
+FutureFilter	lib/pacer/filter/future_filter.rb	/^    module FutureFilter$/;"	m	class:Pacer.Filter
+GD	samples/grateful_dead.rb	/^module GD$/;"	m
+Graph	lib/pacer/core/graph.rb	/^    module Graph$/;"	m	class:Pacer.Core
+GraphAnalysis	lib/pacer/utils/graph_analysis.rb	/^    module GraphAnalysis$/;"	m	class:Pacer.Utils
+GraphIndexRoute	lib/pacer/core/graph/graph_index_route.rb	/^  module GraphIndexRoute$/;"	m	class:Pacer
+GraphML	lib/pacer/graph/graph_ml.rb	/^  class GraphML$/;"	c	class:Pacer
+GraphRoute	lib/pacer/core/graph/graph_route.rb	/^  module GraphRoute$/;"	m	class:Pacer
+GraphTransactionsMixin	lib/pacer/graph/graph_transactions_mixin.rb	/^  module GraphTransactionsMixin$/;"	m	class:Pacer
+GroupCount	lib/pacer/side_effect/group_count.rb	/^    module GroupCount$/;"	m	class:Pacer.SideEffect
+HasCountCap	lib/pacer/transform/has_count_cap.rb	/^    module HasCountCap$/;"	m	class:Pacer.Transform
+Hash	lib/pacer/support/hash.rb	/^class Hash$/;"	c
+IdCollectionFilterPipe	lib/pacer/pipe/id_collection_filter_pipe.rb	/^  class IdCollectionFilterPipe < RubyPipe$/;"	c	class:Pacer
+IndexFilter	lib/pacer/filter/index_filter.rb	/^    module IndexFilter$/;"	m	class:Pacer.Filter
+IndexWrapper	lib/pacer/wrappers/index_wrapper.rb	/^  class IndexWrapper$/;"	c	class:Pacer
+Indices	lib/pacer/graph/pacer_graph.rb	/^    module Indices$/;"	m	class:Pacer.PacerGraph.load_vertices.load_edges
+InternalError	lib/pacer/exceptions.rb	/^      class InternalError < LogicError; end$/;"	c	class:Pacer
+IsEmptyPipe	lib/pacer/pipe/is_empty_pipe.rb	/^  class IsEmptyPipe < RubyPipe$/;"	c	class:Pacer
+IsRuby	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^  module IsRuby$/;"	m	class:VertexWrapperSpec
+IsUnique	lib/pacer/side_effect/is_unique.rb	/^    module IsUnique$/;"	m	class:Pacer.SideEffect
+IsUniquePipe	lib/pacer/pipe/is_unique_pipe.rb	/^  class IsUniquePipe < RubyPipe$/;"	c	class:Pacer
+Java	lib/pacer/support/array_list.rb	/^class Java::JavaUtil::ArrayList$/;"	c
+Java	lib/pacer/support/array_list.rb	/^class Java::JavaUtil::HashMap$/;"	c
+Java	lib/pacer/support/array_list.rb	/^class Java::JavaUtil::HashSet$/;"	c
+Java	lib/pacer/support/array_list.rb	/^class Java::JavaUtil::LinkedList$/;"	c
+Join	lib/pacer/transform/join.rb	/^    module Join$/;"	m	class:Pacer.Transform
+KeyIndex	lib/pacer/filter/property_filter/filters.rb	/^    class KeyIndex$/;"	c	class:Pacer.Filter
+KeyIndices	lib/pacer/graph/pacer_graph.rb	/^    module KeyIndices$/;"	m	class:Pacer.PacerGraph.load_vertices
+LabelCollectionFilterPipe	lib/pacer/pipe/label_collection_filter_pipe.rb	/^  class LabelCollectionFilterPipe < RubyPipe$/;"	c	class:Pacer
+LabelPrefixPipe	lib/pacer/pipe/label_prefix_pipe.rb	/^  class LabelPrefixPipe < RubyPipe$/;"	c	class:Pacer
+LogicError	lib/pacer/exceptions.rb	/^    class LogicError < Error; end$/;"	c	class:Pacer
+LoopFilter	lib/pacer/filter/loop_filter.rb	/^    module LoopFilter$/;"	m	class:Pacer.Filter
+LoopPipe	lib/pacer/pipe/loop_pipe.rb	/^  class LoopPipe < RubyPipe$/;"	c	class:Pacer
+Map	lib/pacer/transform/map.rb	/^    module Map$/;"	m	class:Pacer.Transform
+Matchers	spec/support/matchers.rb	/^    module Matchers$/;"	m	class:RSpec.Core
+Methods	lib/pacer/transform/path.rb	/^      module Methods$/;"	m	class:Pacer.Transform.Path
+MixedRoute	lib/pacer/core/graph/mixed_route.rb	/^  module MixedRoute$/;"	m	class:Pacer
+MockTransactionRollback	lib/pacer/exceptions.rb	/^        class MockTransactionRollback < ClientError; end$/;"	c	class:Pacer
+MultiGraph	lib/pacer/blueprints/multi_graph.rb	/^  class MultiGraph < RubyGraph$/;"	c	class:Pacer
+MultiGraph	spec/support/graph_runner.rb	/^  module MultiGraph$/;"	m	class:RSpec
+MultiVertex	lib/pacer/blueprints/multi_graph.rb	/^  class MultiVertex < RubyVertex$/;"	c	class:Pacer
+Naming	lib/pacer/graph/pacer_graph.rb	/^    module Naming$/;"	m	class:Pacer.PacerGraph.load_vertices.load_edges
+NativeException	lib/pacer/support/native_exception.rb	/^class NativeException$/;"	c
+NestedMockTransactionRollback	lib/pacer/exceptions.rb	/^        class NestedMockTransactionRollback < NestedTransactionRollback; end$/;"	c	class:Pacer
+NestedTransactionRollback	lib/pacer/exceptions.rb	/^        class NestedTransactionRollback < ClientError; end$/;"	c	class:Pacer
+NeverPipe	lib/pacer/pipe/never_pipe.rb	/^  class NeverPipe < RubyPipe$/;"	c	class:Pacer
+NilClass	lib/pacer/support/nil_class.rb	/^class NilClass$/;"	c
+NodeVisitor	lib/pacer/filter/where_filter/node_visitor.rb	/^      class NodeVisitor$/;"	c	class:Pacer.Filter.WhereFilter
+ObjectFilter	lib/pacer/filter/object_filter.rb	/^    module ObjectFilter$/;"	m	class:Pacer.Filter
+Pacer	lib/pacer.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/blueprints/multi_graph.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/blueprints/ruby_graph.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/blueprints/tg.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/core.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/core/graph.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/core/graph/edges_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/graph/element_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/graph/graph_index_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/graph/graph_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/graph/mixed_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/graph/vertices_route.rb	/^module Pacer::Core::Graph$/;"	m
+Pacer	lib/pacer/core/route.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/core/side_effect.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/exceptions.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/extensions.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/extensions/block_filter_element.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/block_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/collection_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/empty_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/future_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/index_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/loop_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/object_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/property_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/property_filter/edge_filters.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/property_filter/filters.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/random_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/range_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/uniq_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/where_filter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/filter/where_filter/node_visitor.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/function_resolver.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph/graph_ml.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph/graph_transactions_mixin.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph/pacer_graph.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph/simple_encoder.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/graph/yaml_encoder.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/blackbox_pipeline.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/block_filter_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/collection_filter_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/cross_product_transform_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/edges_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/enumerable_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/expandable_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/id_collection_filter_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/is_empty_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/is_unique_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/label_collection_filter_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/label_prefix_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/loop_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/never_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/path_wrapping_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/process_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/property_comparison_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/ruby_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/simple_visitor_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/stream_sort_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/stream_uniq_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/type_filter_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/unary_transform_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/unwrapping_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/vertices_pipe.rb	/^module Pacer::Pipes$/;"	m
+Pacer	lib/pacer/pipe/visitor_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipe/wrapping_pipe.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/pipes.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/route.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/route/mixin/bulk_operations.rb	/^module Pacer::Routes$/;"	m
+Pacer	lib/pacer/route/mixin/route_operations.rb	/^module Pacer::Routes$/;"	m
+Pacer	lib/pacer/routes.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/aggregate.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/as.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/counted.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/group_count.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/is_unique.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/side_effect/visitor.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/support.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/cap.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/gather.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/has_count_cap.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/join.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/map.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/path.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/process.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/scatter.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/sort_section.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/stream_sort.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/transform/stream_uniq.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/utils.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/utils/graph_analysis.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/utils/trie.rb	/^module Pacer::Utils$/;"	m
+Pacer	lib/pacer/utils/tsort.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/utils/y_files.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/version.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/visitors.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/visitors/section.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/visitors/visits_section.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/wrappers.rb	/^module Pacer$/;"	m
+Pacer	lib/pacer/wrappers/edge_wrapper.rb	/^module Pacer::Wrappers$/;"	m
+Pacer	lib/pacer/wrappers/element_wrapper.rb	/^module Pacer::Wrappers$/;"	m
+Pacer	lib/pacer/wrappers/index_wrapper.rb	/^module Pacer::Wrappers$/;"	m
+Pacer	lib/pacer/wrappers/vertex_wrapper.rb	/^module Pacer::Wrappers$/;"	m
+Pacer	lib/pacer/wrappers/wrapper_selector.rb	/^module Pacer::Wrappers$/;"	m
+Pacer	lib/pacer/wrappers/wrapping_pipe_function.rb	/^module Pacer$/;"	m
+Pacer	spec/pacer/filter/property_filter/filters_spec.rb	/^module Pacer::Filter::PropertyFilter$/;"	m
+PacerGraph	lib/pacer/graph/pacer_graph.rb	/^  class PacerGraph$/;"	c	class:Pacer
+Pangloss	spec/tackle/tinkerpop_graph_mixins.rb	/^  class Pangloss$/;"	c	class:TP
+Path	lib/pacer/transform/path.rb	/^    module Path$/;"	m	class:Pacer.Transform
+PathWrappingPipe	lib/pacer/pipe/path_wrapping_pipe.rb	/^    class PathWrappingPipe < RubyPipe$/;"	c	class:Pacer.Pipes
+Person	spec/tackle/tinkerpop_graph_mixins.rb	/^  module Person$/;"	m	class:TP
+Pipe	lib/pacer/filter/where_filter/node_visitor.rb	/^        class Pipe$/;"	c	class:Pacer.Filter.WhereFilter.NodeVisitor
+Pipes	lib/pacer/pipe/collection_filter_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipe/path_wrapping_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipe/simple_visitor_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipe/unwrapping_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipe/visitor_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipe/wrapping_pipe.rb	/^  module Pipes$/;"	m	class:Pacer
+Pipes	lib/pacer/pipes.rb	/^  module Pipes$/;"	m	class:Pacer
+Proc	lib/pacer/support/proc.rb	/^class Proc$/;"	c
+Process	lib/pacer/transform/process.rb	/^    module Process$/;"	m	class:Pacer.Transform
+ProcessPipe	lib/pacer/pipe/process_pipe.rb	/^  class ProcessPipe < AbstractPipe$/;"	c	class:Pacer
+Procsy	spec/support/use_transactions.rb	/^        class Procsy$/;"	c	class:RSpec.Core.Example
+Procsy	spec/support/use_transactions.rb	/^        module Procsy$/;"	m	class:RSpec.Core.Example
+ProcsyTransactions	spec/support/use_transactions.rb	/^      module ProcsyTransactions$/;"	m	class:RSpec.Core.Example
+Project	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^  module Project$/;"	m	class:VertexWrapperSpec
+Project	spec/tackle/tinkerpop_graph_mixins.rb	/^  class Project$/;"	c	class:TP
+Properties	lib/pacer/utils/graph_analysis.rb	/^      module Properties$/;"	m	class:Pacer.Utils.Vertices.Route
+PropertyComparisonFilterPipe	lib/pacer/pipe/property_comparison_pipe.rb	/^  class PropertyComparisonFilterPipe < RubyPipe$/;"	c	class:Pacer
+PropertyFilter	lib/pacer/filter/property_filter.rb	/^    module PropertyFilter$/;"	m	class:Filter
+PropertyFilter	lib/pacer/filter/property_filter/edge_filters.rb	/^    module PropertyFilter$/;"	m	class:Pacer.Filter
+PropertyFilter	lib/pacer/filter/property_filter/filters.rb	/^    module PropertyFilter$/;"	m	class:Pacer.Filter
+RSpec	spec/spec_helper.rb	/^class RSpec::Core::ExampleGroup$/;"	c
+RSpec	spec/support/contexts.rb	/^module RSpec$/;"	m
+RSpec	spec/support/graph_runner.rb	/^class RSpec::GraphRunner$/;"	c
+RSpec	spec/support/matchers.rb	/^module RSpec$/;"	m
+RSpec	spec/support/use_transactions.rb	/^module RSpec$/;"	m
+RangeFilter	lib/pacer/filter/range_filter.rb	/^    module RangeFilter$/;"	m	class:Pacer.Filter
+Renamed	lib/pacer/pipe/collection_filter_pipe.rb	/^    module Renamed$/;"	m	class:Pacer.Pipes
+Route	lib/pacer/core/route.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/extensions/block_filter_element.rb	/^      module Route$/;"	m	class:Pacer.Extensions.BlockFilterElement
+Route	lib/pacer/filter/collection_filter.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/filter/empty_filter.rb	/^  class Route$/;"	c	class:Pacer
+Route	lib/pacer/filter/property_filter.rb	/^  class Route$/;"	c	class:Pacer
+Route	lib/pacer/filter/random_filter.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/route.rb	/^  class Route$/;"	c	class:Pacer
+Route	lib/pacer/transform/gather.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/transform/path.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/transform/scatter.rb	/^    module Route$/;"	m	class:Pacer.Core
+Route	lib/pacer/utils/graph_analysis.rb	/^        module Route$/;"	m	class:Pacer.Utils.Vertices
+Route	lib/pacer/utils/graph_analysis.rb	/^        module Route$/;"	m	class:Pacer.Utils.Vertices.Route.Edges
+Route	lib/pacer/utils/graph_analysis.rb	/^      module Route$/;"	m	class:Pacer.Utils
+Route	lib/pacer/utils/tsort.rb	/^      module Route$/;"	m	class:Pacer.Utils.TSort
+Route	samples/grateful_dead.rb	/^    module Route$/;"	m	class:GD.Artist
+Route	samples/grateful_dead.rb	/^    module Route$/;"	m	class:GD.Song
+Route	spec/tackle/simple_mixin.rb	/^    module Route$/;"	m	class:Tackle.SimpleMixin
+Route	spec/tackle/tinkerpop_graph_mixins.rb	/^    module Route$/;"	m	class:TP.Coder
+Route	spec/tackle/tinkerpop_graph_mixins.rb	/^    module Route$/;"	m	class:TP.Person
+Route	spec/tackle/tinkerpop_graph_mixins.rb	/^    module Route$/;"	m	class:TP.Project
+Route	spec/tackle/tinkerpop_graph_mixins.rb	/^    module Route$/;"	m	class:TP.Software
+RouteBuilder	lib/pacer/route.rb	/^  class RouteBuilder$/;"	c	class:Pacer
+RouteOperations	lib/pacer/filter/block_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/future_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/loop_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/object_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/range_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/uniq_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/filter/where_filter.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/route/mixin/route_operations.rb	/^  module RouteOperations$/;"	m	class:Pacer
+RouteOperations	lib/pacer/side_effect/counted.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/side_effect/is_unique.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/side_effect/visitor.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/transform/has_count_cap.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/transform/join.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/transform/map.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/transform/process.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/transform/sort_section.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+RouteOperations	lib/pacer/visitors/section.rb	/^    module RouteOperations$/;"	m	class:Pacer.Routes
+Routes	lib/pacer/filter/block_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/future_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/loop_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/object_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/range_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/uniq_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/filter/where_filter.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/routes.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/aggregate.rb	/^  module Routes::RouteOperations$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/as.rb	/^  module Routes::RouteOperations$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/counted.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/group_count.rb	/^  module Routes::RouteOperations$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/is_unique.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/side_effect/visitor.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/has_count_cap.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/join.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/map.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/process.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/sort_section.rb	/^  module Routes$/;"	m	class:Pacer
+Routes	lib/pacer/transform/stream_sort.rb	/^  module Routes::RouteOperations$/;"	m	class:Pacer
+Routes	lib/pacer/transform/stream_uniq.rb	/^  module Routes::RouteOperations$/;"	m	class:Pacer
+Routes	lib/pacer/visitors/section.rb	/^  module Routes$/;"	m	class:Pacer
+RubyEdge	lib/pacer/blueprints/ruby_graph.rb	/^  class RubyEdge < RubyElement$/;"	c	class:Pacer
+RubyElement	lib/pacer/blueprints/ruby_graph.rb	/^  class RubyElement$/;"	c	class:Pacer
+RubyGraph	lib/pacer/blueprints/ruby_graph.rb	/^  class RubyGraph$/;"	c	class:Pacer
+RubyGraph	spec/support/graph_runner.rb	/^  module RubyGraph$/;"	m	class:RSpec
+RubyPipe	lib/pacer/pipe/ruby_pipe.rb	/^  class RubyPipe < AbstractPipe$/;"	c	class:Pacer
+RubyVertex	lib/pacer/blueprints/ruby_graph.rb	/^  class RubyVertex < RubyElement$/;"	c	class:Pacer
+Scatter	lib/pacer/transform/scatter.rb	/^    module Scatter$/;"	m	class:Pacer.Transform
+Section	lib/pacer/visitors/section.rb	/^    module Section$/;"	m	class:Pacer.Visitors
+SharedExampleGroup	spec/support/contexts.rb	/^    module SharedExampleGroup$/;"	m	class:RSpec.Core
+SideEffect	lib/pacer/core/side_effect.rb	/^    module SideEffect$/;"	m	class:Pacer.Core
+SideEffect	lib/pacer/side_effect.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/aggregate.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/as.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/counted.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/group_count.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/is_unique.rb	/^  module SideEffect$/;"	m	class:Pacer
+SideEffect	lib/pacer/side_effect/visitor.rb	/^  module SideEffect$/;"	m	class:Pacer
+SimpleEncoder	lib/pacer/graph/simple_encoder.rb	/^  class SimpleEncoder$/;"	c	class:Pacer
+SimpleMixin	spec/tackle/simple_mixin.rb	/^  module SimpleMixin$/;"	m	class:Tackle
+SimpleVisitorPipe	lib/pacer/pipe/simple_visitor_pipe.rb	/^    class SimpleVisitorPipe < Pacer::Pipes::RubyPipe$/;"	c	class:Pacer.Pipes
+SingleElementSet	lib/pacer/side_effect/as.rb	/^      class SingleElementSet < HashSet$/;"	c	class:Pacer.SideEffect.As
+Software	spec/tackle/tinkerpop_graph_mixins.rb	/^  module Software$/;"	m	class:TP
+Song	samples/grateful_dead.rb	/^  module Song$/;"	m	class:GD
+SortSection	lib/pacer/transform/sort_section.rb	/^    module SortSection$/;"	m	class:Pacer.Transform
+SortSectionPipe	lib/pacer/transform/sort_section.rb	/^      class SortSectionPipe < Pacer::Pipes::RubyPipe$/;"	c	class:Pacer.Transform.SortSection
+StreamSort	lib/pacer/transform/stream_sort.rb	/^    module StreamSort$/;"	m	class:Pacer.Transform
+StreamSortPipe	lib/pacer/pipe/stream_sort_pipe.rb	/^  class StreamSortPipe < RubyPipe$/;"	c	class:Pacer
+StreamUniq	lib/pacer/transform/stream_uniq.rb	/^    module StreamUniq$/;"	m	class:Pacer.Transform
+StreamUniqPipe	lib/pacer/pipe/stream_uniq_pipe.rb	/^  class StreamUniqPipe < RubyPipe$/;"	c	class:Pacer
+Stubs	spec/support/graph_runner.rb	/^  module Stubs$/;"	m	class:RSpec
+Support	lib/pacer/support.rb	/^  module Support$/;"	m	class:Pacer
+TP	spec/tackle/tinkerpop_graph_mixins.rb	/^module TP$/;"	m
+TSort	lib/pacer/utils/tsort.rb	/^    module TSort$/;"	m	class:Pacer.Utils
+Tackle	spec/tackle/simple_mixin.rb	/^module Tackle$/;"	m
+Tg	spec/support/graph_runner.rb	/^  module Tg$/;"	m	class:RSpec
+TransactionConcludedError	lib/pacer/exceptions.rb	/^        class TransactionConcludedError < ClientError; end$/;"	c	class:Pacer
+Transform	lib/pacer/transform.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/cap.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/has_count_cap.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/join.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/map.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/path.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/process.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/scatter.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/sort_section.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/stream_sort.rb	/^  module Transform$/;"	m	class:Pacer
+Transform	lib/pacer/transform/stream_uniq.rb	/^  module Transform$/;"	m	class:Pacer
+TransientError	lib/pacer/exceptions.rb	/^    class TransientError < Error; end$/;"	c	class:Pacer
+Trie	lib/pacer/utils/trie.rb	/^  module Trie$/;"	m	class:Pacer
+TypeFilterPipe	lib/pacer/pipe/type_filter_pipe.rb	/^  class TypeFilterPipe < RubyPipe$/;"	c	class:Pacer
+UnaryTransformPipe	lib/pacer/pipe/unary_transform_pipe.rb	/^  class UnaryTransformPipe < RubyPipe$/;"	c	class:Pacer
+UnsupportedOperation	lib/pacer/exceptions.rb	/^        class UnsupportedOperation < ClientError; end$/;"	c	class:Pacer
+UnwrappingPipe	lib/pacer/pipe/unwrapping_pipe.rb	/^    class UnwrappingPipe < RubyPipe$/;"	c	class:Pacer.Pipes
+UnwrappingPipeFunction	lib/pacer/wrappers/wrapping_pipe_function.rb	/^    class UnwrappingPipeFunction$/;"	c	class:Pacer.Wrappers
+UserError	lib/pacer/exceptions.rb	/^    class UserError < Error; end$/;"	c	class:Pacer
+Utils	lib/pacer/utils.rb	/^  module Utils$/;"	m	class:Pacer
+Utils	lib/pacer/utils/graph_analysis.rb	/^  module Utils$/;"	m	class:Pacer
+Utils	lib/pacer/utils/tsort.rb	/^  module Utils$/;"	m	class:Pacer
+Utils	lib/pacer/utils/y_files.rb	/^  module Utils$/;"	m	class:Pacer
+Value	lib/pacer/filter/where_filter/node_visitor.rb	/^        class Value$/;"	c	class:Pacer.Filter.WhereFilter.NodeVisitor
+Vertex	lib/pacer/utils/trie.rb	/^    module Vertex$/;"	m	class:Pacer
+Vertex	lib/pacer/utils/tsort.rb	/^      module Vertex$/;"	m	class:Pacer.Utils.TSort
+Vertex	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^    module Vertex$/;"	m	class:VertexWrapperSpec.IsRuby
+Vertex	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^    module Vertex$/;"	m	class:VertexWrapperSpec.Project
+Vertex	spec/tackle/simple_mixin.rb	/^    module Vertex$/;"	m	class:Tackle.SimpleMixin
+VertexWrapper	lib/pacer/wrappers/vertex_wrapper.rb	/^  class VertexWrapper < ElementWrapper$/;"	c	class:Pacer
+VertexWrapperSpec	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^module VertexWrapperSpec$/;"	m
+Vertices	lib/pacer/utils/graph_analysis.rb	/^      module Vertices$/;"	m	class:Pacer.Utils
+VerticesPipe	lib/pacer/pipe/vertices_pipe.rb	/^  class VerticesPipe < AbstractPipe$/;"	c	class:Pacer
+VerticesRoute	lib/pacer/core/graph/vertices_route.rb	/^  module VerticesRoute$/;"	m	class:Pacer
+Visitor	lib/pacer/side_effect/visitor.rb	/^    module Visitor$/;"	m	class:Pacer.SideEffect
+VisitorPipe	lib/pacer/pipe/visitor_pipe.rb	/^    class VisitorPipe < Pacer::Pipes::RubyPipe$/;"	c	class:Pacer.Pipes
+Visitors	lib/pacer/visitors.rb	/^  module Visitors$/;"	m	class:Pacer
+Visitors	lib/pacer/visitors/section.rb	/^  module Visitors$/;"	m	class:Pacer
+Visitors	lib/pacer/visitors/visits_section.rb	/^  module Visitors$/;"	m	class:Pacer
+VisitsSection	lib/pacer/visitors/visits_section.rb	/^    module VisitsSection$/;"	m	class:Pacer.Visitors
+WhereFilter	lib/pacer/filter/where_filter.rb	/^    module WhereFilter$/;"	m	class:Pacer.Filter
+WhereFilter	lib/pacer/filter/where_filter/node_visitor.rb	/^    module WhereFilter$/;"	m	class:Pacer.Filter
+Wrap	lib/pacer/wrappers/element_wrapper.rb	/^              module Wrap$/;"	m	class:Pacer.ElementWrapper.build_extension_wrapper
+WrapperSelector	lib/pacer/wrappers/wrapper_selector.rb	/^  class WrapperSelector$/;"	c	class:Pacer
+Wrappers	lib/pacer/wrappers.rb	/^  module Wrappers$/;"	m	class:Pacer
+Wrappers	lib/pacer/wrappers/wrapping_pipe_function.rb	/^  module Wrappers$/;"	m	class:Pacer
+WrappingPipe	lib/pacer/pipe/wrapping_pipe.rb	/^    class WrappingPipe < RubyPipe$/;"	c	class:Pacer.Pipes
+WrappingPipeFunction	lib/pacer/wrappers/wrapping_pipe_function.rb	/^    class WrappingPipeFunction$/;"	c	class:Pacer.Wrappers
+Wrote	spec/tackle/tinkerpop_graph_mixins.rb	/^  module Wrote$/;"	m	class:TP
+YFilesExport	lib/pacer/utils/y_files.rb	/^    class YFilesExport$/;"	c	class:Pacer.Utils
+YamlEncoder	lib/pacer/graph/yaml_encoder.rb	/^  class YamlEncoder$/;"	c	class:Pacer
+[]	lib/pacer/core/graph/element_route.rb	/^    def [](prop_or_subset)$/;"	f	class:Pacer.ElementRoute
+[]	lib/pacer/wrappers/element_wrapper.rb	/^    def [](key)$/;"	f
+[]=	lib/pacer/wrappers/element_wrapper.rb	/^    def []=(key, value)$/;"	f
+add	lib/pacer/pipe/expandable_pipe.rb	/^    def add(element, metadata = nil, path = nil)$/;"	f	class:Pacer.ExpandablePipe
+add	lib/pacer/utils/trie.rb	/^      def add(array)$/;"	f	class:Pacer.Vertex.find_partial
+addEdge	lib/pacer/blueprints/ruby_graph.rb	/^    def addEdge(id, outVertex, inVertex, label)$/;"	f	class:Pacer.RubyGraph
+addValuesPipe	lib/pacer/transform/join.rb	/^        def addValuesPipe(name, from_pipe, to_pipe)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+addVertex	lib/pacer/blueprints/ruby_graph.rb	/^    def addVertex(id)$/;"	f	class:Pacer.RubyGraph
+add_edges_to	lib/pacer/core/graph/vertices_route.rb	/^    def add_edges_to(label, to_vertices, props = {})$/;"	f	class:Pacer.VerticesRoute
+add_extension	lib/pacer/core/route.rb	/^      def add_extension(mod, add_to_list = true)$/;"	f	class:Pacer.Core
+add_extensions	lib/pacer/core/route.rb	/^      def add_extensions(exts)$/;"	f	class:Pacer.Core
+add_extensions	lib/pacer/wrappers/edge_wrapper.rb	/^    def add_extensions(exts)$/;"	f	class:Pacer
+add_extensions	lib/pacer/wrappers/element_wrapper.rb	/^      def add_extensions(exts)$/;"	f	class:Pacer.ElementWrapper
+add_extensions	lib/pacer/wrappers/vertex_wrapper.rb	/^    def add_extensions(exts)$/;"	f	class:Pacer
+add_filter	lib/pacer/filter/property_filter/edge_filters.rb	/^        def add_filter(filter, extension)$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+add_filter	lib/pacer/filter/property_filter/filters.rb	/^        def add_filter(filter, extension)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+add_filters	lib/pacer/filter/property_filter/filters.rb	/^        def add_filters(filters, extension)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+add_word	lib/pacer/utils/trie.rb	/^      def add_word(word)$/;"	f	class:Pacer.Vertex.find_partial
+after_element	lib/pacer/transform/sort_section.rb	/^        def after_element$/;"	f	class:Pacer.Transform.SortSection.SortSectionPipe
+after_initialize	lib/pacer/filter/empty_filter.rb	/^      def after_initialize$/;"	f	class:Filter.EmptyFilter
+after_initialize	lib/pacer/filter/future_filter.rb	/^      def after_initialize$/;"	f	class:Pacer.Filter.FutureFilter
+after_initialize	lib/pacer/route.rb	/^    def after_initialize$/;"	f	class:Pacer
+after_initialize	lib/pacer/transform/join.rb	/^      def after_initialize$/;"	f	class:Pacer.Transform.Join
+after_initialize	lib/pacer/wrappers/element_wrapper.rb	/^    def after_initialize$/;"	f
+aggregate	lib/pacer/side_effect/aggregate.rb	/^    def aggregate(into = nil)$/;"	f	class:Pacer.Routes
+all	lib/pacer/wrappers/index_wrapper.rb	/^    def all(key, value, extensions = nil)$/;"	f	class:Pacer.IndexWrapper
+all	spec/support/graph_runner.rb	/^    def all(*args)$/;"	f	class:RSpec.Stubs
+all	spec/support/graph_runner.rb	/^    def all(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.MultiGraph
+all	spec/support/graph_runner.rb	/^    def all(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.RubyGraph
+all	spec/support/graph_runner.rb	/^    def all(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.Tg
+all_extensions	lib/pacer/route.rb	/^    def all_extensions(source, args)$/;"	f	class:Pacer
+any?	lib/pacer/filter/property_filter/edge_filters.rb	/^        def any?$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+any?	lib/pacer/filter/property_filter/filters.rb	/^        def any?$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+append_property_array	lib/pacer/blueprints/multi_graph.rb	/^    def append_property_array(key, value)$/;"	f	class:Pacer.MultiVertex
+arity	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def arity$/;"	f	class:Pacer.Wrappers.UnwrappingPipeFunction
+arity	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def arity$/;"	f	class:Pacer.Wrappers.WrappingPipeFunction
+array	lib/pacer/utils/trie.rb	/^      def array$/;"	f	class:Pacer.Vertex.find_partial.path
+as	lib/pacer/side_effect/as.rb	/^    def as(name)$/;"	f	class:Pacer.Routes
+as	lib/pacer/support/nil_class.rb	/^  def as(*args)$/;"	f	class:NilClass
+as	lib/pacer/wrappers/vertex_wrapper.rb	/^    def as(*exts)$/;"	f	class:Pacer
+as?	lib/pacer/wrappers/vertex_wrapper.rb	/^    def as?(*exts)$/;"	f	class:Pacer
+at	lib/pacer/filter/range_filter.rb	/^      def at(pos)$/;"	f	class:Pacer.Routes.RouteOperations
+at_least	lib/pacer/side_effect/group_count.rb	/^      def at_least(n)$/;"	f	class:Pacer.SideEffect.GroupCount
+attach_pipe	lib/pacer/core/route.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Core
+attach_pipe	lib/pacer/filter/block_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.BlockFilter
+attach_pipe	lib/pacer/filter/collection_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.CollectionFilter
+attach_pipe	lib/pacer/filter/future_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.FutureFilter
+attach_pipe	lib/pacer/filter/loop_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.LoopFilter
+attach_pipe	lib/pacer/filter/object_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.ObjectFilter
+attach_pipe	lib/pacer/filter/range_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.RangeFilter
+attach_pipe	lib/pacer/filter/where_filter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Filter.WhereFilter
+attach_pipe	lib/pacer/side_effect/aggregate.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.SideEffect.Aggregate
+attach_pipe	lib/pacer/side_effect/as.rb	/^      def attach_pipe(pipe)$/;"	f	class:Pacer.SideEffect.As
+attach_pipe	lib/pacer/side_effect/counted.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.SideEffect.Counted
+attach_pipe	lib/pacer/side_effect/group_count.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.SideEffect.GroupCount
+attach_pipe	lib/pacer/side_effect/is_unique.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.SideEffect.IsUnique
+attach_pipe	lib/pacer/side_effect/visitor.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.SideEffect.Visitor
+attach_pipe	lib/pacer/transform/cap.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Cap
+attach_pipe	lib/pacer/transform/has_count_cap.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.HasCountCap
+attach_pipe	lib/pacer/transform/join.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Join
+attach_pipe	lib/pacer/transform/map.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Map
+attach_pipe	lib/pacer/transform/path.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Path
+attach_pipe	lib/pacer/transform/process.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Process
+attach_pipe	lib/pacer/transform/scatter.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Scatter
+attach_pipe	lib/pacer/transform/sort_section.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.SortSection
+attach_pipe	lib/pacer/transform/stream_sort.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.StreamSort
+attach_pipe	lib/pacer/transform/stream_uniq.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Transform.StreamUniq
+attach_pipe	lib/pacer/visitors/section.rb	/^      def attach_pipe(end_pipe)$/;"	f	class:Pacer.Visitors.Section
+available_indices	lib/pacer/filter/property_filter/filters.rb	/^        def available_indices(element_type)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+back=	lib/pacer/core/route.rb	/^      def back=(back)$/;"	f	class:Pacer.Core
+back=	lib/pacer/extensions/block_filter_element.rb	/^        def back=(back)$/;"	f	class:Pacer.Extensions.BlockFilterElement.Route
+back_element_type	lib/pacer/route.rb	/^    def back_element_type(args)$/;"	f	class:Pacer
+back_object	lib/pacer/route.rb	/^    def back_object(args)$/;"	f	class:Pacer
+base_tx_finalizers	lib/pacer/graph/graph_transactions_mixin.rb	/^    def base_tx_finalizers$/;"	f	class:Pacer.GraphTransactionsMixin
+begin=	lib/pacer/filter/range_filter.rb	/^      def begin=(n)$/;"	f	class:Pacer.Filter.RangeFilter
+best_index	lib/pacer/filter/property_filter/edge_filters.rb	/^        def best_index(route)$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+best_index	lib/pacer/filter/property_filter/filters.rb	/^        def best_index(element_type)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+blank	lib/pacer/blueprints/multi_graph.rb	/^    def self.blank$/;"	F	class:Pacer.MultiGraph
+block	lib/pacer/filter/property_filter.rb	/^      def block$/;"	f	class:Filter.PropertyFilter
+block=	lib/pacer/filter/future_filter.rb	/^      def block=(block)$/;"	f	class:Pacer.Filter.FutureFilter
+block=	lib/pacer/filter/property_filter.rb	/^      def block=(block)$/;"	f	class:Filter.PropertyFilter
+block_branch	lib/pacer/filter/empty_filter.rb	/^      def block_branch(back, block, branch_start = nil)$/;"	f	class:Pacer.Route
+both	lib/pacer/core/graph/vertices_route.rb	/^    def both(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+both_e	lib/pacer/core/graph/mixed_route.rb	/^    def both_e(*args, &block)$/;"	f	class:Pacer.MixedRoute
+both_e	lib/pacer/core/graph/vertices_route.rb	/^    def both_e(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+both_edges	lib/pacer/wrappers/vertex_wrapper.rb	/^    def both_edges(*labels_and_extensions)$/;"	f	class:Pacer
+both_v	lib/pacer/core/graph/edges_route.rb	/^    def both_v(*filters, &block)$/;"	f	class:Pacer.EdgesRoute
+both_v	lib/pacer/core/graph/mixed_route.rb	/^    def both_v(*args, &block)$/;"	f	class:Pacer.MixedRoute
+build	lib/pacer/filter/where_filter/node_visitor.rb	/^          def build$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Pipe
+build	lib/pacer/filter/where_filter/node_visitor.rb	/^          def build$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Value
+build	lib/pacer/wrappers/wrapper_selector.rb	/^    def self.build(element_type = nil, extensions = Set[])$/;"	F	class:Pacer.WrapperSelector
+build!	lib/pacer/filter/where_filter.rb	/^      def build!$/;"	f	class:Pacer.Filter.WhereFilter
+build_args	lib/pacer/filter/where_filter/node_visitor.rb	/^          def build_args$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Pipe
+build_comparison	lib/pacer/filter/where_filter/node_visitor.rb	/^        def build_comparison(a, b, name)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+build_edge_wrapper	lib/pacer/wrappers/edge_wrapper.rb	/^      def build_edge_wrapper(exts)$/;"	f	class:Pacer.EdgeWrapper
+build_extension_wrapper	lib/pacer/wrappers/element_wrapper.rb	/^      def build_extension_wrapper(exts, mod_names, superclass)$/;"	f	class:Pacer.ElementWrapper
+build_index	lib/pacer/core/graph/element_route.rb	/^    def build_index(index, index_key = nil, property = nil, create = true)$/;"	f	class:Pacer.ElementRoute
+build_pipeline	lib/pacer/core/route.rb	/^      def build_pipeline$/;"	f	class:Pacer.Core
+build_pipeline	lib/pacer/filter/empty_filter.rb	/^      def build_pipeline$/;"	f	class:Filter.EmptyFilter
+build_pipeline	lib/pacer/filter/property_filter.rb	/^      def build_pipeline$/;"	f	class:Filter.PropertyFilter
+build_pipeline	lib/pacer/filter/property_filter/edge_filters.rb	/^        def build_pipeline(route, start_pipe = nil, pipe = nil)$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+build_pipeline	lib/pacer/filter/property_filter/filters.rb	/^        def build_pipeline(route, start_pipe, pipe = nil)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+build_vertex_wrapper	lib/pacer/wrappers/vertex_wrapper.rb	/^      def build_vertex_wrapper(exts)$/;"	f	class:Pacer.VertexWrapper
+bulk_job	lib/pacer/route/mixin/bulk_operations.rb	/^    def bulk_job(size = nil, target_graph = nil)$/;"	f	class:Pacer.BulkOperations
+bulk_job_size	lib/pacer/graph/pacer_graph.rb	/^      def bulk_job_size$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.BulkJob
+bulk_job_size=	lib/pacer/graph/pacer_graph.rb	/^      def bulk_job_size=(size)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.BulkJob
+bulk_map	lib/pacer/route/mixin/bulk_operations.rb	/^    def bulk_map(size = nil, target_graph = nil)$/;"	f	class:Pacer.BulkOperations
+call_with_args	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def call_with_args(element, *args)$/;"	f	class:Pacer.Wrappers.UnwrappingPipeFunction
+call_with_args	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def call_with_args(element, *args)$/;"	f	class:Pacer.Wrappers.WrappingPipeFunction
+cap	lib/pacer/transform/cap.rb	/^    def cap$/;"	f	class:Pacer.Core
+chain	lib/pacer/route.rb	/^    def chain(source, args)$/;"	f	class:Pacer
+chain_route	lib/pacer/route.rb	/^    def chain_route(args_hash)$/;"	f
+check_index	lib/pacer/filter/property_filter/filters.rb	/^        def check_index(index_options, idxs, k, v, index_value)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+check_uniqueness	lib/pacer/pipe/is_unique_pipe.rb	/^    def check_uniqueness(value)$/;"	f	class:Pacer.IsUniquePipe
+clear	lib/pacer/blueprints/ruby_graph.rb	/^    def clear$/;"	f	class:Pacer.RubyGraph
+clear	spec/support/graph_runner.rb	/^  def clear(graph)$/;"	f	class:RSpec
+clear_cache	lib/pacer/function_resolver.rb	/^      def clear_cache$/;"	f	class:Pacer.FunctionResolver
+clear_cache	lib/pacer/wrappers/edge_wrapper.rb	/^      def clear_cache$/;"	f	class:Pacer.EdgeWrapper
+clear_cache	lib/pacer/wrappers/element_wrapper.rb	/^      def clear_cache$/;"	f	class:Pacer.ElementWrapper
+clear_cache	lib/pacer/wrappers/vertex_wrapper.rb	/^      def clear_cache$/;"	f	class:Pacer.VertexWrapper
+clear_plugin_cache	lib/pacer.rb	/^    def clear_plugin_cache$/;"	f	class:Pacer
+clone_into	lib/pacer/core/graph/element_route.rb	/^    def clone_into(target_graph, opts = {})$/;"	f	class:Pacer.ElementRoute
+clone_into	lib/pacer/wrappers/edge_wrapper.rb	/^    def clone_into(target_graph, opts = {})$/;"	f	class:Pacer
+clone_into	lib/pacer/wrappers/vertex_wrapper.rb	/^    def clone_into(target_graph, opts = nil)$/;"	f	class:Pacer
+coders	spec/tackle/tinkerpop_graph_mixins.rb	/^      def coders$/;"	f	class:TP.Software.Route
+collaborations	samples/grateful_dead.rb	/^      def collaborations$/;"	f	class:GD.Song.Route
+collection=	lib/pacer/filter/collection_filter.rb	/^      def collection=(collection)$/;"	f	class:Pacer.Filter.CollectionFilter
+collection_count	lib/pacer/filter/collection_filter.rb	/^      def collection_count$/;"	f	class:Pacer.Filter.CollectionFilter
+columns	lib/pacer.rb	/^    def columns$/;"	f	class:Pacer
+columns=	lib/pacer.rb	/^    def columns=(n)$/;"	f	class:Pacer
+compact	lib/pacer/filter/object_filter.rb	/^      def compact$/;"	f	class:Pacer.Routes.RouteOperations
+comparable_pipe	lib/pacer/filter/where_filter/node_visitor.rb	/^        def comparable_pipe(pipe)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+compute	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def compute(element)$/;"	f	class:Pacer.Wrappers.UnwrappingPipeFunction
+compute	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def compute(element)$/;"	f	class:Pacer.Wrappers.WrappingPipeFunction
+configure_iterator	lib/pacer/core/graph/element_route.rb	/^    def configure_iterator(iter)$/;"	f	class:Pacer.ElementRoute
+configure_iterator	lib/pacer/core/route.rb	/^      def configure_iterator(iter)$/;"	f	class:Pacer.Core
+configure_iterator	lib/pacer/transform/path.rb	/^      def configure_iterator(iter)$/;"	f	class:Pacer.Transform.Path
+contexts	spec/support/contexts.rb	/^      def contexts(ctxts, &block)$/;"	f	class:RSpec.Core.SharedExampleGroup
+copy_into	lib/pacer/core/graph/element_route.rb	/^    def copy_into(target_graph, opts = {})$/;"	f	class:Pacer.ElementRoute
+copy_into	lib/pacer/wrappers/edge_wrapper.rb	/^    def copy_into(target_graph)$/;"	f	class:Pacer
+copy_into	lib/pacer/wrappers/vertex_wrapper.rb	/^    def copy_into(target_graph)$/;"	f	class:Pacer
+count	lib/pacer/filter/index_filter.rb	/^      def count$/;"	f	class:Pacer.Filter.IndexFilter
+count	lib/pacer/filter/property_filter/filters.rb	/^      def count(key, value)$/;"	f	class:Pacer.Filter.KeyIndex
+count	lib/pacer/side_effect/counted.rb	/^      def count$/;"	f	class:Pacer.Routes.RouteOperations
+count	lib/pacer/side_effect/counted.rb	/^      def count$/;"	f	class:Pacer.SideEffect.Counted
+counted	lib/pacer/side_effect/counted.rb	/^      def counted$/;"	f	class:Pacer.Routes.RouteOperations
+create_edge	lib/pacer/graph/pacer_graph.rb	/^    def create_edge(id, from_v, to_v, label, *args)$/;"	f	class:Pacer.PacerGraph
+create_key_index	lib/pacer/graph/pacer_graph.rb	/^      def create_key_index(name, type)$/;"	f	class:Pacer.PacerGraph.load_vertices.KeyIndices
+create_vertex	lib/pacer/graph/pacer_graph.rb	/^    def create_vertex(*args)$/;"	f	class:Pacer.PacerGraph
+creating_elements	lib/pacer/graph/pacer_graph.rb	/^    def creating_elements$/;"	f	class:Pacer.PacerGraph
+current	lib/pacer/route.rb	/^      def current$/;"	f	class:Pacer.RouteBuilder
+debug_pipe	lib/pacer.rb	/^    def debug_pipe(pipe)$/;"	f	class:Pacer
+debug_pipe!	lib/pacer.rb	/^    def debug_pipe!$/;"	f	class:Pacer
+decode_property	lib/pacer/graph/pacer_graph.rb	/^      def decode_property(value)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Encoding
+decode_property	lib/pacer/graph/simple_encoder.rb	/^    def self.decode_property(value)$/;"	F	class:Pacer.SimpleEncoder
+decode_property	lib/pacer/graph/yaml_encoder.rb	/^      def self.decode_property(value)$/;"	F	class:Pacer.YamlEncoder
+delete!	lib/pacer/core/graph/element_route.rb	/^    def delete!$/;"	f	class:Pacer.ElementRoute
+delete!	lib/pacer/core/graph/vertices_route.rb	/^    def delete!$/;"	f	class:Pacer.VerticesRoute
+delete!	lib/pacer/wrappers/edge_wrapper.rb	/^    def delete!$/;"	f	class:Pacer
+delete!	lib/pacer/wrappers/vertex_wrapper.rb	/^    def delete!$/;"	f	class:Pacer
+dependencies	lib/pacer/utils/tsort.rb	/^        def dependencies(&block)$/;"	f	class:Pacer.Utils.TSort.Route
+description	lib/pacer/core/route.rb	/^      def description(join = ' -> ')$/;"	f	class:Pacer.Core
+dex	spec/support/graph_runner.rb	/^    def dex(*args)$/;"	f	class:RSpec.Stubs
+display_name	lib/pacer/wrappers/edge_wrapper.rb	/^    def display_name$/;"	f	class:Pacer
+display_name	lib/pacer/wrappers/vertex_wrapper.rb	/^    def display_name$/;"	f	class:Pacer
+drop_index	lib/pacer/graph/pacer_graph.rb	/^      def drop_index(idx)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Indices
+e	lib/pacer/core/graph/edges_route.rb	/^    def e(*filters, &block)$/;"	f	class:Pacer.EdgesRoute
+e	lib/pacer/core/graph/element_route.rb	/^    def e(*filters, &block)$/;"	f	class:Pacer.ElementRoute
+e	lib/pacer/core/graph/graph_index_route.rb	/^    def e(*filters, &block)$/;"	f	class:Pacer.GraphIndexRoute
+e	lib/pacer/core/graph/graph_route.rb	/^    def e(*filters, &block)$/;"	f	class:Pacer.GraphRoute
+e	lib/pacer/core/graph/mixed_route.rb	/^    def e(*args, &block)$/;"	f	class:Pacer.MixedRoute
+each	lib/pacer/core/route.rb	/^      def each$/;"	f	class:Pacer.Core
+edge	lib/pacer/graph/pacer_graph.rb	/^    def edge(id, *modules)$/;"	f	class:Pacer.PacerGraph
+edge?	lib/pacer.rb	/^    def edge?(element)$/;"	f	class:Pacer
+edge_class	lib/pacer/blueprints/multi_graph.rb	/^    def edge_class$/;"	f	class:Pacer.MultiGraph
+edge_class	lib/pacer/blueprints/ruby_graph.rb	/^    def edge_class$/;"	f	class:Pacer.RubyGraph
+edge_filters	lib/pacer/filter/property_filter.rb	/^      def edge_filters(filters)$/;"	f	class:Pacer.Route
+edge_mixin_method	spec/tackle/simple_mixin.rb	/^      def edge_mixin_method$/;"	f	class:Tackle.SimpleMixin.Edge
+edge_name	lib/pacer/graph/pacer_graph.rb	/^      def edge_name$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Naming
+edge_name=	lib/pacer/graph/pacer_graph.rb	/^      def edge_name=(a_proc)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Naming
+edge_route?	lib/pacer.rb	/^    def edge_route?(obj)$/;"	f	class:Pacer
+edge_route_name	lib/pacer/core/graph/vertices_route.rb	/^    def edge_route_name(prefix)$/;"	f	class:Pacer.VerticesRoute
+edge_wrapper	lib/pacer/wrappers.rb	/^  def self.edge_wrapper(*exts)$/;"	F	class:Pacer
+edges_route?	lib/pacer/route/mixin/route_operations.rb	/^    def edges_route?$/;"	f	class:Pacer.RouteOperations
+element_id	lib/pacer/wrappers/element_wrapper.rb	/^    def element_id$/;"	f
+element_id_hashset	lib/pacer/filter/collection_filter.rb	/^      def element_id_hashset(collection)$/;"	f	class:Pacer.Filter.CollectionFilter
+element_ids	lib/pacer/core/graph/element_route.rb	/^    def element_ids$/;"	f	class:Pacer.ElementRoute
+element_type	lib/pacer/core/graph/edges_route.rb	/^    def element_type$/;"	f	class:Pacer.EdgesRoute
+element_type	lib/pacer/core/graph/mixed_route.rb	/^    def element_type$/;"	f	class:Pacer.MixedRoute
+element_type	lib/pacer/core/graph/vertices_route.rb	/^    def element_type$/;"	f	class:Pacer.VerticesRoute
+element_type	lib/pacer/graph/pacer_graph.rb	/^      def element_type(et = nil)$/;"	f	class:Pacer.PacerGraph.load_vertices.ElementType
+element_type	lib/pacer/route.rb	/^    def element_type(source, args)$/;"	f	class:Pacer
+element_type	lib/pacer/side_effect/visitor.rb	/^      def element_type$/;"	f	class:Pacer.SideEffect.Visitor
+element_type?	lib/pacer/graph/pacer_graph.rb	/^      def element_type?(et)$/;"	f	class:Pacer.PacerGraph.load_vertices.ElementType
+empty	lib/pacer/filter/empty_filter.rb	/^      def empty(back)$/;"	f	class:Pacer.Route
+empty?	lib/pacer/core/route.rb	/^      def empty?$/;"	f	class:Pacer.Core
+enablePath	lib/pacer/pipe/blackbox_pipeline.rb	/^    def enablePath(b)$/;"	f	class:Pacer.BlackboxPipeline
+enablePath	lib/pacer/pipe/ruby_pipe.rb	/^    def enablePath(b)$/;"	f	class:Pacer.RubyPipe
+encode_property	lib/pacer/graph/pacer_graph.rb	/^      def encode_property(value)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Encoding
+encode_property	lib/pacer/graph/simple_encoder.rb	/^    def self.encode_property(value)$/;"	F	class:Pacer.SimpleEncoder
+encode_property	lib/pacer/graph/yaml_encoder.rb	/^    def self.encode_property(value)$/;"	F	class:Pacer.YamlEncoder
+encode_value	lib/pacer/filter/property_filter/filters.rb	/^        def encode_value(value)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+encoded_properties	lib/pacer/filter/property_filter/filters.rb	/^        def encoded_properties$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+end=	lib/pacer/filter/range_filter.rb	/^      def end=(n)$/;"	f	class:Pacer.Filter.RangeFilter
+eql?	lib/pacer/wrappers/element_wrapper.rb	/^    def eql?(other)$/;"	f
+equals	lib/pacer/graph/pacer_graph.rb	/^    def equals(other)$/;"	f	class:Pacer.PacerGraph
+except	lib/pacer/filter/collection_filter.rb	/^      def except(excluded)$/;"	f	class:Pacer.Core.Route
+except=	lib/pacer/filter/collection_filter.rb	/^      def except=(collection)$/;"	f	class:Pacer.Filter.CollectionFilter
+except_var=	lib/pacer/filter/collection_filter.rb	/^      def except_var=(var)$/;"	f	class:Pacer.Filter.CollectionFilter
+export	lib/pacer/graph/graph_ml.rb	/^    def self.export(graph, path)$/;"	F	class:Pacer.GraphML
+export	lib/pacer/utils/y_files.rb	/^      def export(graph, path)$/;"	f	class:Pacer.Utils.YFilesExport
+extension_modules	lib/pacer/route.rb	/^    def extension_modules(source, args)$/;"	f	class:Pacer
+extensions	lib/pacer/core/route.rb	/^      def extensions$/;"	f	class:Pacer.Core
+extensions	lib/pacer/wrappers/edge_wrapper.rb	/^    def extensions$/;"	f	class:Pacer
+extensions	lib/pacer/wrappers/element_wrapper.rb	/^      def extensions$/;"	f	class:Pacer.ElementWrapper
+extensions	lib/pacer/wrappers/vertex_wrapper.rb	/^    def extensions$/;"	f	class:Pacer
+extensions=	lib/pacer/core/route.rb	/^      def extensions=(exts)$/;"	f	class:Pacer.Core
+extensions_missing	lib/pacer/wrappers/vertex_wrapper.rb	/^    def extensions_missing(exts)$/;"	f	class:Pacer
+extensions_only?	lib/pacer/filter/property_filter/filters.rb	/^        def extensions_only?$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+extract_labels	lib/pacer/core/graph/vertices_route.rb	/^    def extract_labels(filters)$/;"	f	class:Pacer.VerticesRoute
+extract_varargs_strings	lib/pacer/blueprints/ruby_graph.rb	/^    def extract_varargs_strings(labels)$/;"	f	class:Pacer.RubyElement
+fail	spec/support/matchers.rb	/^      def fail$/;"	f	class:RSpec.Core.Matchers
+fail_with	spec/support/matchers.rb	/^      def fail_with(message)$/;"	f	class:RSpec.Core.Matchers
+fast_group_count	lib/pacer/side_effect/group_count.rb	/^    def fast_group_count(hash_map = nil)$/;"	f	class:Pacer.Routes
+features	lib/pacer/blueprints/ruby_graph.rb	/^    def features$/;"	f	class:Pacer.RubyGraph
+features	lib/pacer/graph/pacer_graph.rb	/^    def features$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges
+filter	lib/pacer/core/graph/element_route.rb	/^    def filter(*filters, &block)$/;"	f	class:Pacer.ElementRoute
+filter	lib/pacer/core/graph/graph_route.rb	/^    def filter(*args)$/;"	f	class:Pacer.GraphRoute
+filter	lib/pacer/core/graph/mixed_route.rb	/^    def filter(*args, &block)$/;"	f	class:Pacer.MixedRoute
+filter_map	lib/pacer/function_resolver.rb	/^      def filter_map$/;"	f	class:Pacer.FunctionResolver
+filters	lib/pacer/filter/property_filter.rb	/^      def filters$/;"	f	class:Filter.PropertyFilter
+filters	lib/pacer/filter/property_filter.rb	/^      def filters(filters)$/;"	f	class:Pacer.Route
+filters=	lib/pacer/filter/property_filter.rb	/^      def filters=(f)$/;"	f	class:Filter.PropertyFilter
+filters?	lib/pacer/filter/property_filter.rb	/^      def filters?(filters)$/;"	f	class:Pacer.Route
+find	lib/pacer/utils/trie.rb	/^      def find(array)$/;"	f	class:Pacer.Vertex
+find_best_index	lib/pacer/filter/property_filter/edge_filters.rb	/^        def find_best_index(route)$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+find_best_index	lib/pacer/filter/property_filter/filters.rb	/^        def find_best_index(element_type)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+find_index	spec/pacer/filter/property_filter/filters_spec.rb	/^          def find_index$/;"	f	class:Pacer
+find_metadata	spec/support/use_transactions.rb	/^        def find_metadata(hash, key)$/;"	f	class:RSpec.Core.Example.ProcsyTransactions
+find_partial	lib/pacer/utils/trie.rb	/^      def find_partial(array)$/;"	f	class:Pacer.Vertex
+find_word	lib/pacer/utils/trie.rb	/^      def find_word(word)$/;"	f	class:Pacer.Vertex
+finish_transaction!	lib/pacer/graph/graph_transactions_mixin.rb	/^    def finish_transaction!$/;"	f	class:Pacer.GraphTransactionsMixin
+first	lib/pacer/wrappers/index_wrapper.rb	/^    def first(key, value, extensions = nil)$/;"	f	class:Pacer.IndexWrapper
+for_graph	spec/support/graph_runner.rb	/^  def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)$/;"	f	class:RSpec
+from_graph?	lib/pacer/core/route.rb	/^      def from_graph?(g)$/;"	f	class:Pacer.Core
+from_graph?	lib/pacer/wrappers/element_wrapper.rb	/^    def from_graph?(g)$/;"	f
+function	lib/pacer/function_resolver.rb	/^      def function(args)$/;"	f	class:Pacer.FunctionResolver
+gather	lib/pacer/transform/gather.rb	/^      def gather$/;"	f	class:Pacer.Core.Route
+get	lib/pacer/filter/property_filter/filters.rb	/^      def get(key, value)$/;"	f	class:Pacer.Filter.KeyIndex
+getCurrentPath	lib/pacer/pipe/blackbox_pipeline.rb	/^    def getCurrentPath$/;"	f	class:Pacer.BlackboxPipeline
+getCurrentPath	lib/pacer/pipe/path_wrapping_pipe.rb	/^      def getCurrentPath$/;"	f	class:Pacer.Pipes.PathWrappingPipe
+getCurrentPath	lib/pacer/pipe/unwrapping_pipe.rb	/^      def getCurrentPath$/;"	f	class:Pacer.Pipes.UnwrappingPipe
+getCurrentPath	lib/pacer/pipe/wrapping_pipe.rb	/^      def getCurrentPath$/;"	f	class:Pacer.Pipes.WrappingPipe
+getCurrentPath	lib/pacer/side_effect/as.rb	/^        def getCurrentPath$/;"	f	class:Pacer.SideEffect.As.AsPipe
+getEdge	lib/pacer/blueprints/ruby_graph.rb	/^    def getEdge(id)$/;"	f	class:Pacer.RubyGraph
+getEdges	lib/pacer/blueprints/multi_graph.rb	/^    def getEdges(direction, *labels)$/;"	f	class:Pacer.MultiVertex
+getEdges	lib/pacer/blueprints/ruby_graph.rb	/^    def getEdges$/;"	f	class:Pacer.RubyGraph
+getEdges	lib/pacer/blueprints/ruby_graph.rb	/^    def getEdges(direction, *labels)$/;"	f	class:Pacer.RubyVertex
+getId	lib/pacer/blueprints/ruby_graph.rb	/^    def getId$/;"	f	class:Pacer.RubyElement
+getLabel	lib/pacer/blueprints/ruby_graph.rb	/^    def getLabel()$/;"	f	class:Pacer.RubyEdge
+getPathToHere	lib/pacer/pipe/expandable_pipe.rb	/^    def getPathToHere$/;"	f	class:Pacer.ExpandablePipe
+getPathToHere	lib/pacer/pipe/loop_pipe.rb	/^    def getPathToHere$/;"	f	class:Pacer.LoopPipe
+getPathToHere	lib/pacer/pipe/ruby_pipe.rb	/^    def getPathToHere$/;"	f	class:Pacer.RubyPipe
+getProperty	lib/pacer/blueprints/ruby_graph.rb	/^    def getProperty(key)$/;"	f	class:Pacer.RubyElement
+getPropertyKeys	lib/pacer/blueprints/ruby_graph.rb	/^    def getPropertyKeys$/;"	f	class:Pacer.RubyElement
+getRawEdge	lib/pacer/blueprints/ruby_graph.rb	/^    def getRawEdge$/;"	f	class:Pacer.RubyEdge
+getRawVertex	lib/pacer/blueprints/ruby_graph.rb	/^    def getRawVertex$/;"	f	class:Pacer.RubyVertex
+getSideEffect	lib/pacer/pipe/is_unique_pipe.rb	/^    def getSideEffect$/;"	f	class:Pacer.IsUniquePipe
+getSideEffect	lib/pacer/transform/join.rb	/^        def getSideEffect$/;"	f	class:Pacer.Transform.Join.CombinePipe
+getVertex	lib/pacer/blueprints/ruby_graph.rb	/^    def getVertex(direction)$/;"	f	class:Pacer.RubyEdge
+getVertex	lib/pacer/blueprints/ruby_graph.rb	/^    def getVertex(id)$/;"	f	class:Pacer.RubyGraph
+getVertices	lib/pacer/blueprints/ruby_graph.rb	/^    def getVertices$/;"	f	class:Pacer.RubyGraph
+getVertices	lib/pacer/blueprints/ruby_graph.rb	/^    def getVertices(direction, *labels)$/;"	f	class:Pacer.RubyVertex
+get_edges_helper	lib/pacer/wrappers/vertex_wrapper.rb	/^    def get_edges_helper(direction, *labels_and_extensions)$/;"	f	class:Pacer
+get_keys	lib/pacer/transform/join.rb	/^        def get_keys(element)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+get_section_route	lib/pacer/core/route.rb	/^      def get_section_route(name)$/;"	f	class:Pacer.Core
+get_values	lib/pacer/transform/join.rb	/^        def get_values(element)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+graph	lib/pacer/core/graph/graph_route.rb	/^    def graph$/;"	f	class:Pacer.GraphRoute
+graph	lib/pacer/core/route.rb	/^      def graph$/;"	f	class:Pacer.Core
+graph	lib/pacer/graph/pacer_graph.rb	/^    def graph$/;"	f	class:Pacer.PacerGraph
+graph	lib/pacer/route.rb	/^    def graph(source, args)$/;"	f	class:Pacer
+graph=	lib/pacer/filter/property_filter/filters.rb	/^        def graph=(g)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+graph_id	lib/pacer/graph/pacer_graph.rb	/^    def graph_id$/;"	f	class:Pacer.PacerGraph
+group_count	lib/pacer/route/mixin/route_operations.rb	/^    def group_count(*props)$/;"	f	class:Pacer.RouteOperations
+group_count	lib/pacer/support/enumerable.rb	/^  def group_count$/;"	f	class:id_to_element_route
+has?	lib/pacer/route/mixin/route_operations.rb	/^    def has?(element)$/;"	f	class:Pacer.RouteOperations
+hasNext	lib/pacer/pipe/blackbox_pipeline.rb	/^    def hasNext$/;"	f	class:Pacer.BlackboxPipeline
+has_count?	lib/pacer/transform/has_count_cap.rb	/^      def has_count?(opts = {})$/;"	f	class:Pacer.Routes.RouteOperations
+has_count_route	lib/pacer/transform/has_count_cap.rb	/^      def has_count_route(opts = {})$/;"	f	class:Pacer.Routes.RouteOperations
+hash	lib/pacer/wrappers/element_wrapper.rb	/^    def hash$/;"	f
+hash_map=	lib/pacer/side_effect/group_count.rb	/^      def hash_map=(hash_map)$/;"	f	class:Pacer.SideEffect.GroupCount
+hide_elements	lib/pacer/core/graph/graph_route.rb	/^    def hide_elements$/;"	f	class:Pacer.GraphRoute
+hide_route_elements	lib/pacer.rb	/^    def hide_route_elements$/;"	f	class:Pacer
+hide_route_elements=	lib/pacer.rb	/^    def hide_route_elements=(bool)$/;"	f	class:Pacer
+id_modules_properties	lib/pacer/graph/pacer_graph.rb	/^    def id_modules_properties(args)$/;"	f	class:Pacer.PacerGraph
+id_pipe_class	lib/pacer/core/graph/edges_route.rb	/^    def id_pipe_class$/;"	f	class:Pacer.EdgesRoute
+id_pipe_class	lib/pacer/core/graph/vertices_route.rb	/^    def id_pipe_class$/;"	f	class:Pacer.VerticesRoute
+id_to_element_route	lib/pacer/support/enumerable.rb	/^  def id_to_element_route(args = {})$/;"	f
+identity_branch	lib/pacer/filter/empty_filter.rb	/^      def identity_branch(back)$/;"	f	class:Pacer.Route
+import	lib/pacer/graph/graph_ml.rb	/^    def self.import(graph, path)$/;"	F	class:Pacer.GraphML
+in	lib/pacer/core/graph/vertices_route.rb	/^    def in(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+in_bulk_job?	lib/pacer/graph/pacer_graph.rb	/^      def in_bulk_job?$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.BulkJob
+in_e	lib/pacer/core/graph/mixed_route.rb	/^    def in_e(*args, &block)$/;"	f	class:Pacer.MixedRoute
+in_e	lib/pacer/core/graph/vertices_route.rb	/^    def in_e(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+in_edge_types	lib/pacer/utils/graph_analysis.rb	/^          def in_edge_types$/;"	f	class:Pacer.Utils.Vertices.Route.out_edge_types
+in_edges	lib/pacer/wrappers/vertex_wrapper.rb	/^    def in_edges(*labels_and_extensions)$/;"	f	class:Pacer
+in_editor?	spec/spec_helper.rb	/^def in_editor?$/;"	f
+in_transaction?	lib/pacer/graph/graph_transactions_mixin.rb	/^    def in_transaction?$/;"	f	class:Pacer.GraphTransactionsMixin
+in_v	lib/pacer/core/graph/edges_route.rb	/^    def in_v(*filters, &block)$/;"	f	class:Pacer.EdgesRoute
+in_v	lib/pacer/core/graph/mixed_route.rb	/^    def in_v(*args, &block)$/;"	f	class:Pacer.MixedRoute
+in_vertex	lib/pacer/wrappers/edge_wrapper.rb	/^    def in_vertex(extensions = nil)$/;"	f	class:Pacer
+include_extensions	lib/pacer/route.rb	/^    def include_extensions(args)$/;"	f	class:Pacer
+include_function	lib/pacer/route.rb	/^    def include_function(args)$/;"	f	class:Pacer
+included	lib/pacer/core/route.rb	/^        def included(target)$/;"	f	class:Pacer.Core.Route
+included	lib/pacer/utils/tsort.rb	/^            def self.included(target)$/;"	F	class:Pacer.Utils.TSort.Route.dependencies
+index	lib/pacer/graph/pacer_graph.rb	/^      def index(name, type = nil, opts = {})$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Indices
+index=	lib/pacer/filter/range_filter.rb	/^      def index=(index)$/;"	f	class:Pacer.Filter.RangeFilter
+index_class	lib/pacer/graph/pacer_graph.rb	/^      def index_class(et)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Indices
+index_class?	lib/pacer/graph/pacer_graph.rb	/^      def index_class?(et, thing)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges
+index_for_property	lib/pacer/filter/property_filter/filters.rb	/^        def index_for_property(avail, index_options, k, v)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+indexed_route	lib/pacer/core/graph/graph_index_route.rb	/^    def indexed_route(element_type, filters, block)$/;"	f	class:Pacer.GraphIndexRoute
+indices	lib/pacer/graph/pacer_graph.rb	/^      def indices$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges
+indices=	lib/pacer/filter/property_filter/filters.rb	/^        def indices=(i)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+initialize	lib/pacer/blueprints/multi_graph.rb	/^    def initialize(*args)$/;"	f	class:Pacer.MultiVertex
+initialize	lib/pacer/blueprints/ruby_graph.rb	/^    def initialize$/;"	f	class:Pacer.RubyGraph
+initialize	lib/pacer/blueprints/ruby_graph.rb	/^    def initialize(raw_graph, element_id)$/;"	f	class:Pacer.RubyElement
+initialize	lib/pacer/blueprints/ruby_graph.rb	/^    def initialize(raw_graph, id, out_vertex, in_vertex, label)$/;"	f	class:Pacer.RubyEdge
+initialize	lib/pacer/filter/property_filter/edge_filters.rb	/^        def initialize(filters)$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+initialize	lib/pacer/filter/property_filter/filters.rb	/^        def initialize(filters)$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+initialize	lib/pacer/filter/property_filter/filters.rb	/^      def initialize(graph, element_type)$/;"	f	class:Pacer.Filter.KeyIndex
+initialize	lib/pacer/filter/where_filter/node_visitor.rb	/^          def initialize(pipe, *args)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Pipe
+initialize	lib/pacer/filter/where_filter/node_visitor.rb	/^          def initialize(value)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Value
+initialize	lib/pacer/filter/where_filter/node_visitor.rb	/^        def initialize(route, values = {})$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+initialize	lib/pacer/graph/pacer_graph.rb	/^    def initialize(encoder, open, shutdown = nil)$/;"	f	class:Pacer.PacerGraph
+initialize	lib/pacer/pipe/blackbox_pipeline.rb	/^    def initialize(start_pipe, end_pipe)$/;"	f	class:Pacer.BlackboxPipeline
+initialize	lib/pacer/pipe/block_filter_pipe.rb	/^    def initialize(back, block, invert = false)$/;"	f	class:Pacer.BlockFilterPipe
+initialize	lib/pacer/pipe/cross_product_transform_pipe.rb	/^    def initialize(method, branch_a, branch_b)$/;"	f	class:Pacer.CrossProductTransformPipe
+initialize	lib/pacer/pipe/enumerable_pipe.rb	/^    def initialize(enumerable)$/;"	f	class:Pacer.EnumerablePipe
+initialize	lib/pacer/pipe/expandable_pipe.rb	/^    def initialize$/;"	f	class:Pacer.ExpandablePipe
+initialize	lib/pacer/pipe/id_collection_filter_pipe.rb	/^    def initialize(ids, comparison)$/;"	f	class:Pacer.IdCollectionFilterPipe
+initialize	lib/pacer/pipe/is_empty_pipe.rb	/^    def initialize$/;"	f	class:Pacer.IsEmptyPipe
+initialize	lib/pacer/pipe/is_unique_pipe.rb	/^    def initialize$/;"	f	class:Pacer.IsUniquePipe
+initialize	lib/pacer/pipe/label_collection_filter_pipe.rb	/^    def initialize(labels)$/;"	f	class:Pacer.LabelCollectionFilterPipe
+initialize	lib/pacer/pipe/label_prefix_pipe.rb	/^    def initialize(prefix)$/;"	f	class:Pacer.LabelPrefixPipe
+initialize	lib/pacer/pipe/loop_pipe.rb	/^    def initialize(graph, looping_pipe, control_block)$/;"	f	class:Pacer.LoopPipe
+initialize	lib/pacer/pipe/path_wrapping_pipe.rb	/^      def initialize(graph, vertex_extensions = [], edge_extensions = [])$/;"	f	class:Pacer.Pipes.PathWrappingPipe
+initialize	lib/pacer/pipe/process_pipe.rb	/^    def initialize(back, block)$/;"	f	class:Pacer.ProcessPipe
+initialize	lib/pacer/pipe/property_comparison_pipe.rb	/^    def initialize(left, right, filter)$/;"	f	class:Pacer.PropertyComparisonFilterPipe
+initialize	lib/pacer/pipe/simple_visitor_pipe.rb	/^      def initialize(wrapper, graph)$/;"	f	class:Pacer.Pipes.SimpleVisitorPipe
+initialize	lib/pacer/pipe/stream_sort_pipe.rb	/^    def initialize(queue_length = 100, silo_size = 10)$/;"	f	class:Pacer.StreamSortPipe
+initialize	lib/pacer/pipe/stream_uniq_pipe.rb	/^    def initialize(buffer = 1000)$/;"	f	class:Pacer.StreamUniqPipe
+initialize	lib/pacer/pipe/type_filter_pipe.rb	/^    def initialize(type)$/;"	f	class:Pacer.TypeFilterPipe
+initialize	lib/pacer/pipe/unary_transform_pipe.rb	/^    def initialize(method, branch_a)$/;"	f	class:Pacer.UnaryTransformPipe
+initialize	lib/pacer/pipe/visitor_pipe.rb	/^      def initialize(visitor = nil)$/;"	f	class:Pacer.Pipes.VisitorPipe
+initialize	lib/pacer/pipe/wrapping_pipe.rb	/^      def initialize(graph, element_type = nil, extensions = Set[])$/;"	f	class:Pacer.Pipes.WrappingPipe
+initialize	lib/pacer/route.rb	/^    def initialize$/;"	f	class:Pacer
+initialize	lib/pacer/route.rb	/^    def initialize(args = {})$/;"	f	class:Pacer
+initialize	lib/pacer/side_effect/as.rb	/^        def initialize(pipe, vars, variable_name)$/;"	f	class:Pacer.SideEffect.As.AsPipe
+initialize	lib/pacer/transform/join.rb	/^        def initialize(from_graph, multi_graph)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+initialize	lib/pacer/transform/sort_section.rb	/^        def initialize(route, section, pipe_function)$/;"	f	class:Pacer.Transform.SortSection.SortSectionPipe
+initialize	lib/pacer/utils/y_files.rb	/^      def initialize$/;"	f	class:Pacer.Utils.YFilesExport
+initialize	lib/pacer/wrappers/element_wrapper.rb	/^    def initialize(element)$/;"	f
+initialize	lib/pacer/wrappers/index_wrapper.rb	/^    def initialize(graph, index, element_type)$/;"	f	class:Pacer.IndexWrapper
+initialize	lib/pacer/wrappers/wrapper_selector.rb	/^    def initialize(extensions = Set[])$/;"	f	class:Pacer.WrapperSelector
+initialize	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def initialize(back, block)$/;"	f	class:Pacer.Wrappers.WrappingPipeFunction
+initialize	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def initialize(block)$/;"	f	class:Pacer.Wrappers.UnwrappingPipeFunction
+initialize	spec/support/graph_runner.rb	/^  def initialize(*graphs)$/;"	f	class:RSpec
+inspect	lib/pacer/blueprints/multi_graph.rb	/^    def inspect$/;"	f	class:Pacer.MultiVertex
+inspect	lib/pacer/core/route.rb	/^      def inspect(limit = nil)$/;"	f	class:Pacer.Core
+inspect	lib/pacer/filter/where_filter/node_visitor.rb	/^          def inspect(depth = 0)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Pipe
+inspect	lib/pacer/filter/where_filter/node_visitor.rb	/^          def inspect(depth = 0)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Value
+inspect	lib/pacer/support/array_list.rb	/^  def inspect$/;"	f	class:Java
+inspect	lib/pacer/wrappers/edge_wrapper.rb	/^    def inspect$/;"	f	class:Pacer
+inspect	lib/pacer/wrappers/vertex_wrapper.rb	/^    def inspect$/;"	f	class:Pacer
+inspect	spec/support/graph_runner.rb	/^  def inspect$/;"	f	class:RSpec
+inspect_class_name	lib/pacer/core/route.rb	/^      def inspect_class_name$/;"	f	class:Pacer.Core
+inspect_class_name	lib/pacer/filter/collection_filter.rb	/^      def inspect_class_name$/;"	f	class:Pacer.Filter.CollectionFilter
+inspect_class_name	lib/pacer/filter/empty_filter.rb	/^      def inspect_class_name$/;"	f	class:Filter.EmptyFilter
+inspect_class_name	lib/pacer/route.rb	/^    def inspect_class_name$/;"	f	class:Pacer
+inspect_class_name	lib/pacer/side_effect/as.rb	/^      def inspect_class_name$/;"	f	class:Pacer.SideEffect.As
+inspect_limit	lib/pacer.rb	/^    def inspect_limit$/;"	f	class:Pacer
+inspect_limit=	lib/pacer.rb	/^    def inspect_limit=(n)$/;"	f	class:Pacer
+inspect_string	lib/pacer/core/route.rb	/^      def inspect_string$/;"	f	class:Pacer.Core
+inspect_string	lib/pacer/filter/collection_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.CollectionFilter
+inspect_string	lib/pacer/filter/future_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.FutureFilter
+inspect_string	lib/pacer/filter/index_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.IndexFilter
+inspect_string	lib/pacer/filter/loop_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.LoopFilter
+inspect_string	lib/pacer/filter/object_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.ObjectFilter
+inspect_string	lib/pacer/filter/property_filter.rb	/^      def inspect_string$/;"	f	class:Filter.PropertyFilter
+inspect_string	lib/pacer/filter/range_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.RangeFilter
+inspect_string	lib/pacer/filter/where_filter.rb	/^      def inspect_string$/;"	f	class:Pacer.Filter.WhereFilter
+inspect_string	lib/pacer/transform/cap.rb	/^      def inspect_string$/;"	f	class:Pacer.Transform.Cap
+inspect_string	lib/pacer/transform/has_count_cap.rb	/^      def inspect_string$/;"	f	class:Pacer.Transform.HasCountCap
+inspect_string	lib/pacer/transform/join.rb	/^      def inspect_string$/;"	f	class:Pacer.Transform.Join
+inspect_strings	lib/pacer/core/route.rb	/^      def inspect_strings$/;"	f	class:Pacer.Core
+intermediate	lib/pacer/filter/where_filter.rb	/^      def intermediate$/;"	f	class:Pacer.Filter.WhereFilter
+into=	lib/pacer/side_effect/aggregate.rb	/^      def into=(name)$/;"	f	class:Pacer.SideEffect.Aggregate
+is	lib/pacer/filter/object_filter.rb	/^      def is(value)$/;"	f	class:Pacer.Routes.RouteOperations
+is_not	lib/pacer/filter/object_filter.rb	/^      def is_not(value)$/;"	f	class:Pacer.Routes.RouteOperations
+is_unique	lib/pacer/side_effect/is_unique.rb	/^      def is_unique$/;"	f	class:Pacer.Routes.RouteOperations
+iterator	lib/pacer/core/route.rb	/^      def iterator$/;"	f	class:Pacer.Core
+iterator	lib/pacer/pipe/blackbox_pipeline.rb	/^    def iterator$/;"	f	class:Pacer.BlackboxPipeline
+iterator_from_source	lib/pacer/core/route.rb	/^      def iterator_from_source(src)$/;"	f	class:Pacer.Core
+join	lib/pacer/transform/join.rb	/^      def join(name = nil, &block)$/;"	f	class:Pacer.Transform.Join
+join	lib/pacer/transform/join.rb	/^      def join(name = nil, options = {}, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+join_on	lib/pacer/blueprints/multi_graph.rb	/^    def join_on(keys)$/;"	f	class:Pacer.MultiVertex
+join_on	lib/pacer/transform/join.rb	/^      def join_on(*keys)$/;"	f	class:Pacer.Transform.Join
+key	lib/pacer/transform/join.rb	/^      def key(&block)$/;"	f	class:Pacer.Routes.RouteOperations
+key	lib/pacer/transform/join.rb	/^      def key(&block)$/;"	f	class:Pacer.Transform.Join
+key_indices	lib/pacer/graph/pacer_graph.rb	/^      def key_indices(type = nil)$/;"	f	class:Pacer.PacerGraph.load_vertices.KeyIndices
+label	lib/pacer/wrappers/edge_wrapper.rb	/^    def label$/;"	f	class:Pacer
+labels	lib/pacer/core/graph/edges_route.rb	/^    def labels$/;"	f	class:Pacer.EdgesRoute
+labels	lib/pacer/core/graph/mixed_route.rb	/^    def labels(&block)$/;"	f	class:Pacer.MixedRoute
+limit	lib/pacer/filter/range_filter.rb	/^      def limit(max)$/;"	f	class:Pacer.Routes.RouteOperations
+limit	lib/pacer/filter/range_filter.rb	/^      def limit(n = nil)$/;"	f	class:Pacer.Filter.RangeFilter
+limit=	lib/pacer/filter/range_filter.rb	/^      def limit=(n)$/;"	f	class:Pacer.Filter.RangeFilter
+load_edges	lib/pacer/graph/pacer_graph.rb	/^    def load_edges(ids)$/;"	f	class:Pacer.PacerGraph.load_vertices
+load_vertices	lib/pacer/graph/pacer_graph.rb	/^    def load_vertices(ids)$/;"	f	class:Pacer.PacerGraph
+lookahead	lib/pacer/filter/future_filter.rb	/^      def lookahead(opts = {}, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+lookahead_pipe	lib/pacer/filter/future_filter.rb	/^      def lookahead_pipe$/;"	f	class:Pacer.Filter.FutureFilter
+lookahead_route	lib/pacer/filter/future_filter.rb	/^      def lookahead_route$/;"	f	class:Pacer.Filter.FutureFilter
+lookup_path	lib/pacer/function_resolver.rb	/^      def lookup_path$/;"	f	class:Pacer.FunctionResolver
+loop	lib/pacer/filter/loop_filter.rb	/^      def loop(&block)$/;"	f	class:Pacer.Routes.RouteOperations
+looping_pipe	lib/pacer/filter/loop_filter.rb	/^      def looping_pipe$/;"	f	class:Pacer.Filter.LoopFilter
+looping_route=	lib/pacer/filter/loop_filter.rb	/^      def looping_route=(route)$/;"	f	class:Pacer.Filter.LoopFilter
+many?	lib/pacer/support/enumerable.rb	/^  def many?$/;"	f	class:Enumerable
+map	lib/pacer/transform/map.rb	/^      def map(opts = {}, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+metadata	lib/pacer/pipe/expandable_pipe.rb	/^    def metadata$/;"	f	class:Pacer.ExpandablePipe
+mixed	lib/pacer/core/graph/mixed_route.rb	/^    def mixed(*args, &block)$/;"	f	class:Pacer.MixedRoute
+mixed_route?	lib/pacer/route/mixin/route_operations.rb	/^    def mixed_route?$/;"	f	class:Pacer.RouteOperations
+mock_base_tx_finalizers	lib/pacer/graph/graph_transactions_mixin.rb	/^    def mock_base_tx_finalizers$/;"	f	class:Pacer.GraphTransactionsMixin
+mock_nested_tx_finalizers	lib/pacer/graph/graph_transactions_mixin.rb	/^    def mock_nested_tx_finalizers$/;"	f	class:Pacer.GraphTransactionsMixin
+most_frequent	lib/pacer/route/mixin/route_operations.rb	/^    def most_frequent(range = 0, include_counts = false)$/;"	f	class:Pacer.RouteOperations
+multi_graph	spec/support/graph_runner.rb	/^    def multi_graph$/;"	f	class:RSpec.MultiGraph
+multi_graph2	spec/support/graph_runner.rb	/^    def multi_graph2$/;"	f	class:RSpec.MultiGraph
+multigraph	lib/pacer/transform/join.rb	/^      def multigraph$/;"	f	class:Pacer.Transform.Join
+multigraph	spec/support/graph_runner.rb	/^    def multigraph(*args)$/;"	f	class:RSpec.Stubs
+multigraph	spec/support/graph_runner.rb	/^    def multigraph(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.MultiGraph
+name	lib/pacer/wrappers/index_wrapper.rb	/^    def name$/;"	f	class:Pacer.IndexWrapper
+neg_block=	lib/pacer/filter/future_filter.rb	/^      def neg_block=(block)$/;"	f	class:Pacer.Filter.FutureFilter
+neg_lookahead	lib/pacer/filter/future_filter.rb	/^      def neg_lookahead(opts = {}, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+negate	lib/pacer/filter/where_filter/node_visitor.rb	/^        def negate(pipe)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+neo4j	spec/support/graph_runner.rb	/^    def neo4j(*args)$/;"	f	class:RSpec.Stubs
+nested_tx_finalizers	lib/pacer/graph/graph_transactions_mixin.rb	/^    def nested_tx_finalizers$/;"	f	class:Pacer.GraphTransactionsMixin
+new	lib/pacer/wrappers/wrapper_selector.rb	/^    def new(element)$/;"	f	class:Pacer.WrapperSelector
+next	lib/pacer/pipe/blackbox_pipeline.rb	/^    def next$/;"	f	class:Pacer.BlackboxPipeline
+next	lib/pacer/pipe/expandable_pipe.rb	/^    def next$/;"	f	class:Pacer.ExpandablePipe
+next	lib/pacer/pipe/loop_pipe.rb	/^    def next$/;"	f	class:Pacer.LoopPipe
+next_a	lib/pacer/pipe/unary_transform_pipe.rb	/^    def next_a$/;"	f	class:Pacer.UnaryTransformPipe
+next_element	lib/pacer/pipe/unary_transform_pipe.rb	/^    def next_element$/;"	f	class:Pacer.UnaryTransformPipe
+next_id	lib/pacer/blueprints/ruby_graph.rb	/^    def next_id$/;"	f	class:Pacer.RubyGraph
+next_pair	lib/pacer/pipe/cross_product_transform_pipe.rb	/^    def next_pair$/;"	f	class:Pacer.CrossProductTransformPipe
+next_results	lib/pacer/transform/join.rb	/^        def next_results(expando, pipe, element)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+next_song	samples/grateful_dead.rb	/^      def next_song(arg = nil, args = nil)$/;"	f	class:GD.Song.Route
+no_extensions	lib/pacer/core/route.rb	/^      def no_extensions$/;"	f	class:Pacer.Core
+no_extensions	lib/pacer/wrappers/edge_wrapper.rb	/^    def no_extensions$/;"	f	class:Pacer
+no_extensions	lib/pacer/wrappers/vertex_wrapper.rb	/^    def no_extensions$/;"	f	class:Pacer
+no_songs	spec/pacer/filter/future_filter_spec.rb	/^      def no_songs$/;"	f
+offset	lib/pacer/filter/range_filter.rb	/^      def offset(amount)$/;"	f	class:Pacer.Routes.RouteOperations
+offset	lib/pacer/filter/range_filter.rb	/^      def offset(n = nil)$/;"	f	class:Pacer.Filter.RangeFilter
+offset=	lib/pacer/filter/range_filter.rb	/^      def offset=(n)$/;"	f	class:Pacer.Filter.RangeFilter
+on_element	lib/pacer/side_effect/aggregate.rb	/^        def on_element(element)$/;"	f	class:Pacer.SideEffect.Aggregate.ElementSet
+on_element	lib/pacer/side_effect/as.rb	/^        def on_element(element)$/;"	f	class:Pacer.SideEffect.As.SingleElementSet
+on_element	lib/pacer/transform/sort_section.rb	/^        def on_element(element)$/;"	f	class:Pacer.Transform.SortSection.SortSectionPipe
+one?	lib/pacer/support/enumerable.rb	/^  def one?$/;"	f	class:Enumerable
+only	lib/pacer/filter/collection_filter.rb	/^      def only(included)$/;"	f	class:Pacer.Core.Route
+only=	lib/pacer/filter/collection_filter.rb	/^      def only=(collection)$/;"	f	class:Pacer.Filter.CollectionFilter
+only_as	lib/pacer/wrappers/vertex_wrapper.rb	/^    def only_as(*exts)$/;"	f	class:Pacer
+only_var=	lib/pacer/filter/collection_filter.rb	/^      def only_var=(var)$/;"	f	class:Pacer.Filter.CollectionFilter
+open_graphs	lib/pacer.rb	/^    def open_graphs$/;"	f	class:Pacer
+orient	spec/support/graph_runner.rb	/^    def orient(*args)$/;"	f	class:RSpec.Stubs
+other_modules	lib/pacer/route.rb	/^    def other_modules(source, args)$/;"	f	class:Pacer
+out	lib/pacer/core/graph/vertices_route.rb	/^    def out(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+out_e	lib/pacer/core/graph/mixed_route.rb	/^    def out_e(*args, &block)$/;"	f	class:Pacer.MixedRoute
+out_e	lib/pacer/core/graph/vertices_route.rb	/^    def out_e(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+out_edge_types	lib/pacer/utils/graph_analysis.rb	/^          def out_edge_types$/;"	f	class:Pacer.Utils.Vertices.Route
+out_edges	lib/pacer/wrappers/vertex_wrapper.rb	/^    def out_edges(*labels_and_extensions)$/;"	f	class:Pacer
+out_v	lib/pacer/core/graph/edges_route.rb	/^    def out_v(*filters, &block)$/;"	f	class:Pacer.EdgesRoute
+out_v	lib/pacer/core/graph/mixed_route.rb	/^    def out_v(*args, &block)$/;"	f	class:Pacer.MixedRoute
+out_vertex	lib/pacer/wrappers/edge_wrapper.rb	/^    def out_vertex(extensions = nil)$/;"	f	class:Pacer
+pages	lib/pacer/route/mixin/route_operations.rb	/^    def pages(elements_per_page = 1000)$/;"	f	class:Pacer.RouteOperations
+parsed	lib/pacer/filter/where_filter.rb	/^      def parsed$/;"	f	class:Pacer.Filter.WhereFilter
+path	lib/pacer/utils/trie.rb	/^      def path$/;"	f	class:Pacer.Vertex.find_partial
+paths	lib/pacer/transform/path.rb	/^      def paths(*exts)$/;"	f	class:Pacer.Core.Route
+people	spec/pacer/filter/future_filter_spec.rb	/^      def people$/;"	f
+people	spec/tackle/tinkerpop_graph_mixins.rb	/^      def people$/;"	f	class:TP.Project.Route
+pipe	lib/pacer/core/route.rb	/^      def pipe$/;"	f	class:Pacer.Core
+pipe	lib/pacer/filter/where_filter/node_visitor.rb	/^          def pipe; end$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Value
+pipe_args=	lib/pacer/core/route.rb	/^      def pipe_args=(args)$/;"	f	class:Pacer.Core
+pipe_source	lib/pacer/core/route.rb	/^      def pipe_source$/;"	f	class:Pacer.Core
+pipe_source	lib/pacer/transform/cap.rb	/^      def pipe_source$/;"	f	class:Pacer.Transform.Cap
+pipeline	lib/pacer/route.rb	/^      def pipeline(route)$/;"	f	class:Pacer.Route
+prepare_aggregate_pipe	lib/pacer/transform/join.rb	/^        def prepare_aggregate_pipe(from_pipe, to_pipe)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+prepare_state	lib/pacer/pipe/is_unique_pipe.rb	/^    def prepare_state$/;"	f	class:Pacer.IsUniquePipe
+prev_song	samples/grateful_dead.rb	/^      def prev_song(arg = nil, args = nil)$/;"	f	class:GD.Song.Route
+process	lib/pacer/transform/process.rb	/^      def process(opts = {}, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+processNextStart	lib/pacer/pipe/block_filter_pipe.rb	/^    def processNextStart()$/;"	f	class:Pacer.BlockFilterPipe
+processNextStart	lib/pacer/pipe/cross_product_transform_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.CrossProductTransformPipe
+processNextStart	lib/pacer/pipe/edges_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.EdgesPipe
+processNextStart	lib/pacer/pipe/enumerable_pipe.rb	/^    def processNextStart()$/;"	f	class:Pacer.EnumerablePipe
+processNextStart	lib/pacer/pipe/expandable_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.ExpandablePipe
+processNextStart	lib/pacer/pipe/id_collection_filter_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.IdCollectionFilterPipe
+processNextStart	lib/pacer/pipe/is_empty_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.IsEmptyPipe
+processNextStart	lib/pacer/pipe/is_unique_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.IsUniquePipe
+processNextStart	lib/pacer/pipe/label_collection_filter_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.LabelCollectionFilterPipe
+processNextStart	lib/pacer/pipe/label_prefix_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.LabelPrefixPipe
+processNextStart	lib/pacer/pipe/loop_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.LoopPipe
+processNextStart	lib/pacer/pipe/never_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.NeverPipe
+processNextStart	lib/pacer/pipe/path_wrapping_pipe.rb	/^      def processNextStart$/;"	f	class:Pacer.Pipes.PathWrappingPipe
+processNextStart	lib/pacer/pipe/process_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.ProcessPipe
+processNextStart	lib/pacer/pipe/property_comparison_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.PropertyComparisonFilterPipe
+processNextStart	lib/pacer/pipe/simple_visitor_pipe.rb	/^      def processNextStart$/;"	f	class:Pacer.Pipes.SimpleVisitorPipe
+processNextStart	lib/pacer/pipe/stream_sort_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.StreamSortPipe
+processNextStart	lib/pacer/pipe/stream_uniq_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.StreamUniqPipe
+processNextStart	lib/pacer/pipe/type_filter_pipe.rb	/^    def processNextStart()$/;"	f	class:Pacer.TypeFilterPipe
+processNextStart	lib/pacer/pipe/unary_transform_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.UnaryTransformPipe
+processNextStart	lib/pacer/pipe/unwrapping_pipe.rb	/^      def processNextStart$/;"	f	class:Pacer.Pipes.UnwrappingPipe
+processNextStart	lib/pacer/pipe/vertices_pipe.rb	/^    def processNextStart$/;"	f	class:Pacer.VerticesPipe
+processNextStart	lib/pacer/pipe/visitor_pipe.rb	/^      def processNextStart$/;"	f	class:Pacer.Pipes.VisitorPipe
+processNextStart	lib/pacer/pipe/wrapping_pipe.rb	/^      def processNextStart$/;"	f	class:Pacer.Pipes.WrappingPipe
+processNextStart	lib/pacer/side_effect/as.rb	/^        def processNextStart$/;"	f	class:Pacer.SideEffect.As.AsPipe
+processNextStart	lib/pacer/transform/join.rb	/^        def processNextStart$/;"	f	class:Pacer.Transform.Join.CombinePipe
+processNextStart	lib/pacer/transform/sort_section.rb	/^        def processNextStart$/;"	f	class:Pacer.Transform.SortSection.SortSectionPipe
+projects	spec/tackle/tinkerpop_graph_mixins.rb	/^      def projects$/;"	f	class:TP.Coder.Route
+projects	spec/tackle/tinkerpop_graph_mixins.rb	/^      def projects$/;"	f	class:TP.Person.Route
+properties	lib/pacer/core/graph/element_route.rb	/^    def properties$/;"	f	class:Pacer.ElementRoute
+properties	lib/pacer/wrappers/element_wrapper.rb	/^    def properties$/;"	f
+properties=	lib/pacer/wrappers/element_wrapper.rb	/^    def properties=(props)$/;"	f
+property?	lib/pacer/core/graph/element_route.rb	/^    def property?(name)$/;"	f	class:Pacer.ElementRoute
+property_filter	lib/pacer/filter/property_filter.rb	/^      def property_filter(base, filters, block)$/;"	f	class:Pacer.Route
+property_filter_before	lib/pacer/filter/property_filter.rb	/^      def property_filter_before(base, filters, block)$/;"	f	class:Pacer.Route
+property_keys	lib/pacer/wrappers/element_wrapper.rb	/^    def property_keys$/;"	f
+property_variations	lib/pacer/utils/graph_analysis.rb	/^          def property_variations$/;"	f	class:Pacer.Utils.Vertices.Route.Edges.Route
+property_variations	lib/pacer/utils/graph_analysis.rb	/^          def property_variations$/;"	f	class:Pacer.Utils.Vertices.Route.out_edge_types.in_edge_types
+property_variations	lib/pacer/utils/graph_analysis.rb	/^        def property_variations(result, node)$/;"	f	class:Pacer.Utils.Route
+put	lib/pacer/wrappers/index_wrapper.rb	/^    def put(key, value, element)$/;"	f	class:Pacer.IndexWrapper
+r	spec/pacer/core/graph/element_route_spec.rb	/^      def r$/;"	f
+random	lib/pacer/filter/random_filter.rb	/^      def random(bias = 0.5)$/;"	f	class:Pacer.Core.Route
+range	lib/pacer/filter/range_filter.rb	/^      def range$/;"	f	class:Pacer.Filter.RangeFilter
+range	lib/pacer/filter/range_filter.rb	/^      def range(from, to)$/;"	f	class:Pacer.Routes.RouteOperations
+range=	lib/pacer/filter/range_filter.rb	/^      def range=(range)$/;"	f	class:Pacer.Filter.RangeFilter
+reject	lib/pacer/filter/block_filter.rb	/^      def reject(&block)$/;"	f	class:Pacer.Routes.RouteOperations
+reload!	lib/pacer.rb	/^    def reload!$/;"	f	class:Pacer
+reload_time	lib/pacer.rb	/^    def reload_time$/;"	f	class:Pacer
+removeEdge	lib/pacer/blueprints/ruby_graph.rb	/^    def removeEdge(edge)$/;"	f	class:Pacer.RubyGraph
+removeProperty	lib/pacer/blueprints/multi_graph.rb	/^    def removeProperty(key)$/;"	f	class:Pacer.MultiVertex
+removeProperty	lib/pacer/blueprints/ruby_graph.rb	/^    def removeProperty(key)$/;"	f	class:Pacer.RubyElement
+removeVertex	lib/pacer/blueprints/ruby_graph.rb	/^    def removeVertex(vertex)$/;"	f	class:Pacer.RubyGraph
+remove_edge	lib/pacer/graph/pacer_graph.rb	/^    def remove_edge(edge)$/;"	f	class:Pacer.PacerGraph
+remove_vertex	lib/pacer/graph/pacer_graph.rb	/^    def remove_vertex(vertex)$/;"	f	class:Pacer.PacerGraph
+reopen	lib/pacer/graph/pacer_graph.rb	/^    def reopen$/;"	f	class:Pacer.PacerGraph
+repeat	lib/pacer/filter/loop_filter.rb	/^      def repeat(arg, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+reset	lib/pacer/pipe/blackbox_pipeline.rb	/^    def reset$/;"	f	class:Pacer.BlackboxPipeline
+reset	lib/pacer/pipe/edges_pipe.rb	/^    def reset$/;"	f	class:Pacer.EdgesPipe
+reset	lib/pacer/pipe/is_empty_pipe.rb	/^    def reset$/;"	f	class:Pacer.IsEmptyPipe
+reset	lib/pacer/pipe/is_unique_pipe.rb	/^    def reset$/;"	f	class:Pacer.IsUniquePipe
+reset	lib/pacer/pipe/ruby_pipe.rb	/^    def reset$/;"	f	class:Pacer.RubyPipe
+reset	lib/pacer/pipe/simple_visitor_pipe.rb	/^      def reset$/;"	f	class:Pacer.Pipes.SimpleVisitorPipe
+reset	lib/pacer/pipe/vertices_pipe.rb	/^    def reset$/;"	f	class:Pacer.VerticesPipe
+reset	lib/pacer/pipe/visitor_pipe.rb	/^      def reset$/;"	f	class:Pacer.Pipes.VisitorPipe
+reset	lib/pacer/side_effect/aggregate.rb	/^        def reset$/;"	f	class:Pacer.SideEffect.Aggregate.ElementSet
+reset	lib/pacer/side_effect/as.rb	/^        def reset$/;"	f	class:Pacer.SideEffect.As.SingleElementSet
+reset_properties	lib/pacer/filter/property_filter/edge_filters.rb	/^        def reset_properties$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+reset_properties	lib/pacer/filter/property_filter/filters.rb	/^        def reset_properties$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+result	lib/pacer/core/graph/element_route.rb	/^    def result(name = nil)$/;"	f	class:Pacer.ElementRoute
+result	lib/pacer/core/graph/graph_route.rb	/^    def result$/;"	f	class:Pacer.GraphRoute
+result	lib/pacer/core/graph/mixed_route.rb	/^    def result(name = nil)$/;"	f	class:Pacer.MixedRoute
+result	lib/pacer/wrappers/element_wrapper.rb	/^    def result(name = nil)$/;"	f
+rg	spec/support/graph_runner.rb	/^    def rg(*args)$/;"	f	class:RSpec.Stubs
+rg	spec/support/graph_runner.rb	/^    def rg(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.RubyGraph
+root?	lib/pacer/core/graph/graph_route.rb	/^    def root?$/;"	f	class:Pacer.GraphRoute
+root?	lib/pacer/core/route.rb	/^      def root?$/;"	f	class:Pacer.Core
+root_cause	lib/pacer/support/native_exception.rb	/^  def root_cause$/;"	f	class:NativeException
+route	lib/pacer/core/route.rb	/^      def route$/;"	f	class:Pacer.Core
+route	spec/tackle/tinkerpop_graph_mixins.rb	/^    def self.route(base)$/;"	F	class:TP.Pangloss
+route_after	lib/pacer/core/route.rb	/^      def route_after(route)$/;"	f	class:Pacer.Core
+route_conditions	lib/pacer/utils/graph_analysis.rb	/^        def self.route_conditions$/;"	F	class:Pacer.Utils.Vertices
+route_conditions	lib/pacer/utils/graph_analysis.rb	/^        def self.route_conditions$/;"	F	class:Pacer.Utils.Vertices.Route.Edges
+route_conditions	lib/pacer/utils/graph_analysis.rb	/^        def self.route_conditions$/;"	F	class:Pacer.Utils.Vertices.Route.Properties
+route_conditions	lib/pacer/utils/trie.rb	/^      def route_conditions$/;"	f	class:Pacer.Trie
+route_conditions	lib/pacer/wrappers/element_wrapper.rb	/^      def route_conditions$/;"	f	class:Pacer.ElementWrapper
+route_conditions	samples/grateful_dead.rb	/^    def self.route_conditions$/;"	F	class:GD.Artist
+route_conditions	samples/grateful_dead.rb	/^    def self.route_conditions$/;"	F	class:GD.Song
+route_conditions	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^    def self.route_conditions$/;"	F	class:VertexWrapperSpec.IsRuby
+route_conditions	spec/pacer/wrapper/vertex_wrapper_spec.rb	/^    def self.route_conditions$/;"	F	class:VertexWrapperSpec.Project
+route_conditions	spec/tackle/tinkerpop_graph_mixins.rb	/^    def self.route_conditions$/;"	F	class:TP.Person
+route_conditions	spec/tackle/tinkerpop_graph_mixins.rb	/^    def self.route_conditions$/;"	F	class:TP.Project
+route_conditions	spec/tackle/tinkerpop_graph_mixins.rb	/^    def self.route_conditions$/;"	F	class:TP.Wrote
+route_labels	lib/pacer/core/graph/vertices_route.rb	/^    def route_labels$/;"	f	class:Pacer.VerticesRoute
+route_mixin_method	spec/tackle/simple_mixin.rb	/^      def route_mixin_method$/;"	f	class:Tackle.SimpleMixin.Route
+ruby_graph	spec/support/graph_runner.rb	/^    def ruby_graph$/;"	f	class:RSpec.RubyGraph
+ruby_graph2	spec/support/graph_runner.rb	/^    def ruby_graph2$/;"	f	class:RSpec.RubyGraph
+run_all	spec/spec_helper.rb	/^  def self.run_all(reporter=nil)$/;"	F	class:RSpec
+sanitize_properties	lib/pacer/graph/pacer_graph.rb	/^      def sanitize_properties(props)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Encoding
+sanitize_properties	lib/pacer/graph/simple_encoder.rb	/^    def self.sanitize_properties(props)$/;"	F	class:Pacer.SimpleEncoder
+sanitize_properties	lib/pacer/graph/yaml_encoder.rb	/^    def self.sanitize_properties(props)$/;"	F	class:Pacer.YamlEncoder
+scatter	lib/pacer/transform/scatter.rb	/^      def scatter(args = {})$/;"	f	class:Pacer.Core.Route
+section	lib/pacer/visitors/section.rb	/^      def section(section_name = nil, visitor_target = nil)$/;"	f	class:Pacer.Routes.RouteOperations
+section=	lib/pacer/visitors/visits_section.rb	/^      def section=(section)$/;"	f	class:Pacer.Visitors.VisitsSection
+section_visitor	lib/pacer/visitors/section.rb	/^      def section_visitor$/;"	f	class:Pacer.Visitors.Section
+section_visitor	lib/pacer/visitors/visits_section.rb	/^      def section_visitor$/;"	f	class:Pacer.Visitors.VisitsSection
+section_visitor_target	lib/pacer/visitors/visits_section.rb	/^      def section_visitor_target$/;"	f	class:Pacer.Visitors.VisitsSection
+select	lib/pacer/filter/block_filter.rb	/^      def select(&block)$/;"	f	class:Pacer.Routes.RouteOperations
+setKeyPipe	lib/pacer/transform/join.rb	/^        def setKeyPipe(from_pipe, to_pipe)$/;"	f	class:Pacer.Transform.Join.CombinePipe
+setProperty	lib/pacer/blueprints/multi_graph.rb	/^    def setProperty(key, value)$/;"	f	class:Pacer.MultiVertex
+setProperty	lib/pacer/blueprints/ruby_graph.rb	/^    def setProperty(key, value)$/;"	f	class:Pacer.RubyElement
+setSiloSize	lib/pacer/pipe/stream_sort_pipe.rb	/^    def setSiloSize(n)$/;"	f	class:Pacer.StreamSortPipe
+setStarts	lib/pacer/pipe/blackbox_pipeline.rb	/^    def setStarts(pipe)$/;"	f	class:Pacer.BlackboxPipeline
+setStarts	lib/pacer/pipe/edges_pipe.rb	/^    def setStarts(starts)$/;"	f	class:Pacer.EdgesPipe
+setStarts	lib/pacer/pipe/loop_pipe.rb	/^    def setStarts(starts)$/;"	f	class:Pacer.LoopPipe
+setStarts	lib/pacer/pipe/ruby_pipe.rb	/^    def setStarts(starts)$/;"	f	class:Pacer.RubyPipe
+setStarts	lib/pacer/pipe/vertices_pipe.rb	/^    def setStarts(starts)$/;"	f	class:Pacer.VerticesPipe
+setStarts	lib/pacer/transform/sort_section.rb	/^        def setStarts(starts)$/;"	f	class:Pacer.Transform.SortSection.SortSectionPipe
+set_pipe_source	lib/pacer/core/route.rb	/^      def set_pipe_source(src)$/;"	f	class:Pacer.Core
+set_wrapper	lib/pacer/core/route.rb	/^      def set_wrapper(wrapper)$/;"	f	class:Pacer.Core
+shutdown	lib/pacer/blueprints/ruby_graph.rb	/^    def shutdown$/;"	f	class:Pacer.RubyGraph
+shutdown	lib/pacer/graph/pacer_graph.rb	/^    def shutdown$/;"	f	class:Pacer.PacerGraph
+side_effect	lib/pacer/core/side_effect.rb	/^      def side_effect$/;"	f	class:Pacer.Core.SideEffect
+side_effect_map	lib/pacer/function_resolver.rb	/^      def side_effect_map$/;"	f	class:Pacer.FunctionResolver
+side_effect_pipe	lib/pacer/transform/cap.rb	/^      def side_effect_pipe(end_pipe)$/;"	f	class:Pacer.Transform.Cap
+singers	samples/grateful_dead.rb	/^      def singers$/;"	f	class:GD.Artist.Route
+songwriters	samples/grateful_dead.rb	/^      def songwriters$/;"	f	class:GD.Artist.Route
+sort_section	lib/pacer/transform/sort_section.rb	/^      def sort_section(section = nil, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+source=	lib/pacer/core/route.rb	/^      def source=(source)$/;"	f	class:Pacer.Core
+source_iterator	lib/pacer/core/route.rb	/^      def source_iterator$/;"	f	class:Pacer.Core
+source_iterator	lib/pacer/filter/index_filter.rb	/^      def source_iterator$/;"	f	class:Pacer.Filter.IndexFilter
+source_iterator	lib/pacer/graph/pacer_graph.rb	/^    def source_iterator$/;"	f	class:Pacer.PacerGraph
+split_labels_and_extensions	lib/pacer/wrappers/vertex_wrapper.rb	/^    def split_labels_and_extensions(mixed)$/;"	f	class:Pacer
+start_transaction!	lib/pacer/graph/graph_transactions_mixin.rb	/^    def start_transaction!$/;"	f	class:Pacer.GraphTransactionsMixin
+stream_sort	lib/pacer/transform/stream_sort.rb	/^    def stream_sort(buffer = 1000, silo = 100)$/;"	f	class:Pacer.Routes
+stream_uniq	lib/pacer/transform/stream_uniq.rb	/^    def stream_uniq(buffer = 1000)$/;"	f	class:Pacer.Routes
+structure	lib/pacer/utils/graph_analysis.rb	/^        def structure(graph, type_field = :type)$/;"	f	class:Pacer.Utils.GraphAnalysis
+subgraph	lib/pacer/core/graph/element_route.rb	/^    def subgraph opts = {}$/;"	f	class:Pacer.ElementRoute
+subgraph	lib/pacer/transform/path.rb	/^        def subgraph(target_graph = nil, opts = {})$/;"	f	class:Pacer.Transform.Path.Methods
+sung	samples/grateful_dead.rb	/^      def sung$/;"	f	class:GD.Artist.Route
+sung	samples/grateful_dead.rb	/^      def sung(*args)$/;"	f	class:GD.Song.Route
+symbolize_module_name	lib/pacer/function_resolver.rb	/^      def symbolize_module_name(name)$/;"	f	class:Pacer.FunctionResolver
+tg	lib/pacer/blueprints/tg.rb	/^  def self.tg(path = nil)$/;"	F	class:Pacer
+tg	spec/support/graph_runner.rb	/^    def tg(*args)$/;"	f	class:RSpec.Stubs
+tg	spec/support/graph_runner.rb	/^    def tg(usage_style = :read_write, indices = true, &block)$/;"	f	class:RSpec.Tg
+threadlocal_graph_info	lib/pacer/graph/graph_transactions_mixin.rb	/^    def threadlocal_graph_info$/;"	f	class:Pacer.GraphTransactionsMixin
+to_h	lib/pacer/core/graph/edges_route.rb	/^    def to_h$/;"	f	class:Pacer.EdgesRoute
+to_h	lib/pacer/side_effect/group_count.rb	/^      def to_h$/;"	f	class:Pacer.SideEffect.GroupCount
+to_hash_map	lib/pacer/support/array_list.rb	/^  def to_hash_map$/;"	f	class:Java
+to_hash_map	lib/pacer/support/hash.rb	/^  def to_hash_map$/;"	f	class:Hash
+to_hashset	lib/pacer/support/enumerable.rb	/^  def to_hashset(method = nil, *args)$/;"	f
+to_iterable	lib/pacer/support/enumerable.rb	/^  def to_iterable$/;"	f
+to_list	lib/pacer/support/enumerable.rb	/^  def to_list$/;"	f
+to_route	lib/pacer/support/enumerable.rb	/^  def to_route(opts = {})$/;"	f
+to_route	lib/pacer/support/proc.rb	/^  def to_route(opts = {})$/;"	f	class:Proc
+to_s	lib/pacer/blueprints/multi_graph.rb	/^    def to_s$/;"	f	class:Pacer.MultiVertex
+to_s	lib/pacer/filter/property_filter/edge_filters.rb	/^        def to_s$/;"	f	class:Pacer.Filter.PropertyFilter.EdgeFilters
+to_s	lib/pacer/filter/property_filter/filters.rb	/^        def to_s$/;"	f	class:Pacer.Filter.PropertyFilter.Filters
+to_s	lib/pacer/pipe/blackbox_pipeline.rb	/^    def to_s$/;"	f	class:Pacer.BlackboxPipeline
+transaction	lib/pacer/graph/graph_transactions_mixin.rb	/^    def transaction$/;"	f	class:Pacer.GraphTransactionsMixin
+transform_map	lib/pacer/function_resolver.rb	/^      def transform_map$/;"	f	class:Pacer.FunctionResolver
+transpose	lib/pacer/transform/path.rb	/^        def transpose$/;"	f	class:Pacer.Transform.Path.Methods
+trie	lib/pacer/utils/trie.rb	/^      def trie(graph, name)$/;"	f	class:Pacer.Trie
+tsort	lib/pacer/utils/tsort.rb	/^        def tsort$/;"	f	class:Pacer.Utils.TSort.Route
+tsort_dependencies	lib/pacer/utils/tsort.rb	/^        def tsort_dependencies(tsort_anon_mod = nil)$/;"	f	class:Pacer.Utils.TSort.Vertex
+tsort_each_child	lib/pacer/utils/tsort.rb	/^        def tsort_each_child(node)$/;"	f	class:Pacer.Utils.TSort.Route
+tsort_each_node	lib/pacer/utils/tsort.rb	/^        def tsort_each_node$/;"	f	class:Pacer.Utils.TSort.Route
+tsort_each_node	lib/pacer/utils/tsort.rb	/^        def tsort_each_node$/;"	f	class:Pacer.Utils.TSort.Vertex
+type_from_source?	lib/pacer/route.rb	/^    def type_from_source?(source, args)$/;"	f	class:Pacer
+type_modules	lib/pacer/route.rb	/^    def type_modules(source, args)$/;"	f	class:Pacer
+uniq	lib/pacer/filter/uniq_filter.rb	/^      def uniq(*filters, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+unique?	lib/pacer/pipe/is_unique_pipe.rb	/^    def unique?$/;"	f	class:Pacer.IsUniquePipe
+unique?	lib/pacer/side_effect/is_unique.rb	/^      def unique?$/;"	f	class:Pacer.Routes.RouteOperations
+unique?	lib/pacer/side_effect/is_unique.rb	/^      def unique?$/;"	f	class:Pacer.SideEffect.IsUnique
+unless	lib/pacer/filter/where_filter.rb	/^      def unless(str, values = {})$/;"	f	class:Pacer.Routes.RouteOperations
+unravel	lib/pacer/support/native_exception.rb	/^  def unravel$/;"	f	class:NativeException
+use_graph?	spec/support/graph_runner.rb	/^  def use_graph?(name)$/;"	f	class:RSpec
+use_grateful_dead_data	spec/spec_helper.rb	/^def use_grateful_dead_data(usage_style = :read_write)$/;"	f
+use_pacer_graphml_data	spec/spec_helper.rb	/^def use_pacer_graphml_data(usage_style = :read_write)$/;"	f
+use_simple_graph_data	spec/spec_helper.rb	/^def use_simple_graph_data$/;"	f
+use_transactions?	spec/support/use_transactions.rb	/^        def use_transactions?$/;"	f	class:RSpec.Core.Example.ProcsyTransactions
+v	lib/pacer/core/graph/element_route.rb	/^    def v(*filters)$/;"	f	class:Pacer.ElementRoute
+v	lib/pacer/core/graph/graph_index_route.rb	/^    def v(*filters, &block)$/;"	f	class:Pacer.GraphIndexRoute
+v	lib/pacer/core/graph/graph_route.rb	/^    def v(*filters, &block)$/;"	f	class:Pacer.GraphRoute
+v	lib/pacer/core/graph/mixed_route.rb	/^    def v(*args, &block)$/;"	f	class:Pacer.MixedRoute
+v	lib/pacer/core/graph/vertices_route.rb	/^    def v(*filters, &block)$/;"	f	class:Pacer.VerticesRoute
+values!	lib/pacer/filter/where_filter/node_visitor.rb	/^          def values!$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor.Value
+vars	lib/pacer/core/route.rb	/^      def vars$/;"	f	class:Pacer.Core
+vars	lib/pacer/extensions/block_filter_element.rb	/^        def vars$/;"	f	class:Pacer.Extensions.BlockFilterElement.Route
+verbose=	lib/pacer.rb	/^    def verbose=(v)$/;"	f	class:Pacer
+verbose?	lib/pacer.rb	/^    def verbose?$/;"	f	class:Pacer
+vertex	lib/pacer/graph/pacer_graph.rb	/^    def vertex(id, *modules)$/;"	f	class:Pacer.PacerGraph
+vertex?	lib/pacer.rb	/^    def vertex?(element)$/;"	f	class:Pacer
+vertex_class	lib/pacer/blueprints/multi_graph.rb	/^    def vertex_class$/;"	f	class:Pacer.MultiGraph
+vertex_class	lib/pacer/blueprints/ruby_graph.rb	/^    def vertex_class$/;"	f	class:Pacer.RubyGraph
+vertex_mixin_method	spec/tackle/simple_mixin.rb	/^      def vertex_mixin_method$/;"	f	class:Tackle.SimpleMixin.Vertex
+vertex_name	lib/pacer/graph/pacer_graph.rb	/^      def vertex_name$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Naming
+vertex_name=	lib/pacer/graph/pacer_graph.rb	/^      def vertex_name=(a_proc)$/;"	f	class:Pacer.PacerGraph.load_vertices.load_edges.Naming
+vertex_route?	lib/pacer.rb	/^    def vertex_route?(obj)$/;"	f	class:Pacer
+vertex_wrapper	lib/pacer/wrappers.rb	/^  def self.vertex_wrapper(*exts)$/;"	F	class:Pacer
+vertices	lib/pacer/blueprints/multi_graph.rb	/^    def vertices$/;"	f	class:Pacer.MultiVertex
+vertices_route?	lib/pacer/route/mixin/route_operations.rb	/^    def vertices_route?$/;"	f	class:Pacer.RouteOperations
+visitAndNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitAndNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitArrayNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitArrayNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitBignumNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitBignumNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitCallNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitCallNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitFalseNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitFalseNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitFixnumNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitFixnumNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitFloatNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitFloatNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitHashNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitHashNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitLocalAsgnNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitLocalAsgnNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitLocalVarNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitLocalVarNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitNewlineNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitNewlineNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitNilNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitNilNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitOrNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitOrNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitRootNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitRootNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitStrNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitStrNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitSymbolNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitSymbolNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitTrueNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitTrueNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitVCallNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitVCallNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitXStrNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitXStrNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitYieldNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitYieldNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitZArrayNode	lib/pacer/filter/where_filter/node_visitor.rb	/^        def visitZArrayNode(node)$/;"	f	class:Pacer.Filter.WhereFilter.NodeVisitor
+visitor	lib/pacer/side_effect/visitor.rb	/^      def visitor(visitor)$/;"	f	class:Pacer.Routes.RouteOperations
+visitor=	lib/pacer/pipe/simple_visitor_pipe.rb	/^      def visitor=(visitor)$/;"	f	class:Pacer.Pipes.SimpleVisitorPipe
+visitor=	lib/pacer/pipe/visitor_pipe.rb	/^      def visitor=(visitor)$/;"	f	class:Pacer.Pipes.VisitorPipe
+visitor=	lib/pacer/side_effect/visitor.rb	/^      def visitor=(v)$/;"	f	class:Pacer.SideEffect.Visitor
+visitor_count	lib/pacer/visitors/section.rb	/^      def visitor_count$/;"	f	class:Pacer.Visitors.Section
+visitor_map	lib/pacer/function_resolver.rb	/^      def visitor_map$/;"	f	class:Pacer.FunctionResolver
+where	lib/pacer/filter/where_filter.rb	/^      def where(str, values = {}, *more, &block)$/;"	f	class:Pacer.Routes.RouteOperations
+where_statement=	lib/pacer/filter/where_filter.rb	/^      def where_statement=(str)$/;"	f	class:Pacer.Filter.WhereFilter
+while	lib/pacer/filter/loop_filter.rb	/^      def while(&block)$/;"	f	class:Pacer.Filter.LoopFilter
+will_visit!	lib/pacer/visitors/section.rb	/^      def will_visit!$/;"	f	class:Pacer.Visitors.Section
+with=	lib/pacer/transform/cap.rb	/^      def with=(route)$/;"	f	class:Pacer.Transform.Cap
+word	lib/pacer/utils/trie.rb	/^      def word$/;"	f	class:Pacer.Vertex.find_partial.path
+wrap	lib/pacer/wrappers/element_wrapper.rb	/^      def wrap(element, exts)$/;"	f	class:Pacer.ElementWrapper
+wrap_path	lib/pacer/wrappers/wrapping_pipe_function.rb	/^      def wrap_path(path)$/;"	f	class:Pacer.Wrappers.WrappingPipeFunction
+wrapper	lib/pacer/core/route.rb	/^      def wrapper$/;"	f	class:Pacer.Core
+wrapper	lib/pacer/route.rb	/^    def wrapper(source, args)$/;"	f	class:Pacer
+wrapper	lib/pacer/wrappers/index_wrapper.rb	/^    def wrapper$/;"	f	class:Pacer.IndexWrapper
+wrapper	lib/pacer/wrappers/wrapper_selector.rb	/^    def wrapper(element)$/;"	f	class:Pacer.WrapperSelector
+wrapper=	lib/pacer/pipe/wrapping_pipe.rb	/^      def wrapper=(w)$/;"	f	class:Pacer.Pipes.WrappingPipe
+wrapper_for	lib/pacer/wrappers/edge_wrapper.rb	/^      def wrapper_for(exts)$/;"	f	class:Pacer.EdgeWrapper
+wrapper_for	lib/pacer/wrappers/vertex_wrapper.rb	/^      def wrapper_for(exts)$/;"	f	class:Pacer.VertexWrapper
+writer	samples/grateful_dead.rb	/^      def writer(*args)$/;"	f	class:GD.Song.Route
+writer	spec/tackle/tinkerpop_graph_mixins.rb	/^      def writer$/;"	f	class:TP.Wrote.Edge
+written	samples/grateful_dead.rb	/^      def written$/;"	f	class:GD.Artist.Route
+wrote_songs	spec/pacer/filter/future_filter_spec.rb	/^      def wrote_songs$/;"	f
+xml	lib/pacer/utils/y_files.rb	/^      def xml(graph)$/;"	f	class:Pacer.Utils.YFilesExport

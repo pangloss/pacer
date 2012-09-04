@@ -60,15 +60,15 @@ module Enumerable
     else
       based_on = opts[:based_on]
       if opts[:unwrap] or based_on and (based_on.wrapper or based_on.extensions.any?) and based_on.is_a? Pacer::Core::Graph::ElementRoute
-        source = Pacer::Route.new(:source => self, :element_type => :object).map { |e| e.element }
+        source = Pacer::RouteBuilder.current.chain(self, :element_type => :object).map { |e| e.element }
       else
         source = self
       end
       if based_on
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info, :route_name => opts[:route_name])
+        Pacer::RouteBuilder.current.chain(source, :element_type => opts.fetch(:element_type, based_on.element_type), :graph => based_on.graph, :wrapper => based_on.wrapper, :extensions => based_on.extensions, :info => based_on.info, :route_name => opts[:route_name])
       else
         graph = opts[:graph] if opts[:graph]
-        Pacer::Route.new(:source => source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info], :route_name => opts[:route_name])
+        Pacer::RouteBuilder.current.chain(source, :element_type => opts.fetch(:element_type, :object), :graph => graph, :wrapper => opts[:wrapper], :extensions => opts[:extensions], :info => opts[:info], :route_name => opts[:route_name])
       end
     end
   end

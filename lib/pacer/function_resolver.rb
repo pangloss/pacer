@@ -12,7 +12,7 @@ module Pacer
             return [function, extension] if function
           end
         end
-        nil
+        []
       end
 
       def lookup_path

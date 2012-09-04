@@ -3,6 +3,9 @@ module Pacer::Core::Graph
   # Basic methods for routes shared between all route types that emit
   # routes: {VerticesRoute}, {EdgesRoute} and {MixedRoute}
   module ElementRoute
+    def graph
+      config[:graph]
+    end
 
     # Attach a filter to the current route.
     #
@@ -152,7 +155,7 @@ module Pacer::Core::Graph
     protected
 
     def configure_iterator(iter)
-      pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, @extensions
+      pipe = Pacer::Pipes::WrappingPipe.new graph, element_type, extensions
       pipe.wrapper = wrapper if wrapper
       pipe.setStarts iter
       pipe
