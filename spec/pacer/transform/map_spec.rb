@@ -12,9 +12,6 @@ shared_examples_for '#map' do
 
   describe 'with extensions' do
     let(:extended) { source.add_extensions([Tackle::SimpleMixin]) }
-    it 'should be the same type' do
-      extended.should be_a source.class
-    end
 
     subject { extended.map { |v| v.extensions } }
 
@@ -24,14 +21,14 @@ shared_examples_for '#map' do
     context 'with vertex result type' do
       subject { extended.map(element_type: :vertex) { |v| v } }
       its(:element_type) { should == :vertex }
-      its(:extensions) { should == Set[] }
+      its(:extensions) { should == [] }
     end
 
     context 'with extended vertex result type' do
-      let(:exts) { Set[] }
+      let(:exts) { [] }
       subject { extended.map(element_type: :vertex, extensions: TP::Person) { |v| exts << v.extensions; v } }
       its(:element_type) { should == :vertex }
-      its(:extensions) { should == Set[TP::Person] }
+      its(:extensions) { should == [TP::Person] }
       it 'should use the source - not the result - extension in the block' do
         v = subject.first
         v.extensions.should == [TP::Person]

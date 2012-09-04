@@ -15,6 +15,11 @@ module Pacer
         # into a route.
         def dependencies(&block)
           anon_mod = Module.new
+          class << anon_mod
+            def inspect
+              '<TSort anon mixin module>'
+            end
+          end
           anon_mod.const_set :Route, TSort::Route
           anon_mod.const_set :Vertex, Module.new
           anon_mod::Vertex.const_set :DependenciesBlock, block
@@ -23,7 +28,7 @@ module Pacer
               target.const_set :DependenciesBlock, self::DependenciesBlock
             end
           end
-          route = v(*(extensions - [TSort] + [anon_mod]))
+          route = v.add_extensions [TSort, anon_mod]
           route.tsort_anon_mod = anon_mod
           route
         end
@@ -54,7 +59,7 @@ module Pacer
 
         def tsort_dependencies(tsort_anon_mod = nil)
           if self.class.const_defined? :DependenciesBlock
-            self.class::DependenciesBlock.call(self).add_extension(tsort_anon_mod)
+            self.class::DependenciesBlock.call(self).add_extensions([tsort_anon_mod])
           else
             self.in
           end
