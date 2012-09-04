@@ -2,14 +2,12 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
   module VerticesRoute
-    import com.tinkerpop.pipes.transform.OutEdgesPipe
-    import com.tinkerpop.pipes.transform.OutPipe
-    import com.tinkerpop.pipes.transform.InEdgesPipe
-    import com.tinkerpop.pipes.transform.InPipe
-    import com.tinkerpop.pipes.transform.BothEdgesPipe
-    import com.tinkerpop.pipes.transform.BothPipe
-
-    include ElementRoute
+    import com.tinkerpop.gremlin.pipes.transform.OutEdgesPipe
+    import com.tinkerpop.gremlin.pipes.transform.OutPipe
+    import com.tinkerpop.gremlin.pipes.transform.InEdgesPipe
+    import com.tinkerpop.gremlin.pipes.transform.InPipe
+    import com.tinkerpop.gremlin.pipes.transform.BothEdgesPipe
+    import com.tinkerpop.gremlin.pipes.transform.BothPipe
 
     # Extends the route with out edges from this route's matching vertices.
     #
@@ -17,7 +15,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def out_e(*filters, &block)
       filters = extract_labels(filters)
@@ -34,7 +32,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def out(*filters, &block)
       filters = extract_labels(filters)
@@ -51,7 +49,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def in_e(*filters, &block)
       filters = extract_labels(filters)
@@ -68,7 +66,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def in(*filters, &block)
       filters = extract_labels(filters)
@@ -85,7 +83,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def both_e(*filters, &block)
       filters = extract_labels(filters)
@@ -102,7 +100,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def both(*filters, &block)
       filters = extract_labels(filters)
@@ -119,7 +117,7 @@ module Pacer::Core::Graph
     #   If string(s) or symbol(s) are given, they will be treated as edge
     #   labels. Unlike other property filters which all must be matched, an
     #   edge will pass the filter if it matches any of the given labels.
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def v(*filters, &block)
       filter(*filters, &block)
@@ -130,7 +128,7 @@ module Pacer::Core::Graph
     # @return [element_type(:vertex)] The actual type varies based on
     # which graph is in use.
     def element_type
-      graph.element_type(:vertex)
+      :vertex
     end
 
     # Delete all matching vertices and all edges which link to this
@@ -172,16 +170,17 @@ module Pacer::Core::Graph
       has_props = !props.empty?
       edge_ids = []
       counter = 0
-      graph.managed_transactions do
-        graph.managed_transaction do
-          each do |from_v|
-            to_vertices.each do |to_v|
-              counter += 1
-              graph.managed_checkpoint if counter % graph.bulk_job_size == 0
-              begin
-                edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
-                edge_ids << edge.element_id
-              end
+      graph.transaction do |commit, rollback|
+        v.each do |from_v|
+          to_vertices.each do |to_v|
+            counter += 1
+            if counter == graph.bulk_job_size
+              commit.call
+              counter = 0
+            end
+            begin
+              edge = graph.create_edge(nil, from_v, to_v, label.to_s, props)
+              edge_ids << edge.element_id
             end
           end
         end
@@ -214,7 +213,7 @@ module Pacer::Core::Graph
 
     # TODO: move id_pipe_class into the element_type object
     def id_pipe_class
-      com.tinkerpop.pipes.transform.IdVertexPipe
+      com.tinkerpop.gremlin.pipes.transform.IdVertexPipe
     end
   end
 end

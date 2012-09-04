@@ -15,12 +15,6 @@ module Pacer::Pipes
 
     def next
       super
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     ensure
       @path = @next_path
       @metadata = @next_metadata
@@ -32,8 +26,8 @@ module Pacer::Pipes
       if @queue.isEmpty
         @next_metadata = nil
         r = @starts.next
-        if @starts.respond_to? :getPath
-          @next_path = @starts.getPath
+        if pathEnabled and @starts.respond_to? :getCurrentPath
+          @next_path = @starts.getCurrentPath
         else
           @next_path = java.util.ArrayList.new
         end
@@ -41,12 +35,6 @@ module Pacer::Pipes
       else
         element, @next_metadata, @next_path = @queue.remove
         element
-      end
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
       end
     end
 

@@ -1,8 +1,10 @@
 module Pacer
   class MultiGraph < RubyGraph
-    def element_class
-      RubyElement
+    def self.blank
+      PacerGraph.new SimpleEncoder, proc { MultiGraph.new }
     end
+
+    protected
 
     def vertex_class
       MultiVertex
@@ -15,7 +17,7 @@ module Pacer
 
 
   class MultiVertex < RubyVertex
-    import com.tinkerpop.pipes.util.MultiIterator
+    import com.tinkerpop.pipes.util.iterators.MultiIterator
 
     def initialize(*args)
       super
@@ -82,24 +84,12 @@ module Pacer
       super
     end
 
-    def getOutEdges(*labels)
+    def getEdges(direction, *labels)
       vs = vertices
       if vs.any?
         labels = extract_varargs_strings(labels)
         p = Pacer::Pipes::IdentityPipe.new
-        p.setStarts(MultiIterator.new super(*labels), *vs.map { |v| v.getOutEdges(*labels).iterator })
-        p
-      else
-        super
-      end
-    end
-
-    def getInEdges(*labels)
-      vs = vertices
-      if vs.any?
-        labels = extract_varargs_strings(labels)
-        p = Pacer::Pipes::IdentityPipe.new
-        p.setStarts MultiIterator.new super(*labels), *vs.map { |v| v.getInEdges(*labels).iterator }
+        p.setStarts(MultiIterator.new super, *vs.map { |v| v.getEdges(direction, *labels).iterator })
         p
       else
         super
@@ -115,7 +105,5 @@ module Pacer
     def to_s
       "m[#{ element_id }]"
     end
-
-    include VertexExtensions
   end
 end

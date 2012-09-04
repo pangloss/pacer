@@ -2,7 +2,7 @@ module Pacer
   module Routes
     module RouteOperations
       def map(opts = {}, &block)
-        chain_route({:transform => :map, :block => block, :element_type => :object}.merge(opts))
+        chain_route({:transform => :map, :block => block, :element_type => :object, :extensions => []}.merge(opts))
       end
     end
   end
@@ -14,7 +14,11 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = Pacer::Pipes::MapPipe.new(back, block)
+        # Must wrap based on parent pipe because the element in the block has
+        # not yet been affected by any of this block's transforms.
+        pf = Pacer::Wrappers::WrappingPipeFunction.new back || source, block
+        pf = Pacer::Wrappers::UnwrappingPipeFunction.new pf
+        pipe = com.tinkerpop.pipes.transform.TransformFunctionPipe.new pf
         pipe.setStarts end_pipe if end_pipe
         pipe
       end

@@ -9,7 +9,7 @@ module Pacer
         args = {
           :transform => :join,
           element_type: :vertex,
-          graph: options.fetch(:multi_graph, Pacer::MultiGraph.new),
+          graph: options.fetch(:multi_graph, Pacer::MultiGraph.blank),
           from_graph: graph
         }
         args[:multi_graph] = options[:multi_graph] if options[:multi_graph]
@@ -37,12 +37,13 @@ module Pacer
         include SideEffectPipe rescue nil # may raise exception on reload.
 
         attr_accessor :multi_graph, :current_keys, :current_values, :join_on
-        attr_reader :key_expando, :key_end, :values_pipes, :from_graph
+        attr_reader :key_expando, :key_end, :values_pipes, :from_graph, :wrapper
 
         def initialize(from_graph, multi_graph)
           super()
           @from_graph = from_graph
-          @multi_graph = multi_graph || Pacer::MultiGraph.new
+          @wrapper = Pacer::Wrappers::WrapperSelector.build
+          @multi_graph = multi_graph || Pacer::MultiGraph.blank
           @values_pipes = []
           @current_keys = []
           @current_values = []
@@ -65,30 +66,24 @@ module Pacer
         def processNextStart
           while true
             if current_keys.empty?
-              element = starts.next
+              element = wrapper.new starts.next
               element.graph = from_graph if element.respond_to? :graph
               self.current_keys = get_keys(element)
               self.current_values = get_values(element) unless current_keys.empty?
             else
               key = current_keys.removeFirst
               if key
-                combined = multi_graph.send(:getVertex, key) || multi_graph.send(:addVertex, key)
+                combined = multi_graph.vertex(key) || multi_graph.create_vertex(key)
               else
-                combined = multi_graph.send(:addVertex, nil)
+                combined = multi_graph.create_vertex
               end
               combined.join_on join_on if join_on
               combined[:key] = key
               current_values.each do |key, values|
-                combined.append_property_array key, values
+                combined.element.append_property_array key, values
               end
               return combined
             end
-          end
-        rescue NativeException => e
-          if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            raise e.cause
-          else
-            raise e
           end
         end
 
@@ -113,8 +108,13 @@ module Pacer
           pipe.reset
           expando.add element, ArrayList.new, nil
           array = pipe.next
-          array.each { |element| element.graph = from_graph if element.respond_to? :graph }
-          array
+          array.map do |element|
+            if element.is_a? Pacer::Element
+              element = wrapper.new element
+              element.graph = from_graph if element.respond_to? :graph
+            end
+            element
+          end
         end
 
         def prepare_aggregate_pipe(from_pipe, to_pipe)
@@ -182,4 +182,4 @@ module Pacer
     end
   end
 end
-    
+

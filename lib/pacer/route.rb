@@ -1,12 +1,155 @@
-[Pacer::Core::Route, Pacer::ElementMixin, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
+[Pacer::Core::Route, Pacer::Wrappers::ElementWrapper, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
   klass.class_eval %{
     def chain_route(args_hash)
-      Pacer::Route.new({ :back => self }.merge(args_hash))
+      Pacer::RouteBuilder.current.chain self, args_hash
     end
   }
 end
 
 module Pacer
+
+  class RouteBuilder
+    class << self
+      attr_writer :current
+
+      def current
+        @current ||= RouteBuilder.new
+      end
+    end
+
+    attr_reader :types
+
+    def initialize
+      @types = Hash.new do |h, type_def|
+        h[type_def] = Class.new(Route) do
+          type_def.each do |mods|
+            mods.each do |mod|
+              include mod
+            end
+          end
+        end
+      end
+    end
+
+    def chain(source, args)
+      types[type_def(source, args)].new source, configuration(source, args), arguments(source, args)
+    end
+
+    protected
+
+    def source_value(source, name)
+      source.send name if source.respond_to? name
+    end
+
+    def type_def(source, args)
+      [
+        type_modules(source, args),
+        function_modules(source, args),
+        other_modules(source, args),
+        extension_modules(source, args)
+      ]
+    end
+
+    def configuration(source, args)
+      {
+        element_type: element_type(source, args),
+        graph: graph(source, args),
+        extensions: extensions(source, args),
+        wrapper: wrapper(source, args),
+        function: function_modules(source, args).first
+      }
+    end
+
+    def arguments(source, args)
+      args.reject do |key, val|
+        Set[:element_type, :wrapper, :extensions, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor].include? key
+      end
+    end
+
+    def graph(source, args)
+      args[:graph] || source_value(source, :graph)
+    end
+
+    def element_type(source, args)
+      et = args[:element_type] || source_value(source, :element_type)
+      if not et
+        fail ClientError, "No element_type specified or inferred"
+      end
+      if not graph(source, args) and (et == :vertex or et == :edge or et == :mixed)
+        fail ClientError, "Element type #{ et.inspect } specified, but no graph specified."
+      end
+      et
+    end
+
+    def type_modules(source, args)
+      case element_type source, args
+      when :vertex
+        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::VerticesRoute]
+      when :edge
+        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::EdgesRoute]
+      when :mixed
+        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::MixedRoute]
+      else
+        []
+      end
+    end
+
+    def other_modules(source, args)
+      [*args[:modules]]
+    end
+
+    def type_from_source?(source, args)
+      element_type(source, args) == source_value(source, :element_type)
+    end
+
+    def wrapper(source, args)
+      args.fetch(:wrapper) do
+        source_value(source, :wrapper) if type_from_source? source, args
+      end
+    end
+
+    def extensions(source, args)
+      exts = args.fetch(:extensions) do
+        source_value(source, :extensions) if type_from_source? source, args
+      end
+      if exts.is_a? Set
+        exts.to_a
+      elsif exts.is_a? Module
+        [exts]
+      elsif exts.is_a? Array
+        exts.uniq
+      else
+        []
+      end
+    end
+
+    def all_extensions(source, args)
+      w = wrapper source, args
+      exts = extensions source, args
+      if w and exts
+        (w.extensions + exts).uniq
+      elsif w
+        w.extensions
+      elsif exts
+        exts
+      else
+        []
+      end
+    end
+
+    def extension_modules(source, args)
+      all_extensions(source, args).uniq.select do |mod|
+        mod.respond_to?(:const_defined?) and mod.const_defined? :Route
+      end.map { |mod| mod::Route }
+    end
+
+
+    def function_modules(source, args)
+      FunctionResolver.function(args).compact
+    end
+  end
+
+
   # The base class for almost everything in Pacer. Every route is an
   # instance of this class with a variety of modules mixed into the
   # instance at runtime.
@@ -37,11 +180,33 @@ module Pacer
     include Pacer::Core::Route
     include Pacer::Routes::RouteOperations
 
-    # The function mixed into this instance
-    attr_reader :function
+    attr_reader :config
+
+    def wrapper
+      config[:wrapper]
+    end
+
+    def extensions
+      config[:extensions]
+    end
+
+    def all_extensions
+      if wrapper
+        (wrapper.extensions + extensions).uniq
+      else
+        extensions
+      end
+    end
 
     # The type of object that this route emits.
-    attr_reader :element_type
+    def element_type
+      config[:element_type]
+    end
+
+    # The function mixed into this instance
+    def function
+      config[:function]
+    end
 
     # Additional info to include after the class name when generating a
     # name for this route.
@@ -57,18 +222,18 @@ module Pacer
     # Create a new route. It should be very rare that you would need to
     # directly create a Route object.
     #
-    # See {Core::Graph::GraphRoute} and {GraphMixin} for methods
+    # See {Core::Graph::GraphRoute} and {PacerGraph} for methods
     # to build routes based on a graph.
     #
-    # See {ElementMixin}, {VertexMixin} and
-    # {EdgeMixin} for methods to build routes based on an
+    # See {ElementWrapper}, {VertexWrapper} and
+    # {EdgeWrapper} for methods to build routes based on an
     # individual graph element.
     #
     # @see Core::Graph::GraphRoute
-    # @see GraphMixin
-    # @see ElementMixin
-    # @see VertexMixin
-    # @see EdgeMixin
+    # @see PacerGraph
+    # @see ElementWrapper
+    # @see VertexWrapper
+    # @see EdgeWrapper
     #
     # See Pacer's {Enumerable#to_route} method to create a route based
     # on an Array, a Set or any other Enumerable type.
@@ -104,125 +269,37 @@ module Pacer
     # When the route object is fully initialized, the
     # {#after_initialize} method is called to allow mixins to do any
     # additional setup.
-    def initialize(args = {})
-      @@graph = @back = @source = nil
-      @wrapper = nil
-      @extensions = Set[]
-      self.graph = args[:graph]
-      self.back = args[:back]
-      include_function args
-      set_element_type args
-      include_other_modules args
-      keys = args.keys - [:element_type, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor]
-      keys.each do |key|
-        send("#{key}=", args[key])
+    def initialize(source, config, args)
+      if source.is_a? Route
+        @back = source
+      else
+        @source = source
       end
-      include_extensions args
+      @config = config
+      @args = args
+
+      args.each do |key, value|
+        send("#{key}=", value)
+      end
+
       after_initialize
     rescue Exception => e
-      puts "Exception creating Route with #{ args.inspect }" if Pacer.verbose?
-      raise
+      begin
+        if Pacer.verbose?
+          puts "Exception #{ e.class } #{ e.message } ..."
+          puts "... creating #{ config.inspect } route"
+          puts "... with #{ args.inspect }"
+        end
+      rescue Exception
+      end
+      raise e
     end
 
     protected
 
-    # Set the element type of this route and include the apropriate
-    # mixin to support the element type.
-    #
-    # @param [:vertex, :edge, :mixed, element type, Object] et the
-    #   element type to use
-    def element_type=(et)
-      if graph
-        @element_type = graph.element_type(et)
-        if @element_type == graph.element_type(:vertex)
-          extend Pacer::Core::Graph::VerticesRoute
-        elsif @element_type == graph.element_type(:edge)
-          extend Pacer::Core::Graph::EdgesRoute
-        elsif @element_type == graph.element_type(:mixed)
-          extend Pacer::Core::Graph::MixedRoute
-        end
-      elsif et == :object or et == Object
-        @element_type = Object
-      else
-        raise "Element type #{ et.inspect } specified, but no graph specified."
-      end
-    end
-
     # This callback may be overridden. Be sure to call super() though.
     # @return ignored
     def after_initialize
-    end
-
-    # Find the module for the function to include based on the :filter,
-    # :side_effect or :transform argument given to {#initialize} and
-    # extend this instance with it.
-    def include_function(args)
-      @function, extension = FunctionResolver.function(args)
-      self.extend extension if extension
-      self.extend function if function
-    end
-
-    # @return [Route, nil] the previous route in the chain
-    def back_object(args)
-      back || args[:back]
-    end
-
-    # Get element type from the previous route in the chain.
-    # @return [element type, nil]
-    def back_element_type(args)
-      b = back_object(args)
-      if b.respond_to? :element_type
-        b.element_type
-      end
-    end
-
-    # If no element type has been specified, try to find one from
-    # the previous route in the chain.
-    # @raise [StandardError] if no element type can be found
-    def set_element_type(args)
-      if args[:element_type]
-        self.element_type = args[:element_type]
-      else
-        if bet = back_element_type(args)
-          self.element_type = bet
-        else
-          raise "No element_type specified or inferred"
-        end
-      end
-    end
-
-    # extends this class with any modules passed to {#initialize} in the
-    # :modules key.
-    def include_other_modules(args)
-      if mods = args[:modules]
-        @modules = [*mods]
-        @modules.each do |mod|
-          extend mod
-        end
-      end
-    end
-
-    # Copy extensions from the previous route in the chain if the
-    # previous route's element type is the same as the current route's
-    # element type and no extensions were explicitly set on this route.
-    def include_extensions(args)
-      if back_element_type(args) == self.element_type and not args.key? :extensions and not args.key? :wrapper
-        back_obj = back_object(args)
-        if not wrapper and extensions.none?
-          self.wrapper = back_obj.wrapper if back_obj.respond_to? :wrapper
-          self.extensions = back_obj.extensions if back_obj.respond_to? :extensions
-        end
-      end
-    end
-
-    # Creates a terse, human-friendly name for the class based on its
-    # element type, function and info.
-    # @return [String]
-    def inspect_class_name
-      s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
-      s = "#{s}-#{function.name.split('::').last.sub(/Filter|Route$/, '')}" if function
-      s = "#{s} #{ @info }" if @info
-      s
     end
   end
 end

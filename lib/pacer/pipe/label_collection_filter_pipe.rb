@@ -8,13 +8,7 @@ module Pacer::Pipes
     def processNextStart
       while true
         edge = @starts.next
-        return edge if edge and @labels.include? edge.label
-      end
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
+        return edge if edge and @labels.include? edge.getLabel
       end
     end
   end

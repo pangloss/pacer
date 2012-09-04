@@ -2,7 +2,7 @@ module Pacer::Pipes
   class IsUniquePipe < RubyPipe
     import java.util.ArrayList
     import com.tinkerpop.pipes.sideeffect.SideEffectPipe
-    import com.tinkerpop.pipes.util.ExpandableIterator
+    import com.tinkerpop.pipes.util.iterators.ExpandableIterator
     import com.tinkerpop.pipes.filter.DuplicateFilterPipe
 
     include SideEffectPipe
@@ -16,12 +16,6 @@ module Pacer::Pipes
       value = starts.next
       check_uniqueness value if @unique
       value
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     end
 
     def reset
@@ -42,12 +36,8 @@ module Pacer::Pipes
     def check_uniqueness(value)
       @expando.add value
       @unique_pipe.next
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        @unique = false
-      else
-        raise e
-      end
+    rescue EmptyPipe, java.util.NoSuchElementException
+      @unique = false
     end
 
     def prepare_state

@@ -2,16 +2,14 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only edges.
   module EdgesRoute
-    import com.tinkerpop.pipes.transform.OutVertexPipe
-    import com.tinkerpop.pipes.transform.InVertexPipe
-    import com.tinkerpop.pipes.transform.BothVerticesPipe
-
-    include ElementRoute
+    import com.tinkerpop.gremlin.pipes.transform.OutVertexPipe
+    import com.tinkerpop.gremlin.pipes.transform.InVertexPipe
+    import com.tinkerpop.gremlin.pipes.transform.BothVerticesPipe
 
     # Extends the route with out vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def out_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -23,7 +21,7 @@ module Pacer::Core::Graph
     # Extends the route with in vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def in_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -35,7 +33,7 @@ module Pacer::Core::Graph
     # Extends the route with both in and oud vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def both_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -47,7 +45,7 @@ module Pacer::Core::Graph
     # Extend route with the additional edge label, property and block filters.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [EdgeMixin(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def e(*filters, &block)
       filter(*filters, &block)
@@ -58,7 +56,7 @@ module Pacer::Core::Graph
     #
     # @return [Core::Route]
     def labels
-      chain_route(:pipe_class => com.tinkerpop.pipes.transform.LabelPipe,
+      chain_route(:pipe_class => com.tinkerpop.gremlin.pipes.transform.LabelPipe,
                   :route_name => 'labels',
                   :element_type => :object)
     end
@@ -80,13 +78,13 @@ module Pacer::Core::Graph
     # @return [element_type(:edge)] The actual type varies based on
     # which graph is in use.
     def element_type
-      graph.element_type(:edge)
+      :edge
     end
 
     protected
 
     def id_pipe_class
-      com.tinkerpop.pipes.transform.IdEdgePipe
+      com.tinkerpop.gremlin.pipes.transform.IdEdgePipe
     end
   end
 end

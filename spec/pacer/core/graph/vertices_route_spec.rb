@@ -75,7 +75,9 @@ Run.tg(:read_only) do
       it { graph.v.out_e(:label) { |x| true }.should be_a(Pacer::Route) }
       it { graph.v.out_e { |x| true }.should be_a(Pacer::Route) }
 
-      it { Set[*graph.v.out_e].should == Set[*graph.edges] }
+      it('should have all edges') do
+        Set[*graph.v.out_e].should == Set[*graph.e]
+      end
 
       it { graph.v.out_e.count.should >= 1 }
 
@@ -129,9 +131,9 @@ Run.tg do
         subject { people.add_edges_to(:uses, projects) }
 
         it { should be_a(Pacer::Core::Route) }
-        its(:element_type) { should == graph.element_type(:edge) }
+        its(:element_type) { should == :edge }
         its(:count) { should == 8 }
-        its('back.back.element_type') { should == Object }
+        its('back.back.element_type') { should == :object }
         its('back.count') { should == 8 }
 
         specify 'all edges in rasge should exist' do
@@ -162,6 +164,11 @@ Run.tg do
         it 'should do nothing if target is nil' do
           result = pangloss.add_edges_to(:likes, nil)
           result.should be_nil
+        end
+
+        it 'should work if the source is a simple vertex' do
+          result = pangloss.first.add_edges_to(:likes, pacer)
+          result.should_not be_empty
         end
       end
     end

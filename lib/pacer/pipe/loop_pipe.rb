@@ -4,72 +4,74 @@ module Pacer::Pipes
 
     def initialize(graph, looping_pipe, control_block)
       super()
+      @graph = graph
       @control_block = control_block
+      @wrapper = Pacer::Wrappers::WrapperSelector.build
 
       @expando = ExpandablePipe.new
       empty = ArrayList.new
       @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
+      #if control_block.arity < 0 and 1 < control_block.arity
+        @yield_paths = true
+        looping_pipe.enablePath true
+      #end
       @looping_pipe = looping_pipe
     end
 
     def next
       super
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     ensure
       @path = @next_path
     end
 
     def setStarts(starts)
-      @starts_has_path = starts.respond_to? :getPath
       super
+      enablePath true if yield_paths
     end
 
     protected
 
+    attr_reader :wrapper, :control_block, :expando, :looping_pipe, :graph, :yield_paths
+
     def processNextStart
       while true
         # FIXME: hasNext shouldn't be raising an exception...
-        has_next = @looping_pipe.hasNext rescue nil
+        has_next = looping_pipe.hasNext
         if has_next
-          element = @looping_pipe.next
-          depth = (@expando.metadata || 0) + 1
-          @next_path = @looping_pipe.getPath
+          element = looping_pipe.next
+          depth = (expando.metadata || 0) + 1
+          @next_path = looping_pipe.getCurrentPath if yield_paths
         else
-          element = @starts.next
-          if @starts_has_path
-            @next_path = @starts.getPath
+          element = starts.next
+          if pathEnabled
+            @next_path = starts.getCurrentPath
           else
             @next_path = ArrayList.new
             @next_path.add element
           end
           depth = 0
         end
-        element.graph ||= @graph if element.respond_to? :graph=
-        case @control_block.call element, depth, @next_path
+        wrapped = wrapper.new(element)
+        wrapped.graph = graph if wrapped.respond_to? :graph=
+        path = @next_path.map do |e|
+          w = wrapper.new e
+          w.graph = graph if w.respond_to? :graph=
+          w
+        end
+        case control_block.call wrapped, depth, path
         when :loop
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
         when :emit
           return element
         when :emit_and_loop, :loop_and_emit
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
           return element
         when false, nil
         else
-          @expando.add element, depth, @next_path
+          expando.add element, depth, @next_path
           return element
         end
-      end
-    rescue NativeException => e
-      if e.cause.getClass == Pacer::NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
       end
     end
 

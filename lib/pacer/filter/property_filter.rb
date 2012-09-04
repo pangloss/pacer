@@ -28,34 +28,39 @@ module Pacer
         filters.is_a? Pacer::Filter::PropertyFilter::Filters
       end
 
-      def property_filter_before(base, filters, block)
-        filters = Pacer::Route.edge_filters(filters)
+      def property_filter_before(base, args, block)
+        filters = Pacer::Route.edge_filters(args)
         filters.blocks = [block] if block
+        args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
-          base.wrapper ||= filters.wrapper if filters.wrapper
-          base.add_extensions(filters.extensions)
-          yield base
+          yield base.chain_route(args)
         elsif filters and filters.any?
-          yield new(:back => base, :filter => :property, :filters => filters)
+          yield base.chain_route(args.merge!(filter: :property, filters: filters))
         else
           yield base
         end
       end
 
-      def property_filter(base, filters, block)
-        filters = Pacer::Route.edge_filters(filters)
+      def property_filter(base, args, block)
+        filters = Pacer::Route.edge_filters(args)
         filters.blocks = [block] if block
+        args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
-          base.wrapper ||= filters.wrapper if filters.wrapper
-          base.add_extensions(filters.extensions)
-        elsif filters and filters.any?
-          new(:back => base, :filter => :property, :filters => filters)
-        elsif Pacer.vertex? base
-          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
-        elsif Pacer.edge? base
-          new(:back => base, :pipe_class => Pacer::Pipes::IdentityPipe)
+          base.chain_route(args)
+        elsif filters.any?
+          base.chain_route(args.merge!(filter: :property, filters: filters))
+        elsif base.is_a? Pacer::Wrappers::ElementWrapper
+          base.chain_route({})
         else
           base
+        end
+      end
+
+      def chain_args(filters)
+        if filters.wrapper or (filters.extensions and not filters.extensions.empty?)
+          { extensions: filters.extensions, wrapper: filters.wrapper }
+        else
+          {}
         end
       end
     end
@@ -64,7 +69,7 @@ module Pacer
   module Filter
     module PropertyFilter
       #import com.tinkerpop.pipes.filter.LabelCollectionFilterPipe
-      import com.tinkerpop.pipes.filter.PropertyFilterPipe
+      import com.tinkerpop.gremlin.pipes.filter.PropertyFilterPipe
 
       def filters=(f)
         if f.is_a? Filters
@@ -72,8 +77,6 @@ module Pacer
         else
           @filters = EdgeFilters.new(f)
         end
-        self.wrapper ||= f.wrapper if f.wrapper
-        add_extensions f.extensions
       end
 
       # Return an array of filter options for the current route.

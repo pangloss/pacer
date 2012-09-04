@@ -1,5 +1,4 @@
 module Pacer
-
   module Routes
     module RouteOperations
       def sort_section(section = nil, &block)
@@ -8,56 +7,77 @@ module Pacer
     end
   end
 
+
   module Transform
     module SortSection
-      class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :block_1, :block_2, :to_sort, :to_emit, :section, :extensions, :is_element, :graph
+      # VisitsSection module provides:
+      #  section=
+      #  section_visitor
+      include Pacer::Visitors::VisitsSection
 
-        def initialize(route, section, block)
+      attr_accessor :block
+
+      protected
+
+      def attach_pipe(end_pipe)
+        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block if block
+        pipe = SortSectionPipe.new(self, section_visitor, pf)
+        pipe.setStarts end_pipe if end_pipe
+        pipe
+      end
+
+
+      class SortSectionPipe < Pacer::Pipes::RubyPipe
+        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section
+        attr_reader :getPathToHere
+
+        def initialize(route, section, pipe_function)
           super()
-          @is_element = route.graph.element_type?(route.element_type)
-          @extensions = route.extensions
-          @graph = route.graph
           @to_emit = []
           @section = section
           @to_sort = []
+          @paths = []
           if section
             section.visitor = self
           else
             on_element nil
           end
-          if block
-            if block.arity == 1
-              @block_1 = block
+          if pipe_function
+            if pipe_function.arity == 1
+              @pf_1 = pipe_function
               section.use_on_element = false
-            elsif block.arity == 2 or block.arity < 0
-              @block_2 = block
+            else
+              @pf_2 = pipe_function
             end
           else
             section.use_on_element = false
           end
         end
 
+        def setStarts(starts)
+          super
+          enablePath(true) if pf_2
+        end
+
         def processNextStart
-          while to_emit.empty?
-            element = @starts.next
-            if is_element
-              element = element.add_extensions(extensions)
-              element.graph = graph
-            end
-            to_sort << element
-          end
-          to_emit.shift
-        rescue NativeException => e
-          if e.cause.getClass == Pacer::NoSuchElementException.getClass
-            if to_emit.empty?
-              raise e.cause
-            else
-              after_element
-              retry
+          if pathEnabled
+            while to_emit.empty?
+              to_sort << [starts.next, starts.getCurrentPath]
             end
           else
-            raise e
+            while to_emit.empty?
+              to_sort << [starts.next, nil]
+            end
+          end
+          raise EmptyPipe.instance if to_emit.empty?
+          element, @getPathToHere = to_emit.shift
+          element
+        rescue EmptyPipe, java.util.NoSuchElementException
+          if to_emit.empty?
+            raise EmptyPipe.instance
+          else
+            after_element
+            retry
           end
         end
 
@@ -67,33 +87,23 @@ module Pacer
 
         def after_element
           if to_sort.any?
-            if block_1
-              sorted = to_sort.sort_by do |element|
-                block_1.call element
+            if pf_1
+              sorted = to_sort.sort_by do |element, path|
+                pf_1.call element
               end
-            elsif block_2
-              sorted = to_sort.sort_by do |element|
-                block_2.call element, @section_element
+            elsif pf_2
+              sorted = to_sort.sort_by do |element, path|
+                pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
               end
             else
-              sorted = to_sort.sort
+              sorted = to_sort.sort_by do |element, path|
+                element
+              end
             end
             to_emit.concat sorted
-            @to_sort = []
+            @to_sort.clear
           end
         end
-      end
-
-      include Pacer::Visitors::VisitsSection
-
-      attr_accessor :block
-
-      protected
-
-      def attach_pipe(end_pipe)
-        pipe = SortSectionPipe.new(self, section_visitor, block)
-        pipe.setStarts end_pipe if end_pipe
-        pipe
       end
     end
   end

@@ -16,7 +16,7 @@ shared_examples_for 'a vertex with a mixin' do
   end
 end
 
-shared_examples_for Pacer::GraphMixin do
+shared_examples_for Pacer::RubyGraph do
   let(:v0) { graph.create_vertex }
   let(:v1) { graph.create_vertex }
   let(:e0) { graph.create_edge nil, v0, v1, :links }
@@ -96,9 +96,11 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#create_vertex' do
+    let(:use_id) { rand 1000000 }
+
     context 'existing' do
       it 'should raise an exception' do
-        if graph.supports_custom_element_ids?
+        unless graph.features.ignoresSuppliedIds
           expect { graph.create_vertex v0.element_id }.to raise_error(Pacer::ElementExists)
         end
       end
@@ -110,24 +112,24 @@ shared_examples_for Pacer::GraphMixin do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_vertex 1234, :name => 'Steve' }
+        subject { graph.create_vertex use_id, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '1234'
-          elsif graph.supports_custom_element_ids?
-            should == '1234' 
+            should == graph.id_prefix + use_id.to_s
+          elsif not graph.features.ignoresSuppliedIds
+            should == use_id.to_s
           end
         end
 
         context 'and mixins' do
-          subject { graph.create_vertex 1234, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_vertex use_id, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its('element_id.to_s') do
             if graph.respond_to? :id_prefix
-              should == graph.id_prefix + '1234'
-            elsif graph.supports_custom_element_ids?
-              should == '1234' 
+              should == graph.id_prefix + use_id.to_s
+            elsif not graph.features.ignoresSuppliedIds
+              should == use_id.to_s
             end
           end
           it_behaves_like 'a vertex with a mixin'
@@ -136,22 +138,22 @@ shared_examples_for Pacer::GraphMixin do
     end
 
     context 'with an id' do
-      subject { graph.create_vertex 1234 }
+      subject { graph.create_vertex use_id }
       its('element_id.to_s') do
         if graph.respond_to? :id_prefix
-          should == graph.id_prefix + '1234'
-        elsif graph.supports_custom_element_ids?
-          should == '1234' 
+          should == graph.id_prefix + use_id.to_s
+        elsif not graph.features.ignoresSuppliedIds
+          should == use_id.to_s
         end
       end
 
       context 'and mixins' do
-        subject { graph.create_vertex 1234, Tackle::SimpleMixin }
+        subject { graph.create_vertex use_id, Tackle::SimpleMixin }
         its('element_id.to_s') do
           if graph.respond_to? :id_prefix
-            should == graph.id_prefix + '1234'
-          elsif graph.supports_custom_element_ids?
-            should == '1234' 
+            should == graph.id_prefix + use_id.to_s
+          elsif not graph.features.ignoresSuppliedIds
+            should == use_id.to_s
           end
         end
         it_behaves_like 'a vertex with a mixin'
@@ -166,12 +168,13 @@ shared_examples_for Pacer::GraphMixin do
 
 
   describe '#create_edge' do
+    let(:use_id) { rand 1000000 }
     let(:from) { graph.vertex v0.element_id }
     let(:to) { graph.vertex v1.element_id }
 
     context 'existing' do
       it 'should raise an exception' do
-        if graph.supports_custom_element_ids?
+        if not graph.features.ignoresSuppliedIds
           expect { graph.create_edge e0.element_id, from, to, :connects }.to raise_error(Pacer::ElementExists)
         end
       end
@@ -184,30 +187,30 @@ shared_examples_for Pacer::GraphMixin do
       its(:element_id) { should_not be_nil }
 
       context 'and an id' do
-        subject { graph.create_edge 1234, from, to, :connects, :name => 'Steve' }
+        subject { graph.create_edge use_id, from, to, :connects, :name => 'Steve' }
         it { subject[:name].should == 'Steve' }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
+        its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
 
         context 'and mixins' do
-          subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
+          subject { graph.create_edge use_id, from, to, :connects, Tackle::SimpleMixin, :name => 'John' }
           it { subject[:name].should == 'John' }
           its(:label) { should == 'connects' }
-          its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
+          its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
           it_behaves_like 'an edge with a mixin'
         end
       end
     end
 
     context 'with an id' do
-      subject { graph.create_edge 1234, from, to, :connects }
+      subject { graph.create_edge use_id, from, to, :connects }
       its(:label) { should == 'connects' }
-      its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
+      its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
 
       context 'and mixins' do
-        subject { graph.create_edge 1234, from, to, :connects, Tackle::SimpleMixin }
+        subject { graph.create_edge use_id, from, to, :connects, Tackle::SimpleMixin }
         its(:label) { should == 'connects' }
-        its('element_id.to_i') { should == 1234 if graph.supports_custom_element_ids? }
+        its('element_id.to_i') { should == use_id unless graph.features.ignoresSuppliedIds }
         it_behaves_like 'an edge with a mixin'
       end
     end
@@ -257,7 +260,10 @@ shared_examples_for Pacer::GraphMixin do
   end
 
   describe '#load_edges' do
-    before { graph.checkpoint }
+    before do
+      c = example.metadata[:graph_commit]
+      c.call if c
+    end
     context 'invalid' do
       subject { graph.load_edges [e0.element_id, nil, e0.element_id, 'missing'] }
       it { should == [e0, e0] }
@@ -269,60 +275,22 @@ shared_examples_for Pacer::GraphMixin do
     end
   end
 
-  describe '#index_name' do
-
-
-    it 'should have 2 indices' do
-      graph.indices.count.should == 2 if graph.supports_automatic_indices?
-    end
-
-    context "'vertices'" do
-      around { |spec| spec.run if graph.supports_automatic_indices? }
-      subject { graph.index_name 'vertices' }
-      it { should_not be_nil }
-      its(:index_name) { should == 'vertices' }
-      its(:index_type) { should == Pacer.automatic_index }
-      its(:index_class) { should == graph.index_class(:vertex) }
-      context ':vertex' do
-        subject { graph.index_name 'vertices', :vertex }
-        it { should_not be_nil }
-      end
-      context ':edge' do
-        subject { graph.index_name 'vertices', :edge }
-        it { should be_nil }
-      end
-    end
-
-    context "'edges'" do
-      around { |spec| spec.run if graph.supports_edge_indices? }
-      subject { graph.index_name 'edges' }
-      it { should_not be_nil }
-      its(:index_name) { should == 'edges' }
-      its(:index_type) { should == Pacer.automatic_index }
-      its(:index_class) { should == graph.index_class(:edge) }
-      context ':vertex' do
-        subject { graph.index_name 'edges', :vertex }
-        it { should be_nil }
-      end
-      context ':edge' do
-        subject { graph.index_name 'edges', :edge }
-        it { should_not be_nil }
-      end
+  describe '#index' do
+    it 'should have no indices' do
+      graph.indices.count.should == 0 if graph.features.supportsKeyIndices
     end
 
     context 'missing' do
-      around { |spec| spec.run if graph.supports_manual_indices? }
-      subject { graph.index_name 'invalid' }
+      around { |spec| spec.run if graph.features.supportsIndices }
+      subject { graph.index 'invalid' }
       it { should be_nil }
       context 'edge' do
         before do
           graph.drop_index 'missing_edge' rescue nil
-          graph.index_name('missing_edge').should be_nil
+          graph.index('missing_edge').should be_nil
         end
-        subject { graph.index_name 'missing_edge', :edge, :create => true }
-        its(:index_name) { should == 'missing_edge' }
-        its(:index_type) { should == Pacer.manual_index }
-        its(:index_class) { should == graph.index_class(:edge) }
+        subject { graph.index 'missing_edge', :edge, :create => true }
+        its(:name) { should == 'missing_edge' }
         after do
           graph.transaction do
             graph.drop_index 'missing_edge'
@@ -333,23 +301,15 @@ shared_examples_for Pacer::GraphMixin do
       context 'vertex' do
         before do
           graph.drop_index 'missing_vertex' rescue nil
-          graph.index_name('missing_vertex').should be_nil
+          graph.index('missing_vertex').should be_nil
         end
-        subject { graph.index_name 'missing_vertex', :vertex, :create => true }
-        its(:index_name) { should == 'missing_vertex' }
-        its(:index_type) { should == Pacer.manual_index }
-        its(:index_class) { should == graph.index_class(:vertex) }
+        subject { graph.index 'missing_vertex', :vertex, :create => true }
+        its(:name) { should == 'missing_vertex' }
         after do
           graph.transaction do
             graph.drop_index 'missing_vertex'
           end
         end
-      end
-    end
-
-    it 'should return the same object each time' do
-      if graph.supports_manual_indices? or graph.supports_automatic_indices?
-        graph.index_name('vertices').should equal(graph.index_name('vertices'))
       end
     end
   end
@@ -373,43 +333,35 @@ shared_examples_for Pacer::GraphMixin do
     after { graph.edge_name = nil }
   end
 
-  describe '#index_class' do
-    around { |spec| spec.run if graph.respond_to? :index_class }
-    subject { graph.index_class(:vertex) }
-    specify 'should be the class the index returns when queried for index_class' do
-      if graph.is_a? Pacer::DexGraph
-        subject.should == graph.indices.first.index_class
-      else
-        subject.to_s.should == graph.index_name('vertices').index_class.to_s
-      end
-    end
-  end
-
   describe '#import' do
-    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
-
     it 'should load the data into an empty graph' do
       graph2.v.count.should == 0
-      graph2.import 'spec/data/pacer.graphml'
+      Pacer::GraphML.import graph2, 'spec/data/pacer.graphml'
       graph2.v.count.should == 7
       graph2.e.count.should == 14
     end
 
     it 'should not load the data into a graph with conflicting vertex ids' do
-      if graph.supports_custom_element_ids?
+      unless graph.features.ignoresSuppliedIds
         graph.create_vertex '0' unless graph.vertex '0'
-        expect { graph.import 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
+        expect { Pacer::GraphML.import graph, 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
       end
     end
   end
 
   describe '#export' do
-    before { pending 'create a fresh graph for these tests' if graph.is_a? Pacer::DexGraph }
     it 'should create a file that can be read back' do
-      graph.export 'tmp/graph_mixin_spec_export.graphml'
-      graph2.import 'tmp/graph_mixin_spec_export.graphml'
-      graph2.v.count.should == graph.v.count
-      graph2.e.count.should == graph.e.count
+      graph.v.count.should == 2
+      graph.e.count.should == 1
+      graph2.e.delete!
+      graph2.v.delete!
+      graph2.v.count.should == 0
+      graph2.e.count.should == 0
+      Pacer::GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
+      Pacer::GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
+      puts File.read 'tmp/graph_mixin_spec_export.graphml'
+      graph2.v.count.should == 2
+      graph2.e.count.should == 1
     end
   end
 
@@ -426,101 +378,78 @@ Run.all :read_only, false do
   let(:e0) { graph.create_edge nil, v0, v1, :links }
   let(:e1) { graph.create_edge nil, v0, v1, :relinks }
 
-  describe Pacer::GraphMixin do
+  describe Pacer::RubyGraph do
     before do
       e0 # force edge and vertices to be created.
     end
 
-    describe 'rebuild_automatic_index', :transactions => false do
-      context 'vertices' do
-        before do
-          v0.properties = { :name => 'darrick', :type => 'person' }
-          v1.properties = { :name => 'eliza', :type => 'person' }
-          @orig_idx = graph.createAutomaticIndex 'vertices', graph.index_class(:vertex), nil
-          @new_idx = graph.rebuild_automatic_index @orig_idx
+    pending "not sure if index rebuilding will be needed anymore" do
+      describe 'rebuild_automatic_index', :transactions => false do
+        context 'vertices' do
+          before do
+            v0.properties = { :name => 'darrick', :type => 'person' }
+            v1.properties = { :name => 'eliza', :type => 'person' }
+            @orig_idx = graph.createAutomaticIndex 'vertices', graph.index_class(:vertex), nil
+            @new_idx = graph.rebuild_automatic_index @orig_idx
+          end
+
+          after do
+            graph.drop_index :vertices
+            graph.v.delete!
+          end
+
+          let(:orig_idx) { @orig_idx }
+          subject { @new_idx }
+          it { should_not equal(orig_idx) }
+          it 'should not use the old vertices index' do
+            graph.index('vertices').should_not equal(orig_idx)
+          end
+          it { should equal(graph.index('vertices')) }
+          it 'should have 2 persons' do
+            subject.count('type', 'person').should == 2
+          end
+          it 'should have v1 for eliza' do
+            subject.get('name', 'eliza').to_a.should == [v1].to_a
+          end
         end
 
-        after do
-          graph.drop_index :vertices
-          graph.v.delete!
-        end
+        context 'edges' do
+          before do
+            v0.properties = { :name => 'darrick', :type => 'person' }
+            v1.properties = { :name => 'eliza', :type => 'person' }
+            e0.properties = { :style => 'edgy' }
+            e1.properties = { :style => 'edgy' }
+            @orig_idx = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
+            @new_idx = graph.rebuild_automatic_index @orig_idx
+          end
 
-        let(:orig_idx) { @orig_idx }
-        subject { @new_idx }
-        it { should_not equal(orig_idx) }
-        it 'should not use the old vertices index' do
-          graph.index_name('vertices').should_not equal(orig_idx)
-        end
-        it { should equal(graph.index_name('vertices')) }
-        it 'should have 2 persons' do
-          subject.count('type', 'person').should == 2
-        end
-        it 'should have v1 for eliza' do
-          subject.get('name', 'eliza').to_a.should == [v1].to_a
+          after do
+            graph.drop_index :edges
+            graph.v.delete!
+          end
+
+
+          let(:orig_idx) { @orig_idx }
+          subject { @new_idx }
+          it { should_not equal(orig_idx) }
+          it 'should not use the old edges index' do
+            graph.index('edges').should_not equal(orig_idx)
+          end
+          it { should equal(graph.index('edges')) }
+          it 'should have 1 edge' do
+            subject.count('label', 'links').should == 1
+          end
+          it 'should have e0 and e1 for style => edgy' do
+            subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
+          end
         end
       end
-
-      context 'edges' do
-        before do
-          v0.properties = { :name => 'darrick', :type => 'person' }
-          v1.properties = { :name => 'eliza', :type => 'person' }
-          e0.properties = { :style => 'edgy' }
-          e1.properties = { :style => 'edgy' }
-          @orig_idx = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
-          @new_idx = graph.rebuild_automatic_index @orig_idx
-        end
-
-        after do
-          graph.drop_index :edges
-          graph.v.delete!
-        end
-
-
-        let(:orig_idx) { @orig_idx }
-        subject { @new_idx }
-        it { should_not equal(orig_idx) }
-        it 'should not use the old edges index' do
-          graph.index_name('edges').should_not equal(orig_idx)
-        end
-        it { should equal(graph.index_name('edges')) }
-        it 'should have 1 edge' do
-          subject.count('label', 'links').should == 1
-        end
-        it 'should have e0 and e1 for style => edgy' do
-          subject.get('style', 'edgy').to_set.should == [e0, e1].to_set
-        end
-      end
-    end
-  end
-
-  describe 'edges can be indexed', :transactions => false do
-    after do
-      graph.drop_index 'edges'
-      graph.v.delete!
-    end
-
-    specify 'in an auto index' do
-      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
-      graph.edges.count.should == 0
-      label = e0.label
-      graph.edges.count.should == 1
-      index.get('label', label).count.should == 1
-    end
-
-    specify 'by adding them to a new auto index' do
-      graph.edges.count.should == 0
-      label = e0.label
-      graph.edges.count.should == 1
-      index = graph.createAutomaticIndex 'edges', graph.index_class(:edge), nil
-      index.get('label', label).count.should == 0
-      Pacer::Utils::AutomaticIndexHelper.addElement(index, e0)
-      index.get('label', label).count.should == 1
     end
   end
 end
 
-Run.all do
-  it_uses Pacer::GraphMixin
+Run.all :read_write do
+  it_uses Pacer::RubyGraph
 end
 
 Run.neo4j do

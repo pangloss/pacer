@@ -11,6 +11,7 @@ doc
 # bundler
 .bundle
 Gemfile.lock
+Gemfile
 
 # jeweler generated
 pkg
@@ -26,3 +27,4 @@ jdex.log
 bin
 .jitcache
 coverage/*
+dex.log

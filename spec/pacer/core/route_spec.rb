@@ -101,68 +101,45 @@ describe Pacer::Core::Route do
     [].to_route.should be_empty
   end
 
-  describe '#add_extension' do
-    context 'Object' do
-      subject { base_route.add_extension Object }
-      its(:extensions) { should be_empty }
-    end
+  its(:extensions) { should == [] }
 
-    context 'SimpleMixin' do
-      subject { base_route.add_extension Tackle::SimpleMixin }
-      its(:extensions) { should include(Tackle::SimpleMixin) }
-      its('extensions.count') { should == 1 }
-      it 'should have extension method' do
-        subject.route_mixin_method.should be_true
+  context 'mocked' do
+    before(:all) { JRuby.objectspace = true }
+    after(:all) { JRuby.objectspace = false }
+
+    subject { base_route.add_extensions([TP::Person]) }
+
+    describe '#extensions=' do
+      it 'should add multiple extensions' do
+        subject.add_extensions [Tackle::SimpleMixin, TP::Person]
       end
-      it { should be_a Tackle::SimpleMixin::Route }
-      its(:first) { should == 1 }
     end
-  end
 
-  its(:extensions) { should == Set[] }
+    describe '#add_extensions' do
+      it 'should add multiple extensions' do
+        mock(subject).chain_route(extensions: [Tackle::SimpleMixin, TP::Person])
+        subject.add_extensions [Tackle::SimpleMixin, TP::Person]
+      end
+      it 'should be chainable' do
+        subject.add_extensions([Tackle::SimpleMixin]).should be_a Pacer::Route
+      end
+      it 'should accumulate extensions' do
+        subject.extensions.should == [TP::Person]
+        r = subject.add_extensions [Tackle::SimpleMixin]
+        subject.extensions.should == [TP::Person]
+        r.extensions.should == [TP::Person, Tackle::SimpleMixin]
+      end
+    end
 
-  describe '#extensions=' do
-    before :all do
-      JRuby.objectspace = true
-    end
-    after :all do
-      JRuby.objectspace = false
-    end
-    it 'should add one extension' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      subject.extensions = Tackle::SimpleMixin
-    end
-    it 'should add multiple extensions' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      mock(subject).add_extension(TP::Person)
-      subject.extensions = [Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should accumulate extensions' do
-      subject.add_extension TP::Person
-      subject.extensions.should == Set[TP::Person]
-      subject.extensions = Tackle::SimpleMixin
-      subject.extensions.should == Set[TP::Person, Tackle::SimpleMixin]
-    end
-  end
-
-  describe '#add_extensions' do
-    before :all do
-      JRuby.objectspace = true
-    end
-    after :all do
-      JRuby.objectspace = false
-    end
-    it 'should add use add_extension' do
-      mock(subject).add_extension(Tackle::SimpleMixin)
-      mock(subject).add_extension(TP::Person)
-      result = subject.add_extensions [Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should add multiple extensions' do
-      subject.add_extensions [Tackle::SimpleMixin, TP::Person]
-      subject.extensions.should == Set[Tackle::SimpleMixin, TP::Person]
-    end
-    it 'should be chainable' do
-      subject.add_extensions([Tackle::SimpleMixin]).should be subject
+    describe '#set_extensions' do
+      it 'should be chainable' do
+        subject.set_extensions([Tackle::SimpleMixin]).should be_a Pacer::Route
+      end
+      it 'should replace extensions' do
+        r = subject.set_extensions Tackle::SimpleMixin
+        subject.extensions.should == [TP::Person]
+        r.extensions.should == [Tackle::SimpleMixin]
+      end
     end
   end
 
@@ -178,14 +155,14 @@ describe Pacer::Core::Route do
     end
   end
 
-  its(:element_type) { should == Object }
+  its(:element_type) { should == :object }
 
   describe 'custom pipe' do
     context 'with pipe args' do
       let(:mock_type) { Pacer::Pipes::EnumerablePipe }
       let(:pipe_args) { [['a', 1]] }
 
-      subject { Pacer::Route.new :element_type => :object,
+      subject { Pacer::RouteBuilder.current.chain nil, :element_type => :object,
                   :pipe_class => mock_type, :pipe_args => pipe_args }
 
       it 'should create the pipe' do

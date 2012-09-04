@@ -35,7 +35,7 @@ module Pacer
       #
       # @todo move this to graph routes.
       #
-      # @return [GraphMixin]
+      # @return [PacerGraph]
       def graph
         @graph = nil unless defined? @graph
         @graph ||= (@back || @source).graph rescue nil
@@ -109,7 +109,7 @@ module Pacer
       # @return [Enumerator] if no block is given
       def each
         iter = iterator
-        configure_iterator(iter)
+        iter = configure_iterator(iter)
         if block_given?
           while true
             yield iter.next
@@ -117,7 +117,7 @@ module Pacer
         else
           iter
         end
-      rescue java.util.NoSuchElementException
+      rescue Pacer::EmptyPipe, java.util.NoSuchElementException
         self
       end
 
@@ -127,10 +127,13 @@ module Pacer
       # @return [java.util.Iterator] the pipe.
       def pipe
         iterator = each
-        yield iterator if block_given?
-        iterator
-      rescue java.util.NoSuchElementException
-        iterator
+        if block_given?
+          yield iterator if block_given?
+        else
+          iterator
+        end
+      rescue Pacer::EmptyPipe, java.util.NoSuchElementException
+        nil
       end
 
       def description(join = ' -> ')
@@ -196,52 +199,12 @@ module Pacer
         none?
       end
 
-      # Add an extension to the route.
-      #
-      # If the extension has a Route module inside it, this route will
-      # be extended with the extension's Route module.
-      #
-      # If the extension has a Vertex or Edge module inside it, any vertices
-      # or edges emitted from this route will be extended with with the
-      # extension as well.
-      #
-      # @see VertexMixin#add_extensions
-      # @see EdgeMixin#add_extensions
-      #
-      # @return [self]
-      def add_extension(mod, add_to_list = true)
-        return self unless mod.respond_to?(:const_defined?)
-        is_extension = false
-        if mod.const_defined? :Route
-          is_extension = true
-          extend mod::Route
-        end
-        if add_to_list and (is_extension or mod.const_defined? :Vertex or mod.const_defined? :Edge)
-          @extensions << mod
-        end
-        self
-      end
-
       def set_wrapper(wrapper)
-        if wrapper.respond_to? :extensions
-          wrapper.extensions.each do |ext|
-            add_extension ext, false
-          end
-        end
-        @wrapper = wrapper
-        self
+        chain_route wrapper: wrapper
       end
-      alias wrapper= set_wrapper
 
       def wrapper
         @wrapper
-      end
-
-      # Add extensions to this route.
-      #
-      # @see #add_extension
-      def extensions=(exts)
-        add_extensions Set[*exts]
       end
 
       # Get the set of extensions currently on this route.
@@ -252,31 +215,32 @@ module Pacer
       # extensions in order followed by any additional extensions in
       # undefined order.
       #
-      # If a wrapper is present, returns an Array. Otherwise a Set.
+      # Returns an Array
       #
-      # @return [Enumerable[extension]]
-      def extensions
+      # @return [Array[extension]]
+      attr_reader :extensions
+
+      def all_extensions
         if wrapper
-          wrapper.extensions + @extensions.to_a
+          wrapper.extensions + extensions
         else
-          @extensions
+          extensions
         end
       end
 
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
-      # @see #add_extension
       # @return [self]
       def add_extensions(exts)
-        modules = exts.select { |obj| obj.is_a? Module or obj.is_a? Class }
-        modules.each do |mod|
-          add_extension(mod)
-        end
-        self
+        chain_route extensions: (extensions - exts) + exts
+      end
+
+      def set_extensions(exts)
+        chain_route extensions: exts, wrapper: nil
       end
 
       def no_extensions
-        chain_route(:extensions => nil, :wrapper => nil)
+        chain_route(:extensions => [], :wrapper => nil)
       end
 
       # Change the source of this route.
@@ -297,9 +261,10 @@ module Pacer
 
       # Set the previous route in the chain.
       def back=(back)
-        if back.is_a? Route and not back.is_a? GraphMixin
+        if back.is_a? Route and not back.is_a? PacerGraph
           @back = back
         else
+          @back = nil
           @source = back
         end
       end
@@ -320,6 +285,7 @@ module Pacer
       # Overridden to extend the iterator to apply mixins
       # or wrap elements
       def configure_iterator(iter)
+        iter
       end
 
       def get_section_route(name)
@@ -367,9 +333,9 @@ module Pacer
 
       # Return an iterator for a variety of source object types.
       def iterator_from_source(src)
-        if src.is_a? Pacer::GraphMixin
+        if src.is_a? PacerGraph
           al = java.util.ArrayList.new
-          al << src
+          al << src.blueprints_graph
           al.iterator
         elsif src.is_a? Pacer::Wrappers::ElementWrapper
           Pacer::Pipes::EnumerablePipe.new src.element
@@ -500,7 +466,6 @@ module Pacer
         s = "#{s} #{ info }" if info
         s
       end
-
     end
   end
 end

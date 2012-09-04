@@ -1,11 +1,11 @@
-if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-5]|1\.6\.[0-3])/
+if not defined?(JRUBY_VERSION) or JRUBY_VERSION =~ /^(0|1\.[0-6])/
   # NOTE: This is because JRuby 1.6.4 fixes a bug that made it impossible to
   # instantiate Java classes with a varargs constructor signature  with 0
   # arguments. Marko would not accept a patch to create a 0 args constructor to
   # work around the problem, therefore this version of Pacer will not work
   # under any older versions of JRuby. The oldest Pacer version that will work
   # is 0.8.1.
-  raise Exception, 'Pacer >= 0.8.2 requires JRuby version 1.6.4 or higher. It is strongly recommended that you use the latest JRuby release.'
+  raise Exception, 'Pacer >= 1.0.0 requires JRuby version 1.7.0 preview or higher. It is strongly recommended that you use the latest JRuby release.'
 end
 
 if RUBY_VERSION == '1.8.7'
@@ -15,6 +15,7 @@ WARNING: Pacer is developed using JRuby in 1.9 mode. I recommend you
   defaulting to 1.9 mode by setting the environment variable
   JRUBY_OPTS=--1.9
 WARNING
+  raise Exception, "Pacer must be run in JRuby 1.9 mode"
 end
 
 require 'java'
@@ -39,9 +40,9 @@ module Pacer
   require JAR
 
   require 'pacer/exceptions'
-  require 'pacer/graph'
   require 'pacer/pipes'
   require 'pacer/core'
+  require 'pacer/graph'
   require 'pacer/routes'
   require 'pacer/wrappers'
   require 'pacer/route'
@@ -182,16 +183,12 @@ module Pacer
 
     # Is the object a vertex?
     def vertex?(element)
-      element.is_a? Pacer::Vertex or
-        (element.respond_to? :element and
-         element.element.is_a? Pacer::Vertex)
+      element.is_a? Pacer::Wrappers::VertexWrapper
     end
 
     # Is the object an edge?
     def edge?(element)
-      element.is_a? Pacer::Edge
-        (element.respond_to? :element and
-         element.element.is_a? Pacer::Edge)
+      element.is_a? Pacer::Wrappers::EdgeWrapper
     end
 
     def vertex_route?(obj)
@@ -203,18 +200,6 @@ module Pacer
       obj.is_a? Pacer::Core::Graph::EdgesRoute
     end
     alias edges_route? edge_route?
-
-    # Blueprints constant for manual index.
-    # @return [com.tinkerpop.blueprints.pgm.Index::Type::MANUAL]
-    def manual_index
-      com.tinkerpop.blueprints.pgm.Index::Type::MANUAL
-    end
-
-    # Blueprints constant for automatic index.
-    # @return [com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC]
-    def automatic_index
-      com.tinkerpop.blueprints.pgm.Index::Type::AUTOMATIC
-    end
 
     # If a pipe is giving you trouble, you can get all of the
     # intermediate pipes by using this method.
@@ -246,26 +231,8 @@ module Pacer
     # or a url or address.
     # @return [Hash] address => graph
     def open_graphs
-      @open_graphs = Hash.new { |h, k| h[k] = {} } unless defined? @open_graphs
+      @open_graphs = {} unless defined? @open_graphs
       @open_graphs
-    end
-
-    def next_graph_id
-      @next_graph_id = 0 unless defined? @next_graph_id
-      @next_graph_id += 1
-    end
-
-    # Tell pacer to record that we're starting a graph.
-    #
-    # @param [Class] type type of graph
-    # @param [String] key address of the graph
-    # @yield the block should return the instantiated graph.
-    # @return [GraphMixin] the instantiated graph
-    def starting_graph(type, key)
-      graph = open_graphs[type][key]
-      return graph if graph
-      graph = yield
-      open_graphs[type][key] = graph
     end
 
     # Used internally to collect debug information while using
@@ -279,13 +246,11 @@ end
 
 at_exit do
   # Close all open graphs
-  Pacer.open_graphs.each do |type, graphs|
-    graphs.each do |path, graph|
-      begin
-        graph.shutdown
-      rescue Exception, StandardError => e
-        pp e
-      end
+  Pacer.open_graphs.each do |path, graph|
+    begin
+      graph.shutdown
+    rescue Exception, StandardError => e
+      puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
     end
   end
 end

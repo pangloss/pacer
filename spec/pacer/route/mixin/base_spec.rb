@@ -7,7 +7,7 @@ Run.all do
         subject { graph.v.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
+        its(:first) { should be_a(Pacer::Pipes::VerticesPipe) }
         specify { subject.first.should equal(subject.last) }
       end
 
@@ -41,7 +41,7 @@ Run.all do
 
       its(:in_e) { should_not be_nil }
       its(:to_a) { should == [] }
-      its(:extensions) { should == Set[Tackle::SimpleMixin] }
+      its(:extensions) { should == [Tackle::SimpleMixin] }
     end
 
     context "graph.v(:name => 'darrick')" do
@@ -49,7 +49,8 @@ Run.all do
       before { setup_data }
       subject { graph.v(:name => 'darrick') }
 
-      its('iterator.next') { should == v1 }
+      # iterator is a protected method... It is the raw iterator before wrapping stuff is added.
+      its('iterator.next') { should == v1.element }
       its(:to_a) { should == [v1] }
     end
 
@@ -58,7 +59,7 @@ Run.all do
         subject { graph.v.element_ids.send(:build_pipeline) }
         it { should be_a(Array) }
         its(:count) { should == 2 }
-        its(:first) { should be_a(com.tinkerpop.pipes.transform.VerticesPipe) }
+        its(:first) { should be_a(Pacer::Pipes::VerticesPipe) }
         its(:last) { should be_a(Pacer::Pipes::IdPipe) }
       end
 
@@ -74,8 +75,9 @@ Run.all do
           begin
             subject.next
             fail 'expected exception to be raised'
-          rescue NativeException => e
-            e.cause.inspect.should == 'java.util.NoSuchElementException'
+          rescue Pacer::EmptyPipe, java.util.NoSuchElementException
+          else
+            'Got the wrong kind of exception.'.should be_false
           end
         end
       end
@@ -84,7 +86,7 @@ Run.all do
         use_simple_graph_data
         before { setup_data }
         subject { graph.v.element_ids.to_a }
-        its(:sort) { should == [v0.element_id, v1.element_id].sort }
+        its(:sort) { should == [v0, v1].to_route(based_on: graph.v).element_ids.to_a.sort }
       end
     end
   end
@@ -109,10 +111,8 @@ Run.all(:read_only) do
     end
 
     describe '#to_a' do
-      it { Set[*graph.v].should == Set[*graph.getVertices] }
-      it { Set[*(graph.v.to_a)].should == Set[*graph.getVertices] }
-      it { Set[*graph.e].should == Set[*graph.getEdges] }
-      it { Set[*(graph.e.to_a)].should == Set[*graph.getEdges] }
+      it { Set[*graph.v.collect(&:element)].should == Set[*graph.blueprints_graph.getVertices] }
+      it { Set[*graph.e.collect(&:element)].should == Set[*graph.blueprints_graph.getEdges] }
     end
 
     describe '#root?' do
@@ -131,6 +131,7 @@ Run.all(:read_only) do
     describe 'block filter' do
       it { graph.v { false }.count.should == 0 }
       it { graph.v { true }.count.should == graph.v.count }
+      it { graph.v { |v| v.graph.should == graph }.first }
       it { graph.v { |v| v.out_e.none? }[:name].to_a.should == ['blueprints'] }
 
       it 'should work with paths' do
@@ -185,7 +186,7 @@ shared_examples_for Pacer::Core::Route do
   let(:result_type) { raise 'specify :vertex, :edge, :mixed or :object' }
   let(:back) { nil }
   let(:info) { nil }
-  let(:route_extensions) { Set[] }
+  let(:route_extensions) { [] }
 
   context 'without data' do
     subject { route }
@@ -211,7 +212,10 @@ shared_examples_for Pacer::Core::Route do
     end
 
     describe '#result' do
-      before { graph.checkpoint }
+      before do
+        c = example.metadata[:graph_commit]
+        c.call if c
+      end
       subject { route.result }
       its(:element_type) { should == route.element_type }
     end
@@ -337,33 +341,30 @@ shared_examples_for Pacer::Core::Route do
       its(:element_type) { should == graph.element_type(result_type) }
     end
 
-    describe '#add_extension' do
+    describe '#add_extensions' do
       # Note that this mixin doesn't need to include
       # versions of each test with extensions applied because
       context '(SimpleMixin)' do
-        before do
-          @orig_ancestors = route.class.ancestors
-          r = route.add_extension Tackle::SimpleMixin
-          r.should equal(route)
+        subject do
+          route.add_extensions [Tackle::SimpleMixin]
         end
+        its(:back) { should equal(route) }
         its(:extensions) { should include(Tackle::SimpleMixin) }
         it { should respond_to(:route_mixin_method) }
       end
 
       context '(Object)' do
-        before do
-          @orig_ancestors = route.class.ancestors
-          route.add_extension Object
+        subject do
+          route.add_extensions [Object]
         end
-        its(:extensions) { should_not include(Object) }
+        its(:extensions) { should include(Object) }
       end
 
-      context '(invalid)' do
-        before do
-          @orig_ancestors = route.class.ancestors
-          route.add_extension :invalid
+      context '(:invalid)' do
+        subject do
+          route.add_extensions [:invalid]
         end
-        its(:extensions) { should_not include(:invalid) }
+        its(:extensions) { should include(:invalid) }
       end
     end
 
@@ -388,11 +389,11 @@ Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
   context 'vertices with extension' do
     it_uses Pacer::Core::Route do
-      let(:back) { nil }
-      let(:route) { graph.v.filter(Tackle::SimpleMixin) }
+      let(:back) { graph.v }
+      let(:route) { back.filter(Tackle::SimpleMixin) }
       let(:number_of_results) { 7 }
       let(:result_type) { :vertex }
-      let(:route_extensions) { Set[Tackle::SimpleMixin] }
+      let(:route_extensions) { [Tackle::SimpleMixin] }
     end
   end
 end

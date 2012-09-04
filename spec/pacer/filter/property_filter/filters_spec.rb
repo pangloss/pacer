@@ -49,8 +49,11 @@ module Pacer::Filter::PropertyFilter
 
         context '+ indices' do
           before do
+            graph.create_key_index 'name', :vertex
+            graph.create_key_index 'type', :vertex
+            graph.create_key_index 'nickname', :vertex
             filters.graph = graph
-            filters.indices = graph.getIndices
+            filters.indices = graph.indices
             filters.choose_best_index = true
             filters.search_manual_indices = true
           end
@@ -61,7 +64,7 @@ module Pacer::Filter::PropertyFilter
 
           it 'should use the automatic index' do
             find_index
-            @idx.should be_a Java::ComTinkerpopBlueprintsPgmImplsTg::TinkerAutomaticIndex
+            @idx.should be_a Pacer::Filter::KeyIndex
           end
 
           it 'should use the first key and value' do
@@ -132,10 +135,10 @@ module Pacer::Filter::PropertyFilter
         its(:properties) { should == [['tokens', short: '555555'], %w[ name Darrick ]] }
 
         context '+ indices' do
-          let!(:token_index) { graph.index_name 'tokens', :vertex, create: true }
+          let!(:token_index) { graph.index 'tokens', :vertex, create: true }
           before do
             filters.graph = graph
-            filters.indices = graph.getIndices
+            filters.indices = graph.indices
             filters.choose_best_index = true
             filters.search_manual_indices = true
           end
@@ -146,7 +149,7 @@ module Pacer::Filter::PropertyFilter
 
           it 'should use the automatic index' do
             find_index
-            @idx.should be token_index
+            @idx.should be token_index.index
           end
 
           it 'should use the first key and value' do

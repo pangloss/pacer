@@ -74,22 +74,22 @@ describe Enumerable do
         context 'with no arguments' do
           subject { [1, 'a'].to_route }
           it { should be_a Pacer::Core::Route }
-          its(:element_type) { should == Object }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
 
         context 'based on an object route' do
           subject { [1, 'a'].to_route(:based_on => graph.v[:name]) }
           it { should be_a Pacer::Core::Route }
-          its(:element_type) { should == Object }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
 
         context 'based on an object route with an extension' do
-          subject { [1, 'a'].to_route(:based_on => graph.v[:name].add_extension(Tackle::SimpleMixin)) }
+          subject { [1, 'a'].to_route(:based_on => graph.v[:name].add_extensions([Tackle::SimpleMixin])) }
           it { should be_a Pacer::Core::Route }
-          its(:extensions) { should == Set[Tackle::SimpleMixin] }
-          its(:element_type) { should == Object }
+          its(:extensions) { should == [Tackle::SimpleMixin] }
+          its(:element_type) { should == :object }
           its(:to_a) { should == [1, 'a'] }
         end
       end
@@ -105,7 +105,7 @@ describe Enumerable do
 
         context 'based on an extended element route' do
           subject { elements.to_route(:based_on => graph.v(Tackle::SimpleMixin)) }
-          its(:extensions) { should == Set[Tackle::SimpleMixin] }
+          its(:extensions) { should == [Tackle::SimpleMixin] }
           its(:element_type) { should == graph.element_type(:vertex) }
           its(:to_a) { should == elements }
         end

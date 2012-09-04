@@ -2,9 +2,18 @@
 
 Pacer is a JRuby library that enables very expressive graph traversals.
 
-It currently supports 2 major graph database: [Neo4j](http://neo4j.org) and [Dex](http://www.sparsity-technologies.com/dex) using the [Tinkerpop](http://tinkerpop.com) graphdb stack. Plus there's a very convenient in-memory graph called TinkerGraph which is part of [Blueprints](http://blueprints.tinkerpop.com).
+It currently supports 2 major graph database: [Neo4j](http://neo4j.org)
+and [Dex](http://www.sparsity-technologies.com/dex) using the
+[Tinkerpop](http://tinkerpop.com) graphdb stack. Plus there's a very
+convenient in-memory graph called TinkerGraph which is part of
+[Blueprints](http://blueprints.tinkerpop.com).
 
-Pacer allows you to create, modify and traverse graphs using very fast and memory efficient stream processing thanks to the very cool [Pipes](http://pipes.tinkerpop.com) library. That also means that almost all processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too, it's very fast!
+Pacer allows you to create, modify and traverse graphs using very fast
+and memory efficient stream processing thanks to the very cool
+[Pipes](http://pipes.tinkerpop.com) library. That also means that almost
+all processing is done in pure Java, so when it comes the usual Ruby
+expressiveness vs. speed problem, you can have your cake and eat it too,
+it's very fast!
 
 ## Mailing List
 
@@ -22,6 +31,14 @@ If you like, you can also use the documentation locally via
   gem install yard
   yard server
 
+## JRuby 1.7 Required
+
+As of Pacer 1.0.0, [JRuby](http://jruby.org/) 1.7 is required because it is both faster and
+fixes some problems that I previously had to work around in Pacer.
+
+The easiest way (ie. the way I do it) to get the most recent version of
+JRuby is to use [RVM](https://rvm.io/)
+
 ## Installation
 
 The easiest way to get Pacer is `gem install pacer`.
@@ -29,12 +46,9 @@ The easiest way to get Pacer is `gem install pacer`.
 If you want to hack on Pacer, you'll need to have
 [maven](http://maven.apache.org/) installed (I recommend `brew install
 maven`), then use `rake jar` to set up maven's pom.xml file and run the
-maven build script.
-
-*Note* Pacer currently relies on some features that are not yet in the
-main Pipes repo. You will need to build the `develop` branch of [my pipes
-repo](https://github.com/pangloss/pipes) by cloning it and running `mvn
-clean install`.
+maven build script. Then `rake gemfile_devel` to set up a default
+Gemfile that you can customize as needed to include dependencies
+to the various pacer-... graphs you want the test suite to run against.
 
 ## Graph Database Support
 

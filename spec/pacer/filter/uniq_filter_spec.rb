@@ -6,7 +6,7 @@ Run.tg(:read_only) do
   describe 'UniqFilter' do
     describe '#uniq' do
       it 'should be a route' do
-        graph.v.uniq.should be_an_instance_of(Pacer::Route)
+        graph.v.uniq.should be_a(Pacer::Route)
       end
 
       it 'results should be unique' do

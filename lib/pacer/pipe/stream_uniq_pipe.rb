@@ -22,12 +22,6 @@ module Pacer::Pipes
           return obj
         end
       end
-    rescue NativeException => e
-      if e.cause.getClass == NoSuchElementException.getClass
-        raise e.cause
-      else
-        raise e
-      end
     end
   end
 end

@@ -26,7 +26,7 @@ module Pacer
       def side_effect_pipe(end_pipe)
         old_back = @side_effect.back
         begin
-          empty = Pacer::Route.new :filter => :empty, :back => self
+          empty = Pacer::Route.empty self
           @side_effect.back = empty
           _, side_effect_pipe = @side_effect.send :build_pipeline
           side_effect_pipe.setStarts end_pipe if end_pipe

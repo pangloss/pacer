@@ -13,7 +13,7 @@ module Pacer
       # @param [Route] back the route the new route is based on.
       # @return [Route]
       def empty(back)
-        Pacer::Route.new :filter => :empty, :back => back
+        back.chain_route :filter => :empty
       end
 
       def block_branch(back, block, branch_start = nil)
@@ -21,7 +21,7 @@ module Pacer
           route = block.call rescue nil
         else
           unless branch_start
-            if back.is_a? Pacer::Graph 
+            if back.is_a? Pacer::Graph
               branch_start = back
             else
               branch_start = Pacer::Route.empty(back)
@@ -61,7 +61,16 @@ module Pacer
       end
 
       def inspect_class_name
-        s = "#{element_type.to_s.scan(/Elem|Obj|V|E/).last}"
+        s = case element_type
+            when :vertex
+              'V'
+            when :edge
+              'E'
+            when :object
+              'Obj'
+            when :mixed
+              'Elem'
+            end
         s = "#{s} #{ @info }" if @info
         s
       end

@@ -2,7 +2,8 @@ require 'spec_helper'
 
 describe Pacer::Transform::Path do
   before :all do
-    @g = Pacer.tg 'spec/data/pacer.graphml'
+    @g = Pacer.tg
+    Pacer::GraphML.import @g, 'spec/data/pacer.graphml'
   end
 
   describe '#paths' do
@@ -16,11 +17,13 @@ describe Pacer::Transform::Path do
 
     it 'should include all elements traversed' do
       @g.v.out_e.in_v.paths.each do |path|
-        path[0].should == @g
-        path[1].should be_a(Pacer::TinkerVertex)
-        path[2].should be_a(Pacer::TinkerEdge)
-        path[3].should be_a(Pacer::TinkerVertex)
-        path.length.should == 4
+        path[0].should be_a(Pacer::Wrappers::VertexWrapper)
+        path[1].should be_a(Pacer::Wrappers::EdgeWrapper)
+        path[2].should be_a(Pacer::Wrappers::VertexWrapper)
+        path[0].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerVertex)
+        path[1].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerEdge)
+        path[2].element.should be_a(com.tinkerpop.blueprints.impls.tg.TinkerVertex)
+        path.length.should == 3
       end
     end
 

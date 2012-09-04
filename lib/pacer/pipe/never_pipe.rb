@@ -3,7 +3,7 @@ module Pacer::Pipes
     protected
 
     def processNextStart
-      raise NoSuchElementException
+      raise EmptyPipe.instance
     end
   end
 end

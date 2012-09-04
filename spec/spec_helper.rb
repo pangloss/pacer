@@ -1,3 +1,9 @@
+def maybe_require(file)
+  require file
+rescue LoadError
+  puts "Not using #{ file }"
+end
+
 require "rubygems"
 require "bundler"
 Bundler.setup(:default, :development)
@@ -23,9 +29,9 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-require 'pacer-neo4j'
-# require 'pacer-dex'
-Pacer::DexGraph = Class.new unless defined? Pacer::DexGraph
+maybe_require 'pacer-neo4j'
+maybe_require 'pacer-orient'
+maybe_require 'pacer-dex'
 
 Run = RSpec::GraphRunner.new ENV['GRAPHS']
 
@@ -41,11 +47,11 @@ def use_pacer_graphml_data(usage_style = :read_write)
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
-      graph.import 'spec/data/pacer.graphml' if graph
+      Pacer::GraphML.import graph, 'spec/data/pacer.graphml' if graph
     end
   else
     let(:setup_data) do
-      graph.import 'spec/data/pacer.graphml' if graph
+      Pacer::GraphML.import graph, 'spec/data/pacer.graphml' if graph
     end
   end
   let(:pangloss) { graph.v(:name => 'pangloss', :type => 'person').first }
@@ -58,11 +64,11 @@ def use_grateful_dead_data(usage_style = :read_write)
   if usage_style == :read_only
     let(:setup_data) { }
     before(:all) do
-      graph.import 'spec/data/grateful-dead.xml' if graph
+      Pacer::GraphML.import graph, 'spec/data/grateful-dead.xml' if graph
     end
   else
     let(:setup_data) do
-      graph.import 'spec/data/grateful-dead.xml' if graph
+      Pacer::GraphML.import graph, 'spec/data/grateful-dead.xml' if graph
     end
   end
 end

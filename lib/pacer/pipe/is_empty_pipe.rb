@@ -6,20 +6,13 @@ module Pacer::Pipes
     end
 
     def processNextStart
-      raise Pacer::NoSuchElementException if @raise
-      @starts.next
+      raise EmptyPipe.instance if @raise
+      starts.next
       @raise = true
-    rescue NativeException => e
-      if e.cause.getClass == NoSuchElementException.getClass
-        # This is the only case where we return true.
-        # The only time we get here is if the first call to next
-        # has no results.
-        true
-      else
-        raise e
-      end
+    rescue EmptyPipe, java.util.NoSuchElementException
+      true
     else
-      raise Pacer::NoSuchElementException
+      raise EmptyPipe.instance
     end
 
     def reset

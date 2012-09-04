@@ -4,9 +4,11 @@ module Pacer::Core::Graph
   # blueprints library.
   module GraphIndexRoute
     # Returns a new route to all graph vertices. Standard filter options.
-    def v(*filters, &block)
-      filters = Pacer::Route.filters(filters)
-      route = indexed_route(:vertex, filters, block)
+    def v(*args, &block)
+      filters = Pacer::Route.filters(args)
+      if features.supportsIndices
+        route = indexed_route(:vertex, filters, block)
+      end
       if route
         route
       else
@@ -15,9 +17,11 @@ module Pacer::Core::Graph
     end
 
     # Returns a new route to all graph edges. Standard filter options.
-    def e(*filters, &block)
-      filters = Pacer::Route.edge_filters(filters)
-      route = indexed_route(:edge, filters, block)
+    def e(*args, &block)
+      filters = Pacer::Route.edge_filters(args)
+      if features.supportsIndices
+        route = indexed_route(:edge, filters, block)
+      end
       if route
         route
       else
@@ -28,11 +32,11 @@ module Pacer::Core::Graph
     attr_accessor :choose_best_index
     attr_accessor :search_manual_indices
 
-    protected
+    private
 
     def indexed_route(element_type, filters, block)
       filters.graph = self
-      filters.indices = graph.getIndices
+      filters.indices = graph.indices
       filters.choose_best_index = choose_best_index != false
       filters.search_manual_indices = search_manual_indices
       idx, key, value = filters.best_index(element_type)
