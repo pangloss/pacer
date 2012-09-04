@@ -21,8 +21,6 @@ group :development do
   libs.each do |lib, version|
     if File.directory? "../#{lib}"
       gem lib, :path => "../#{lib}" 
-    else
-      gem lib, version
     end
   end
 
