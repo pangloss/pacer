@@ -23,10 +23,9 @@ def in_editor?
   ENV.has_key?('TM_MODE') || ENV.has_key?('EMACS') || ENV.has_key?('VIM')
 end
 
-require 'pacer-neo4j'
-require 'pacer-orient'
-# require 'pacer-dex'
-Pacer::DexGraph = Class.new unless defined? Pacer::DexGraph
+require 'pacer-neo4j' rescue nil
+require 'pacer-orient' rescue nil
+require 'pacer-dex' rescue nil
 
 Run = RSpec::GraphRunner.new ENV['GRAPHS']
 

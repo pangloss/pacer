@@ -15,7 +15,8 @@ group :development do
   #
   libs = [
     ['pacer-neo4j', '2.0.0.pre'],
-    ['pacer-orient', '2.0.0.pre']
+    ['pacer-orient', '2.0.0.pre'],
+    ['pacer-dex', '2.0.0.pre']
   ] 
   libs.each do |lib, version|
     if File.directory? "../#{lib}"

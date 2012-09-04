@@ -1,5 +1,6 @@
-require 'pacer-neo4j/rspec'
-require 'pacer-orient/rspec'
+require 'pacer-neo4j/rspec' rescue nil
+require 'pacer-orient/rspec' rescue nil
+require 'pacer-dex/rspec' rescue nil
 
 class RSpec::GraphRunner
   module Stubs
@@ -88,7 +89,7 @@ class RSpec::GraphRunner
   #include RubyGraph
   #include MultiGraph
   include Neo4j
-  #include Dex
+  include Dex
   include Orient
 
   def initialize(*graphs)

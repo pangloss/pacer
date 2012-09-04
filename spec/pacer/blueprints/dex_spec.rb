@@ -1,7 +1,7 @@
 require 'spec_helper'
 
 Run.dex do
-  describe Pacer::DexGraph do
+  describe Pacer::Dex do
     let(:v0) { graph.create_vertex }
     let(:v1) { graph.create_vertex }
     let(:e0) { graph.create_edge '0', v0, v1, :default }
