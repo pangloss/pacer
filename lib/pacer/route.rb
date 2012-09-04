@@ -190,6 +190,14 @@ module Pacer
       config[:extensions]
     end
 
+    def all_extensions
+      if wrapper
+        (wrapper.extensions + extensions).uniq
+      else
+        extensions
+      end
+    end
+
     # The type of object that this route emits.
     def element_type
       config[:element_type]
