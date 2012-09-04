@@ -141,7 +141,7 @@ module Pacer
     # @todo make id param optional
     def create_edge(id, from_v, to_v, label, *args)
       _, wrapper, modules, props = id_modules_properties(args)
-      raw_edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label) }
+      raw_edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label.to_s) }
       if wrapper
         edge = wrapper.new raw_edge
       else
@@ -410,7 +410,11 @@ module Pacer
         end
       end
       modules.delete wrapper
-      id = nil if id == props or modules.include? id or id == wrapper
+      begin
+        id = nil if id == props or modules.include? id or id == wrapper
+      rescue Exception
+        # Orient uses an ID type that can't be compared with things?
+      end
       [id, wrapper, modules, props]
     end
 

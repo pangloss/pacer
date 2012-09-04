@@ -1,4 +1,5 @@
 require 'pacer-neo4j/rspec'
+require 'pacer-orient/rspec'
 
 class RSpec::GraphRunner
   module Stubs
@@ -88,7 +89,7 @@ class RSpec::GraphRunner
   #include MultiGraph
   include Neo4j
   #include Dex
-  #include Orient
+  include Orient
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
