@@ -27,3 +27,4 @@ jdex.log
 bin
 .jitcache
 coverage/*
+dex.log
