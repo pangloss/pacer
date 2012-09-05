@@ -1,4 +1,4 @@
-[Pacer::Core::Route, Pacer::Wrappers::ElementWrapper, Pacer::Wrappers::EdgeWrapper, Pacer::Wrappers::VertexWrapper].each do |klass|
+[Pacer::Core::Route, Pacer::Wrappers::ElementWrapper].each do |klass|
   klass.class_eval %{
     def chain_route(args_hash)
       Pacer::RouteBuilder.current.chain self, args_hash
@@ -182,6 +182,10 @@ module Pacer
 
     attr_reader :config
 
+    # The wrapper object to use to wrap elements in.
+    #
+    # If it responds to #add_extensions and the rout also has additional
+    # extensions, it will be used to generate a new wrapper dynamically.
     def wrapper
       config[:wrapper]
     end
