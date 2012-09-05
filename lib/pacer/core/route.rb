@@ -203,31 +203,6 @@ module Pacer
         chain_route wrapper: wrapper
       end
 
-      def wrapper
-        @wrapper
-      end
-
-      # Get the set of extensions currently on this route.
-      #
-      # The order of extensions for custom defined wrappers are
-      # guaranteed. If a wrapper is iterated with additional extensions,
-      # a new wrapper will be created dynamically with the original
-      # extensions in order followed by any additional extensions in
-      # undefined order.
-      #
-      # Returns an Array
-      #
-      # @return [Array[extension]]
-      attr_reader :extensions
-
-      def all_extensions
-        if wrapper
-          wrapper.extensions + extensions
-        else
-          extensions
-        end
-      end
-
       # If any objects in the given array are modules that contain a Route
       # submodule, extend this route with the Route module.
       # @return [self]

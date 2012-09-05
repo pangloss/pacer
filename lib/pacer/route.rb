@@ -186,6 +186,17 @@ module Pacer
       config[:wrapper]
     end
 
+    # Get the set of extensions currently on this route.
+    #
+    # The order of extensions for custom defined wrappers are
+    # guaranteed. If a wrapper is iterated with additional extensions,
+    # a new wrapper will be created dynamically with the original
+    # extensions in order followed by any additional extensions in
+    # undefined order.
+    #
+    # Returns an Array
+    #
+    # @return [Array[extension]]
     def extensions
       if wrapper
         (wrapper.extensions + config[:extensions]).uniq
