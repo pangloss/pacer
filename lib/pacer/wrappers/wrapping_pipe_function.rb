@@ -3,14 +3,13 @@ module Pacer
     class WrappingPipeFunction
       include com.tinkerpop.pipes.PipeFunction
 
-      attr_reader :block, :graph, :wrapper, :extensions, :back
+      attr_reader :block, :graph, :wrapper, :extensions
 
       def initialize(back, block)
-        @back = back
         @block = block
         if back
           @graph = back.graph
-          @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
+          @extensions = back.extensions
           element_type = back.element_type
         end
         @wrapper = WrapperSelector.build element_type, extensions
@@ -23,7 +22,6 @@ module Pacer
       def compute(element)
         e = wrapper.new element
         e.graph = graph if e.respond_to? :graph=
-        e.back = back if e.respond_to? :back=
         block.call e
       end
 
@@ -32,7 +30,6 @@ module Pacer
       def call_with_args(element, *args)
         e = wrapper.new element
         e.graph = graph if e.respond_to? :graph=
-        e.back = back if e.respond_to? :back=
         block.call e, *args
       end
 

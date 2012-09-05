@@ -20,7 +20,7 @@ shared_examples_for '#process' do
 
     it 'should have the right extensions in the block' do
       subject.first
-      exts.first.should == [Tackle::SimpleMixin, Pacer::Extensions::BlockFilterElement]
+      exts.first.should == [Tackle::SimpleMixin]
     end
   end
 end

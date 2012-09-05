@@ -398,9 +398,8 @@ Run.tg :read_only do
         end
 
         it 'should have ancestors in the correct order' do
-          subject.ancestors[0...7].should == [
-            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_CoderPacer_Extensions_BlockFilterElement,
-            Pacer::Extensions::BlockFilterElement::Route,
+          subject.ancestors[0...6].should == [
+            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_Coder,
             TP::Coder::Route,
             Tackle::SimpleMixin::Vertex,
             Tackle::SimpleMixin::Route,
@@ -438,9 +437,8 @@ Run.tg :read_only do
 
           it { should_not be_nil }
           it 'should have ancestors in the correct order' do
-            subject.ancestors[0...7].should == [
-              Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_CoderPacer_Extensions_BlockFilterElement,
-              Pacer::Extensions::BlockFilterElement::Route,
+            subject.ancestors[0...6].should == [
+              Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_Coder,
               TP::Coder::Route,
               TP::Person::Route,
               Tackle::SimpleMixin::Vertex,
