@@ -193,5 +193,12 @@ module Pacer::Wrappers
         graph == other.graph
     end
     alias eql? ==
+
+    # Neo4j and Orient both have hash collisions between vertices and
+    # edges which causes problems when making a set out of a path for
+    # instance. Simple fix: negate edge hashes.
+    def hash
+      -element.hash
+    end
   end
 end

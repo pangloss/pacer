@@ -92,10 +92,6 @@ module Pacer::Wrappers
       after_initialize
     end
 
-    def hash
-      element.hash
-    end
-
     # Convenience method to retrieve a property by name.
     #
     # @param [#to_s] key the property name
