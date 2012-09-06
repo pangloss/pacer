@@ -186,12 +186,12 @@ module Pacer::Wrappers
     # If the other instance is an unwrapped edge, this will always return
     # false because otherwise the == method would not be symetrical.
     #
-    # @see #eql?
     # @param other
     def ==(other)
       other.is_a? EdgeWrapper and
         element_id == other.element_id and
         graph == other.graph
     end
+    alias eql? ==
   end
 end

@@ -172,13 +172,13 @@ module Pacer::Wrappers
     # If the other instance is an unwrapped vertex, this will always return
     # false because otherwise the == method would not be symetrical.
     #
-    # @see #eql?
     # @param other
     def ==(other)
       other.is_a? VertexWrapper and
         element_id == other.element_id and
         graph == other.graph
     end
+    alias eql? ==
 
     protected
 

@@ -174,24 +174,6 @@ module Pacer::Wrappers
       display_name.to_s <=> other.display_name.to_s
     end
 
-    # Test object equality of the element instance.
-    #
-    # Wrappers/extensions (if any) are ignored, the underlying element
-    # only is compared
-    #
-    # If the graphdb instantiates multiple copies of the same element
-    # this method will return false when comparing them.
-    #
-    # @see #==
-    # @param other
-    def eql?(other)
-      if other.respond_to? :element_id
-        other.graph == graph and other.element_id == element_id
-      else
-        element.equals other
-      end
-    end
-
     protected
 
     def after_initialize
