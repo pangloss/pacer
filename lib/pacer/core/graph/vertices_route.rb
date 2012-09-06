@@ -39,6 +39,8 @@ module Pacer::Core::Graph
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
                                                :pipe_class => OutPipe,
                                                :pipe_args => route_labels,
+                                               :wrapper => nil,
+                                               :extensions => [],
                                                :route_name => edge_route_name('out')),
                                   filters, block)
     end
@@ -73,6 +75,8 @@ module Pacer::Core::Graph
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
                                                :pipe_class => InPipe,
                                                :pipe_args => route_labels,
+                                               :wrapper => nil,
+                                               :extensions => [],
                                                :route_name => edge_route_name('in')),
                                   filters, block)
     end
@@ -107,6 +111,8 @@ module Pacer::Core::Graph
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
                                                :pipe_class => BothPipe,
                                                :pipe_args => route_labels,
+                                               :wrapper => nil,
+                                               :extensions => [],
                                                :route_name => edge_route_name('both')),
                                   filters, block)
     end
