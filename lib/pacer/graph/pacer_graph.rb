@@ -62,12 +62,11 @@ module Pacer
       if v
         wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
         if wrapper
-          v = wrapper.new v
+          v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::VertexWrapper.new v
+          v = Pacer::Wrappers::VertexWrapper.new graph, v
         end
-        v.graph = self
         v.add_extensions modules
       else
         v
@@ -90,12 +89,11 @@ module Pacer
       if v
         wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
         if wrapper
-          v = wrapper.new v
+          v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::EdgeWrapper.new v
+          v = Pacer::Wrappers::EdgeWrapper.new graph, v
         end
-        v.graph = self
         v.add_extensions modules
       end
     end
@@ -116,14 +114,13 @@ module Pacer
       id, wrapper, modules, props = id_modules_properties(args)
       raw_vertex = creating_elements { blueprints_graph.addVertex(id) }
       if wrapper
-        vertex = wrapper.new raw_vertex
+        vertex = wrapper.new graph, raw_vertex
       else
-        vertex = Pacer::Wrappers::VertexWrapper.new raw_vertex
+        vertex = Pacer::Wrappers::VertexWrapper.new graph, raw_vertex
       end
       if modules.any?
         vertex = vertex.add_extensions modules
       end
-      vertex.graph = self
       props.each { |k, v| vertex[k.to_s] = v } if props
       vertex
     end
@@ -143,14 +140,13 @@ module Pacer
       _, wrapper, modules, props = id_modules_properties(args)
       raw_edge = creating_elements { blueprints_graph.addEdge(id, from_v.element, to_v.element, label.to_s) }
       if wrapper
-        edge = wrapper.new raw_edge
+        edge = wrapper.new graph, raw_edge
       else
-        edge = Pacer::Wrappers::EdgeWrapper.new raw_edge
+        edge = Pacer::Wrappers::EdgeWrapper.new graph, raw_edge
       end
       if modules.any?
         edge = edge.add_extensions modules
       end
-      edge.graph = self
       props.each { |k, v| edge[k.to_s] = v } if props
       edge
     end

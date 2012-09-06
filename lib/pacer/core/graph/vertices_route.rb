@@ -165,8 +165,6 @@ module Pacer::Core::Graph
       else
         to_vertices = [to_vertices].compact
       end
-      graph = self.graph
-
       has_props = !props.empty?
       edge_ids = []
       counter = 0

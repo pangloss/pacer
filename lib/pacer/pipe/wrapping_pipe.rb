@@ -24,13 +24,7 @@ module Pacer
       end
 
       def processNextStart
-        e = wrapper.new starts.next
-        if element_type == :vertex or element_type == :edge or element_type == :mixed
-          e.graph = graph
-        elsif e.respond_to? :graph=
-          e.graph = graph
-        end
-        e
+        wrapper.new graph, starts.next
       end
     end
   end

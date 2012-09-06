@@ -49,9 +49,7 @@ module Pacer::Wrappers
     #   the extensions
     def add_extensions(exts)
       if exts.any?
-        e = self.class.wrap(element, extensions + exts.to_a)
-        e.graph = graph
-        e
+        self.class.wrap(self, extensions + exts.to_a)
       else
         self
       end
@@ -60,9 +58,7 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [VertexWrapper]
     def no_extensions
-      e = VertexWrapper.new element
-      e.graph = graph
-      e
+      VertexWrapper.new graph, element
     end
 
     # Checks that the given extensions can be applied to the vertex. If

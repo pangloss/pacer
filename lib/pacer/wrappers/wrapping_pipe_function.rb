@@ -20,28 +20,24 @@ module Pacer
       end
 
       def compute(element)
-        e = wrapper.new element
-        e.graph = graph if e.respond_to? :graph=
+        e = wrapper.new graph, element
         block.call e
       end
 
       alias call compute
 
       def call_with_args(element, *args)
-        e = wrapper.new element
-        e.graph = graph if e.respond_to? :graph=
+        e = wrapper.new graph, element
         block.call e, *args
       end
 
       def wrap_path(path)
         path.collect do |item|
           if item.is_a? Pacer::Vertex
-            wrapped = Pacer::Wrappers::VertexWrapper.new item
-            wrapped.graph = graph
+            wrapped = Pacer::Wrappers::VertexWrapper.new graph, item
             wrapped
           elsif item.is_a? Pacer::Edge
-            wrapped = Pacer::Wrappers::EdgeWrapper.new item
-            wrapped.graph = graph
+            wrapped = Pacer::Wrappers::EdgeWrapper.new graph, item
             wrapped
           else
             item

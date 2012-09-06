@@ -23,9 +23,7 @@ module Pacer::Utils
       def find(array)
         found = find_partial(array)
         if found.length == array.length
-          result = found.last.in_vertex.add_extensions [Trie]
-          result.graph = graph
-          result
+          found.last.in_vertex.add_extensions [Trie]
         end
       end
 
@@ -64,7 +62,6 @@ module Pacer::Utils
           end
         end
         result[:end] = true
-        result.graph = graph
         result.add_extensions [Trie]
       end
 

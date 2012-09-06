@@ -19,17 +19,11 @@ module Pacer
         path = starts.next
         path.collect do |item|
           if item.is_a? Pacer::Vertex
-            wrapped = vertex_wrapper.new item
-            wrapped.graph = graph
-            wrapped
+            vertex_wrapper.new graph, item
           elsif item.is_a? Pacer::Edge
-            wrapped = edge_wrapper.new item
-            wrapped.graph = graph
-            wrapped
+            edge_wrapper.new graph, item
           elsif other_wrapper
-            wrapped = other_wrapper.new item
-            wrapped.graph = graph if wrapped.respond_to? :graph
-            wrapped
+            other_wrapper.new graph, item
           else
             item
           end

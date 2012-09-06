@@ -28,10 +28,10 @@ module Pacer::Wrappers
       end
     end
 
-    def new(element)
+    def new(graph, element)
       w = wrapper(element)
       if w
-        w.new element
+        w.new graph, element
       else
         element
       end

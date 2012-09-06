@@ -52,12 +52,9 @@ module Pacer::Pipes
           end
           depth = 0
         end
-        wrapped = wrapper.new(element)
-        wrapped.graph = graph if wrapped.respond_to? :graph=
+        wrapped = wrapper.new(graph, element)
         path = @next_path.map do |e|
-          w = wrapper.new e
-          w.graph = graph if w.respond_to? :graph=
-          w
+          wrapper.new graph, e
         end
         case control_block.call wrapped, depth, path
         when :loop

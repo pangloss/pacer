@@ -8,11 +8,7 @@ module Pacer::Wrappers
 
     class << self
       def wrap(element, exts)
-        if element.respond_to? :element
-          wrapper_for(exts).new(element.element)
-        else
-          wrapper_for(exts).new(element)
-        end
+        wrapper_for(exts).new(element.graph, element.element)
       end
 
       def extensions
@@ -83,10 +79,11 @@ module Pacer::Wrappers
     # the element.
     #
     # @return [PacerGraph]
-    attr_accessor :graph
+    attr_reader :graph
     attr_reader :element
 
-    def initialize(element)
+    def initialize(graph, element)
+      @graph = graph
       if element.is_a? ElementWrapper
         @element = element.element
       else
