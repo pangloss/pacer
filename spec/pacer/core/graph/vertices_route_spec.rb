@@ -37,6 +37,10 @@ Run.all(:read_only) do
         its(:count) { should == 9 }
         it { subject.to_a.should == graph.v.out_e(:uses, :wrote).in_v.to_a }
       end
+
+      it 'should not apply extensions to new route' do
+        graph.v(Tackle::SimpleMixin).out.extensions.should == []
+      end
     end
 
     describe '#in' do
@@ -49,6 +53,10 @@ Run.all(:read_only) do
         its(:count) { should == 9 }
         it { subject.to_a.should == graph.v.in_e(:uses, :wrote).out_v.to_a }
       end
+
+      it 'should not apply extensions to new route' do
+        graph.v(Tackle::SimpleMixin).in.extensions.should == []
+      end
     end
 
     describe '#both' do
@@ -60,6 +68,10 @@ Run.all(:read_only) do
         its(:count) { should == 8 }
         # These element ids only work under TinkerGraph:
         #it { subject.element_ids.to_a.should == %w[5 5 0 1 4 2 3 5] }
+      end
+
+      it 'should not apply extensions to new route' do
+        graph.v(Tackle::SimpleMixin).both.extensions.should == []
       end
     end
   end

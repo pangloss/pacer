@@ -66,8 +66,7 @@ module Pacer
         def processNextStart
           while true
             if current_keys.empty?
-              element = wrapper.new starts.next
-              element.graph = from_graph if element.respond_to? :graph
+              element = wrapper.new from_graph, starts.next
               self.current_keys = get_keys(element)
               self.current_values = get_values(element) unless current_keys.empty?
             else
@@ -110,10 +109,10 @@ module Pacer
           array = pipe.next
           array.map do |element|
             if element.is_a? Pacer::Element
-              element = wrapper.new element
-              element.graph = from_graph if element.respond_to? :graph
+              wrapper.new from_graph, element
+            else
+              element
             end
-            element
           end
         end
 

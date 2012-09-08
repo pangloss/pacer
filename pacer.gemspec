@@ -13,8 +13,6 @@ Gem::Specification.new do |s|
   s.summary = %Q{A very efficient and easy to use graph traversal engine.}
   s.description = %Q{Pacer defines routes through a graph and then traverses them very quickly.}
 
-  s.add_dependency 'fastercsv', '>= 1.5.4'
-
   s.files = `git ls-files`.split("\n") + [Pacer::JAR_PATH]
   s.test_files = `git ls-files -- spec/*`.split("\n")
   s.require_paths = ['lib']

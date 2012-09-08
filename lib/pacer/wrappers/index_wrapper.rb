@@ -19,9 +19,8 @@ module Pacer::Wrappers
     def first(key, value, extensions = nil)
       e = index.get(key, value).first
       if e
-        e = wrapper.new e
+        e = wrapper.new graph, e
         e = e.add_extensions extensions if extensions
-        e.graph = graph
       end
       e
     end

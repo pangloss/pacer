@@ -24,8 +24,7 @@ module Pacer
         current = starts.next
         @in_section = true unless in_section
         if use_on_element
-          wrapped = wrapper.new current
-          wrapped.graph = graph
+          wrapped = wrapper.new graph, current
           visitor.on_element(wrapped)
         end
         return current

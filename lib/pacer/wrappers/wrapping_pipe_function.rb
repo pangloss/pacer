@@ -3,14 +3,13 @@ module Pacer
     class WrappingPipeFunction
       include com.tinkerpop.pipes.PipeFunction
 
-      attr_reader :block, :graph, :wrapper, :extensions, :back
+      attr_reader :block, :graph, :wrapper, :extensions
 
       def initialize(back, block)
-        @back = back
         @block = block
         if back
           @graph = back.graph
-          @extensions = back.extensions + [Pacer::Extensions::BlockFilterElement]
+          @extensions = back.extensions
           element_type = back.element_type
         end
         @wrapper = WrapperSelector.build element_type, extensions
@@ -21,30 +20,24 @@ module Pacer
       end
 
       def compute(element)
-        e = wrapper.new element
-        e.graph = graph if e.respond_to? :graph=
-        e.back = back if e.respond_to? :back=
+        e = wrapper.new graph, element
         block.call e
       end
 
       alias call compute
 
       def call_with_args(element, *args)
-        e = wrapper.new element
-        e.graph = graph if e.respond_to? :graph=
-        e.back = back if e.respond_to? :back=
+        e = wrapper.new graph, element
         block.call e, *args
       end
 
       def wrap_path(path)
         path.collect do |item|
           if item.is_a? Pacer::Vertex
-            wrapped = Pacer::Wrappers::VertexWrapper.new item
-            wrapped.graph = graph
+            wrapped = Pacer::Wrappers::VertexWrapper.new graph, item
             wrapped
           elsif item.is_a? Pacer::Edge
-            wrapped = Pacer::Wrappers::EdgeWrapper.new item
-            wrapped.graph = graph
+            wrapped = Pacer::Wrappers::EdgeWrapper.new graph, item
             wrapped
           else
             item

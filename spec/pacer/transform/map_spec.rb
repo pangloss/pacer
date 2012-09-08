@@ -15,7 +15,7 @@ shared_examples_for '#map' do
 
     subject { extended.map { |v| v.extensions } }
 
-    its(:first) { should == [Tackle::SimpleMixin, Pacer::Extensions::BlockFilterElement] }
+    its(:first) { should == [Tackle::SimpleMixin] }
     its(:element_type) { should == :object }
 
     context 'with vertex result type' do
@@ -32,7 +32,7 @@ shared_examples_for '#map' do
       it 'should use the source - not the result - extension in the block' do
         v = subject.first
         v.extensions.should == [TP::Person]
-        exts.first.should == [Tackle::SimpleMixin, Pacer::Extensions::BlockFilterElement]
+        exts.first.should == [Tackle::SimpleMixin]
       end
     end
   end

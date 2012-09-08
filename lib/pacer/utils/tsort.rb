@@ -59,9 +59,9 @@ module Pacer
 
         def tsort_dependencies(tsort_anon_mod = nil)
           if self.class.const_defined? :DependenciesBlock
-            self.class::DependenciesBlock.call(self).add_extensions([tsort_anon_mod])
+            self.class::DependenciesBlock.call(self).add_extensions([TSort, tsort_anon_mod])
           else
-            self.in
+            self.in(extensions)
           end
         end
       end

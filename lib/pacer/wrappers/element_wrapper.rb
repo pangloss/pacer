@@ -8,11 +8,7 @@ module Pacer::Wrappers
 
     class << self
       def wrap(element, exts)
-        if element.respond_to? :element
-          wrapper_for(exts).new(element.element)
-        else
-          wrapper_for(exts).new(element)
-        end
+        wrapper_for(exts).new(element.graph, element.element)
       end
 
       def extensions
@@ -83,20 +79,17 @@ module Pacer::Wrappers
     # the element.
     #
     # @return [PacerGraph]
-    attr_accessor :graph
+    attr_reader :graph
     attr_reader :element
 
-    def initialize(element)
+    def initialize(graph, element)
+      @graph = graph
       if element.is_a? ElementWrapper
         @element = element.element
       else
         @element = element
       end
       after_initialize
-    end
-
-    def hash
-      element.hash
     end
 
     # Convenience method to retrieve a property by name.
@@ -175,24 +168,6 @@ module Pacer::Wrappers
     # @return [Fixnum]
     def <=>(other)
       display_name.to_s <=> other.display_name.to_s
-    end
-
-    # Test object equality of the element instance.
-    #
-    # Wrappers/extensions (if any) are ignored, the underlying element
-    # only is compared
-    #
-    # If the graphdb instantiates multiple copies of the same element
-    # this method will return false when comparing them.
-    #
-    # @see #==
-    # @param other
-    def eql?(other)
-      if other.respond_to? :element_id
-        other.graph == graph and other.element_id == element_id
-      else
-        element.equals other
-      end
     end
 
     protected

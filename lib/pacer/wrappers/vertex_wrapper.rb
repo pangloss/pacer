@@ -49,9 +49,7 @@ module Pacer::Wrappers
     #   the extensions
     def add_extensions(exts)
       if exts.any?
-        e = self.class.wrap(element, extensions + exts.to_a)
-        e.graph = graph
-        e
+        self.class.wrap(self, extensions + exts.to_a)
       else
         self
       end
@@ -60,9 +58,7 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [VertexWrapper]
     def no_extensions
-      e = VertexWrapper.new element
-      e.graph = graph
-      e
+      VertexWrapper.new graph, element
     end
 
     # Checks that the given extensions can be applied to the vertex. If
@@ -176,12 +172,19 @@ module Pacer::Wrappers
     # If the other instance is an unwrapped vertex, this will always return
     # false because otherwise the == method would not be symetrical.
     #
-    # @see #eql?
     # @param other
     def ==(other)
       other.is_a? VertexWrapper and
         element_id == other.element_id and
         graph == other.graph
+    end
+    alias eql? ==
+
+    # Neo4j and Orient both have hash collisions between vertices and
+    # edges which causes problems when making a set out of a path for
+    # instance. Simple fix: negate edge hashes.
+    def hash
+      element.hash
     end
 
     protected

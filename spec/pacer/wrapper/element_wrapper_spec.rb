@@ -42,6 +42,19 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
       end
     end
 
+    describe '#hash' do
+      it 'should not collide between vertices and edges' do
+        # different graphs need different numbers
+        600.times { graph.create_edge nil, graph.create_vertex, graph.create_vertex, 'abc' }
+        v_hashes = graph.v.map(&:hash).to_a
+        e_hashes = graph.e.map(&:hash).to_a
+        count = v_hashes.count + e_hashes.count
+        (v_hashes + e_hashes).uniq.count.should == count
+        set = graph.v.to_set + graph.e.to_set
+        set.count.should == count
+      end
+    end
+
     describe '#eql?' do
       subject { Hash.new(0) }
       before do
@@ -398,9 +411,8 @@ Run.tg :read_only do
         end
 
         it 'should have ancestors in the correct order' do
-          subject.ancestors[0...7].should == [
-            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_CoderPacer_Extensions_BlockFilterElement,
-            Pacer::Extensions::BlockFilterElement::Route,
+          subject.ancestors[0...6].should == [
+            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_Coder,
             TP::Coder::Route,
             Tackle::SimpleMixin::Vertex,
             Tackle::SimpleMixin::Route,
@@ -438,9 +450,8 @@ Run.tg :read_only do
 
           it { should_not be_nil }
           it 'should have ancestors in the correct order' do
-            subject.ancestors[0...7].should == [
-              Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_CoderPacer_Extensions_BlockFilterElement,
-              Pacer::Extensions::BlockFilterElement::Route,
+            subject.ancestors[0...6].should == [
+              Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_Coder,
               TP::Coder::Route,
               TP::Person::Route,
               Tackle::SimpleMixin::Vertex,

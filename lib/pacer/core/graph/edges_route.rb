@@ -9,7 +9,7 @@ module Pacer::Core::Graph
     # Extends the route with out vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def out_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -21,7 +21,7 @@ module Pacer::Core::Graph
     # Extends the route with in vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def in_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -33,7 +33,7 @@ module Pacer::Core::Graph
     # Extends the route with both in and oud vertices from this route's matching edges.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [VertexWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [VertexWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def both_v(*filters, &block)
       Pacer::Route.property_filter(chain_route(:element_type => :vertex,
@@ -45,7 +45,7 @@ module Pacer::Core::Graph
     # Extend route with the additional edge label, property and block filters.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
-    # @yield [EdgeWrapper(Extensions::BlockFilterElement)] filter proc, see {Pacer::Route#property_filter}
+    # @yield [EdgeWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [EdgesRoute]
     def e(*filters, &block)
       filter(*filters, &block)

@@ -42,14 +42,12 @@ module Pacer::Wrappers
     def in_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::IN
       if extensions.is_a? Enumerable
-        v = VertexWrapper.wrapper_for(extensions).new v
+        VertexWrapper.wrapper_for(extensions).new graph, v
       elsif extensions
-        v = VertexWrapper.wrapper_for([extensions]).new v
+        VertexWrapper.wrapper_for([extensions]).new graph, v
       else
-        v = VertexWrapper.new v
+        VertexWrapper.new graph, v
       end
-      v.graph = graph
-      v
     end
 
     # The outgoing vertex for this edge.
@@ -57,14 +55,12 @@ module Pacer::Wrappers
     def out_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::OUT
       if extensions.is_a? Enumerable
-        v = VertexWrapper.wrapper_for(extensions).new v
+        VertexWrapper.wrapper_for(extensions).new graph, v
       elsif extensions
-        v = VertexWrapper.wrapper_for([extensions]).new v
+        VertexWrapper.wrapper_for([extensions]).new graph, v
       else
-        v = VertexWrapper.new v
+        VertexWrapper.new graph, v
       end
-      v.graph = graph
-      v
     end
 
     # This method must be defined here rather than in the superclass in order
@@ -83,9 +79,7 @@ module Pacer::Wrappers
     #   the extensions
     def add_extensions(exts)
       if exts.any?
-        e = self.class.wrap(element, extensions + exts.to_a)
-        e.graph = graph
-        e
+        self.class.wrap(self, extensions + exts.to_a)
       else
         self
       end
@@ -94,7 +88,7 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [EdgeWrapper]
     def no_extensions
-      EdgeWrapper.new element
+      EdgeWrapper.new graph, element
     end
 
     # Returns a human-readable representation of the edge using the
@@ -138,8 +132,7 @@ module Pacer::Wrappers
       unless e
         e = e_idx.first('id', element_id)
         if e
-          e = EdgeWrapper.new(e)
-          e.graph = target_graph
+          e = EdgeWrapper.new(graph, e)
         end
       end
       unless e
@@ -193,12 +186,19 @@ module Pacer::Wrappers
     # If the other instance is an unwrapped edge, this will always return
     # false because otherwise the == method would not be symetrical.
     #
-    # @see #eql?
     # @param other
     def ==(other)
       other.is_a? EdgeWrapper and
         element_id == other.element_id and
         graph == other.graph
+    end
+    alias eql? ==
+
+    # Neo4j and Orient both have hash collisions between vertices and
+    # edges which causes problems when making a set out of a path for
+    # instance. Simple fix: negate edge hashes.
+    def hash
+      -element.hash
     end
   end
 end
