@@ -9,7 +9,11 @@ module Pacer
     attr_reader :blueprints_graph, :encoder
 
     def initialize(encoder, open, shutdown = nil)
-      @reopen = open
+      if open.is_a? Proc
+        @reopen = open
+      else
+        @reopen = proc { open }
+      end
       @shutdown = shutdown
       reopen
       @encoder = encoder
