@@ -46,6 +46,8 @@ shared_examples_for Pacer::RubyGraph do
       subject { graph.vertex v0.element_id, wrapper }
       its(:element_id) { should == v0.element_id }
       its(:class) { should == wrapper }
+      its(:extensions) { should == wrapper.extensions }
+      its(:extensions) { should == [Tackle::SimpleMixin] }
       it_behaves_like 'a vertex with a mixin'
     end
 

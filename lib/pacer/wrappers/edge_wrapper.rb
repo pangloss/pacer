@@ -9,10 +9,13 @@ module Pacer::Wrappers
       :getRawEdge
 
     class << self
+      def wrappers
+        @wrappers ||= {}
+      end
+
       def wrapper_for(exts)
-        @wrappers = {} unless defined? @wrappers
         if exts
-          @wrappers[exts.to_set] ||= build_edge_wrapper(exts)
+          EdgeWrapper.wrappers[exts] ||= build_edge_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
