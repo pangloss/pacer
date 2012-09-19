@@ -9,10 +9,13 @@ module Pacer::Wrappers
       :getRawVertex
 
     class << self
+      def wrappers
+        @wrappers ||= {}
+      end
+
       def wrapper_for(exts)
-        @wrappers = {} unless defined? @wrappers
         if exts
-          @wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+          VertexWrapper.wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
