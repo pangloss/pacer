@@ -1,78 +1,17 @@
 require 'spec_helper'
 
 Run.neo4j do
-  describe 'neo4j graph' do
-    let(:v0) { graph.create_vertex }
-    let(:v1) { graph.create_vertex }
-    let(:e0) { graph.create_edge '0', v0, v1, :default }
+    use_simple_graph_data
 
-    describe '#element_type' do
-      context 'invalid' do
-        it { expect { graph.element_type(:nothing) }.to raise_error(ArgumentError) }
+    describe '#vertex' do
+      it 'should not raise an exception for invalid key type' do
+        graph.vertex('bad id').should be_nil
       end
+    end
 
-      context ':vertex' do
-        subject { graph.element_type(:vertex) }
-        it { should == :vertex }
-      end
-
-      context 'a vertex' do
-        subject { graph.element_type(v0) }
-        it { should == :vertex }
-      end
-
-      context ':edge' do
-        subject { graph.element_type(:edge) }
-        it { should == :edge }
-      end
-
-      context 'an edge' do
-        subject { graph.element_type(e0) }
-        it { should == :edge }
-      end
-
-      context ':mixed' do
-        subject { graph.element_type(:mixed) }
-        it { should == :mixed }
-      end
-
-      context ':object' do
-        subject { graph.element_type(:object) }
-        it { should == :object }
-      end
-
-      context 'from element_type' do
-        context ':vertex' do
-          subject { graph.element_type(graph.element_type :vertex) }
-          it { should == :vertex }
-        end
-
-        context ':edge' do
-          subject { graph.element_type(graph.element_type :edge) }
-          it { should == :edge }
-        end
-
-        context ':mixed' do
-          subject { graph.element_type(graph.element_type :mixed) }
-          it { should == :mixed }
-        end
-
-        context ':object' do
-          subject { graph.element_type(graph.element_type :object) }
-          it { should == :object }
-        end
-      end
-
-      context 'from index_class' do
-        context ':vertex' do
-          subject { graph.element_type(graph.index_class :vertex) }
-          it { should == :vertex }
-        end
-
-        context ':edge' do
-          subject { graph.element_type(graph.index_class :edge) }
-          it { should == :edge }
-        end
+    describe '#edge' do
+      it 'should not raise an exception for invalid key type' do
+        graph.edge('bad id').should be_nil
       end
     end
 
@@ -160,4 +99,3 @@ Run.neo4j do
       end
     end
   end
-end
