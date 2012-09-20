@@ -76,9 +76,7 @@ describe Pacer::Utils::TSort do
       vertices = graph.v.only([a,b]).result
       edges = graph.e.lookahead(:min => 2) { |e| e.both_v.only(vertices) }.result
       subgraph = (vertices.to_a + edges.to_a).to_route(:graph => graph, :element_type => :mixed).subgraph
-      # The elements aren't the same since they've been copied into a
-      # new graph:
-      subgraph.v(Pacer::Utils::TSort).tsort.element_ids.to_a.should == ['b', 'a']
+      subgraph.v(Pacer::Utils::TSort).tsort.element_ids.to_a.should == ['a', 'b']
     end
 
     it 'can be sorted with a custom dependencies block' do
