@@ -11,9 +11,7 @@ module Pacer
 
   module SideEffect
     module As
-      class AsPipe < Pacer::Pipes::AbstractPipe
-
-        field_reader :starts
+      class AsPipe < Pacer::Pipes::RubyPipe
         attr_accessor :vars
 
         def initialize(pipe, vars, variable_name)
