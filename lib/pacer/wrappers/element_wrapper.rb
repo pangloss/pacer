@@ -123,7 +123,7 @@ module Pacer::Wrappers
     #
     # @return [Hash]
     def properties
-      element.getPropertyKeys.inject({}) { |h, name| h[name] = element.getProperty(name); h }
+      Hash[element.getPropertyKeys.map { |name| [name, graph.decode_property(element.getProperty(name))] }]
     end
 
     # Replace the element's properties with the given hash

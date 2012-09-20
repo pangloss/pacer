@@ -75,9 +75,10 @@ module Pacer::Core::Graph
     def [](prop_or_subset)
       case prop_or_subset
       when String, Symbol
-        chain_route(:element_type => :object,
+        route = chain_route(:element_type => :object,
                     :pipe_class => Pacer::Pipes::PropertyPipe,
                     :pipe_args => [prop_or_subset.to_s])
+        route.map { |v| graph.decode_property(v) }
       when Fixnum
         range(prop_or_subset, prop_or_subset)
       when Range
@@ -85,7 +86,7 @@ module Pacer::Core::Graph
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
           map do |element|
-            prop_or_subset.collect { |i| element.getProperty(i.to_s) }
+            element[prop_or_subset]
           end
         end
       end
