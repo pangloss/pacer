@@ -133,7 +133,7 @@ Run.tg :read_only do
 
       specify do
         counted_group.inspect.should ==
-          "#<GraphV -> V-Join(#<V -> Obj(type)>: {:count=>#<V -> outE -> Obj-Cap(E-Counted)>, :out_e=>#<V -> outE>})>"
+          "#<GraphV -> V-Join(#<V -> Obj(type) -> decode>: {:count=>#<V -> outE -> Obj-Cap(E-Counted)>, :out_e=>#<V -> outE>})>"
       end
     end
   end
