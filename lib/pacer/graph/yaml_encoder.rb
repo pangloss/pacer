@@ -5,13 +5,6 @@ module Pacer
   # Neo4j could and for everything else it uses (slow (but easy))
   # human-readable YAML encoding.
   class YamlEncoder
-    def self.sanitize_properties(props)
-      pairs = props.map do |name, value|
-        [name, encode_property(value)]
-      end
-      Hash[pairs]
-    end
-
     def self.encode_property(value)
       case value
       when nil

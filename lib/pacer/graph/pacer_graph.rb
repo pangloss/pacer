@@ -188,10 +188,6 @@ module Pacer
     end
 
     module Encoding
-      def sanitize_properties(props)
-        encoder.sanitize_properties props
-      end
-
       def encode_property(value)
         encoder.encode_property value
       end

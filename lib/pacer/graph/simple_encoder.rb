@@ -1,9 +1,5 @@
 module Pacer
   class SimpleEncoder
-    def self.sanitize_properties(props)
-      props
-    end
-
     def self.encode_property(value)
       if value.is_a? String
         value = value.strip
