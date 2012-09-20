@@ -306,6 +306,10 @@ module Pacer
         @temp_indices.delete idx.name
       end
 
+      def drop_temp_indices
+        @temp_indices = {}
+      end
+
       # Return an object that can be compared to the return value of
       # Index#index_class.
       def index_class(et)
