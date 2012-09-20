@@ -266,7 +266,7 @@ module Pacer
       # @option opts [true] :create create the index if it doesn't exist
       # @return [Pacer::IndexMixin]
       def index(name, type = nil, opts = {})
-        return unless features.supportsIndices
+        return temp_index(name, type, opts) unless features.supportsIndices
         name = name.to_s
         if type
           type = index_class element_type type
@@ -281,12 +281,29 @@ module Pacer
       end
 
       def drop_index(idx)
-        return unless features.supportsIndices
+        return drop_temp_index(idx) unless features.supportsIndices
         if idx.is_a? String or idx.is_a? Symbol
           blueprints_graph.dropIndex idx
         else
           blueprints_graph.dropIndex idx.indexName
         end
+      end
+
+      def temp_index(name, type = nil, opts = {})
+        @temp_indices ||= {}
+        idx = @temp_indices[name]
+        unless idx
+          if name and type and opts[:create]
+            idx = @temp_indices[name] = Pacer::Graph::HashIndex.new type, name
+          elsif opts[:create]
+            idx = Pacer::Graph::HashIndex.new type, nil
+          end
+        end
+        Pacer::Wrappers::IndexWrapper.new self, idx, idx.type if idx
+      end
+
+      def drop_temp_index(idx)
+        @temp_indices.delete idx.name
       end
 
       # Return an object that can be compared to the return value of

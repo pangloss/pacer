@@ -130,7 +130,7 @@ module Pacer::Wrappers
     #
     # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
-      e_idx = target_graph.index("tmp-e-#{graph.graph_id}", :edge, :create => true)
+      e_idx = target_graph.temp_index("tmp-e-#{graph.graph_id}", :edge, :create => true)
       e = target_graph.edge(element_id)
       unless e
         e = e_idx.first('id', element_id)
@@ -139,7 +139,7 @@ module Pacer::Wrappers
         end
       end
       unless e
-        v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+        v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
         iv = target_graph.vertex(in_vertex.element_id) || v_idx.first('id', in_vertex.element_id)
         ov = target_graph.vertex(out_vertex.element_id) || v_idx.first('id', out_vertex.element_id)
         if opts[:create_vertices]
@@ -168,7 +168,7 @@ module Pacer::Wrappers
     #
     # @raise [StandardError] If this the associated vertices don't exist
     def copy_into(target_graph)
-      v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+      v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
       iv = v_idx.first('id', in_vertex.element_id) || target_graph.vertex(in_vertex.element_id)
       ov = v_idx.first('id', out_vertex.element_id) || target_graph.vertex(out_vertex.element_id)
 

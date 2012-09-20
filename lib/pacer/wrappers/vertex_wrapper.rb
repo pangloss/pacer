@@ -131,7 +131,7 @@ module Pacer::Wrappers
     # @yield [v] Optional block yields the vertex after it has been created.
     # @return [Pacer::Wrappers::VertexWrapper] the new vertex
     def clone_into(target_graph, opts = nil)
-      v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+      v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
       v = target_graph.vertex(element_id) || v_idx.first('id', element_id)
       unless v
         v = target_graph.create_vertex element_id, properties
