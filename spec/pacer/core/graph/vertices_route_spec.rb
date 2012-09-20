@@ -1,5 +1,34 @@
 require 'spec_helper'
 
+Run.all(:read_write) do
+  use_pacer_graphml_data(:read_write)
+
+  describe '#property?' do
+    before do
+      setup_data
+      graph.create_vertex other: 'hi'
+      graph.create_vertex falsy: false
+      graph.create_vertex zero: 0
+    end
+
+    it 'should filter vertices that do not have the given property' do
+      graph.v.count.should == 10
+      graph.v.property?(:name).count.should == 7
+      graph.v.property?(:other).count.should == 1
+    end
+
+    it 'should work even if the value is falsy (but does not)' do
+      graph.v.count.should == 10
+      graph.v.property?(:name).count.should == 7
+      graph.v.property?(:zero).count.should == 1
+
+      # TODO: (dw 12-9) I don't really like that the pipe filters falsy
+      # values but I'm not worrying about it any further for now.
+      graph.v.property?(:falsy).count.should == 0
+    end
+  end
+end
+
 Run.all(:read_only) do
   use_pacer_graphml_data(:read_only)
 

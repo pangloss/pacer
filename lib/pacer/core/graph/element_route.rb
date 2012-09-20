@@ -99,7 +99,7 @@ module Pacer::Core::Graph
     def property?(name)
       chain_route(:element_type => :object,
                   :pipe_class => Pacer::Pipes::PropertyPipe,
-                  :pipe_args => [name.to_s, true])
+                  :pipe_args => [name.to_s, false])
     end
 
     # Attach a route to the element id for each element emitted by the
