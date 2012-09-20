@@ -77,8 +77,11 @@ module Pacer::Core::Graph
       when String, Symbol
         route = chain_route(:element_type => :object,
                     :pipe_class => Pacer::Pipes::PropertyPipe,
-                    :pipe_args => [prop_or_subset.to_s])
-        route.map { |v| graph.decode_property(v) }
+                    :pipe_args => [prop_or_subset.to_s],
+                    :lookahead_replacement => proc { |r| r.back.property?(prop_or_subset) })
+        route.map(route_name: 'decode', remove_from_lookahead: true) do |v|
+          graph.decode_property(v)
+        end
       when Fixnum
         range(prop_or_subset, prop_or_subset)
       when Range

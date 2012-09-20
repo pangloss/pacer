@@ -31,6 +31,22 @@ module Pacer
       # @todo move this to graph routes.
       attr_writer :graph
 
+      # If this piece of the route is useless in a lookahead, set this to true
+      # and when it is at the tail of a lookahead, it will be removed
+      # automatically. (for instance the property decoder, or wrap/unwrap)
+      attr_accessor :remove_from_lookahead
+
+      # If a route's function won't do the expected thing in a lookahead, set a
+      # proc here that will correct the route. For instance:
+      #
+      #   g.v.lookahead { |v| v[:prop] }
+      #
+      # gets transformed to:
+      #
+      #   g.v.lookahead { |v| v.property?(:prop) }
+      #
+      attr_accessor :lookahead_replacement
+
       # Return which graph this route operates on.
       #
       # @todo move this to graph routes.
