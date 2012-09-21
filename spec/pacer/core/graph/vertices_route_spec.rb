@@ -17,13 +17,11 @@ Run.all(:read_write) do
       graph.v.property?(:other).count.should == 1
     end
 
-    it 'should work even if the value is falsy (but does not)' do
+    it 'should work even if the value is falsy' do
       graph.v.count.should == 10
       graph.v.property?(:name).count.should == 7
       graph.v.property?(:zero).count.should == 1
 
-      # TODO: (dw 12-9) I don't really like that the pipe filters falsy
-      # values but I'm not worrying about it any further for now.
       graph.v.property?(:falsy).count.should == 1
     end
   end
