@@ -34,12 +34,12 @@ describe Pacer::YamlEncoder do
     end
 
     specify 'numbers should be javafied' do
-      subject[:integer].should == 121.to_java(:int)
+      subject[:integer].should == 121.to_java(:long)
       subject[:float].should == 100.001
     end
 
     specify 'everything else should be yaml' do
-      subject[:time].should == YAML.dump(Time.utc(1999, 11, 9, 9, 9, 1))
+      subject[:time].should == ' ' + YAML.dump(Time.utc(1999, 11, 9, 9, 9, 1))
     end
   end
 

@@ -24,7 +24,7 @@ Run.all(:read_write) do
 
       # TODO: (dw 12-9) I don't really like that the pipe filters falsy
       # values but I'm not worrying about it any further for now.
-      graph.v.property?(:falsy).count.should == 0
+      graph.v.property?(:falsy).count.should == 1
     end
   end
 end

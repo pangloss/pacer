@@ -15,12 +15,12 @@ module Pacer
         value
       when Numeric
         if value.is_a? Bignum
-          value.to_yaml
+          dump value
         else
-          value
+          value.to_java
         end
       when true, false
-        value
+        value.to_java
       when Array
         if value.length == 0
           value_type = Fixnum
@@ -44,33 +44,27 @@ module Pacer
         when String
           value.to_java :string
         else
-          value.to_yaml
+          dump value
         end
       else
-        value.to_yaml
+        dump value
       end
     end
 
-    if 'x'.to_yaml[0, 5] == '%YAML'
-      def self.decode_property(value)
-        if value.is_a? String and value[0, 5] == '%YAML'
-          YAML.load(value)
-        elsif value.is_a? ArrayJavaProxy
-          value.to_a
-        else
-          value
-        end
+    def self.decode_property(value)
+      if value.is_a? String and value[0, 1] == ' '
+        YAML.load(value[1..-1])
+      elsif value.is_a? ArrayJavaProxy
+        value.to_a
+      else
+        value
       end
-    else
-      def self.decode_property(value)
-        if value.is_a? String and value[0, 3] == '---'
-          YAML.load(value)
-        elsif value.is_a? ArrayJavaProxy
-          value.to_a
-        else
-          value
-        end
-      end
+    end
+
+    private
+
+    def self.dump(value)
+      " #{ YAML.dump value }"
     end
   end
 end
