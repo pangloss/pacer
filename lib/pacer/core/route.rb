@@ -62,6 +62,10 @@ module Pacer
         graph.equals g
       end
 
+      def chain_route(args_hash)
+        Pacer::RouteBuilder.current.chain self, args_hash
+      end
+
       # The arguments passed to the pipe constructor.
       #
       # @overload pipe_args

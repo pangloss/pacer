@@ -78,6 +78,10 @@ module Pacer::Wrappers
       after_initialize
     end
 
+    def chain_route(args_hash)
+      Pacer::RouteBuilder.current.chain self, args_hash
+    end
+
     # Convenience method to retrieve a property by name.
     #
     # @param [#to_s] key the property name

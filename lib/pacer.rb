@@ -45,6 +45,7 @@ module Pacer
   require 'pacer/graph'
   require 'pacer/routes'
   require 'pacer/wrappers'
+  require 'pacer/route_builder'
   require 'pacer/route'
   require 'pacer/blueprints'
   require 'pacer/support'
