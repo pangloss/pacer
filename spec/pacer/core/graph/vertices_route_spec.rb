@@ -59,12 +59,12 @@ Run.all(:read_only) do
       subject { graph.v.out }
       it { should be_a Pacer::Core::Graph::VerticesRoute }
       its(:count) { should == 14 }
-      its(:to_a) { should == graph.v.out_e.in_v.to_a }
+      its(:to_set) { should == graph.v.out_e.in_v.to_set }
 
       describe '(:uses, :wrote)' do
         subject { graph.v.out(:uses, :wrote) }
         its(:count) { should == 9 }
-        it { subject.to_a.should == graph.v.out_e(:uses, :wrote).in_v.to_a }
+        it { subject.to_set.should == graph.v.out_e(:uses, :wrote).in_v.to_set }
       end
 
       it 'should not apply extensions to new route' do
@@ -76,11 +76,11 @@ Run.all(:read_only) do
       subject { graph.v.in }
       it { should be_a Pacer::Core::Graph::VerticesRoute }
       its(:count) { should == 14 }
-      its(:to_a) { should == graph.v.in_e.out_v.to_a }
+      its(:to_set) { should == graph.v.in_e.out_v.to_set }
       describe '(:uses, :wrote)' do
         subject { graph.v.in(:uses, :wrote) }
         its(:count) { should == 9 }
-        it { subject.to_a.should == graph.v.in_e(:uses, :wrote).out_v.to_a }
+        it { subject.to_set.should == graph.v.in_e(:uses, :wrote).out_v.to_set }
       end
 
       it 'should not apply extensions to new route' do
@@ -126,7 +126,7 @@ Run.tg(:read_only) do
         r = graph.v.out_e.in_v.in_e { |e| e.label == 'wrote' }.out_v
         paths = r.paths
         paths.first.should_not be_nil
-        graph.v.out_e.in_v.in_e(:wrote).out_v.paths.collect(&:to_a).should == paths.collect(&:to_a)
+        graph.v.out_e.in_v.in_e(:wrote).out_v.paths.to_a.should == paths.to_a
       end
     end
   end
