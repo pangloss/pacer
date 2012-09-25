@@ -1,14 +1,9 @@
 module Pacer
   import com.tinkerpop.blueprints.TransactionalGraph
 
-  # Add features to transactions to allow them to be more rubyish and
-  # more convenient to use.
-  #
-  # TODO: the method names in this module need to be cleaned up.
-  # TODO: some methods may be able to be eliminated.
   module GraphTransactionsMixin
     def in_transaction?
-      threadlocal_graph_info[:tx_depth] > 0
+      threadlocal_graph_info.fetch(:tx_depth, 0) > 0
     end
 
     # Basic usage:
