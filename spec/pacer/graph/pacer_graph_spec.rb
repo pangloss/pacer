@@ -288,7 +288,7 @@ Run.all :read_write do
           subject { graph.index 'missing_edge', :edge, :create => true }
           its(:name) { should == 'missing_edge' }
           after do
-            graph.transaction do
+            graph.transaction(nesting: true) do
               graph.drop_index 'missing_edge'
             end
           end
@@ -302,7 +302,7 @@ Run.all :read_write do
           subject { graph.index 'missing_vertex', :vertex, :create => true }
           its(:name) { should == 'missing_vertex' }
           after do
-            graph.transaction do
+            graph.transaction(nesting: true) do
               graph.drop_index 'missing_vertex'
             end
           end
