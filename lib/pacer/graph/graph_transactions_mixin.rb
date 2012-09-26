@@ -76,7 +76,7 @@ module Pacer
     end
 
     def finish_transaction!
-      threadlocal_graph_info[:tx_depth] -= 1
+      threadlocal_graph_info[:tx_depth] -= 1 rescue nil
     end
 
     def base_tx_finalizers
