@@ -64,7 +64,7 @@ module Pacer
         elsif opts[:nesting] == true
           nested_tx_finalizers
         else
-          fail NestedTransactionError
+          fail NestedTransactionError, "To use nested transactions, use nesting: true"
         end
       else
         if tx_depth == 0
@@ -83,7 +83,7 @@ module Pacer
       tx_id = threadlocal_graph_info[:tx_id] = rand
       commit = -> do
         if tx_id != threadlocal_graph_info[:tx_id]
-          fail InternalError
+          fail InternalError, 'Can not commit transaction outside its original block'
         end
         puts "transaction committed" if Pacer.verbose == :very
         blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
