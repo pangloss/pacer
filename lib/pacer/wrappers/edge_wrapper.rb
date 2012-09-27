@@ -9,10 +9,13 @@ module Pacer::Wrappers
       :getRawEdge
 
     class << self
+      def wrappers
+        @wrappers ||= {}
+      end
+
       def wrapper_for(exts)
-        @wrappers = {} unless defined? @wrappers
         if exts
-          @wrappers[exts.to_set] ||= build_edge_wrapper(exts)
+          EdgeWrapper.wrappers[exts] ||= build_edge_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
@@ -127,18 +130,12 @@ module Pacer::Wrappers
     #
     # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
-      e_idx = target_graph.index("tmp-e-#{graph.graph_id}", :edge, :create => true)
-      e = target_graph.edge(element_id)
+      e_idx = target_graph.temp_index("tmp-e-#{graph.graph_id}", :edge, :create => true)
+      e = e_idx.first('id', element_id)
       unless e
-        e = e_idx.first('id', element_id)
-        if e
-          e = EdgeWrapper.new(graph, e)
-        end
-      end
-      unless e
-        v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
-        iv = target_graph.vertex(in_vertex.element_id) || v_idx.first('id', in_vertex.element_id)
-        ov = target_graph.vertex(out_vertex.element_id) || v_idx.first('id', out_vertex.element_id)
+        v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+        iv = v_idx.first('id', in_vertex.element_id)
+        ov = v_idx.first('id', out_vertex.element_id)
         if opts[:create_vertices]
           iv ||= in_vertex.clone_into target_graph
           ov ||= out_vertex.clone_into target_graph
@@ -149,7 +146,7 @@ module Pacer::Wrappers
           raise message unless opts[:ignore_missing_vertices]
           return nil
         end
-        e = target_graph.create_edge(element_id, iv, ov, label, properties)
+        e = target_graph.create_edge(element_id, ov, iv, label, properties)
         e_idx.put('id', element_id, e)
         yield e if block_given?
       end
@@ -165,12 +162,12 @@ module Pacer::Wrappers
     #
     # @raise [StandardError] If this the associated vertices don't exist
     def copy_into(target_graph)
-      v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+      v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
       iv = v_idx.first('id', in_vertex.element_id) || target_graph.vertex(in_vertex.element_id)
       ov = v_idx.first('id', out_vertex.element_id) || target_graph.vertex(out_vertex.element_id)
 
       raise 'vertices not found' if not iv or not ov
-      e = target_graph.create_edge nil, iv, ov, label, properties
+      e = target_graph.create_edge nil, ov, iv, label, properties
       yield e if block_given?
       e
     end

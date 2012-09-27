@@ -9,10 +9,13 @@ module Pacer::Wrappers
       :getRawVertex
 
     class << self
+      def wrappers
+        @wrappers ||= {}
+      end
+
       def wrapper_for(exts)
-        @wrappers = {} unless defined? @wrappers
         if exts
-          @wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+          VertexWrapper.wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
@@ -128,8 +131,8 @@ module Pacer::Wrappers
     # @yield [v] Optional block yields the vertex after it has been created.
     # @return [Pacer::Wrappers::VertexWrapper] the new vertex
     def clone_into(target_graph, opts = nil)
-      v_idx = target_graph.index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
-      v = target_graph.vertex(element_id) || v_idx.first('id', element_id)
+      v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
+      v = v_idx.first('id', element_id)
       unless v
         v = target_graph.create_vertex element_id, properties
         v_idx.put('id', element_id, v.element)

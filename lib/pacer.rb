@@ -39,21 +39,7 @@ module Pacer
 
   require JAR
 
-  require 'pacer/exceptions'
-  require 'pacer/pipes'
-  require 'pacer/core'
-  require 'pacer/graph'
-  require 'pacer/routes'
-  require 'pacer/wrappers'
-  require 'pacer/route'
-  require 'pacer/blueprints'
-  require 'pacer/support'
-  require 'pacer/utils'
-  require 'pacer/visitors'
-  require 'pacer/filter'
-  require 'pacer/transform'
-  require 'pacer/side_effect'
-  require 'pacer/function_resolver'
+  require 'pacer/loader'
 
   class << self
     # A global place for pacer to put debug info if it's tucked deep in
@@ -178,6 +164,14 @@ module Pacer
       Wrappers::VertexWrapper.clear_cache
       Wrappers::EdgeWrapper.clear_cache
       FunctionResolver.clear_cache
+    end
+
+    def vertex_wrapper(*exts)
+      Wrappers::VertexWrapper.wrapper_for(exts)
+    end
+
+    def edge_wrapper(*exts)
+      Wrappers::EdgeWrapper.wrapper_for(exts)
     end
 
     # Is the object a vertex?

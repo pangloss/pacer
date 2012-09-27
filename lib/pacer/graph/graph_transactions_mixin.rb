@@ -1,14 +1,9 @@
 module Pacer
   import com.tinkerpop.blueprints.TransactionalGraph
 
-  # Add features to transactions to allow them to be more rubyish and
-  # more convenient to use.
-  #
-  # TODO: the method names in this module need to be cleaned up.
-  # TODO: some methods may be able to be eliminated.
   module GraphTransactionsMixin
     def in_transaction?
-      threadlocal_graph_info[:tx_depth] > 0
+      threadlocal_graph_info.fetch(:tx_depth, 0) > 0
     end
 
     # Basic usage:
@@ -34,8 +29,12 @@ module Pacer
     # Also considering a 3rd callback that could be used to get info about the
     # current transaction stack like depth, number of commits/rollbacks, possibly the number of
     # mutations it wraps and even some event registration stuff could be made available.
-    def transaction
-      commit, rollback = start_transaction!
+    #
+    # opts:
+    #   nesting: true  -- allow mock nested transactions
+    #   nesting: false -- (default) raise an exception instead of starting a nested transaction
+    def transaction(opts = {})
+      commit, rollback = start_transaction! opts
       begin
         r = yield commit, rollback
         commit.call
@@ -55,15 +54,17 @@ module Pacer
       graphs[blueprints_graph.object_id] ||= {}
     end
 
-    def start_transaction!
+    def start_transaction!(opts)
       tgi = threadlocal_graph_info
       tx_depth = tgi[:tx_depth] ||= 0
       tgi[:tx_depth] += 1
       if blueprints_graph.is_a? TransactionalGraph
         if tx_depth == 0
           base_tx_finalizers
-        else
+        elsif opts[:nesting] == true
           nested_tx_finalizers
+        else
+          fail NestedTransactionError, "To use nested transactions, use nesting: true"
         end
       else
         if tx_depth == 0
@@ -75,14 +76,14 @@ module Pacer
     end
 
     def finish_transaction!
-      threadlocal_graph_info[:tx_depth] -= 1
+      threadlocal_graph_info[:tx_depth] -= 1 rescue nil
     end
 
     def base_tx_finalizers
       tx_id = threadlocal_graph_info[:tx_id] = rand
       commit = -> do
         if tx_id != threadlocal_graph_info[:tx_id]
-          fail InternalError
+          fail InternalError, 'Can not commit transaction outside its original block'
         end
         puts "transaction committed" if Pacer.verbose == :very
         blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS

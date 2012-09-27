@@ -174,7 +174,7 @@ module Pacer::Core::Graph
       has_props = !props.empty?
       edge_ids = []
       counter = 0
-      graph.transaction do |commit, rollback|
+      graph.transaction(nesting: true) do |commit, rollback|
         v.each do |from_v|
           to_vertices.each do |to_v|
             counter += 1

@@ -44,6 +44,8 @@ module Pacer
           block, negate = @future_filter
           @future_filter = nil
           route = block.call(Pacer::Route.empty(self))
+          route = route.back while route.remove_from_lookahead
+          route = route.lookahead_replacement.call(route) if route.lookahead_replacement
           if min or max
             route = route.has_count_route(:min => min, :max => max).is(true)
           end

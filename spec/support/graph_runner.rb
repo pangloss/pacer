@@ -149,13 +149,22 @@ protected
         end
         if transactions and spec.use_transactions?
           graph.transaction do |g1_commit, g1_rollback|
-            graph2.transaction do |_, g2_rollback|
+            graph2.transaction do |g2_commit, g2_rollback|
               spec.metadata[:graph_commit] = g1_commit
+              spec.metadata[:graph2_commit] = g2_commit
               begin
                 spec.run
               ensure
-                g1_rollback.call rescue nil
-                g2_rollback.call rescue nil
+                graph.drop_temp_indices
+                graph2.drop_temp_indices
+                begin
+                  g1_rollback.call
+                rescue Pacer::NestedTransactionRollback, Pacer::NestedMockTransactionRollback
+                end
+                begin
+                  g2_rollback.call #rescue nil
+                rescue Pacer::NestedTransactionRollback, Pacer::NestedMockTransactionRollback
+                end
               end
             end
           end

@@ -316,14 +316,14 @@ end
 describe Pacer, '.wrap_vertex' do
   before { Pacer.edge_wrapper Tackle::SimpleMixin }
   subject { Pacer.vertex_wrapper Tackle::SimpleMixin }
-  its(:name) { should =~ /^Pacer::Wrap::/ }
+  its(:name) { should be_nil }
   its(:ancestors) { should include Pacer::Wrappers::VertexWrapper }
 end
 
 describe Pacer, '.wrap_vertex' do
   before { Pacer.vertex_wrapper Tackle::SimpleMixin }
   subject { Pacer.edge_wrapper Tackle::SimpleMixin }
-  its(:name) { should =~ /^Pacer::Wrap::/ }
+  its(:name) { should be_nil }
   its(:ancestors) { should include Pacer::Wrappers::EdgeWrapper }
 end
 
@@ -333,7 +333,7 @@ Run.tg :read_only do
   describe Pacer::Wrappers::ElementWrapper do
     subject { Pacer.vertex_wrapper Tackle::SimpleMixin }
 
-    its(:name) { should =~ /^Pacer::Wrap::/ }
+    its(:name) { should be_nil }
     its(:extensions) { should == [Tackle::SimpleMixin] }
 
     describe '.clear_cache' do
@@ -364,8 +364,7 @@ Run.tg :read_only do
       it 'should have the ancestors set in the correct order' do
         # Ruby searches for methods down this list, so order is
         # important for method overrides.
-        subject.ancestors[0...6].should == [
-          Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_Coder,
+        subject.ancestors[1...6].should == [
           TP::Coder::Route,
           Tackle::SimpleMixin::Vertex,
           Tackle::SimpleMixin::Route,
@@ -388,8 +387,7 @@ Run.tg :read_only do
         end
 
         it 'should have ancestors in the correct order' do
-          subject.ancestors[0...9].should == [
-            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_CoderPacer_Utils_TSort,
+          subject.ancestors[1...9].should == [
             Pacer::Utils::TSort::Vertex,
             Pacer::Utils::TSort::Route,
             TSort,
@@ -411,8 +409,7 @@ Run.tg :read_only do
         end
 
         it 'should have ancestors in the correct order' do
-          subject.ancestors[0...6].should == [
-            Pacer::Wrap::VertexWrapperTP_PersonTackle_SimpleMixinTP_Coder,
+          subject.ancestors[1...6].should == [
             TP::Coder::Route,
             Tackle::SimpleMixin::Vertex,
             Tackle::SimpleMixin::Route,
@@ -430,8 +427,7 @@ Run.tg :read_only do
         it 'should have the ancestors set in the correct order' do
           # Ruby searches for methods down this list, so order is
           # important for method overrides.
-          subject.ancestors[0...6].should == [
-            Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_Coder,
+          subject.ancestors[1...6].should == [
             TP::Coder::Route,
             TP::Person::Route,
             Tackle::SimpleMixin::Vertex,
@@ -450,8 +446,7 @@ Run.tg :read_only do
 
           it { should_not be_nil }
           it 'should have ancestors in the correct order' do
-            subject.ancestors[0...6].should == [
-              Pacer::Wrap::VertexWrapperTackle_SimpleMixinTP_PersonTP_Coder,
+            subject.ancestors[1...6].should == [
               TP::Coder::Route,
               TP::Person::Route,
               Tackle::SimpleMixin::Vertex,
