@@ -3,7 +3,7 @@ module Pacer
     module Graph
       module PathRoute
         def combine(*exts)
-          chain_route transform: :combine_path
+          wrapped.chain_route transform: :combine_path, element_type: :object
         end
       end
     end
