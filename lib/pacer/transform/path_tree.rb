@@ -2,25 +2,35 @@ module Pacer
   module Core
     module Graph
       module PathRoute
-        def combine(*exts)
-          wrapped.chain_route transform: :combine_path, element_type: :object
+        # Transform raw paths to a tree:
+        # [a b c]
+        # [a b d]
+        # [a e f]
+        # [a e g]
+        # -- becomes --
+        # [a [b [c]
+        #       [d]]
+        #    [e [f
+        #        g]]]
+        def tree
+          wrapped.chain_route transform: :path_tree, element_type: :object
         end
       end
     end
   end
 
   module Transform
-    module CombinePath
+    module PathTree
       protected
 
       def attach_pipe(end_pipe)
-        pipe = CombinePathPipe.new
+        pipe = PathTreePipe.new
         pipe.setStarts end_pipe
         pipe
       end
 
 
-      class CombinePathPipe < Pacer::Pipes::RubyPipe
+      class PathTreePipe < Pacer::Pipes::RubyPipe
         def initialize
           super
           self.building_path = nil
@@ -88,12 +98,4 @@ module Pacer
     end
   end
 end
-
-
-# [a [b [c]
-#       [d]]
-#    [e [f
-#        g]]]
-
-
 
