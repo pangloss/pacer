@@ -26,16 +26,6 @@ module Pacer
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
-
-      def configure_iterator(iter)
-        if respond_to? :graph
-          pipe = Pacer::Pipes::PathWrappingPipe.new(graph)
-          pipe.setStarts iter
-          pipe
-        else
-          iter
-        end
-      end
     end
   end
 end

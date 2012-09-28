@@ -28,5 +28,17 @@ module Pacer::Core::Graph
       end
       target_graph
     end
+
+    protected
+
+    def configure_iterator(iter)
+      if respond_to? :graph
+        pipe = Pacer::Pipes::PathWrappingPipe.new(graph)
+        pipe.setStarts iter
+        pipe
+      else
+        iter
+      end
+    end
   end
 end
