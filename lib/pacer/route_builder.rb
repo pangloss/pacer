@@ -80,6 +80,8 @@ module Pacer
         [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::EdgesRoute]
       when :mixed
         [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::MixedRoute]
+      when :path
+        [Pacer::Core::Graph::PathRoute]
       else
         []
       end
