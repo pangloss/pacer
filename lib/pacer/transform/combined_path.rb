@@ -20,7 +20,7 @@ module Pacer
       end
 
 
-      class CombinePathPipe < RubyPipe
+      class CombinePathPipe < Pacer::Pipes::RubyPipe
         def initialize
           super
           self.building_path = nil
@@ -32,7 +32,7 @@ module Pacer
           while true
             path = starts.next
             if building_path
-              if path.first == building_path.first.first
+              if path.first == building_path.first
                 add_path path
               else
                 return next_path(path)
@@ -43,7 +43,9 @@ module Pacer
           end
         rescue Pacer::EmptyPipe, java.util.NoSuchElementException
           if building_path
-            building_path
+            r = building_path
+            self.building_path = nil
+            r
           else
             raise EmptyPipe.instance
           end
@@ -54,18 +56,22 @@ module Pacer
         attr_accessor :building_path, :prev_path
 
         def make(path)
-          path.reverse.inject([]) { |inner, e| [e, inner] }
+          path.reverse.inject(nil) { |inner, e| [e, inner].compact }
         end
 
         def add_path(path)
           working = building_path
-          path.length.times do |pos|
+          (1..path.length).each do |pos|
             current = path[pos]
             prev = prev_path[pos]
             if current == prev
               working = working.last
             else
-              working << make(path[pos..-1])
+              if pos < path.length
+                working << make(path[pos..-1])
+              else
+                working << [current]
+              end
               break
             end
           end
@@ -84,10 +90,10 @@ module Pacer
 end
 
 
-  [a [b [c]
-        [d]]
-     [e [f
-         g]]]
+# [a [b [c]
+#       [d]]
+#    [e [f
+#        g]]]
 
 
 
