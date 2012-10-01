@@ -48,6 +48,8 @@ require 'pacer/blueprints/tg'
 require 'pacer/blueprints/ruby_graph'
 require 'pacer/blueprints/multi_graph'
 
+require 'pacer/blueprints/payload_elements'
+
 require 'pacer/support/array_list'
 require 'pacer/support/enumerable'
 require 'pacer/support/proc'
@@ -86,6 +88,7 @@ require 'pacer/transform/wrapped_path'
 require 'pacer/transform/scatter'
 require 'pacer/transform/has_count_cap'
 require 'pacer/transform/sort_section'
+require 'pacer/transform/payload'
 
 require 'pacer/side_effect/aggregate'
 require 'pacer/side_effect/as'
