@@ -30,7 +30,7 @@ module Pacer::Core::Graph
     end
 
     def payloads
-      map do |path|
+      map element_type: :path do |path|
         path.map do |e|
           if e.is_a? Pacer::Payload::Element
             e.payload
@@ -38,6 +38,12 @@ module Pacer::Core::Graph
             e.element_payload
           end
         end
+      end
+    end
+
+    def compact_paths
+      map element_type: :path do |path|
+        path.compact
       end
     end
 
