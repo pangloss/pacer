@@ -193,6 +193,14 @@ module Pacer::Wrappers
       element.hash
     end
 
+    def element_payload=(data)
+      if element.is_a? Pacer::Payload::Vertex
+        element.payload = data
+      else
+        @element = Pacer::Payload::Vertex.new element, data
+      end
+    end
+
     protected
 
     def get_edges_helper(direction, *labels_and_extensions)

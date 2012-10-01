@@ -200,5 +200,13 @@ module Pacer::Wrappers
     def hash
       -element.hash
     end
+
+    def element_payload=(data)
+      if element.is_a? Pacer::Payload::Edge
+        element.payload = data
+      else
+        @element = Pacer::Payload::Edge.new element, data
+      end
+    end
   end
 end
