@@ -10,10 +10,12 @@ module Pacer
         # -- becomes --
         # [a [b [c]
         #       [d]]
-        #    [e [f
-        #        g]]]
-        def tree
-          wrapped.chain_route transform: :path_tree, element_type: :object
+        #    [e [f]
+        #       [g]]]
+
+        # The default comparator block is { |prev, current| prev == current }
+        def tree(&block)
+          wrapped.chain_route transform: :path_tree, element_type: :object, compare: block
         end
       end
     end
@@ -21,20 +23,22 @@ module Pacer
 
   module Transform
     module PathTree
+      attr_accessor :compare
+
       protected
 
       def attach_pipe(end_pipe)
-        pipe = PathTreePipe.new
+        pipe = PathTreePipe.new compare
         pipe.setStarts end_pipe
         pipe
       end
 
-
       class PathTreePipe < Pacer::Pipes::RubyPipe
-        def initialize
-          super
+        def initialize(compare = nil)
+          super()
           self.building_path = nil
           self.prev_path = nil
+          self.compare = compare || proc { |a, b| a == b }
         end
 
         # NOTE: doesn't handle variable length paths yet...
@@ -42,7 +46,7 @@ module Pacer
           while true
             path = starts.next
             if building_path
-              if path.first == building_path.first
+              if compare.call path.first, building_path.first
                 add_path path
               else
                 return next_path(path)
@@ -63,18 +67,24 @@ module Pacer
 
         private
 
-        attr_accessor :building_path, :prev_path
+        attr_accessor :building_path, :prev_path, :compare
 
         def make(path)
-          path.reverse.inject(nil) { |inner, e| [e, inner].compact }
+          path.reverse.inject(nil) do |inner, e|
+            if inner
+              [e, inner]
+            else
+              [e]
+            end
+          end
         end
 
         def add_path(path)
           working = building_path
-          (1..path.length).each do |pos|
+          (1..path.length - 1).each do |pos|
             current = path[pos]
             prev = prev_path[pos]
-            if current == prev
+            if compare.call current, prev
               working = working.last
             else
               if pos < path.length
