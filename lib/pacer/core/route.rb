@@ -308,7 +308,9 @@ module Pacer
       # @return [java.util.Iterator]
       def source_iterator
         if @source
-          iterator_from_source(@source)
+          iter = iterator_from_source(@source)
+          iter.enablePath(true) if iter.respond_to? :enablePath
+          iter
         elsif @back
           @back.send(:source_iterator)
         end
