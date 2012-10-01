@@ -160,6 +160,10 @@ module Pacer::Wrappers
       display_name.to_s <=> other.display_name.to_s
     end
 
+    def element_payload
+      element.payload if element.is_a? Pacer::Payload::Element
+    end
+
     protected
 
     def after_initialize

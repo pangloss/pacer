@@ -29,6 +29,18 @@ module Pacer::Core::Graph
       target_graph
     end
 
+    def payloads
+      map do |path|
+        path.map do |e|
+          if e.is_a? Pacer::Payload::Element
+            e.payload
+          elsif e.is_a? Pacer::Wrappers::ElementWrapper
+            e.element_payload
+          end
+        end
+      end
+    end
+
     protected
 
     def configure_iterator(iter)
