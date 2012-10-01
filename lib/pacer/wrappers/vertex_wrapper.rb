@@ -4,9 +4,12 @@ module Pacer::Wrappers
     include Pacer::Core::Graph::VerticesRoute
 
     def_delegators :@element,
-      :getId, :getPropertyKeys, :getProperty, :setProperty, :removeProperty,
-      :getEdges,
-      :getRawVertex
+      # Object
+      :equals, :toString, :hashCode,
+      # Element
+      :getId, :getPropertyKeys, :getProperty, :setProperty, :removeProperty, :getRawElement,
+      # Vertex
+      :getEdges, :getVertices, :query, :getRawVertex
 
     class << self
       def wrappers
