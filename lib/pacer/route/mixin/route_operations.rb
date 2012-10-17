@@ -39,6 +39,19 @@ module Pacer::Routes
       end
       result
     end
+    alias frequencies group_count
+
+    def frequency_groups(*props)
+      result = Hash.new { |h, k| h[k] = [] }
+      group_count(*props).each { |k, v| result[v] << k }
+      result
+    end
+
+    def frequency_counts(*props)
+      result = Hash.new 0
+      group_count(*props).each { |k, v| result[v] += 1 }
+      result
+    end
 
     def most_frequent(range = 0, include_counts = false)
       if include_counts
