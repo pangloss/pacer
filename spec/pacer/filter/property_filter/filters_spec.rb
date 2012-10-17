@@ -3,17 +3,17 @@ require 'spec_helper'
 module Pacer::Filter::PropertyFilter
 
   Run.tg do
-    describe Filters do
+    shared_examples Filters do
       subject { filters }
 
       context 'no properties' do
-        let(:filters) { Pacer::Route.filters [] }
+        let(:filters) { Pacer::Route.send filter_method, [] }
 
         its(:any?) { should be_false }
       end
 
       context 'no properties' do
-        let(:filters) { Pacer::Route.filters [Tackle::SimpleMixin] }
+        let(:filters) { Pacer::Route.send filter_method, [Tackle::SimpleMixin] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_true }
@@ -25,7 +25,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'simple properties' do
-        let(:filters) { Pacer::Route.filters([name: 'Darrick', nickname: 'pangloss']) }
+        let(:filters) { Pacer::Route.send filter_method, [name: 'Darrick', nickname: 'pangloss'] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_false }
@@ -37,7 +37,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'with extensions' do
-        let(:filters) { Pacer::Route.filters([TP::Person, name: 'Darrick', nickname: 'pangloss']) }
+        let(:filters) { Pacer::Route.send filter_method, [TP::Person, name: 'Darrick', nickname: 'pangloss'] }
 
         its(:any?) { should be_true }
         its(:extensions) { should == [TP::Person] }
@@ -113,7 +113,7 @@ module Pacer::Filter::PropertyFilter
 
       context 'with route module' do
         # TODO: should this feature be removed?
-        let(:filters) { Pacer::Route.filters [TP::Pangloss] }
+        let(:filters) { Pacer::Route.send filter_method, [TP::Pangloss] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_false }
@@ -125,7 +125,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'with manual index' do
-        let(:filters) { Pacer::Route.filters [tokens: { short: '555555' }, name: 'Darrick'] }
+        let(:filters) { Pacer::Route.send filter_method, [tokens: { short: '555555' }, name: 'Darrick'] }
 
         its(:any?) { should be_true }
         its(:extensions) { should be_empty }
@@ -164,6 +164,16 @@ module Pacer::Filter::PropertyFilter
           end
         end
       end
+    end
+
+    describe 'vertex' do
+      let(:filter_method) { :filters }
+      it_uses Filters
+    end
+
+    describe 'edge' do
+      let(:filter_method) { :edge_filters }
+      it_uses Filters
     end
   end
 end
