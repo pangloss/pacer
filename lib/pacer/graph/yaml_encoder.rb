@@ -59,6 +59,8 @@ module Pacer
       else
         value
       end
+    rescue Psych::SyntaxError
+      value
     end
 
     private
