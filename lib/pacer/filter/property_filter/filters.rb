@@ -225,7 +225,7 @@ module Pacer
           return nil if avail.empty?
           index_options = []
           properties.each do |k, v|
-            if index_for_property(avail, index_options, k, v)
+            if v and index_for_property(avail, index_options, k, v)
               return @best_index
             end
           end
