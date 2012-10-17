@@ -19,7 +19,7 @@ module Pacer
       def to_h
         h = {}
         min = @min || 0
-        side_effect.each do |k,v|
+        cap.first.each do |k,v|
           h[k] = v if v >= min
         end
         h
