@@ -14,9 +14,9 @@ group :development do
   # If you have the gem repos cloned locally, we'll use them.
   #
   libs = [
-    ['pacer-neo4j', '2.0.0.pre'],
-    ['pacer-orient', '2.0.0.pre'],
-    ['pacer-dex', '2.0.0.pre']
+    ['pacer-neo4j', '2.0.2'],
+    ['pacer-orient', '2.0.2'],
+    ['pacer-dex', '2.0.2']
   ] 
   libs.each do |lib, version|
     if File.directory? "../#{lib}"
