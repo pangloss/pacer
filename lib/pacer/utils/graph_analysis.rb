@@ -28,7 +28,7 @@ module Pacer
           end
           result.v(:element_type => 'edge').each do |edge_node|
             puts "edges with label #{ edge_node[:label] }: #{ edge_node[:count] }"
-            edge_route = graph.e(self, edge_node[:label])
+            edge_route = graph.e(edge_node[:label]).e(self)
             edge_route.property_variations result, edge_node
           end
           result.v.each do |type_node|
