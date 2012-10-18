@@ -89,6 +89,11 @@ module Pacer
           end
         end
 
+        def remove_property_keys(keys)
+          properties.delete_if { |a| keys.include? a.first }
+          non_ext_props.delete_if { |a| keys.include? a.first }
+        end
+
         # Set which indices are available to be used to determine the
         # best_index.
         #
