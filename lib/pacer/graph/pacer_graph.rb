@@ -27,12 +27,7 @@ module Pacer
     end
 
     def reopen
-      graph = @reopen.call
-      if graph.is_a? PacerGraph
-        @blueprints_graph = graph.blueprints_graph
-      else
-        @blueprints_graph = graph
-      end
+      @blueprints_graph = unwrap_graph @reopen.call
       self
     end
 
@@ -40,6 +35,17 @@ module Pacer
       @shutdown.call self if @shutdown
       @blueprints_graph = nil
       self
+    end
+
+    def use_wrapper(klass)
+      reopen = proc do
+        klass.new unwrap_graph(@reopen.call)
+      end
+      PacerGraph.new encoder, reopen, @shutdown
+    end
+
+    def use_encoder(encoder)
+      PacerGraph.new encoder, @reopen, @shutdown
     end
 
     def graph_id
@@ -186,6 +192,22 @@ module Pacer
     def features
       blueprints_graph.features
     end
+
+
+    private
+
+    def unwrap_graph(graph)
+      if graph.is_a? PacerGraph
+        graph.blueprints_graph
+      else
+        graph
+      end
+    end
+
+
+
+
+    public
 
     module Encoding
       def encode_property(value)
