@@ -167,6 +167,18 @@ module Pacer::Wrappers
       get_edges_helper Pacer::Pipes::BOTH, *labels_and_extensions
     end
 
+    def out_vertices(*labels_and_extensions)
+      get_vertices_helper Pacer::Pipes::OUT, *labels_and_extensions
+    end
+
+    def in_vertices(*labels_and_extensions)
+      get_vertices_helper Pacer::Pipes::IN, *labels_and_extensions
+    end
+
+    def both_vertices(*labels_and_extensions)
+      get_vertices_helper Pacer::Pipes::BOTH, *labels_and_extensions
+    end
+
     # Test equality to another object.
     #
     # Elements are equal if they are the same type and have the same id
@@ -207,6 +219,13 @@ module Pacer::Wrappers
       labels, exts = split_labels_and_extensions(labels_and_extensions)
       pipe = Pacer::Pipes::WrappingPipe.new graph, :edge, exts
       pipe.setStarts element.getEdges(direction, *labels).iterator
+      pipe
+    end
+
+    def get_vertices_helper(direction, *labels_and_extensions)
+      labels, exts = split_labels_and_extensions(labels_and_extensions)
+      pipe = Pacer::Pipes::WrappingPipe.new graph, :vertex, exts
+      pipe.setStarts element.getVertices(direction, *labels).iterator
       pipe
     end
 
