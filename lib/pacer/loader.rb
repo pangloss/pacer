@@ -50,6 +50,7 @@ require 'pacer/blueprints/multi_graph'
 
 require 'pacer/blueprints/payload_elements'
 
+require 'pacer/support/array'
 require 'pacer/support/array_list'
 require 'pacer/support/enumerable'
 require 'pacer/support/proc'

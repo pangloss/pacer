@@ -47,6 +47,10 @@ module Enumerable
     Pacer::Pipes::EnumerablePipe.new self
   end
 
+  def +(other)
+    Pacer::Pipes::MultiPipe.new [self, other]
+  end
+
   # NOTE: if this is a collection of wrapped vertices or edges, Java pipes
   # may crash with something like:
   #
