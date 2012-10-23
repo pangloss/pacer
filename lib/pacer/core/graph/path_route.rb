@@ -59,9 +59,15 @@ module Pacer::Core::Graph
       end
     end
 
-    def pairs
-      map element_type: :path, route_name: 'pairs' do |path|
-        [path.first, path.last]
+    def pairs(head = 0, tail = -1)
+      map element_type: :path, route_name: "pairs[#{ head },#{ tail }]" do |path|
+        [path[head], path[tail]]
+      end
+    end
+
+    def len(n)
+      select do |path|
+        n === path.length
       end
     end
 
