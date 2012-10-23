@@ -128,7 +128,6 @@ Run.tg :read_only do
                           "group"   => {"projects" => 3, "member"      => 1}}
       end
 
-      its(:inspect) { should == "#<PacerGraph>" }
       its(:blueprints_graph) { should be_a Pacer::MultiGraph }
 
       specify do
