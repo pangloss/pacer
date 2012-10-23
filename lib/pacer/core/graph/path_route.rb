@@ -30,7 +30,7 @@ module Pacer::Core::Graph
     end
 
     def payloads
-      map element_type: :path do |path|
+      map element_type: :path, route_name: 'payloads' do |path|
         path.map do |e|
           if e.is_a? Pacer::Payload::Element
             e.payload
@@ -42,8 +42,26 @@ module Pacer::Core::Graph
     end
 
     def compact_paths
-      map element_type: :path do |path|
+      map element_type: :path, route_name: 'compact' do |path|
         path.compact
+      end
+    end
+
+    def heads(et = :vertex)
+      map element_type: et, route_name: 'heads' do |path|
+        path.first
+      end
+    end
+
+    def tails(et = :vertex)
+      map element_type: et, route_name: 'tails' do |path|
+        path.last
+      end
+    end
+
+    def pairs
+      map element_type: :path, route_name: 'pairs' do |path|
+        [path.first, path.last]
       end
     end
 
