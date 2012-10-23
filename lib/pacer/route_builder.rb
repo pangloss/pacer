@@ -8,7 +8,7 @@ module Pacer
       end
     end
 
-    attr_reader :types
+    attr_reader :types, :element_types
 
     def initialize
       @types = Hash.new do |h, type_def|
@@ -20,6 +20,12 @@ module Pacer
           end
         end
       end
+
+      @element_types = Hash.new { |h, k| h[k] = [] }
+      element_types[:vertex] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::VerticesRoute]
+      element_types[:edge] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::EdgesRoute]
+      element_types[:mixed] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::MixedRoute]
+      element_types[:path] = [Pacer::Core::Graph::PathRoute]
     end
 
     def chain(source, args)
@@ -73,18 +79,7 @@ module Pacer
     end
 
     def type_modules(source, args)
-      case element_type source, args
-      when :vertex
-        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::VerticesRoute]
-      when :edge
-        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::EdgesRoute]
-      when :mixed
-        [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::MixedRoute]
-      when :path
-        [Pacer::Core::Graph::PathRoute]
-      else
-        []
-      end
+      element_types[element_type source, args]
     end
 
     def other_modules(source, args)
