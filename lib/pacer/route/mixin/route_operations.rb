@@ -117,6 +117,8 @@ module Pacer::Routes
             'Obj'
           when :mixed
             'Elem'
+          else
+            element_type.to_s.capitalize
           end
       s = "#{s}-#{function.name.split('::').last.sub(/Filter|Route$/, '')}" if function
       s = "#{s} #{ @info }" if @info

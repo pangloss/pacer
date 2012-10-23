@@ -193,6 +193,10 @@ module Pacer
       blueprints_graph.features
     end
 
+    def inspect
+      "#<PacerGraph #{ blueprints_graph.to_s }"
+    end
+
 
     private
 
