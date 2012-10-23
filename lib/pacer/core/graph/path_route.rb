@@ -71,6 +71,17 @@ module Pacer::Core::Graph
       end
     end
 
+    def trees
+      collect do |path|
+        path.to_a.reverse.reduce({}) do |tree, element|
+          if element.element_type == :vertex
+            tree.merge element.properties
+          else
+            { element.label => [tree] }
+          end
+        end
+      end
+    end
     protected
 
     def configure_iterator(iter)
