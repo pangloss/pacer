@@ -52,6 +52,7 @@ HELP
         else
           super
         end
+        description
       end
 
       protected
