@@ -39,6 +39,7 @@ require 'pacer/wrappers/edge_wrapper'
 require 'pacer/wrappers/index_wrapper'
 require 'pacer/wrappers/wrapper_selector'
 require 'pacer/wrappers/wrapping_pipe_function'
+require 'pacer/wrappers/path_wrapping_pipe_function'
 
 require 'pacer/route_builder'
 require 'pacer/function_resolver'
