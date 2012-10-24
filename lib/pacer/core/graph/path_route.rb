@@ -71,8 +71,8 @@ module Pacer::Core::Graph
       end
     end
 
-    def trees
-      collect do |path|
+    def hashify
+      map(element_type: :hash, route_name: 'trees') do |path|
         path.to_a.reverse.reduce({}) do |tree, element|
           if element.element_type == :vertex
             tree.merge element.properties
