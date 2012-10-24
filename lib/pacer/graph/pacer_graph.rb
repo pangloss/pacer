@@ -26,6 +26,16 @@ module Pacer
       self
     end
 
+    def vendor(full = false)
+      g = blueprints_graph
+      g = g.raw_graph if g.respond_to? :raw_graph
+      if full
+        g.java_class.name
+      else
+        g.java_class.name.split('.')[1]
+      end
+    end
+
     def reopen
       @blueprints_graph = unwrap_graph @reopen.call
       self
