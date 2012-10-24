@@ -11,6 +11,21 @@ module Pacer
     module Process
       attr_accessor :block
 
+      def help(section = nil)
+        case section
+        when nil
+          puts <<HELP
+The process method executes the given block for each element that is
+passed through the route. After the block is called, the element that
+was passed to it is emitted to be handled by the next step in the route.
+
+It is Pacer's lazy version of the #each method.
+
+HELP
+        else
+          super
+        end
+      end
       protected
 
       def attach_pipe(end_pipe)
