@@ -282,11 +282,11 @@ General options (may not be available for all methods)
       registered types: #{ Pacer::RouteBuilder.current.element_types.keys.map(&:inspect).join ', ' }
 
   graph: PacerGraph     If the route contains graph elements, specify that they
-      are from this graph
+                        are from this graph
 
   route_name: String    Name for this route when inspecting it in IRB.
 
-  info: String          Put what you want here. FYI only
+  info: String          Put what you want here. Appears when the route is inspected.
 
   extensions: [Module]  Extra extensions to add to the route.
 
