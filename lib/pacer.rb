@@ -42,6 +42,10 @@ module Pacer
   require 'pacer/loader'
 
   class << self
+    def help(section = nil)
+      Pacer.tg.help section
+    end
+
     # A global place for pacer to put debug info if it's tucked deep in
     # its internals. Should typically not be used unless a mysterious
     # bug needs to be analyzed but that never really happens ;)
