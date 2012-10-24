@@ -131,7 +131,7 @@ module Pacer::Wrappers
     # @yield [e] Optional block yields the edge after it has been created.
     # @return [Pacer::Wrappers::EdgeWrapper] the new edge
     #
-    # @raise [StandardError] If this the associated vertices don't exist and :create_vertices is not set
+    # @raise [Pacer::ElementNotFound] If this the associated vertices don't exist and :create_vertices is not set
     def clone_into(target_graph, opts = {})
       e_idx = target_graph.temp_index("tmp-e-#{graph.graph_id}", :edge, :create => true)
       e = e_idx.first('id', element_id)
@@ -146,7 +146,7 @@ module Pacer::Wrappers
         if not iv or not ov
           message = "Vertex not found for #{ self.inspect }: #{ iv.inspect } -> #{ ov.inspect }"
           puts message if opts[:show_missing_vertices]
-          raise message unless opts[:ignore_missing_vertices]
+          fail Pacer::ElementNotFound, message unless opts[:ignore_missing_vertices]
           return nil
         end
         e = target_graph.create_edge(element_id, ov, iv, label, properties)
@@ -163,13 +163,13 @@ module Pacer::Wrappers
     # @yield [e] Optional block yields the edge after it has been created.
     # @return [Pacer::Wrappers::EdgeWrapper] the new edge
     #
-    # @raise [StandardError] If this the associated vertices don't exist
+    # @raise [Pacer::ElementNotFound] If this the associated vertices don't exist
     def copy_into(target_graph)
       v_idx = target_graph.temp_index("tmp-v-#{graph.graph_id}", :vertex, :create => true)
       iv = v_idx.first('id', in_vertex.element_id) || target_graph.vertex(in_vertex.element_id)
       ov = v_idx.first('id', out_vertex.element_id) || target_graph.vertex(out_vertex.element_id)
 
-      raise 'vertices not found' if not iv or not ov
+      fail Pacer::ElementNotFound 'vertices not found' if not iv or not ov
       e = target_graph.create_edge nil, ov, iv, label, properties
       yield e if block_given?
       e
