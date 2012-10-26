@@ -8,14 +8,28 @@ module Pacer
         def structure(graph, type_field = :type)
           result = Pacer.tg
           result.vertex_name = proc do |v|
-            if v[:element_type] == 'vertex'
-              "vertex '#{v[:type]}' (#{v[:count]})"
-            elsif v[:element_type] == 'edge'
-              "edge :#{v[:label]} (#{v[:count]})"
-            elsif v[:element_type] == 'property keys'
-              "properties #{v[:number]} keys (#{v[:count]})"
+            case v[:element_type]
+            when 'vertex'
+              "vertex '#{ v[:type] }' (#{ v[:count] })"
+            when 'edge'
+              "edge '#{ v[:label] }' (#{ v[:count] })"
+            when 'property keys'
+              if v[:keys].empty?
+                "has no properties"
+              else
+                "has properties: #{ v[:keys].join ', ' } (#{ v[:count] })"
+              end
             end
           end
+          result.edge_name = proc do |e|
+            if e.label == 'properties'
+              "#{ e[:count] }"
+            else
+              "#{ e[:count] } '#{ e.label }' edges to"
+            end
+          end
+
+
           graph.v[type_field].fast_group_count.to_h.each do |type, count|
             result.create_vertex :element_type => 'vertex', :type_field => type_field, :type => type, :count => count
           end
