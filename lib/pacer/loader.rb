@@ -19,6 +19,9 @@ require 'pacer/exceptions'
 require 'pacer/pipes'
 
 require 'pacer/core/route'
+require 'pacer/core/string_route'
+require 'pacer/core/array_route'
+require 'pacer/core/hash_route'
 require 'pacer/core/graph'
 require 'pacer/core/side_effect'
 

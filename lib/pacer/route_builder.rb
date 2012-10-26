@@ -25,7 +25,10 @@ module Pacer
       element_types[:vertex] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::VerticesRoute]
       element_types[:edge] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::EdgesRoute]
       element_types[:mixed] = [Pacer::Core::Graph::ElementRoute, Pacer::Core::Graph::MixedRoute]
-      element_types[:path] = [Pacer::Core::Graph::PathRoute]
+      element_types[:path] = [Pacer::Core::ArrayRoute, Pacer::Core::Graph::PathRoute]
+      element_types[:string] = [Pacer::Core::StringRoute]
+      element_types[:array] = [Pacer::Core::ArrayRoute]
+      element_types[:hash] = [Pacer::Core::HashRoute]
     end
 
     def chain(source, args)
