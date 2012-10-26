@@ -1,7 +1,7 @@
 module Pacer
   module Core::SideEffect
-    def cap
-      back.chain_route :transform => :cap, :with => self, :element_type => :object
+    def cap(opts = {})
+      back.chain_route({:transform => :cap, :with => self, :element_type => :object}.merge(opts))
     end
   end
 

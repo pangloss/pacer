@@ -4,9 +4,9 @@ module Pacer::Core::Graph
       case section
       when :paths
         puts <<HELP
-The following path helper methods are available:
+The following path-specific route methods are available:
 
-#transpose       Works the same as Array transpase
+See also the :arrays section for more available methods
 
 #subgraph(target_graph, opts)   Add each element in the path to the graph
     target_graph: PacerGraph (optional) if not specified creates a new TG.
@@ -18,19 +18,6 @@ The following path helper methods are available:
       ignore_missing_vertices: Boolean  Squelches the above mentioned exception
       show_missing_vertices: Boolean    Complain about missing vertices
 
-#compact_paths      Removes nils from paths
-
-#heads              Route to only the first element from each path
-
-#tails              Route to only the last element from each path
-
-#pairs(head, tail)  Route to a mini path of only the first and last elements
-    head: Number    Array index of the : first  : element in the pair
-    tail: Number                       : second :
-
-#len(n)             Filter paths by length
-    n: Number | Range
-
 #hashify            Make a hash of the properties and relationships of the path
     This is just a simple view on the data to facilitate analysis
 
@@ -39,10 +26,6 @@ HELP
         super
       end
       description
-    end
-
-    def transpose
-      collect { |arraylist| arraylist.to_a }.transpose
     end
 
     def subgraph(target_graph = nil, opts = {})
@@ -82,34 +65,16 @@ HELP
       end
     end
 
-    def compact_paths
-      map element_type: :path, route_name: 'compact' do |path|
-        path.compact
-      end
+    def transpose
+      map(element_type: :array, &:to_a).transpose
     end
 
     def heads(et = :vertex)
-      map element_type: et, route_name: 'heads' do |path|
-        path.first
-      end
+      super et
     end
 
     def tails(et = :vertex)
-      map element_type: et, route_name: 'tails' do |path|
-        path.last
-      end
-    end
-
-    def pairs(head = 0, tail = -1)
-      map element_type: :path, route_name: "pairs[#{ head },#{ tail }]" do |path|
-        [path[head], path[tail]]
-      end
-    end
-
-    def len(n)
-      select do |path|
-        n === path.length
-      end
+      super et
     end
 
     def hashify

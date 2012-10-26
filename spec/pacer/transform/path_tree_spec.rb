@@ -20,7 +20,7 @@ Run.tg :read_only do
     end
     let(:paths) { second.paths }
     let(:payloads) { paths.payloads }
-    let(:compacted) { payloads.compact_paths }
+    let(:compacted) { payloads.compacted }
 
     describe 'basic paths' do
       subject { paths }
