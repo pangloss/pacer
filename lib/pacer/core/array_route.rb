@@ -6,7 +6,7 @@ module Pacer
       end
 
       def transpose
-        collect { |a| a.to_a }.transpose
+        gather.map(element_type: :array) { |a| a.to_a.transpose }.scatter(element_type: :array)
       end
 
       def compacted
