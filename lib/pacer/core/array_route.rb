@@ -5,8 +5,12 @@ module Pacer
         map(element_type: :integer) { |s| s.length }
       end
 
+      # This could be done more efficiently by reimplementing
+      # transpose... Right now it needs 2n memory.
       def transpose
-        gather.map(element_type: :array) { |a| a.to_a.transpose }.scatter(element_type: :array)
+        gather { java.util.ArrayList.new }.
+          map(element_type: :array) { |a| a.to_a.transpose }.
+          scatter(element_type: :array)
       end
 
       def compacted

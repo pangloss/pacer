@@ -1,9 +1,10 @@
 module Pacer
   module Routes::RouteOperations
-    def aggregate(into = nil)
+    def aggregate(into = nil, &block)
       aggregate = ::Pacer::SideEffect::Aggregate
       r = self
       r = section(into, aggregate::ElementSet) if into.is_a? Symbol
+      into = block if block
       r.chain_route :side_effect => aggregate, :into => into
     end
   end
@@ -25,13 +26,16 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        if into.is_a? Symbol
+        case into
+        when Symbol
           hs = vars[into] = HashSet.new
           pipe = AggregatePipe.new hs
-        elsif into
-          pipe = AggregatePipe.new into
-        else
+        when Proc
+          pipe = AggregatePipe.new into.call(self)
+        when nil
           pipe = AggregatePipe.new HashSet.new
+        else
+          pipe = AggregatePipe.new into
         end
         pipe.setStarts end_pipe if end_pipe
         pipe
