@@ -4,9 +4,9 @@ module Pacer::Core::Graph
       case section
       when :paths
         puts <<HELP
-The following path helper methods are available:
+The following path-specific route methods are available:
 
-#transpose       Works the same as Array transpase
+See also the :arrays section for more available methods
 
 #subgraph(target_graph, opts)   Add each element in the path to the graph
     target_graph: PacerGraph (optional) if not specified creates a new TG.
@@ -17,19 +17,6 @@ The following path helper methods are available:
           Pacer::ElementNotFound exception.
       ignore_missing_vertices: Boolean  Squelches the above mentioned exception
       show_missing_vertices: Boolean    Complain about missing vertices
-
-#compact_paths      Removes nils from paths
-
-#heads              Route to only the first element from each path
-
-#tails              Route to only the last element from each path
-
-#pairs(head, tail)  Route to a mini path of only the first and last elements
-    head: Number    Array index of the : first  : element in the pair
-    tail: Number                       : second :
-
-#len(n)             Filter paths by length
-    n: Number | Range
 
 #hashify            Make a hash of the properties and relationships of the path
     This is just a simple view on the data to facilitate analysis
