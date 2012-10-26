@@ -18,7 +18,6 @@ module Pacer
           puts <<HELP
 
 HELP
-        end
         when :example
           puts <<HELP
 This example usage is from pacer-xml plugin v0.2. I transform a raw
