@@ -60,8 +60,8 @@ HELP
       def attach_pipe(end_pipe)
         # Must wrap based on parent pipe because the element in the block has
         # not yet been affected by any of this block's transforms.
-        if back.element_type == :path
-          pf = Pacer::Wrappers::PathWrappingPipeFunction.new back || source, block
+        if back and back.element_type == :path
+          pf = Pacer::Wrappers::PathWrappingPipeFunction.new back, block
         else
           pf = Pacer::Wrappers::WrappingPipeFunction.new back || source, block
           pf = Pacer::Wrappers::UnwrappingPipeFunction.new pf
