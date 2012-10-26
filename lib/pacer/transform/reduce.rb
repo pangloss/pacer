@@ -1,8 +1,8 @@
 module Pacer
   module Routes
     module RouteOperations
-      def reducer(opts = {})
-        chain_route({:transform => :reduce, :extensions => []}.merge(opts))
+      def reducer(opts = {}, &block)
+        chain_route({transform: :reduce, reduce: block}.merge(opts))
       end
     end
   end
