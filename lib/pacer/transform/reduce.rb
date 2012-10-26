@@ -12,21 +12,51 @@ module Pacer
       # The goal is to break down the xml stream from being a black
       # box iterator to doing the job in a few steps:
 
-      def idea(io)
-        lines = Pacer.io_lines(io) # t: :string
-        blocks = lines.reducer(t: :array)
-        blocks.enter do |line|
-          [] if line =~ /<\?xml/
+      def help(section = nil)
+        case section
+        when nil
+          puts <<HELP
+
+HELP
         end
-        blocks.reduce do |line, lines|
-          lines << line
-          lines
+        when :example
+          puts <<HELP
+This example usage is from pacer-xml plugin v0.2. I transform a raw
+stream of lines from a 79MB file that contains > 4000 concatinated xml
+documents averaging 600 lines each. to a stream of imported nodes:
+
+First, a little setup: create a graph, open the file and make a route of
+its lines
+
+  graph = Pacer.tg
+  f = File.open '/tmp/ipgb20120103.xml'
+  lines = f.each_line.to_route(element_type: :string).route
+
+Create a simple reducer that delimits sections when it hits a DTD tag
+and when it gets to the end of the file (that's the s.nil?). and reduces
+the stream by pushing each section's lines into an array. When a section
+is entered, the initial value is provided by the return value of the
+enter block.
+
+  reducer = lines.reducer(element_type: :array).route
+  reducer.enter  { |s|        []     if s =~ /<\?xml/ }
+  reducer.reduce { |s, lines| lines << s              }
+  reducer.leave  { |s, lines| s.nil? or s =~ /<\?xml/ }
+
+Now we're back in the territory of fairly vanilla routes. We join each
+section, use the pacer-xml gem's StringRoute#xml method to parse the XML
+with Nokogiri and then its XmlRoute#import method to turn those XML
+nodes into graph elements.
+
+  vertex = reducer.map(element_type: :string, &:join).xml.limit(1).import(graph).first
+
+  graph           #=> #<PacerGraph tinkergraph[vertices:88 edges:90]
+  vertex          #=> #<V[0] us-patent-grant>
+
+We can see that we've now got a graph with 88 vertices and 90 edges.
+
+HELP
         end
-        blocks.leave do |line, lines, change_value|
-          line.nil? or line =~ /<\?xml/
-        end
-        xml_strings = blocks.map(t: :xml, &:join)
-        xml_strings.xml
       end
 
       attr_writer :enter, :reduce, :leave
