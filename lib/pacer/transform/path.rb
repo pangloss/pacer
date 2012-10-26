@@ -2,7 +2,7 @@ module Pacer
   module Core
     module Route
       def paths(*exts)
-        route = chain_route :transform => :path, :element_type => :object
+        route = chain_route :transform => :path, :element_type => :path
         if exts.any?
           exts = exts.map { |e| Array.wrap(e) if e }
           route.map(modules: Pacer::Transform::Path::Methods) do |path|
@@ -17,40 +17,35 @@ module Pacer
 
   module Transform
     module Path
-      module Methods
-        def transpose
-          collect { |arraylist| arraylist.to_a }.transpose
-        end
-
-        def subgraph(target_graph = nil, opts = {})
-          raise "Can't create a subgraph within itself." if target_graph == graph
-          target_graph ||= Pacer.tg
-          target_graph.vertex_name ||= graph.vertex_name
-          missing_edges = Set[]
-          bulk_job(nil, target_graph) do |path|
-            path.select { |e| e.is_a? Pacer::Vertex }.each do |vertex|
-              vertex.clone_into target_graph
-            end
-            path.select { |e| e.is_a? Pacer::Edge }.each do |edge|
-              unless edge.clone_into target_graph, ignore_missing_vertices: true
-                missing_edges << edge
-              end
-            end
-          end
-          if missing_edges.any?
-            missing_edges.to_route(graph: graph, element_type: :edge).bulk_job nil, target_graph do |edge|
-              edge.clone_into target_graph,
-                ignore_missing_vertices: opts[:ignore_missing_vertices],
-                show_missing_vertices: opts[:show_missing_vertices]
-            end
-          end
-          target_graph
-        end
-      end
-
       import com.tinkerpop.pipes.transform.PathPipe
 
-      include Methods
+      def help(section = nil)
+        case section
+        when nil
+          puts <<HELP
+Each path returned by this method represents each intermediate value that was
+used to calculate the resulting value:
+
+  r = [1,2,3].to_route.map { |n| n*2 }
+  p = r.paths                           #=> #<Obj -> Obj-Map -> Path-Path>
+  p.to_a                                #=> [[1,1], [2,4], [3,6]]
+
+This is especially useful for graph traversals.
+
+  g.v.out_e.in_v.out_e.in_v.paths.first #=> [#<V[37]>,
+                                        #    #<E[41]:37-patcit-38>,
+                                        #    #<V[38]>,
+                                        #    #<E[40]:38-document-id-39>,
+                                        #    #<V[39]>]
+
+See the :paths section for more details and general information about paths.
+
+HELP
+        else
+          super
+        end
+        description
+      end
 
       protected
 
@@ -58,16 +53,6 @@ module Pacer
         pipe = PathPipe.new
         pipe.setStarts end_pipe if end_pipe
         pipe
-      end
-
-      def configure_iterator(iter)
-        if respond_to? :graph
-          pipe = Pacer::Pipes::PathWrappingPipe.new(graph)
-          pipe.setStarts iter
-          pipe
-        else
-          iter
-        end
       end
     end
   end

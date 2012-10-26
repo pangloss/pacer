@@ -70,6 +70,8 @@ module Pacer
               'Obj'
             when :mixed
               'Elem'
+            else
+              element_type.to_s.capitalize
             end
         s = "#{s} #{ @info }" if @info
         s

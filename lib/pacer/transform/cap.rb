@@ -9,6 +9,37 @@ module Pacer
     module Cap
       import com.tinkerpop.pipes.transform.SideEffectCapPipe
 
+      def help(section = nil)
+        case section
+        when nil
+          puts <<HELP
+Cap executes the full pipeline until it is empty, discarding all of the
+pipeline's results. It then calls getSideEffect from the previous pipe
+segment and emits that value as the only resulting value of the route.
+
+The value of getSideEffect is generally calculated by processing each
+element of the route. A good example is #count which is actually
+implemented as follows:
+
+  r = g.v.counted.cap     #=> #<GraphV -> Obj-Cap(V-Counted)>
+  r.to_a                  #=> [123]
+
+In this example, #counted is a side effect pipe. Side effect pipes can
+be used on their own but their value is not reliable until the full
+pipeline has been processed:
+
+  pipe = g.v.counted.pipe
+  pipe.getSideEffect      #=> 0
+  pipe.next               #=> #<V[3]>
+  pipe.getSideEffect      #=> 1
+
+HELP
+        else
+          super
+        end
+        description
+      end
+
       def with=(route)
         @side_effect = route
       end

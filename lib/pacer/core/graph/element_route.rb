@@ -40,8 +40,9 @@ module Pacer::Core::Graph
     # Create a new TinkerGraph based on the paths of all matching elements.
     #
     # @return [TinkerGraph] the subgraph
-    def subgraph opts = {}
-      paths.subgraph nil, opts
+    def subgraph(graph = nil, opts = {})
+      graph, opts = [nil, graph] if graph.is_a? Hash
+      paths.subgraph graph, opts
     end
 
     # Delete all matching elements.

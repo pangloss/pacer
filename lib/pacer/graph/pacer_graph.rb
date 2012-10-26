@@ -26,13 +26,18 @@ module Pacer
       self
     end
 
-    def reopen
-      graph = @reopen.call
-      if graph.is_a? PacerGraph
-        @blueprints_graph = graph.blueprints_graph
+    def vendor(full = false)
+      g = blueprints_graph
+      g = g.raw_graph if g.respond_to? :raw_graph
+      if full
+        g.java_class.name
       else
-        @blueprints_graph = graph
+        g.java_class.name.split('.')[1]
       end
+    end
+
+    def reopen
+      @blueprints_graph = unwrap_graph @reopen.call
       self
     end
 
@@ -40,6 +45,17 @@ module Pacer
       @shutdown.call self if @shutdown
       @blueprints_graph = nil
       self
+    end
+
+    def use_wrapper(klass)
+      reopen = proc do
+        klass.new unwrap_graph(@reopen.call)
+      end
+      PacerGraph.new encoder, reopen, @shutdown
+    end
+
+    def use_encoder(encoder)
+      PacerGraph.new encoder, @reopen, @shutdown
     end
 
     def graph_id
@@ -187,6 +203,26 @@ module Pacer
       blueprints_graph.features
     end
 
+    def inspect
+      "#<PacerGraph #{ blueprints_graph.to_s }"
+    end
+
+
+    private
+
+    def unwrap_graph(graph)
+      if graph.is_a? PacerGraph
+        graph.blueprints_graph
+      else
+        graph
+      end
+    end
+
+
+
+
+    public
+
     module Encoding
       def encode_property(value)
         encoder.encode_property value
@@ -201,34 +237,15 @@ module Pacer
     module Naming
       # The proc used to name vertices.
       #
-      # @return [Proc]
-      def vertex_name
-        @vertex_name if defined? @vertex_name
-      end
-
-      # Set the proc used to name vertices.
-      #
-      # @param [Proc(vertex)] a_proc returns a string given a vertex
-      def vertex_name=(a_proc)
-        @vertex_name = a_proc
-      end
+      # @return [Proc] returns a string given a vertex
+      attr_accessor :vertex_name
 
       # The proc used to name edges.
       #
-      # @return [Proc]
-      def edge_name
-        @edge_name if defined? @edge_name
-      end
-
-      # Set the proc used to name edges.
-      #
-      # @param [Proc(edge)] a_proc returns a string given an edge
-      def edge_name=(a_proc)
-        @edge_name = a_proc
-      end
+      # @return [Proc] returns a string given an edge
+      attr_accessor :edge_name
     end
     include Naming
-
 
     module BulkJob
       attr_accessor :in_bulk_job
@@ -346,9 +363,9 @@ module Pacer
       def create_key_index(name, type)
         if features.supportsKeyIndices
           if element_type(type) == :vertex and features.supportsVertexKeyIndex
-            blueprints_graph.createKeyIndex name, index_class(:vertex)
+            blueprints_graph.createKeyIndex name.to_s, index_class(:vertex)
           elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
-            blueprints_graph.createKeyIndex name, index_class(:edge)
+            blueprints_graph.createKeyIndex name.to_s, index_class(:edge)
           end
         end
       end

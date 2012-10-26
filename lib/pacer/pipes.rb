@@ -5,7 +5,6 @@ module Pacer
     import com.tinkerpop.pipes.AbstractPipe
     import com.tinkerpop.pipes.transform.IdentityPipe
     import com.tinkerpop.pipes.util.Pipeline
-    import com.tinkerpop.pipes.util.iterators.MultiIterator
     import com.tinkerpop.pipes.util.PipeHelper
 
     import com.tinkerpop.pipes.filter.RandomFilterPipe
@@ -37,6 +36,7 @@ require 'pacer/pipe/vertices_pipe'
 require 'pacer/pipe/edges_pipe'
 
 require 'pacer/pipe/never_pipe'
+require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'
 require 'pacer/pipe/collection_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
@@ -64,3 +64,4 @@ require 'pacer/pipe/cross_product_transform_pipe'
 require 'pacer/pipe/wrapping_pipe'
 require 'pacer/pipe/path_wrapping_pipe'
 require 'pacer/pipe/unwrapping_pipe'
+require 'pacer/pipe/naked_pipe'

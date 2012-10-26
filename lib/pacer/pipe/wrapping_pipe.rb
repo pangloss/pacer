@@ -11,6 +11,10 @@ module Pacer
         @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, @extensions
       end
 
+      def getSideEffect
+        starts.getSideEffect
+      end
+
       def getCurrentPath
         starts.getCurrentPath
       end

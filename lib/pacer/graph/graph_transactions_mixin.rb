@@ -47,6 +47,11 @@ module Pacer
       end
     end
 
+    # Set this to true if you don't want to use transactions.
+    #
+    # By default, transactions are enabled.
+    attr_accessor :disable_transactions
+
   private
 
     def threadlocal_graph_info
@@ -58,7 +63,7 @@ module Pacer
       tgi = threadlocal_graph_info
       tx_depth = tgi[:tx_depth] ||= 0
       tgi[:tx_depth] += 1
-      if blueprints_graph.is_a? TransactionalGraph
+      if (not disable_transactions) and blueprints_graph.is_a? TransactionalGraph
         if tx_depth == 0
           base_tx_finalizers
         elsif opts[:nesting] == true

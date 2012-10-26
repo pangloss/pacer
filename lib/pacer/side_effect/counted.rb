@@ -8,6 +8,7 @@ module Pacer
       def count
         counted.count
       end
+      alias run! count
     end
   end
 

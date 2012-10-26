@@ -156,6 +156,148 @@ module Pacer
         nil
       end
 
+      def help(section = nil)
+        general_topics = <<HELP
+Some general help sections:
+:routes     What are Pacer's routes?
+:basics     Simple usage examples
+:creation   How to create records
+:tools      Some things you can do
+:graphs     Available graphs
+:help       How to contribute to Pacer's inline help
+HELP
+        if section == :help
+          puts <<HELP
+Contributions of help topics will be greatly apreciated.
+
+Help topics should be added to the modules that they describe. General topics
+help can be added here for now but will likely be moved eventually.
+
+See lib/pacer/transform/map.rb for an example of how to define contextual help
+topics.
+
+If you add a general topic, remember to add it to the list above.
+
+Remember to call super for unrecognized sections! :)
+
+HELP
+        elsif section == :routes
+          puts <<HELP
+Pacer's routes are a very efficient and fast way to deal with data.
+
+The fundamental thing about them is that they are lazily evaluated, which
+allows very expensive traversals to be defined, yet nearly always produces
+results immediately with very low memory requirements, too.
+
+
+
+HELP
+        elsif section == :basics
+          puts <<HELP
+Pacer basics:
+
+g = Pacer.tg                           # create an in-memory graph
+                                       # - help(:graphs) for other types
+g.v                                    # create a route to all vertices in the graph
+                                       # vertices are your basic documents.
+g.e                                    # ... or all edges
+                                       # edges connect documents. They can have properties, too!
+g.v(name: 'Sue', gender: 'male')       # find all boys named Sue
+                                       # all elements are schemaless, so you
+                                       # can specify any properties
+g.v(name: 'Sue', gender: 'male').count # how many are there?
+                                       # see how we can chain calls? Powerful
+                                       # traversals can be defined this way.
+g.v.out_e(:friend)                     # see Sue's 'friend' relationships
+g.v.out_e(:friend).in_v                # continue on to his friends
+g.v.out_e(:friend).in_v.out(:friends)  # continue on to his friends-of-friends
+g.v.in(:friend)                        # see who has friended Sue.
+                                       # all edges are directional to follow an
+                                       # edge, use #out or #out_e; to go
+                                       # backwards along an edge, use #in or
+                                       # #in_e
+
+#{general_topics}
+
+HELP
+        elsif section == :creation
+          puts <<HELP
+How we can create records in a Pacer graph:
+
+g = Pacer.tg                          # create a new in-memory graph to play with
+sue = g.create_vertex name: 'Sue', gender: 'male'
+                                      # create a record with properties
+ghost = g.create_vertex               # get lazy and create an empty one
+sue.add_edges_to :friend, ghost       # Sue has friended the ghost.
+                                      # This relationship can be traversed in
+                                      # both directions so a reverse
+                                      # relationship is *not* required, but can
+                                      # be created:
+ghost.add_edges_to :friend, sue, type: 'spooky'
+                                      # We can also create edges with properties
+sue[:age] = 27                        # It's that easy to add or change a property
+sue['fav foods'] = [pie, donuts]      # Pacer can shoehorn any data into the
+                                      # graph as long as it's serializable.
+
+#{general_topics}
+
+HELP
+        elsif section == :tools
+          puts <<HELP
+
+HELP
+        elsif section == :graphs or section == :plugins
+          puts <<HELP
+Various graphs are supported in their own Rubygems. Check out pacer-neo4j,
+pacer-orient, pacer-dex for now. New graphs emerge frequently and I hope to
+support many of them.
+
+Search rubygems.org or github for projects that start with "pacer-" to see what
+other plugins exist as well.
+
+#{general_topics}
+
+HELP
+        else
+          if section
+            puts "Unrecognized help section specified"
+            puts
+          elsif not is_a? Graph
+            puts "No specialized help has been defined for this step yet."
+            puts
+          end
+          puts <<HELP
+How to use Pacer's inline help:
+
+You can use Pacer.help(:section) to print help on general topics, or get
+context-specific help by calling help on any route. For example:
+
+    graph.v.out_e.map.help  # will give you help about the map command.
+
+#{general_topics}
+
+General options (may not be available for all methods)
+
+  element_type: Symbol  Set what type of element is emitted from this step.
+      registered types: #{ Pacer::RouteBuilder.current.element_types.keys.map(&:inspect).join ', ' }
+
+  graph: PacerGraph     If the route contains graph elements, specify that they
+                        are from this graph
+
+  route_name: String    Name for this route when inspecting it in IRB.
+
+  info: String          Put what you want here. Appears when the route is inspected.
+
+  extensions: [Module]  Extra extensions to add to the route.
+
+  wrapper: Class         Wrap elements in this class.
+      For each element, wrapper.new(graph, element) happens
+
+HELP
+        end
+        description
+      end
+
       def description(join = ' -> ')
         "#<#{inspect_strings.join(join)}>"
       end
@@ -308,7 +450,9 @@ module Pacer
       # @return [java.util.Iterator]
       def source_iterator
         if @source
-          iterator_from_source(@source)
+          iter = iterator_from_source(@source)
+          iter.enablePath(true) if iter.respond_to? :enablePath
+          iter
         elsif @back
           @back.send(:source_iterator)
         end

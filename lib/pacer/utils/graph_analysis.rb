@@ -8,14 +8,28 @@ module Pacer
         def structure(graph, type_field = :type)
           result = Pacer.tg
           result.vertex_name = proc do |v|
-            if v[:element_type] == 'vertex'
-              "vertex '#{v[:type]}' (#{v[:count]})"
-            elsif v[:element_type] == 'edge'
-              "edge :#{v[:label]} (#{v[:count]})"
-            elsif v[:element_type] == 'property keys'
-              "properties #{v[:number]} keys (#{v[:count]})"
+            case v[:element_type]
+            when 'vertex'
+              "vertex '#{ v[:type] }' (#{ v[:count] })"
+            when 'edge'
+              "edge '#{ v[:label] }' (#{ v[:count] })"
+            when 'property keys'
+              if v[:keys].empty?
+                "has no properties"
+              else
+                "has properties: #{ v[:keys].join ', ' } (#{ v[:count] })"
+              end
             end
           end
+          result.edge_name = proc do |e|
+            if e.label == 'properties'
+              "#{ e[:count] }"
+            else
+              "#{ e[:count] } '#{ e.label }' edges to"
+            end
+          end
+
+
           graph.v[type_field].fast_group_count.to_h.each do |type, count|
             result.create_vertex :element_type => 'vertex', :type_field => type_field, :type => type, :count => count
           end
@@ -28,7 +42,7 @@ module Pacer
           end
           result.v(:element_type => 'edge').each do |edge_node|
             puts "edges with label #{ edge_node[:label] }: #{ edge_node[:count] }"
-            edge_route = graph.e(self, edge_node[:label])
+            edge_route = graph.e(edge_node[:label]).e(self)
             edge_route.property_variations result, edge_node
           end
           result.v.each do |type_node|

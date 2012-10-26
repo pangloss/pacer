@@ -12,17 +12,17 @@ module Pacer::Pipes
       empty = ArrayList.new
       @expando.setStarts empty.iterator
       looping_pipe.setStarts(@expando)
-      #if control_block.arity < 0 and 1 < control_block.arity
+      if control_block.arity < 0 or control_block.arity > 2
         @yield_paths = true
         looping_pipe.enablePath true
-      #end
+      end
       @looping_pipe = looping_pipe
     end
 
     def next
       super
     ensure
-      @path = @next_path
+      @path = next_path
     end
 
     def setStarts(starts)
@@ -30,9 +30,15 @@ module Pacer::Pipes
       enablePath true if yield_paths
     end
 
+    def enablePath(b)
+      super
+      looping_pipe.enablePath true if b and not yield_paths
+    end
+
     protected
 
     attr_reader :wrapper, :control_block, :expando, :looping_pipe, :graph, :yield_paths
+    attr_accessor :next_path
 
     def processNextStart
       while true
@@ -41,32 +47,32 @@ module Pacer::Pipes
         if has_next
           element = looping_pipe.next
           depth = (expando.metadata || 0) + 1
-          @next_path = looping_pipe.getCurrentPath if yield_paths
+          self.next_path = looping_pipe.getCurrentPath if pathEnabled
         else
           element = starts.next
-          if pathEnabled
-            @next_path = starts.getCurrentPath
-          else
-            @next_path = ArrayList.new
-            @next_path.add element
-          end
+          self.next_path = starts.getCurrentPath if pathEnabled
           depth = 0
         end
         wrapped = wrapper.new(graph, element)
-        path = @next_path.map do |e|
-          wrapper.new graph, e
+        if pathEnabled
+          path = next_path.map do |e|
+            wrapper.new graph, e
+          end
+          control = control_block.call wrapped, depth, path
+        else
+          control = control_block.call wrapped, depth
         end
-        case control_block.call wrapped, depth, path
+        case control
         when :loop
-          expando.add element, depth, @next_path
+          expando.add element, depth, next_path
         when :emit
           return element
         when :emit_and_loop, :loop_and_emit
-          expando.add element, depth, @next_path
+          expando.add element, depth, next_path
           return element
-        when false, nil
+        when false, nil, :discard
         else
-          expando.add element, depth, @next_path
+          expando.add element, depth, next_path
           return element
         end
       end
