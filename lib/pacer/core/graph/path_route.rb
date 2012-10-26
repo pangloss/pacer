@@ -41,10 +41,6 @@ HELP
       description
     end
 
-    def transpose
-      collect { |arraylist| arraylist.to_a }.transpose
-    end
-
     def subgraph(target_graph = nil, opts = {})
       raise "Can't create a subgraph within itself." if target_graph == graph
       target_graph ||= Pacer.tg
@@ -82,34 +78,12 @@ HELP
       end
     end
 
-    def compact_paths
-      map element_type: :path, route_name: 'compact' do |path|
-        path.compact
-      end
-    end
-
     def heads(et = :vertex)
-      map element_type: et, route_name: 'heads' do |path|
-        path.first
-      end
+      super et
     end
 
     def tails(et = :vertex)
-      map element_type: et, route_name: 'tails' do |path|
-        path.last
-      end
-    end
-
-    def pairs(head = 0, tail = -1)
-      map element_type: :path, route_name: "pairs[#{ head },#{ tail }]" do |path|
-        [path[head], path[tail]]
-      end
-    end
-
-    def len(n)
-      select do |path|
-        n === path.length
-      end
+      super et
     end
 
     def hashify
