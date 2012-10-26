@@ -237,34 +237,15 @@ module Pacer
     module Naming
       # The proc used to name vertices.
       #
-      # @return [Proc]
-      def vertex_name
-        @vertex_name if defined? @vertex_name
-      end
-
-      # Set the proc used to name vertices.
-      #
-      # @param [Proc(vertex)] a_proc returns a string given a vertex
-      def vertex_name=(a_proc)
-        @vertex_name = a_proc
-      end
+      # @return [Proc] returns a string given a vertex
+      attr_accessor :vertex_name
 
       # The proc used to name edges.
       #
-      # @return [Proc]
-      def edge_name
-        @edge_name if defined? @edge_name
-      end
-
-      # Set the proc used to name edges.
-      #
-      # @param [Proc(edge)] a_proc returns a string given an edge
-      def edge_name=(a_proc)
-        @edge_name = a_proc
-      end
+      # @return [Proc] returns a string given an edge
+      attr_accessor :edge_name
     end
     include Naming
-
 
     module BulkJob
       attr_accessor :in_bulk_job
