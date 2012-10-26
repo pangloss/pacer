@@ -78,6 +78,10 @@ HELP
       end
     end
 
+    def transpose
+      map(element_type: :array, &:to_a).transpose
+    end
+
     def heads(et = :vertex)
       super et
     end

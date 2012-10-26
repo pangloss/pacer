@@ -8,8 +8,8 @@ module Pacer
       # This could be done more efficiently by reimplementing
       # transpose... Right now it needs 2n memory.
       def transpose
-        gather { java.util.ArrayList.new }.
-          map(element_type: :array) { |a| a.to_a.transpose }.
+        gather { [] }.
+          map(element_type: :array) { |a| a.transpose }.
           scatter(element_type: :array)
       end
 
