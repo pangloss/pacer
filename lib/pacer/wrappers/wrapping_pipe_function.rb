@@ -20,14 +20,14 @@ module Pacer
       end
 
       def compute(element)
-        e = wrapper.new graph, element
+        e = wrapper.new graph, element if element
         block.call e
       end
 
       alias call compute
 
       def call_with_args(element, *args)
-        e = wrapper.new graph, element
+        e = wrapper.new graph, element if element
         block.call e, *args
       end
 
