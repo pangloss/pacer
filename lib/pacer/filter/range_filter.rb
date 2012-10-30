@@ -11,10 +11,12 @@ module Pacer
       def limit(max)
         chain_route :filter => :range, :limit => max
       end
+      alias take limit
 
       def offset(amount)
         chain_route :filter => :range, :offset => amount
       end
+      alias drop offset
 
       def at(pos)
         chain_route :filter => :range, :index => pos
@@ -83,7 +85,7 @@ module Pacer
         from = @range.begin
         to = @range.end
         if @range.exclude_end?
-          if to == 0 
+          if to == 0
             pipe = Pacer::Pipes::NeverPipe.new
             pipe.set_starts end_pipe if end_pipe
             return pipe
