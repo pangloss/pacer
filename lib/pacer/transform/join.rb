@@ -133,6 +133,15 @@ module Pacer
       attr_accessor :existing_multi_graph, :key_route, :values_routes, :from_graph
       attr_writer :join_on
 
+      # FIXME: the pipe changes the graph. This does not fit with the idea of immutable routes.
+      def graph
+        @graph or super
+      end
+
+      def graph=(g)
+        @graph = g
+      end
+
       def key(&block)
         self.key_route = Pacer::Route.block_branch(self, block)
         self
