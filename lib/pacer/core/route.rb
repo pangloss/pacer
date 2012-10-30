@@ -26,11 +26,6 @@ module Pacer
       # @return [true, false]
       attr_accessor :hide_elements
 
-      # Set which graph this route will operate on.
-      #
-      # @todo move this to graph routes.
-      attr_writer :graph
-
       # If this piece of the route is useless in a lookahead, set this to true
       # and when it is at the tail of a lookahead, it will be removed
       # automatically. (for instance the property decoder, or wrap/unwrap)
@@ -49,12 +44,12 @@ module Pacer
 
       # Return which graph this route operates on.
       #
-      # @todo move this to graph routes.
-      #
       # @return [PacerGraph]
       def graph
-        @graph = nil unless defined? @graph
-        @graph ||= (@back || @source).graph rescue nil
+        config.fetch :graph do
+          src = @back || @source
+          src.graph if src.respond_to? :graph
+        end
       end
 
       # Returns true if the given graph is the one this route operates on.

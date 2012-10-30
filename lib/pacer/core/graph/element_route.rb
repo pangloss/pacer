@@ -3,10 +3,6 @@ module Pacer::Core::Graph
   # Basic methods for routes shared between all route types that emit
   # routes: {VerticesRoute}, {EdgesRoute} and {MixedRoute}
   module ElementRoute
-    def graph
-      config[:graph]
-    end
-
     # Attach a filter to the current route.
     #
     # @param [Array<Hash, extension>, Hash, extension] filter see {Pacer::Route#property_filter}
