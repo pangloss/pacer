@@ -57,12 +57,6 @@ module Pacer
         # @attr [Boolean] search_manual_indices
         attr_accessor :search_manual_indices
 
-      protected
-
-        attr_accessor :non_ext_props
-
-      public
-
         def initialize(filters)
           @properties = []
           @blocks = []
@@ -162,6 +156,8 @@ module Pacer
         end
 
       protected
+
+        attr_accessor :non_ext_props
 
         def add_filter(filter, extension)
           case filter
