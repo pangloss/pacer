@@ -47,6 +47,15 @@ module Pacer
       self
     end
 
+    def restart!
+      shutdown
+      reopen
+    end
+
+    def read_only
+      use_wrapper com.tinkerpop.blueprints.util.wrappers.readonly.ReadOnlyKeyIndexableGraph
+    end
+
     def use_wrapper(klass)
       reopen = proc do
         klass.new unwrap_graph(@reopen.call)
