@@ -50,7 +50,37 @@ module Pacer
     # Set this to true if you don't want to use transactions.
     #
     # By default, transactions are enabled.
+    #
+    # Note that this does not prevent blueprints implicit transactions from
+    # being created.
     attr_accessor :disable_transactions
+
+    # This is to work around the bad transaction design in Blueprints.
+    # Blueprints will always automatically start a transaction for you that it
+    # doesn't commits automatically and which you can not check the status of
+    # in any way. To deal with that, Pacer will (by default) commit implicit
+    # transactions before an explicit transaction is created. You can change
+    # that behavior by setting one of :commit, :rollback or :ignore. Ignore
+    # effectively folds changes from before the transaction into the current
+    # transaction.
+    attr_accessor :implicit_transaction
+
+    def close_implicit_transaction
+      case implicit_transaction
+      when nil, :commit
+        commit_implicit_transaction
+      when :rollback
+        rollback_implicit_transaction
+      end
+    end
+
+    def rollback_implicit_transaction
+      blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+    end
+
+    def commit_implicit_transaction
+      blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+    end
 
   private
 
@@ -63,20 +93,26 @@ module Pacer
       tgi = threadlocal_graph_info
       tx_depth = tgi[:tx_depth] ||= 0
       tgi[:tx_depth] += 1
-      if (not disable_transactions) and blueprints_graph.is_a? TransactionalGraph
-        if tx_depth == 0
-          base_tx_finalizers
-        elsif opts[:nesting] == true
-          nested_tx_finalizers
+      begin
+        if (not disable_transactions) and blueprints_graph.is_a? TransactionalGraph
+          if tx_depth == 0
+            close_implicit_transaction
+            base_tx_finalizers
+          elsif opts[:nesting] == true
+            nested_tx_finalizers
+          else
+            fail NestedTransactionError, "To use nested transactions, use nesting: true"
+          end
         else
-          fail NestedTransactionError, "To use nested transactions, use nesting: true"
+          if tx_depth == 0
+            mock_base_tx_finalizers
+          else
+            mock_nested_tx_finalizers
+          end
         end
-      else
-        if tx_depth == 0
-          mock_base_tx_finalizers
-        else
-          mock_nested_tx_finalizers
-        end
+      rescue Exception
+        tgi[:tx_depth] -= 1
+        raise
       end
     end
 
