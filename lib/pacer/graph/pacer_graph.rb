@@ -8,7 +8,7 @@ module Pacer
 
     attr_reader :blueprints_graph, :encoder
 
-    def initialize(encoder, open, shutdown = nil)
+    def initialize(encoder, open, shutdown = nil, graph_id = nil)
       if open.is_a? Proc
         @reopen = open
       else
@@ -17,6 +17,7 @@ module Pacer
       @shutdown = shutdown
       reopen
       @encoder = encoder
+      @graph_id = graph_id
     end
 
     # The current graph
@@ -47,6 +48,14 @@ module Pacer
       self
     end
 
+    def threadlocal_copy
+      Thread.current[:"graph-#{graph_id}"] ||= copy_object
+    end
+
+    def copy_object
+      self.class.new @encoder, @reopen, @shutdown, graph_id
+    end
+
     def use_wrapper(klass)
       reopen = proc do
         klass.new unwrap_graph(@reopen.call)
@@ -59,7 +68,7 @@ module Pacer
     end
 
     def graph_id
-      blueprints_graph.object_id
+      @graph_id ||= blueprints_graph.object_id
     end
 
     def equals(other)
