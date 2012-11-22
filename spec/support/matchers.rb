@@ -14,6 +14,6 @@ end
 
 RSpec::Matchers.define :be_one_of do |*list|
   match do |item|
-    list.include? item
+    list.include? item or list.select { |i| i.is_a? Regexp }.any? { |r| item =~ r }
   end
 end
