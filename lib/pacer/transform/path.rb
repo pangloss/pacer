@@ -38,7 +38,9 @@ This is especially useful for graph traversals.
                                         #    #<E[40]:38-document-id-39>,
                                         #    #<V[39]>]
 
-See the :paths section for more details and general information about paths.
+See:
+  :paths  - for more details and general information about paths.
+  :arrays - for general operations that work on arrays or paths.
 
 HELP
         else
