@@ -72,6 +72,62 @@ HELP
           n === path.length
         end
       end
+
+      def map_in(&block)
+        map element_type: element_type do |e|
+          e.map(&block)
+        end
+      end
+
+      def reduce_in(initial, &block)
+        map { |e| e.reduce(initial, &block) }
+      end
+
+      def select_case(*cases)
+        map element_type: element_type do |e|
+          e.select { |x| cases.any? { |c| c === x } }
+        end
+      end
+
+      def reject_case(*cases)
+        map element_type: element_type do |e|
+          e.reject { |x| cases.any? { |c| c === x } }
+        end
+      end
+
+      def vertices(*exts)
+        r = select_case Pacer::Vertex
+        if exts.any?
+          r.map_in { |e| e.add_extensions exts }
+        else
+          r
+        end
+      end
+
+      def edges(*exts)
+        r = select_case Pacer::Edge
+        if exts.any?
+          r.map_in { |e| e.add_extensions exts }
+        else
+          r
+        end
+      end
+
+      def elements
+        select_case Pacer::Element
+      end
+
+      def select_in(&block)
+        map element_type: element_type do |e|
+          e.select(&block)
+        end
+      end
+
+      def reject_in(&block)
+        map element_type: element_type do |e|
+          e.select(&block)
+        end
+      end
     end
   end
 end
