@@ -319,10 +319,12 @@ module Pacer
         @temp_indices ||= {}
         idx = @temp_indices[name]
         unless idx
-          if name and type and opts[:create]
-            idx = @temp_indices[name] = Pacer::Graph::HashIndex.new type, name
-          elsif opts[:create]
-            idx = Pacer::Graph::HashIndex.new type, nil
+          if opts[:temp] != false
+            if name and type and opts[:create]
+              idx = @temp_indices[name] = Pacer::Graph::HashIndex.new type, name
+            elsif opts[:create]
+              idx = Pacer::Graph::HashIndex.new type, nil
+            end
           end
         end
         Pacer::Wrappers::IndexWrapper.new self, idx, idx.type if idx
@@ -389,6 +391,26 @@ module Pacer
           end
         else
           []
+        end
+      end
+
+      def vertices_by_key(key, value, *extensions)
+        if key_indices(:vertex).include? key.to_s
+          pipe = Pacer::Pipes::WrappingPipe.new self, :vertex, extensions
+          pipe.setStarts blueprints_graph.getVertices(key.to_s, value).iterator
+          pipe
+        else
+          fail ClientError, "The key #{ key } is not indexed"
+        end
+      end
+
+      def edges_by_key(key, value, *extensions)
+        if key_indices(:edge).include? key.to_s
+          pipe = Pacer::Pipes::WrappingPipe.new self, :edge, extensions
+          pipe.setStarts blueprints_graph.getEdges(key.to_s, value).iterator
+          pipe
+        else
+          fail ClientError, "The key #{ key } is not indexed"
         end
       end
     end
