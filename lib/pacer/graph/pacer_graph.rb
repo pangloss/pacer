@@ -48,10 +48,6 @@ module Pacer
       self
     end
 
-    def threadlocal_copy
-      Thread.current[:"graph-#{graph_id}"] ||= copy_object
-    end
-
     def copy_object
       self.class.new @encoder, @reopen, @shutdown, graph_id
     end
