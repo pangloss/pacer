@@ -12,7 +12,7 @@ module Pacer
           @extensions = back.extensions
           element_type = back.element_type
         end
-        @wrapper = WrapperSelector.build element_type, extensions
+        @wrapper = WrapperSelector.build graph, element_type, extensions
       end
 
       def arity

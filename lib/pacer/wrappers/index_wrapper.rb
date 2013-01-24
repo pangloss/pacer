@@ -13,7 +13,7 @@ module Pacer::Wrappers
     end
 
     def wrapper
-      WrapperSelector.build element_type
+      WrapperSelector.build graph, element_type
     end
 
     def first(key, value, extensions = nil)

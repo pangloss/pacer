@@ -42,7 +42,7 @@ module Pacer
         def initialize(from_graph, multi_graph)
           super()
           @from_graph = from_graph
-          @wrapper = Pacer::Wrappers::WrapperSelector.build
+          @wrapper = Pacer::Wrappers::WrapperSelector.build from_graph
           @multi_graph = multi_graph || Pacer::MultiGraph.blank
           @values_pipes = []
           @current_keys = []

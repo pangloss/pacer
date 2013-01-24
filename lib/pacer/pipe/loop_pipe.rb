@@ -6,7 +6,7 @@ module Pacer::Pipes
       super()
       @graph = graph
       @control_block = control_block
-      @wrapper = Pacer::Wrappers::WrapperSelector.build
+      @wrapper = Pacer::Wrappers::WrapperSelector.build graph
 
       @expando = ExpandablePipe.new
       empty = ArrayList.new

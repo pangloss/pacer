@@ -8,7 +8,11 @@ module Pacer
 
     attr_reader :blueprints_graph, :encoder
 
+    attr_accessor :base_vertex_wrapper, :base_edge_wrapper
+
     def initialize(encoder, open, shutdown = nil, graph_id = nil)
+      self.base_vertex_wrapper = Pacer::Wrappers::VertexWrapper
+      self.base_edge_wrapper = Pacer::Wrappers::EdgeWrapper
       if open.is_a? Proc
         @reopen = open
       else
@@ -90,7 +94,7 @@ module Pacer
           v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::VertexWrapper.new graph, v
+          v = base_vertex_wrapper.new graph, v
         end
         v.add_extensions modules
       else
@@ -117,7 +121,7 @@ module Pacer
           v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::EdgeWrapper.new graph, v
+          v = base_edge_wrapper.new graph, v
         end
         v.add_extensions modules
       end
@@ -141,7 +145,7 @@ module Pacer
       if wrapper
         vertex = wrapper.new graph, raw_vertex
       else
-        vertex = Pacer::Wrappers::VertexWrapper.new graph, raw_vertex
+        vertex = base_vertex_wrapper.new graph, raw_vertex
       end
       if modules.any?
         vertex = vertex.add_extensions modules
@@ -167,7 +171,7 @@ module Pacer
       if wrapper
         edge = wrapper.new graph, raw_edge
       else
-        edge = Pacer::Wrappers::EdgeWrapper.new graph, raw_edge
+        edge = base_edge_wrapper.new graph, raw_edge
       end
       if modules.any?
         edge = edge.add_extensions modules

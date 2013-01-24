@@ -3,13 +3,23 @@ module Pacer::Wrappers
     import com.tinkerpop.blueprints.Vertex
     import com.tinkerpop.blueprints.Edge
 
-    def self.build(element_type = nil, extensions = [])
-      if element_type == :vertex
-        Pacer::Wrappers::VertexWrapper.wrapper_for extensions
-      elsif element_type == :edge
-        Pacer::Wrappers::EdgeWrapper.wrapper_for extensions
+    def self.build(graph, element_type = nil, extensions = [])
+      if graph
+        if element_type == :vertex
+          graph.base_vertex_wrapper.wrapper_for extensions
+        elsif element_type == :edge
+          graph.base_edge_wrapper.wrapper_for extensions
+        else
+          new extensions
+        end
       else
-        new extensions
+        if element_type == :vertex
+          Pacer::Wrappers::VertexWrapper.wrapper_for extensions
+        elsif element_type == :edge
+          Pacer::Wrappers::EdgeWrapper.wrapper_for extensions
+        else
+          new extensions
+        end
       end
     end
 
@@ -20,16 +30,24 @@ module Pacer::Wrappers
       @extensions = extensions
     end
 
-    def wrapper(element)
-      if element.is_a? Vertex
-        self.vertex_wrapper ||= Pacer::Wrappers::VertexWrapper.wrapper_for extensions
-      elsif element.is_a? Edge
-        self.edge_wrapper ||= Pacer::Wrappers::EdgeWrapper.wrapper_for extensions
+    def wrapper(graph, element)
+      if graph
+        if element.is_a? Vertex
+          self.vertex_wrapper ||= graph.base_vertex_wrapper.wrapper_for extensions
+        elsif element.is_a? Edge
+          self.edge_wrapper ||= graph.base_edge_wrapper.wrapper_for extensions
+        end
+      else
+        if element.is_a? Vertex
+          self.vertex_wrapper ||= Pacer::Wrappers::VertexWrapper.wrapper_for extensions
+        elsif element.is_a? Edge
+          self.edge_wrapper ||= Pacer::Wrappers::EdgeWrapper.wrapper_for extensions
+        end
       end
     end
 
     def new(graph, element)
-      w = wrapper(element)
+      w = wrapper(graph, element)
       if w
         w.new graph, element
       else

@@ -10,7 +10,7 @@ module Pacer
         if back
           @graph = back.graph
         end
-        @wrapper = WrapperSelector.build
+        @wrapper = WrapperSelector.build graph
       end
 
       def arity

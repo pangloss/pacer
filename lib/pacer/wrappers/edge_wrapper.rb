@@ -18,7 +18,7 @@ module Pacer::Wrappers
 
       def wrapper_for(exts)
         if exts
-          EdgeWrapper.wrappers[exts] ||= build_edge_wrapper(exts)
+          base_edge_wrapper.wrappers[exts] ||= build_edge_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
@@ -31,7 +31,7 @@ module Pacer::Wrappers
       protected
 
       def build_edge_wrapper(exts)
-        build_extension_wrapper(exts, [:Route, :Edge], EdgeWrapper)
+        build_extension_wrapper(exts, [:Route, :Edge], base_edge_wrapper)
       end
     end
 
@@ -48,11 +48,11 @@ module Pacer::Wrappers
     def in_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::IN
       if extensions.is_a? Enumerable
-        VertexWrapper.wrapper_for(extensions).new graph, v
+        self.class.base_vertex_wrapper.wrapper_for(extensions).new graph, v
       elsif extensions
-        VertexWrapper.wrapper_for([extensions]).new graph, v
+        self.class.base_vertex_wrapper.wrapper_for([extensions]).new graph, v
       else
-        VertexWrapper.new graph, v
+        self.class.base_vertex_wrapper.new graph, v
       end
     end
 
@@ -61,11 +61,11 @@ module Pacer::Wrappers
     def out_vertex(extensions = nil)
       v = element.getVertex Pacer::Pipes::OUT
       if extensions.is_a? Enumerable
-        VertexWrapper.wrapper_for(extensions).new graph, v
+        self.class.base_vertex_wrapper.wrapper_for(extensions).new graph, v
       elsif extensions
-        VertexWrapper.wrapper_for([extensions]).new graph, v
+        self.class.base_vertex_wrapper.wrapper_for([extensions]).new graph, v
       else
-        VertexWrapper.new graph, v
+        self.class.base_vertex_wrapper.new graph, v
       end
     end
 
@@ -94,7 +94,7 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [EdgeWrapper]
     def no_extensions
-      EdgeWrapper.new graph, element
+      self.class.base_edge_wrapper.new graph, element
     end
 
     # Returns a human-readable representation of the edge using the

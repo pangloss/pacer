@@ -7,6 +7,16 @@ module Pacer::Wrappers
     include Pacer::Core::Graph::ElementRoute
 
     class << self
+      attr_accessor :caches
+
+      def base_vertex_wrapper
+        VertexWrapper
+      end
+
+      def base_edge_wrapper
+        EdgeWrapper
+      end
+
       def wrap(element, exts)
         wrapper_for(exts).new(element.graph, element.element)
       end
@@ -22,6 +32,7 @@ module Pacer::Wrappers
       def clear_cache
         VertexWrapper.clear_cache
         EdgeWrapper.clear_cache
+        caches.each { |c| c.clear_cache } if caches
       end
 
       def route_conditions

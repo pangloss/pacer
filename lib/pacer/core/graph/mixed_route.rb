@@ -7,7 +7,7 @@ module Pacer::Core::Graph
     def v(*args, &block)
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => Pacer::Wrappers::VertexWrapper,
+        :pipe_args => graph.base_vertex_wrapper,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
@@ -17,7 +17,7 @@ module Pacer::Core::Graph
     def e(*args, &block)
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => Pacer::Wrappers::EdgeWrapper,
+        :pipe_args => graph.base_edge_wrapper,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)

@@ -18,7 +18,7 @@ module Pacer::Wrappers
 
       def wrapper_for(exts)
         if exts
-          VertexWrapper.wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
+          base_vertex_wrapper.wrappers[exts.to_set] ||= build_vertex_wrapper(exts)
         else
           fail Pacer::LogicError, "Extensions should not be nil"
         end
@@ -31,7 +31,7 @@ module Pacer::Wrappers
       protected
 
       def build_vertex_wrapper(exts)
-        build_extension_wrapper(exts, [:Route, :Vertex], VertexWrapper)
+        build_extension_wrapper(exts, [:Route, :Vertex], base_vertex_wrapper)
       end
     end
 
@@ -64,7 +64,7 @@ module Pacer::Wrappers
     # Returns the element with a new simple wrapper.
     # @return [VertexWrapper]
     def no_extensions
-      VertexWrapper.new graph, element
+      self.class.base_vertex_wrapper.new graph, element
     end
 
     # Checks that the given extensions can be applied to the vertex. If
