@@ -45,7 +45,7 @@ describe Pacer::Wrappers::EdgeWrapper do
     context 'no extensions' do
       subject { e0.add_extensions([]) }
       its('extensions.to_a') { should == [] }
-      its(:class) { should == Pacer::Wrappers::EdgeWrapper }
+      its(:class) { should == graph.base_edge_wrapper }
     end
 
     context 'with extensions' do

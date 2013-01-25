@@ -1,0 +1,4 @@
+Exception deleting database: #<ExceptionInfo clojure.lang.ExceptionInfo: :uri/invalid Invalid database URI datomic.db.Db@40080c80 {:db/error :uri/invalid}>
+Exception deleting database: #<ExceptionInfo clojure.lang.ExceptionInfo: :uri/invalid Invalid database URI datomic.db.Db@de65e0f0 {:db/error :uri/invalid}>
+Exception deleting database: #<ExceptionInfo clojure.lang.ExceptionInfo: :uri/invalid Invalid database URI datomic.db.Db@d72c5d17 {:db/error :uri/invalid}>
+Exception deleting database: #<ExceptionInfo clojure.lang.ExceptionInfo: :uri/invalid Invalid database URI datomic.db.Db@3d567ba7 {:db/error :uri/invalid}>
