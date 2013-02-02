@@ -58,6 +58,10 @@ HELP
           scatter(element_type: :array)
       end
 
+      def flatten(*opts)
+        scatter(*opts)
+      end
+
       def compacted
         map element_type: element_type, route_name: 'compact' do |a|
           a.compact
