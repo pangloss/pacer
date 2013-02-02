@@ -30,7 +30,7 @@ module Pacer::Core::Graph
     # rather than the elements themselves.
     # @return [Core::Route]
     def properties
-      map { |v| v.properties }
+      map(element_type: :hash) { |v| v.properties }
     end
 
     # Create a new TinkerGraph based on the paths of all matching elements.
