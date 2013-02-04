@@ -24,6 +24,21 @@ The following array route methods are available:
 #len(n)             Filter paths by length
     n: Number | Range
 
+#map_in             Map on each array
+#reduce_in          Reduce on each array
+#select_in          Select on each array
+#reject_in          Reject on each array
+
+#select_case(*cases) Simplified select on each array without needing a block
+#reject_case(*cases)
+    cases: the same type of objects you would give to case statements
+           (ie. exact match, regex, type, etc)
+
+#vertices(*exts)    Filter each array to only its vertices
+#edges(*exts)           "        "        "       edges
+#elements(*exts)        "        "        "       elements
+    exts: extensions to add to the filtered elements
+
 HELP
         else
           super
@@ -41,6 +56,10 @@ HELP
         gather { [] }.
           map(element_type: :array) { |a| a.transpose }.
           scatter(element_type: :array)
+      end
+
+      def flatten(*opts)
+        scatter(*opts)
       end
 
       def compacted
@@ -70,6 +89,67 @@ HELP
       def len(n)
         select do |path|
           n === path.length
+        end
+      end
+
+      def map_in(&block)
+        map element_type: element_type do |e|
+          e.map(&block)
+        end
+      end
+
+      def reduce_in(initial, &block)
+        map { |e| e.reduce(initial, &block) }
+      end
+
+      def select_case(*cases)
+        map element_type: element_type do |e|
+          e.select { |x| cases.any? { |c| c === x } }
+        end
+      end
+
+      def reject_case(*cases)
+        map element_type: element_type do |e|
+          e.reject { |x| cases.any? { |c| c === x } }
+        end
+      end
+
+      def vertices(*exts)
+        r = select_case Pacer::Vertex
+        if exts.any?
+          r.map_in { |e| e.add_extensions exts }
+        else
+          r
+        end
+      end
+
+      def edges(*exts)
+        r = select_case Pacer::Edge
+        if exts.any?
+          r.map_in { |e| e.add_extensions exts }
+        else
+          r
+        end
+      end
+
+      def elements(*exts)
+        r = select_case Pacer::Element
+        if exts.any?
+          r.map_in { |e| e.add_extensions exts }
+        else
+          r
+        end
+      end
+
+      def select_in(&block)
+        map element_type: element_type do |e|
+          e.select(&block)
+        end
+      end
+
+      def reject_in(&block)
+        map element_type: element_type do |e|
+          e.select(&block)
         end
       end
     end

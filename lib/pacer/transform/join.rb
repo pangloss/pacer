@@ -42,7 +42,7 @@ module Pacer
         def initialize(from_graph, multi_graph)
           super()
           @from_graph = from_graph
-          @wrapper = Pacer::Wrappers::WrapperSelector.build
+          @wrapper = Pacer::Wrappers::WrapperSelector.build from_graph
           @multi_graph = multi_graph || Pacer::MultiGraph.blank
           @values_pipes = []
           @current_keys = []
@@ -132,6 +132,20 @@ module Pacer
 
       attr_accessor :existing_multi_graph, :key_route, :values_routes, :from_graph
       attr_writer :join_on
+
+      # FIXME: the pipe changes the graph. This does not fit with the idea of immutable routes.
+      def graph
+        @graph or super
+      end
+
+      def run!
+        super
+        @graph
+      end
+
+      def graph=(g)
+        @graph = g
+      end
 
       def key(&block)
         self.key_route = Pacer::Route.block_branch(self, block)

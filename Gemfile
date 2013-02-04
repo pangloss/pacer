@@ -19,6 +19,11 @@ group :development do
     end
   end
 
+  if File.directory? "../mcfly"
+    gem 'pacer-mcfly', :path => "../mcfly" 
+  end
+
+
    
   gem 'autotest-standalone'
   gem 'autotest-growl'

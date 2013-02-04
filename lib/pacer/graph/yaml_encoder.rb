@@ -21,6 +21,8 @@ module Pacer
         end
       when true, false
         value.to_java
+      when DateTime, Time, Date
+        value.strftime ' time %Y-%m-%d %H:%M:%S.%L %z'
       when Array
         if value.length == 0
           value_type = Fixnum
@@ -53,7 +55,12 @@ module Pacer
 
     def self.decode_property(value)
       if value.is_a? String and value[0, 1] == ' '
-        YAML.load(value[1..-1])
+        if value[1, 4] == 'time'
+          # FIXME: we lose the milliseconds here...
+          Time.parse value[6..-1]
+        else
+          YAML.load(value[1..-1])
+        end
       elsif value.is_a? ArrayJavaProxy
         value.to_a
       else

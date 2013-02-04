@@ -67,7 +67,7 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
     context 'no extensions' do
       subject { v0.add_extensions([]) }
       its('extensions.to_a') { should == [] }
-      its(:class) { should == Pacer::Wrappers::VertexWrapper }
+      its(:class) { should == graph.base_vertex_wrapper }
     end
 
     context 'with extensions' do

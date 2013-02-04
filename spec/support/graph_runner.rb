@@ -1,6 +1,7 @@
 maybe_require 'pacer-neo4j/rspec'
 maybe_require 'pacer-orient/rspec'
 maybe_require 'pacer-dex/rspec'
+maybe_require 'pacer-mcfly/rspec'
 
 class RSpec::GraphRunner
   module Stubs
@@ -23,6 +24,9 @@ class RSpec::GraphRunner
     end
 
     def orient(*args)
+    end
+
+    def mcfly(*args)
     end
   end
 
@@ -91,6 +95,7 @@ class RSpec::GraphRunner
   include Neo4j if defined? Neo4j
   include Dex if defined? Dex
   include Orient if defined? Orient
+  include McFly if defined? McFly
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
@@ -114,9 +119,9 @@ class RSpec::GraphRunner
 
 protected
 
-  def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block)
+  def for_graph(name, usage_style, indices, transactions, source_graph_1, source_graph_2, unindexed_graph, block, clear_graph = nil)
     return unless use_graph? name
-    clear_graph = proc { |g| clear g }
+    clear_graph ||= proc { |g| clear g }
     describe name do
       let(:graph) do
         if indices
@@ -147,7 +152,7 @@ protected
           end
           clear_graph.call source_graph_2
         end
-        if transactions and spec.use_transactions?
+        if graph and transactions and spec.use_transactions?
           graph.transaction do |g1_commit, g1_rollback|
             graph2.transaction do |g2_commit, g2_rollback|
               spec.metadata[:graph_commit] = g1_commit

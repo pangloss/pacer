@@ -8,7 +8,11 @@ module Pacer
 
     attr_reader :blueprints_graph, :encoder
 
-    def initialize(encoder, open, shutdown = nil)
+    attr_accessor :base_vertex_wrapper, :base_edge_wrapper
+
+    def initialize(encoder, open, shutdown = nil, graph_id = nil)
+      self.base_vertex_wrapper = Pacer::Wrappers::VertexWrapper
+      self.base_edge_wrapper = Pacer::Wrappers::EdgeWrapper
       if open.is_a? Proc
         @reopen = open
       else
@@ -17,6 +21,7 @@ module Pacer
       @shutdown = shutdown
       reopen
       @encoder = encoder
+      @graph_id = graph_id
     end
 
     # The current graph
@@ -47,6 +52,10 @@ module Pacer
       self
     end
 
+    def copy_object
+      self.class.new @encoder, @reopen, @shutdown, graph_id
+    end
+
     def use_wrapper(klass)
       reopen = proc do
         klass.new unwrap_graph(@reopen.call)
@@ -59,7 +68,7 @@ module Pacer
     end
 
     def graph_id
-      blueprints_graph.object_id
+      @graph_id ||= blueprints_graph.object_id
     end
 
     def equals(other)
@@ -85,7 +94,7 @@ module Pacer
           v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::VertexWrapper.new graph, v
+          v = base_vertex_wrapper.new graph, v
         end
         v.add_extensions modules
       else
@@ -112,7 +121,7 @@ module Pacer
           v = wrapper.new graph, v
           modules.delete wrapper
         else
-          v = Pacer::Wrappers::EdgeWrapper.new graph, v
+          v = base_edge_wrapper.new graph, v
         end
         v.add_extensions modules
       end
@@ -136,7 +145,7 @@ module Pacer
       if wrapper
         vertex = wrapper.new graph, raw_vertex
       else
-        vertex = Pacer::Wrappers::VertexWrapper.new graph, raw_vertex
+        vertex = base_vertex_wrapper.new graph, raw_vertex
       end
       if modules.any?
         vertex = vertex.add_extensions modules
@@ -162,7 +171,7 @@ module Pacer
       if wrapper
         edge = wrapper.new graph, raw_edge
       else
-        edge = Pacer::Wrappers::EdgeWrapper.new graph, raw_edge
+        edge = base_edge_wrapper.new graph, raw_edge
       end
       if modules.any?
         edge = edge.add_extensions modules
@@ -310,10 +319,12 @@ module Pacer
         @temp_indices ||= {}
         idx = @temp_indices[name]
         unless idx
-          if name and type and opts[:create]
-            idx = @temp_indices[name] = Pacer::Graph::HashIndex.new type, name
-          elsif opts[:create]
-            idx = Pacer::Graph::HashIndex.new type, nil
+          if opts[:temp] != false
+            if name and type and opts[:create]
+              idx = @temp_indices[name] = Pacer::Graph::HashIndex.new type, name
+            elsif opts[:create]
+              idx = Pacer::Graph::HashIndex.new type, nil
+            end
           end
         end
         Pacer::Wrappers::IndexWrapper.new self, idx, idx.type if idx
@@ -380,6 +391,26 @@ module Pacer
           end
         else
           []
+        end
+      end
+
+      def vertices_by_key(key, value, *extensions)
+        if key_indices(:vertex).include? key.to_s
+          pipe = Pacer::Pipes::WrappingPipe.new self, :vertex, extensions
+          pipe.setStarts blueprints_graph.getVertices(key.to_s, value).iterator
+          pipe
+        else
+          fail ClientError, "The key #{ key } is not indexed"
+        end
+      end
+
+      def edges_by_key(key, value, *extensions)
+        if key_indices(:edge).include? key.to_s
+          pipe = Pacer::Pipes::WrappingPipe.new self, :edge, extensions
+          pipe.setStarts blueprints_graph.getEdges(key.to_s, value).iterator
+          pipe
+        else
+          fail ClientError, "The key #{ key } is not indexed"
         end
       end
     end

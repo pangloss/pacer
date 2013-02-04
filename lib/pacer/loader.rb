@@ -97,6 +97,7 @@ require 'pacer/transform/scatter'
 require 'pacer/transform/has_count_cap'
 require 'pacer/transform/sort_section'
 require 'pacer/transform/payload'
+require 'pacer/transform/lookup_ids'
 
 require 'pacer/side_effect/aggregate'
 require 'pacer/side_effect/as'

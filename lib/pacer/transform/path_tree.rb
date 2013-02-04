@@ -15,7 +15,7 @@ module Pacer
 
         # The default comparator block is { |prev, current| prev == current }
         def tree(&block)
-          wrapped.chain_route transform: :path_tree, element_type: :object, compare: block
+          wrapped.chain_route transform: :path_tree, element_type: :array, compare: block
         end
       end
     end

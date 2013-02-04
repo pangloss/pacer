@@ -8,7 +8,7 @@ module Pacer
         @graph = graph
         @element_type = element_type
         @extensions = extensions || []
-        @wrapper = Pacer::Wrappers::WrapperSelector.build element_type, @extensions
+        @wrapper = Pacer::Wrappers::WrapperSelector.build graph, element_type, @extensions
       end
 
       def getSideEffect
