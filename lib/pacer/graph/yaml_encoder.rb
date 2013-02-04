@@ -22,7 +22,7 @@ module Pacer
       when true, false
         value.to_java
       when DateTime, Time, Date
-        value.strftime ' time %Y%m%d%H%M%S%L'
+        value.strftime ' time %Y-%m-%d %H:%M:%S.%L %z'
       when Array
         if value.length == 0
           value_type = Fixnum

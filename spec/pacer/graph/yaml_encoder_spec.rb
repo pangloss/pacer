@@ -38,8 +38,12 @@ describe Pacer::YamlEncoder do
       subject[:float].should == 100.001
     end
 
+    specify 'dates are custom to enable range queries' do
+      subject[:time].should =~ /^ time \d/
+    end
+
     specify 'everything else should be yaml' do
-      subject[:time].should == ' ' + YAML.dump(Time.utc(1999, 11, 9, 9, 9, 1))
+      subject[:nested_array].should == ' ' + YAML.dump(original[:nested_array])
     end
   end
 
