@@ -72,23 +72,27 @@ module Pacer::Core::Graph
     def [](prop_or_subset)
       case prop_or_subset
       when String, Symbol
-        route = chain_route(:element_type => :object,
-                    :pipe_class => Pacer::Pipes::PropertyPipe,
-                    :pipe_args => [prop_or_subset.to_s],
-                    :lookahead_replacement => proc { |r| r.back.property?(prop_or_subset) })
-        route.map(route_name: 'decode', remove_from_lookahead: true) do |v|
-          graph.decode_property(v)
-        end
+        typed_property(:object, prop_or_subset)
       when Fixnum
         range(prop_or_subset, prop_or_subset)
       when Range
         range(prop_or_subset.begin, prop_or_subset.end)
       when Array
         if prop_or_subset.all? { |i| i.is_a? String or i.is_a? Symbol }
-          map do |element|
+          map(element_type: :array) do |element|
             element[prop_or_subset]
           end
         end
+      end
+    end
+
+    def typed_property(element_type, name)
+      route = chain_route(:element_type => :object,
+                          :pipe_class => Pacer::Pipes::PropertyPipe,
+                          :pipe_args => [name.to_s],
+                          :lookahead_replacement => proc { |r| r.back.property?(name) })
+      route.map(route_name: 'decode', remove_from_lookahead: true, element_type: element_type) do |v|
+        graph.decode_property(v)
       end
     end
 
