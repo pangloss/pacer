@@ -13,6 +13,10 @@ module Pacer
         map(element_type: :array) { |h| h.values }
       end
 
+      def pairs
+        map(element_type: :array) { |h| h.to_a }
+      end
+
       def [](k)
         map { |h| h[k] }
       end
