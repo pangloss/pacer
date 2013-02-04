@@ -138,6 +138,11 @@ module Pacer
         @graph or super
       end
 
+      def run!
+        super
+        @graph
+      end
+
       def graph=(g)
         @graph = g
       end
