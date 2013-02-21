@@ -62,7 +62,11 @@ HELP
             r.unshift e.payload
             e = e.element
           end
-          r
+          if r == []
+            [nil]
+          else
+            r
+          end
         end
       end
     end
