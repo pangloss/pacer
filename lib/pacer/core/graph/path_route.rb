@@ -55,12 +55,14 @@ HELP
 
     def payloads
       map element_type: :path, route_name: 'payloads' do |path|
-        path.map do |e|
-          if e.is_a? Pacer::Payload::Element
-            e.payload
-          elsif e.is_a? Pacer::Wrappers::ElementWrapper
-            e.element_payload
+        path.flat_map do |e|
+          e = e.element if e.is_a? Pacer::Wrappers::ElementWrapper
+          r = []
+          while e.is_a? Pacer::Payload::Element
+            r.unshift e.payload
+            e = e.element
           end
+          r
         end
       end
     end
