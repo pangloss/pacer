@@ -119,6 +119,19 @@ module Pacer::Wrappers
       graph.remove_edge element
     end
 
+    # Creates a new edge between the same elements with the same
+    # properties, but in the opposite direction and optionally with a
+    # new label. Attempts to reuse the edge id.
+    def reverse!(opts = {})
+      iv = out_vertex
+      ov = in_vertex
+      id = element_id if opts[:reuse_id]
+      new_label = opts.fetch(:label, label)
+      props = properties
+      delete!
+      graph.create_edge id, ov, iv, new_label, props
+    end
+
     # Clones this edge into the target graph.
     #
     # This differs from the {#copy_into} in that it tries to set

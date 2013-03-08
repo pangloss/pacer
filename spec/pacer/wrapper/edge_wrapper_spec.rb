@@ -100,6 +100,49 @@ describe Pacer::Wrappers::EdgeWrapper do
     end
   end
 
+  describe '#reverse!' do
+    it 'should remove the old element' do
+      id = e0.element_id
+      e0.reverse!
+      c = example.metadata[:graph_commit]
+      c.call if c
+      graph.edge(id).should be_nil
+    end
+
+    it 'should create a new element with the same label' do
+      label = e0.label
+      new_e = e0.reverse!
+      new_e.label.should == label
+    end
+
+    it 'should not have the same element_id' do
+      id = e0.element_id
+      new_e = e0.reverse!
+      new_e.element_id.should_not == id
+    end
+
+    it 'should reverse the direction' do
+      iv = e0.in_vertex
+      ov = e0.out_vertex
+      new_e = e0.reverse!
+      new_e.in_vertex.should == ov
+      new_e.out_vertex.should == iv
+    end
+
+    it 'should change the label' do
+      new_e = e0.reverse! label: 'hello!!'
+      new_e.label.should == 'hello!!'
+    end
+
+    it 'should reuse the element id' do
+      unless graph.features.ignoresSuppliedIds
+        id = e0.element_id
+        new_e = e0.reverse! reuse_id: true
+        new_e.element_id.should == id
+      end
+    end
+  end
+
   contexts(
   'into new tg' => proc {
     let(:dest) { Pacer.tg }
