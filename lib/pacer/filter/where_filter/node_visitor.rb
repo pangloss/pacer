@@ -1,6 +1,8 @@
 module Pacer
   module Filter
     module WhereFilter
+      # NOTE: the property filter also uses this to build { key: Set[v1, v2] }
+      # filters as or statements.
       class NodeVisitor
         import com.tinkerpop.pipes.filter.OrFilterPipe
         import com.tinkerpop.pipes.filter.FilterPipe

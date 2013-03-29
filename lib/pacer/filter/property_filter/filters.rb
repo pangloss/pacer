@@ -34,6 +34,8 @@ module Pacer
 
     module PropertyFilter
       class Filters
+        NodeVisitor = Pacer::Filter::WhereFilter::NodeVisitor
+
         attr_reader :properties, :extensions, :route_modules, :best_index_value
         attr_accessor :wrapper, :blocks
 
@@ -112,11 +114,20 @@ module Pacer
             pipe = e
           end
           encoded_properties.each do |key, value|
-            new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::EQUAL)
-            new_pipe.set_starts pipe if pipe
-            Pacer.debug_pipes << { :name => key, :start => pipe, :end => new_pipe } if Pacer.debug_pipes
-            pipe = new_pipe
-            start_pipe ||= pipe
+            case value
+            when NodeVisitor::Pipe
+              new_pipe = value.build
+            when NodeVisitor::Value
+              # no op
+            else
+              new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::EQUAL)
+            end
+            if new_pipe
+              new_pipe.set_starts pipe if pipe
+              Pacer.debug_pipes << { :name => key, :start => pipe, :end => new_pipe } if Pacer.debug_pipes
+              pipe = new_pipe
+              start_pipe ||= pipe
+            end
           end
           blocks.each do |block|
             block_pipe = Pacer::Pipes::BlockFilterPipe.new(route, block)
@@ -140,7 +151,13 @@ module Pacer
           strings = []
           strings << [wrapper.name] if wrapper
           strings.concat extensions.map { |e| e.name }
-          strings.concat((non_ext_props - [@best_index_value]).map { |k, v| "#{ k }==#{ v.inspect }" })
+          strings.concat((non_ext_props - [@best_index_value]).map { |k, v|
+            if v.is_a? Set
+              "#{ k } IN (#{ v.sort.map { |s| s.inspect }.join ', ' })"
+            else
+              "#{ k }==#{ v.inspect }"
+            end
+          })
           strings.concat blocks.map { '&block' }
           strings.concat route_modules.map { |mod| mod.name }
           strings.join ', '
@@ -164,6 +181,7 @@ module Pacer
           when Hash
             reset_properties
             filter.each do |k, v|
+              v = v.first if v.is_a? Set and v.length == 1
               self.non_ext_props << [k.to_s, v] unless extension
               self.properties << [k.to_s, v]
             end
@@ -209,14 +227,22 @@ module Pacer
           end
         end
 
-        def encode_value(value)
-          value = graph.encode_property(value)
-          if value.respond_to? :to_java
-            jvalue = value.to_java
-          elsif value.respond_to? :to_java_string
-            jvalue = value.to_java_string
+        def encode_value(key, value)
+          if value.is_a? Set
+            encoded = value.map.with_index { |v, i| graph.encode_property(v) }
+            str = encoded.map { |v| "`#{ key.to_s }` == #{ v.inspect }" }.join " or "
+            parsed = JRuby.parse str
+            visitor = NodeVisitor.new(nil, {})
+            parsed.accept visitor
           else
-            jvalue = value
+            value = graph.encode_property(value)
+            if value.respond_to? :to_java
+              value.to_java
+            elsif value.respond_to? :to_java_string
+              value.to_java_string
+            else
+              value
+            end
           end
         end
 
@@ -259,9 +285,13 @@ module Pacer
         end
 
         def check_index(index_options, idxs, k, v, index_value)
-          if choose_best_index
+          if v.is_a? Set
+            # By default we assume that indices can't do OR type operations, so Set values are ruled out. If
+            # the index can do that (i.e. Neo4j's lucene engine), the adapter needs to do its own index selection.
+            false
+          elsif choose_best_index
             idxs.each do |idx|
-              index_options << [idx.count(k, encode_value(v)), [idx, k, v], index_value]
+              index_options << [idx.count(k, encode_value(k, v)), [idx, k, v], index_value]
             end
             false
           else
@@ -284,7 +314,7 @@ module Pacer
 
         def encoded_properties
           @encoded_properties ||= properties.map do |k, v|
-            [k, encode_value(v)]
+            [k, encode_value(k, v)]
           end
         end
 

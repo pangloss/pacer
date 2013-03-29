@@ -371,10 +371,20 @@ module Pacer
     include Indices
 
     module KeyIndices
-      def create_key_index(name, type)
+      def create_key_index(name, type = :vertex)
         if features.supportsKeyIndices
           if element_type(type) == :vertex and features.supportsVertexKeyIndex
             blueprints_graph.createKeyIndex name.to_s, index_class(:vertex)
+          elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
+            blueprints_graph.createKeyIndex name.to_s, index_class(:edge)
+          end
+        end
+      end
+
+      def drop_key_index(name, type = :vertex)
+        if features.supportsKeyIndices
+          if element_type(type) == :vertex and features.supportsVertexKeyIndex
+            blueprints_graph.dropKeyIndex name.to_s, index_class(:vertex)
           elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
             blueprints_graph.createKeyIndex name.to_s, index_class(:edge)
           end

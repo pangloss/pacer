@@ -34,6 +34,20 @@ Run.tg(:read_only) do
       end
     end
 
+    context 'v(:type => "person", :name => Set["pangloss", "someone"])' do
+      subject { graph.v(:type => 'person', :name => Set['pangloss', 'someone']) }
+      its(:to_a) { should == graph.v('type' => 'person', 'name' => 'pangloss').to_a }
+      its(:to_a) { should == graph.v.where('type = "person" and (name == "pangloss" or name == "someone")').to_a }
+      its(:count) { should == 1 }
+      its(:extensions) { should == [] }
+      it 'should have the correct type' do
+        subject[:type].first.should == 'person'
+      end
+      it 'should have the correct name' do
+        subject[:name].first.should == 'pangloss'
+      end
+    end
+
     context 'v(TP::Person)' do
       subject { graph.v(TP::Person) }
       its(:count) { should == 2 }
