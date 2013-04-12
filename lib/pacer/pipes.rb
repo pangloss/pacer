@@ -3,7 +3,7 @@ module Pacer
   module Pipes
     # TODO: move pipe imports to the modules that actually use them.
     import com.tinkerpop.pipes.AbstractPipe
-    import com.tinkerpop.pipes.transform.IdentityPipe
+    import com.tinkerpop.pipes.IdentityPipe
     import com.tinkerpop.pipes.util.Pipeline
     import com.tinkerpop.pipes.util.PipeHelper
 
