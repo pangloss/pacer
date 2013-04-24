@@ -46,18 +46,18 @@ module Pacer::Wrappers
 
     protected
 
-    def legal_modifications
-      @@legal_modifications ||= Set.new([:put, :remove])
-    end
-    
+    LEGAL_MODIFICATIONS = Set.new([:put, :remove])
+
     def modify(key, value, element, modification)
-      if legal_modifications.include?(modification)
+      if LEGAL_MODIFICATIONS.include?(modification)
         if element.is_a? ElementWrapper
           element = element.element
         end
         key_string = key.to_s
 
         index.send modification, key.to_s, value, element
+      else
+        raise "Illegal modification: #{modification}"
       end
     end
   end
