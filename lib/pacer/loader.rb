@@ -3,7 +3,8 @@ module Pacer
   import com.tinkerpop.blueprints.Element
   import com.tinkerpop.blueprints.Vertex
   import com.tinkerpop.blueprints.Edge
-
+  import com.tinkerpop.blueprints.Parameter
+  
   module Core       end
   module Routes     end
   module Wrappers   end
