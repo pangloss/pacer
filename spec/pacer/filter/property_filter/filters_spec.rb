@@ -36,6 +36,27 @@ module Pacer::Filter::PropertyFilter
         its(:properties) { should == [ %w[ name Darrick ], %w[ nickname pangloss ] ] }
       end
 
+      context 'With a Set of properties' do
+        let(:filters) { Pacer::Route.send filter_method, [nickname: Set['pangloss', 'someone']] }
+
+        before { subject.graph = graph }
+
+        its(:any?) { should be_true }
+        its(:extensions_only?) { should be_false }
+        its(:extensions) { should be_empty }
+        its(:route_modules) { should be_empty }
+        its(:wrapper) { should be_nil }
+        its(:blocks) { should be_empty }
+        its(:properties) { should == [ ['nickname', Set['pangloss', 'someone'] ] ] }
+        its(:to_s) { should == 'nickname IN ("pangloss", "someone")' }
+        it 'should encode the Set property as an Or pipe' do
+          props = subject.send :encoded_properties
+          pipe = props.assoc('nickname').last
+          pipe.should be_a Pacer::Filter::WhereFilter::NodeVisitor::Pipe
+          pipe.build.should be_a Java::ComTinkerpopPipesFilter::OrFilterPipe
+        end
+      end
+
       context 'with extensions' do
         let(:filters) { Pacer::Route.send filter_method, [TP::Person, name: 'Darrick', nickname: 'pangloss'] }
 
