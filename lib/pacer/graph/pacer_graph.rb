@@ -371,12 +371,13 @@ module Pacer
     include Indices
 
     module KeyIndices
-      def create_key_index(name, type = :vertex)
+      def create_key_index(name, type = :vertex, opts = {})
+        params = build_key_index_parameters_from opts
         if features.supportsKeyIndices
           if element_type(type) == :vertex and features.supportsVertexKeyIndex
-            blueprints_graph.createKeyIndex name.to_s, index_class(:vertex)
+            blueprints_graph.createKeyIndex name.to_s, index_class(:vertex), *params
           elsif element_type(type) == :edge and features.supportsEdgeKeyIndex
-            blueprints_graph.createKeyIndex name.to_s, index_class(:edge)
+            blueprints_graph.createKeyIndex name.to_s, index_class(:edge), *params
           end
         end
       end
@@ -422,6 +423,15 @@ module Pacer
         else
           fail ClientError, "The key #{ key } is not indexed"
         end
+      end
+
+      def build_key_index_parameters_from(option_hash)
+        params = []
+        option_hash.each do |key, value|
+          params << Pacer::Parameter.new(key, value)
+        end
+
+        params
       end
     end
     include KeyIndices
