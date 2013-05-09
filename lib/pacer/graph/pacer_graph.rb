@@ -1,4 +1,6 @@
 module Pacer
+  import com.tinkerpop.blueprints.Parameter
+
   class PacerGraph
     include GraphTransactionsMixin
 
