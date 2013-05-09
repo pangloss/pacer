@@ -40,7 +40,16 @@ module Pacer::Wrappers
       if element.is_a? ElementWrapper
         element = element.element
       end
+
       index.put key.to_s, value, element
+    end
+
+    def remove(key, value, element)
+      if element.is_a? ElementWrapper
+        element = element.element
+      end
+
+      index.remove key.to_s, value, element
     end
   end
 end
