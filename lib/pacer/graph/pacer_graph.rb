@@ -428,14 +428,12 @@ module Pacer
       end
 
       def build_key_index_parameters_from(option_hash)
-        params = []
-        option_hash.each do |key, value|
+        option_hash.each_with_object([]) do |(key, value), params|
           params << Pacer::Parameter.new(key, value)
         end
-
-        params
       end
     end
+
     include KeyIndices
 
     module ElementType
