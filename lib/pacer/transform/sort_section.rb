@@ -71,7 +71,7 @@ module Pacer
         def processNextStart
           if pathEnabled
             while to_emit.empty?
-              to_sort << [element = starts.next, starts.getCurrentPath]
+              to_sort << [starts.next, starts.getCurrentPath]
             end
           else
             while to_emit.empty?
@@ -142,11 +142,11 @@ module Pacer
         def processNextStart
           if pathEnabled
             while to_emit.empty?
-              to_sort << [ element = starts.next, starts.getCurrentPath ]
+              to_sort << [starts.next, starts.getCurrentPath]
             end
           else
             while to_emit.empty?
-              to_sort << [ starts.next, nil ]
+              to_sort << [starts.next, nil]
             end
           end
           raise EmptyPipe.instance if to_emit.empty?
