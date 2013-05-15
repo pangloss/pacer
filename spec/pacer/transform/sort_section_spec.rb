@@ -21,8 +21,6 @@ Run.tg :read_only do
     end
 
     it 'should put groups into the correct order' do
-      require 'awesome_print'
-
       # depends on the order of graph.v(type: 'project') ...
       route = graph.v(type: 'project').section(:proj).out[:name].custom_sort_section(:proj) { |a, b| a <=> b }
       route.to_a.should == %w[
