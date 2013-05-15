@@ -115,50 +115,20 @@ module Pacer
         end
       end
 
-      class CustomSortPipe < Pacer::Pipes::RubyPipe
+      class CustomSortPipe < SortBySectionPipe
         attr_reader :sort_block, :to_emit, :section, :to_sort
         attr_reader :getPathToHere
 
         def initialize(route, section, sort_block, graph, wrapper)
-          super()
-          @to_emit = []
-          @section = section
+          super route, section, nil
           @sort_block = sort_block
-          @to_sort = []
           @graph = graph
           @wrapper = wrapper
-          if section
-            section.visitor = self
-          else
-            on_element nil
-          end
         end
 
         def setStarts(starts)
           super
           enablePath(true)
-        end
-
-        def processNextStart
-          if pathEnabled
-            while to_emit.empty?
-              to_sort << [starts.next, starts.getCurrentPath]
-            end
-          else
-            while to_emit.empty?
-              to_sort << [starts.next, nil]
-            end
-          end
-          raise EmptyPipe.instance if to_emit.empty?
-          element, @getPathToHere = to_emit.shift
-          element
-        rescue EmptyPipe, java.util.NoSuchElementException
-          if to_emit.empty?
-            raise EmptyPipe.instance
-          else
-            after_element
-            retry
-          end
         end
 
         def after_element
