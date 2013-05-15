@@ -116,8 +116,7 @@ module Pacer
       end
 
       class CustomSortPipe < SortBySectionPipe
-        attr_reader :sort_block, :to_emit, :section, :to_sort
-        attr_reader :getPathToHere
+        attr_reader :sort_block
 
         def initialize(route, section, sort_block, graph, wrapper)
           super route, section, nil
