@@ -125,11 +125,6 @@ module Pacer
           @wrapper = wrapper
         end
 
-        def setStarts(starts)
-          super
-          enablePath(true)
-        end
-
         def after_element
           if to_sort.any?
             to_sort.map! { |e| [ @wrapper.new(@graph, e.first), e.last ] }
