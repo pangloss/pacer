@@ -37,13 +37,14 @@ module Pacer
       end
 
       class SortBySectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section
+        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section, :route
         attr_reader :getPathToHere
 
         def initialize(route, section, pipe_function)
           super()
           @to_emit = []
           @section = section
+          @route = route
           @to_sort = []
           @paths = []
           if section
@@ -129,7 +130,11 @@ module Pacer
           if to_sort.any?
             to_sort.map! { |e| [ @wrapper.new(@graph, e.first), e.last ] }
             sorted = to_sort.sort { |a, b| @sort_block.call a.first, b.first }
-            to_emit.concat sorted.map { |e| [ e.first.element, e.last ] }
+            if route.element_type == :vertex || route.element_type == :edge
+              to_emit.concat sorted.map { |e| [ e.first.element, e.last ] }
+            else
+              to_emit.concat sorted
+            end
             @to_sort.clear
           end
         end
