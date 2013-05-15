@@ -2,7 +2,11 @@ module Pacer
   module Routes
     module RouteOperations
       def sort_section(section = nil, &block)
-        chain_route transform: :sort_section, block: block, section: section
+        chain_route transform: :sort_section, sort_by_block: block, section: section
+      end
+
+      def custom_sort_section(section = nil, &block)
+        chain_route transform: :sort_section, custom_sort_block: block, section: section
       end
     end
   end
@@ -15,26 +19,32 @@ module Pacer
       #  section_visitor
       include Pacer::Visitors::VisitsSection
 
-      attr_accessor :block
+      attr_accessor :sort_by_block
+      attr_accessor :custom_sort_block
 
       protected
 
       def attach_pipe(end_pipe)
-        pf = Pacer::Wrappers::WrappingPipeFunction.new self, block if block
-        pipe = SortSectionPipe.new(self, section_visitor, pf)
+        if custom_sort_block
+          wrapper = Pacer::Wrappers::WrapperSelector.build graph, element_type, extensions
+          pipe = CustomSortPipe.new(self, section_visitor, custom_sort_block, graph, wrapper)
+        else # sort_by_block
+          pf = Pacer::Wrappers::WrappingPipeFunction.new self, sort_by_block if sort_by_block
+          pipe = SortBySectionPipe.new(self, section_visitor, pf)
+        end
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
 
-
-      class SortSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section
+      class SortBySectionPipe < Pacer::Pipes::RubyPipe
+        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section, :route
         attr_reader :getPathToHere
 
         def initialize(route, section, pipe_function)
           super()
           @to_emit = []
           @section = section
+          @route = route
           @to_sort = []
           @paths = []
           if section
@@ -101,6 +111,30 @@ module Pacer
               end
             end
             to_emit.concat sorted
+            @to_sort.clear
+          end
+        end
+      end
+
+      class CustomSortPipe < SortBySectionPipe
+        attr_reader :sort_block
+
+        def initialize(route, section, sort_block, graph, wrapper)
+          super route, section, nil
+          @sort_block = sort_block
+          @graph = graph
+          @wrapper = wrapper
+        end
+
+        def after_element
+          if to_sort.any?
+            to_sort.map! { |e| [ @wrapper.new(@graph, e.first), e.last ] }
+            sorted = to_sort.sort { |a, b| @sort_block.call a.first, b.first }
+            if route.element_type == :vertex || route.element_type == :edge
+              to_emit.concat sorted.map { |e| [ e.first.element, e.last ] }
+            else
+              to_emit.concat sorted
+            end
             @to_sort.clear
           end
         end
