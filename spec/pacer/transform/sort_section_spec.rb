@@ -5,6 +5,22 @@ Run.tg :read_only do
 
   let(:unsorted) { graph.v.out.out }
 
+  describe 'sort by custom sort' do
+    let(:by_custom) do
+      graph.v.section(:x).out.out.sort_section(:x) { |a, b| a[:name] <=> b[:name] }
+    end
+
+    it 'should have the same elements' do
+      by_custom.group_count.should == unsorted.group_count
+    end
+
+    it 'should have 3 elements in the path' do
+      by_custom.paths.each do |path|
+        path.length.should == 3
+      end
+    end
+  end
+
   describe 'sort by name' do
     let(:by_name) do
       graph.v.section(:x).out.out.sort_section(:x) { |v| v[:name] }
