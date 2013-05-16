@@ -87,7 +87,7 @@ Run.all do
         use_simple_graph_data
         before { setup_data }
         subject { graph.v.element_ids.to_a }
-        its(:sort) { should == [v0, v1].to_route(based_on: graph.v).element_ids.to_a.sort }
+        its(:to_set) { should == [v0, v1].to_route(based_on: graph.v).element_ids.to_set }
       end
     end
   end
