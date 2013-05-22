@@ -6,7 +6,7 @@ module Pacer::Core::Graph
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*args, &block)
       filters = Pacer::Route.filters(args)
-      if features.supportsIndices
+      if features.supportsKeyIndices or (search_manual_indices and features.supportsIndices)
         route = indexed_route(:vertex, filters, block)
       end
       if route
@@ -19,7 +19,7 @@ module Pacer::Core::Graph
     # Returns a new route to all graph edges. Standard filter options.
     def e(*args, &block)
       filters = Pacer::Route.edge_filters(args)
-      if features.supportsIndices
+      if features.supportsKeyIndices or (search_manual_indices and features.supportsIndices)
         route = indexed_route(:edge, filters, block)
       end
       if route
