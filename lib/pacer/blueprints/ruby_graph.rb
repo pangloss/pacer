@@ -23,7 +23,6 @@ module Pacer
 
       features.ignoresSuppliedIds = false
       features.isPersistent = false
-      features.isRDFModel = false
       features.isWrapper = false
 
       features.supportsIndices = false
