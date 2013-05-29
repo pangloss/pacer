@@ -138,7 +138,7 @@ describe Pacer::Wrappers::EdgeWrapper do
       unless graph.features.ignoresSuppliedIds
         id = e0.element_id
         new_e = e0.reverse! reuse_id: true
-        new_e.element_id.should == id
+        new_e.element_id.should == id.to_s
       end
     end
   end

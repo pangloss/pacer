@@ -94,6 +94,11 @@ Run.all :read_write do
     describe '#create_vertex' do
       let(:use_id) { rand 1000000 }
 
+      before do
+        c = example.metadata[:graph_commit]
+        c.call if c
+      end
+
       context 'existing' do
         it 'should raise an exception' do
           unless graph.features.ignoresSuppliedIds
@@ -167,6 +172,11 @@ Run.all :read_write do
       let(:use_id) { rand 1000000 }
       let(:from) { graph.vertex v0.element_id }
       let(:to) { graph.vertex v1.element_id }
+
+      before do
+        c = example.metadata[:graph_commit]
+        c.call if c
+      end
 
       context 'existing' do
         it 'should raise an exception' do
@@ -341,6 +351,8 @@ Run.all :read_write do
       it 'should not load the data into a graph with conflicting vertex ids' do
         unless graph.features.ignoresSuppliedIds
           graph.create_vertex '0' unless graph.vertex '0'
+          c = example.metadata[:graph_commit]
+          c.call if c
           expect { Pacer::GraphML.import graph, 'spec/data/pacer.graphml' }.to raise_error(Pacer::ElementExists)
         end
       end
