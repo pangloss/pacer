@@ -136,6 +136,9 @@ describe Pacer::Wrappers::EdgeWrapper do
 
     it 'should reuse the element id' do
       unless graph.features.ignoresSuppliedIds
+        e0
+        c = example.metadata[:graph_commit]
+        c.call if c
         id = e0.element_id
         new_e = e0.reverse! reuse_id: true
         new_e.element_id.should == id.to_s
@@ -158,7 +161,12 @@ describe Pacer::Wrappers::EdgeWrapper do
   }) do
     describe '#clone_into' do
       context 'including vertices' do
-        subject { e0.clone_into(dest, :create_vertices => true) }
+        subject do
+          e0
+          c = example.metadata[:graph_commit]
+          c.call if c
+          e0.clone_into(dest, :create_vertices => true)
+        end
 
         its('element_id.to_s') { should == e0.element_id.to_s unless graph.features.ignoresSuppliedIds }
         its(:label) { should == 'links' }
@@ -175,6 +183,9 @@ describe Pacer::Wrappers::EdgeWrapper do
 
         context 'existing' do
           before do
+            v0; v1; e0
+            c = example.metadata[:graph_commit]
+            c.call if c
             v0.clone_into(dest)
             v1.clone_into(dest)
           end
@@ -189,7 +200,16 @@ describe Pacer::Wrappers::EdgeWrapper do
     end
 
     describe '#copy_into' do
-      subject { v0.clone_into(dest); v1.clone_into(dest); e0.copy_into(dest) }
+      before do
+        v0; v1; e0
+        c = example.metadata[:graph_commit]
+        c.call if c
+      end
+      subject do
+        v0.clone_into(dest)
+        v1.clone_into(dest)
+        e0.copy_into(dest)
+      end
       its(:label) { should == 'links' }
       its(:graph) { should equal(dest) }
       its('in_vertex.properties') { should == e0.in_vertex.properties }
