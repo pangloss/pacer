@@ -203,3 +203,17 @@ I'm aiming for 100% test coverage in Pacer and am currently nearly there in the 
 ## Style Guide
 
 Please follow Github's [Ruby style guide](https://github.com/styleguide/ruby) when contributing to make your patches more likely to be accepted!
+
+## YourKit Profiler
+
+One of the advantages of building Pacer on JRuby is that we can leverage
+the incredible tools that exist in the JVM ecosystem. YourKit is a tool
+that I found through glowing recommendation, and has been greatly useful
+in profiling the performance of Pacer.
+
+YourKit is kindly supporting the Pacer open source project with its full-featured Java Profiler.
+YourKit, LLC is the creator of innovative and intelligent tools for profiling
+Java and .NET applications. Take a look at YourKit's leading software products:
+
+<a href="http://www.yourkit.com/java/profiler/index.jsp">YourKit Java Profiler</a> and
+<a href="http://www.yourkit.com/.net/profiler/index.jsp">YourKit .NET Profiler</a>.
