@@ -54,10 +54,6 @@ module Pacer
       self
     end
 
-    def copy_object
-      self.class.new @encoder, @reopen, @shutdown, graph_id
-    end
-
     def use_wrapper(klass)
       reopen = proc do
         klass.new unwrap_graph(@reopen.call)
@@ -90,18 +86,7 @@ module Pacer
         v = blueprints_graph.getVertex(id)
       rescue java.lang.RuntimeException
       end
-      if v
-        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::VertexWrapper }
-        if wrapper
-          v = wrapper.new graph, v
-          modules.delete wrapper
-        else
-          v = base_vertex_wrapper.new graph, v
-        end
-        v.add_extensions modules
-      else
-        v
-      end
+      wrap_element v, base_vertex_wrapper, Pacer::Wrappers::VertexWrapper, modules
     end
 
     # Get an edge by id.
@@ -117,15 +102,23 @@ module Pacer
         v = blueprints_graph.getEdge(id)
       rescue Java::JavaLang::RuntimeException
       end
+      wrap_element v, base_edge_wrapper, Pacer::Wrappers::EdgeWrapper, modules
+    end
+
+    def wrap_element(v, base, klass, modules)
       if v
-        wrapper = modules.detect { |obj| obj.ancestors.include? Pacer::Wrappers::EdgeWrapper }
-        if wrapper
-          v = wrapper.new graph, v
-          modules.delete wrapper
+        if modules
+          wrapper = modules.detect { |obj| obj.ancestors.include? klass }
+          if wrapper
+            v = wrapper.new graph, v
+            modules.delete wrapper
+          else
+            v = base.new graph, v
+          end
+          v.add_extensions modules
         else
-          v = base_edge_wrapper.new graph, v
+          base.new graph, v
         end
-        v.add_extensions modules
       end
     end
 
