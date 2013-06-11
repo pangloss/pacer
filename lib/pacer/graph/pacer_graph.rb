@@ -8,9 +8,9 @@ module Pacer
     include Pacer::Core::Graph::GraphRoute
     include Pacer::Core::Graph::GraphIndexRoute
 
-    attr_reader :blueprints_graph, :encoder
+    attr_reader :blueprints_graph
 
-    attr_accessor :base_vertex_wrapper, :base_edge_wrapper
+    attr_accessor :encoder, :base_vertex_wrapper, :base_edge_wrapper
 
     def initialize(encoder, open, shutdown = nil, graph_id = nil)
       self.base_vertex_wrapper = Pacer::Wrappers::VertexWrapper
