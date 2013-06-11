@@ -7,8 +7,8 @@ module Pacer
 
     START_TIME = Time.now
 
-    BLUEPRINTS_VERSION = "2.2.0"
-    PIPES_VERSION = "2.2.0"
-    GREMLIN_VERSION = "2.2.0"
+    BLUEPRINTS_VERSION = "2.3.0"
+    PIPES_VERSION = "2.3.0"
+    GREMLIN_VERSION = "2.3.0"
   end
 end
