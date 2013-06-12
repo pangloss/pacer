@@ -113,12 +113,12 @@ module Pacer::Wrappers
       value = graph.encode_property(value)
       key = key.to_s
       if value
-        if value != element.getProperty(key)
-          element.setProperty(key, value)
-        end
+        element.setProperty(key, value)
       else
-        element.removeProperty(key) if element.getPropertyKeys.include? key
+        element.removeProperty(key)
       end
+    rescue Exception => e
+      throw ClientError.new "Unable to serialize #{ key }: #{ value.class }"
     end
 
     # Specialize result to return self for elements.
