@@ -118,7 +118,7 @@ module Pacer::Wrappers
         element.removeProperty(key)
       end
     rescue Exception => e
-      throw ClientError.new "Unable to serialize #{ key }: #{ value.class }"
+      throw Pacer::ClientError.new "Unable to serialize #{ key }: #{ value.class }"
     end
 
     # Specialize result to return self for elements.
