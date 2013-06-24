@@ -82,6 +82,13 @@ module Pacer
       blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
     end
 
+    attr_reader :on_commit_block
+
+    def on_commit(&block)
+      return unless block
+      @on_commit_block = block
+    end
+
   private
 
     def threadlocal_graph_info
@@ -128,6 +135,7 @@ module Pacer
         end
         puts "transaction committed" if Pacer.verbose == :very
         blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+        on_commit_block.call if on_commit_block
       end
       rollback = ->(message = nil) do
         puts ["transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
@@ -153,6 +161,7 @@ module Pacer
     def mock_base_tx_finalizers
       commit = -> do
         puts "mock transaction committed" if Pacer.verbose == :very
+        on_commit_block.call if on_commit_block
       end
       rollback = ->(message = nil) do
         puts ["mock transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
