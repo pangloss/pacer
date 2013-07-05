@@ -15,6 +15,9 @@ Gemfile.lock
 # jeweler generated
 pkg
 
+# mac custom attributes files
+.DS_Store
+
 # Project specific
 *.graph
 *.db
@@ -27,3 +30,4 @@ bin
 .jitcache
 coverage/*
 dex.log
+vendor/
