@@ -362,13 +362,13 @@ Run.all :read_write do
       it 'should create a file that can be read back' do
         graph.v.count.should == 2
         graph.e.count.should == 2
-        Pacer::GraphML.export graph, 'tmp/graph_mixin_spec_export.graphml'
+        Pacer::GraphML.export graph, '/tmp/graph_mixin_spec_export.graphml'
         graph2.e.delete!
         graph2.v.delete!
         graph2.v.count.should == 0
         graph2.e.count.should == 0
-        Pacer::GraphML.import graph2, 'tmp/graph_mixin_spec_export.graphml'
-        puts File.read 'tmp/graph_mixin_spec_export.graphml'
+        Pacer::GraphML.import graph2, '/tmp/graph_mixin_spec_export.graphml'
+        puts File.read '/tmp/graph_mixin_spec_export.graphml'
         graph2.v.count.should == 2
         graph2.e.count.should == 2
       end
