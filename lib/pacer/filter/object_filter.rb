@@ -32,7 +32,8 @@ module Pacer
       protected
 
       def attach_pipe(end_pipe)
-        pipe = ObjectFilterPipe.new(value, negate ? Pacer::Pipes::NOT_EQUAL : Pacer::Pipes::EQUAL)
+        obj  = if value.respond_to?(:element) then value.element else value end
+        pipe = ObjectFilterPipe.new(obj, negate ? Pacer::Pipes::NOT_EQUAL : Pacer::Pipes::EQUAL)
         pipe.set_starts end_pipe if end_pipe
         pipe
       end
