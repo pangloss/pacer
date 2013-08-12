@@ -39,13 +39,13 @@ module Pacer
       def merge
         route = clone
         route.merge_pipe_class = FairMergePipe
-        route
+        route.chain_route transform: MergedBranch
       end
 
       def merge_exhaustive
         route = clone
         route.merge_pipe_class = ExhaustMergePipe
-        route
+        route.chain_route transform: MergedBranch
       end
 
       def add_block!(&block)
@@ -55,8 +55,12 @@ module Pacer
           map { |b| b.extensions }.
           map { |a| a ? a.to_set : Set[] }.
           reduce { |r, e| r.intersection(e) }
-        config[:extensions] = exts.to_a
-        self
+        if exts.to_a != config[:extensions]
+          config[:extensions] = exts.to_a
+          clone
+        else
+          self
+        end
       end
 
       def attach_pipe(end_pipe)
@@ -67,6 +71,11 @@ module Pacer
         merge.setStarts split
         merge
       end
+    end
+
+    module MergedBranch
+      # This just exists so that if I merge and then branch again,
+      # the new branches will be against the merged source.
     end
   end
 end
