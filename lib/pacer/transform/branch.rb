@@ -52,9 +52,10 @@ module Pacer
         branch = block.call(Pacer::Route.empty(back))
         branches.push branch
         exts = branches.
-          map { |b| b.extensions.to_set }.
-          reduce { |r, e| (r || Set[]).intersection(e || Set[]) }
-        self.set_extensions exts
+          map { |b| b.extensions }.
+          map { |a| a ? a.to_set : Set[] }.
+          reduce { |r, e| r.intersection(e) }
+        config[:extensions] = exts.to_a
         self
       end
 
