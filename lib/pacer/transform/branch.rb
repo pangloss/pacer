@@ -59,7 +59,7 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        branch_pipes = branches.map { |b| print '.'; Pacer::Route.pipeline(b) }
+        branch_pipes = branches.map { |b| Pacer::Route.pipeline(b) }
         split = split_pipe_class.new branch_pipes
         split.setStarts end_pipe
         merge = merge_pipe_class.new branch_pipes
