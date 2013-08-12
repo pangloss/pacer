@@ -59,21 +59,11 @@ module Pacer
       end
 
       def attach_pipe(end_pipe)
-        puts "make pipes"
         branch_pipes = branches.map { |b| print '.'; Pacer::Route.pipeline(b) }
-        puts 'made branches'
-        pp branch_pipes
-        pp [split_pipe_class, merge_pipe_class]
         split = split_pipe_class.new branch_pipes
-        puts 'made split'
-        pp split
-        pp end_pipe
         split.setStarts end_pipe
-        pp split
         merge = merge_pipe_class.new branch_pipes
         merge.setStarts split
-        pp merge
-        puts 'made?'
         merge
       end
     end
