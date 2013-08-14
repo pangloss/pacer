@@ -5,6 +5,12 @@ module Pacer
         chain_route :filter => :loop, :looping_route => block
       end
 
+      def all(&block)
+        loop(&block).while do |el, depth|
+          :loop_and_recur
+        end
+      end
+
       # Apply the given path fragment multiple times in succession. If a Range
       # or Array of numbers is given, the results are a combination of the
       # results from all of the specified repetition levels. That is useful if
