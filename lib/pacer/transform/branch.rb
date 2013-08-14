@@ -88,7 +88,7 @@ module Pacer
           type = :mixed
         elsif types.difference([:path, :array]).empty?
           type = :array
-        elsif
+        else
           type = :object
         end
         if type != element_type
