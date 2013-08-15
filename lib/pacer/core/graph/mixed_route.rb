@@ -7,7 +7,7 @@ module Pacer::Core::Graph
     def v(*args, &block)
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => graph.base_vertex_wrapper,
+        :pipe_args => Pacer::Vertex,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
@@ -17,7 +17,7 @@ module Pacer::Core::Graph
     def e(*args, &block)
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::TypeFilterPipe,
-        :pipe_args => graph.base_edge_wrapper,
+        :pipe_args => Pacer::Edge,
         :wrapper => wrapper,
         :extensions => extensions
       Pacer::Route.property_filter(route, args, block)
@@ -68,13 +68,13 @@ module Pacer::Core::Graph
     end
 
     def element_type
-      graph.element_type(:mixed)
+      :mixed
     end
 
     # Calculate and save result.
     def result(name = nil)
       ids = collect do |element|
-        if element.is_a? Pacer::Wrappers::VertexWrapper
+        if element.is_a? Pacer::Vertex
           [:vertex, element.element_id]
         else
           [:edge, element.element_id]

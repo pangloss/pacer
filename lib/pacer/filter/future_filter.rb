@@ -35,7 +35,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         pipe = FutureFilterPipe.new(lookahead_pipe)
-        pipe.set_starts(end_pipe) if end_pipe
+        pipe.setStarts(end_pipe) if end_pipe
         pipe
       end
 

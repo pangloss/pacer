@@ -5,7 +5,7 @@ module Pacer
         route = chain_route :transform => :path, :element_type => :path
         if exts.any?
           exts = exts.map { |e| Array.wrap(e) if e }
-          route.map(modules: Pacer::Transform::Path::Methods) do |path|
+          route.map(element_type: :path) do |path|
             path.zip(exts).map { |element, ext| ext ? element.add_extensions(ext) : element }
           end
         else
