@@ -12,7 +12,7 @@ module Pacer
       end
 
       def deepest(&block)
-        loop(&block).deepest
+        loop(&block).deepest!
       end
 
       # Apply the given path fragment multiple times in succession. If a Range
@@ -157,7 +157,7 @@ HELP
 
       # this could have concurrency problems if multiple instances of the same
       # route
-      def deepest
+      def deepest!
         @deepest = true
         self
       end
