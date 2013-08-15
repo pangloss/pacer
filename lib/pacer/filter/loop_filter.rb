@@ -6,9 +6,13 @@ module Pacer
       end
 
       def all(&block)
-        loop(&block).while do |el, depth|
+        loop(&block).while do
           :loop_and_recur
         end
+      end
+
+      def deepest(&block)
+        loop(&block).deepest
       end
 
       # Apply the given path fragment multiple times in succession. If a Range
@@ -151,16 +155,43 @@ HELP
         self
       end
 
+      # this could have concurrency problems if multiple instances of the same
+      # route
+      def deepest
+        @deepest = true
+        self
+      end
+
       protected
 
       def attach_pipe(end_pipe)
-        unless @control_block
+        if @deepest
+          control_block = deepest_control_block
+        elsif @control_block
+          control_block = @control_block
+        else
           fail ClientError, 'No loop control block specified. Use either #while or #until after #loop.'
         end
-
-        pipe = Pacer::Pipes::LoopPipe.new(graph, looping_pipe, @control_block)
+        pipe = Pacer::Pipes::LoopPipe.new(graph, looping_pipe, control_block)
         pipe.setStarts(end_pipe) if end_pipe
         pipe
+      end
+
+      def deepest_control_block
+        expando = Pacer::Pipes::ExpandablePipe.new
+        empty = java.util.ArrayList.new
+        expando.setStarts empty.iterator
+        control_pipe = looping_pipe
+        control_pipe.setStarts expando
+        proc do |el|
+          control_pipe.reset
+          expando.add el.element
+          if control_pipe.hasNext
+            :loop
+          else
+            :emit
+          end
+        end
       end
 
       def looping_pipe
