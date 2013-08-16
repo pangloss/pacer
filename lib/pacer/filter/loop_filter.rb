@@ -6,8 +6,12 @@ module Pacer
       end
 
       def all(&block)
-        loop(&block).while do
-          :loop_and_recur
+        loop(&block).while do |e, depth|
+          if depth == 0
+            :loop
+          else
+            :loop_and_recur
+          end
         end
       end
 
@@ -183,12 +187,12 @@ HELP
         expando.setStarts empty.iterator
         control_pipe = looping_pipe
         control_pipe.setStarts expando
-        proc do |el|
+        proc do |el, depth|
           control_pipe.reset
           expando.add el.element
           if control_pipe.hasNext
             :loop
-          else
+          elsif depth > 0
             :emit
           end
         end
