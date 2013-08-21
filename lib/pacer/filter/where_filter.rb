@@ -33,7 +33,7 @@ module Pacer
 
       def where_statement=(str)
         @where_statement = str
-        @built = @parsed = @intermediate = nil
+        @parsed = @intermediate = nil
       end
 
       def parsed
@@ -49,7 +49,7 @@ module Pacer
       end
 
       def build!
-        @built ||= intermediate.build
+        intermediate.build
       end
 
       protected
