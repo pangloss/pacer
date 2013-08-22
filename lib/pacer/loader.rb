@@ -79,6 +79,7 @@ require 'pacer/filter/loop_filter'
 require 'pacer/filter/block_filter'
 require 'pacer/filter/object_filter'
 require 'pacer/filter/random_filter'
+require 'pacer/filter/limit_section_filter'
 
 require 'pacer/transform/branch'
 require 'pacer/transform/cap'
