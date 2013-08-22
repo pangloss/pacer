@@ -6,12 +6,12 @@ module Pacer
     OUT = com.tinkerpop.blueprints.Direction::OUT
     BOTH = com.tinkerpop.blueprints.Direction::BOTH
 
-    attr_reader :components
+    attr_reader :components, :key
     attr_reader :paths, :wrapper, :graph
 
     # Initialize it with an empty set to force uniqueness. Non-unique by default.
-    def initialize(id, graph, wrapper, components = nil)
-      @getId = id
+    def initialize(key, graph, wrapper, components = nil)
+      @key = key
       @wrapper = wrapper
       if components
         @components = components
@@ -26,7 +26,9 @@ module Pacer
 
     include com.tinkerpop.blueprints.Element
 
-    attr_reader :getId
+    def getId
+      "#{ key }:#{ components.count }"
+    end
 
     def getPropertyKeys
       Set[]
@@ -35,7 +37,8 @@ module Pacer
     def getProperty(key)
       case key
       when 'components' then components.map { |c| wrapper.new graph, c }
-      when 'key' then getId
+      when 'key' then key
+      when 'count' then components.count
       end
     end
 
