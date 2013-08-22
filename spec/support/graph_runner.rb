@@ -45,53 +45,8 @@ class RSpec::GraphRunner
     end
   end
 
-  module RubyGraph
-    def all(usage_style = :read_write, indices = true, &block)
-      super
-      rg(usage_style, indices, &block)
-    end
-
-    def rg(usage_style = :read_write, indices = true, &block)
-      for_graph('rg', usage_style, indices, false, ruby_graph, ruby_graph2, nil, block)
-    end
-
-    protected
-
-    def ruby_graph
-      Pacer::PacerGraph.new Pacer::SimpleEncoder, proc { Pacer::RubyGraph.new }
-    end
-
-    def ruby_graph2
-      Pacer::PacerGraph.new Pacer::SimpleEncoder, proc { Pacer::RubyGraph.new }
-    end
-  end
-
-  module MultiGraph
-    def all(usage_style = :read_write, indices = true, &block)
-      super
-      multigraph(usage_style, indices, &block)
-    end
-
-    def multigraph(usage_style = :read_write, indices = true, &block)
-      for_graph('multigraph', usage_style, indices, false, multi_graph, multi_graph2, nil, block)
-    end
-
-    protected
-
-    def multi_graph
-      Pacer::MultiGraph.blank
-    end
-
-    def multi_graph2
-      Pacer::MultiGraph.blank
-    end
-  end
-
-
   include Stubs
   include Tg
-  #include RubyGraph
-  #include MultiGraph
   include Neo4j if defined? Neo4j
   include Dex if defined? Dex
   include Orient if defined? Orient
