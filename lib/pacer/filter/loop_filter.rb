@@ -1,12 +1,12 @@
 module Pacer
   module Routes
     module RouteOperations
-      def loop(&block)
-        chain_route :filter => :loop, :looping_route => block
+      def loop(opts = {}, &block)
+        chain_route(opts.merge :filter => :loop, :looping_route => block)
       end
 
-      def all(&block)
-        loop(&block).while do |e, depth|
+      def all(opts = {}, &block)
+        loop(opts, &block).while do |e, depth|
           if depth == 0
             :loop
           else
