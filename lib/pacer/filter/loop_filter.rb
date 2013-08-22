@@ -182,13 +182,13 @@ HELP
         self
       end
 
-      def emit_when_route(&block)
+      def emit_when(&block)
         @emit_when_route = Pacer::Route.block_branch(self, block)
         @reverse_emit_route = false
         self
       end
 
-      def emit_when_not_route(&block)
+      def emit_when_not(&block)
         @emit_when_route = Pacer::Route.block_branch(self, block)
         @reverse_emit_route = true
         self
