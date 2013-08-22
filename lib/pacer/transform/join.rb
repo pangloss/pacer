@@ -19,6 +19,10 @@ module Pacer
         @unique = true
       end
 
+      def unjoin
+        map { |g| g[:components] }.scatter extensions: extensions, graph: graph, element_type: element_type
+      end
+
       def attach_pipe(end_pipe)
         pipe = JoinPipe.new(self, key_block, unique)
         pipe.setStarts end_pipe if end_pipe
