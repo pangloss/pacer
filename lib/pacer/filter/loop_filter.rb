@@ -60,6 +60,7 @@ module Pacer
     module LoopFilter
       attr_reader :looping_route
       attr_accessor :while_description
+      attr_reader :reverse_loop_route, :reverse_emit_route
 
       def help(section = nil)
         case section
@@ -162,15 +163,42 @@ HELP
       # this could have concurrency problems if multiple instances of the same
       # route
       def deepest!
-        @deepest = true
+        @loop_when_route = @looping_route
+        @reverse_loop_route = false
+        @emit_when_route = @looping_route
+        @reverse_emit_route = true
+        self
+      end
+
+      def loop_when(&block)
+        @loop_when_route = Pacer::Route.block_branch(self, block)
+        @reverse_loop_route = false
+        self
+      end
+
+      def loop_when_not(&block)
+        @loop_when_route = Pacer::Route.block_branch(self, block)
+        @reverse_loop_route = true
+        self
+      end
+
+      def emit_when_route(&block)
+        @emit_when_route = Pacer::Route.block_branch(self, block)
+        @reverse_emit_route = false
+        self
+      end
+
+      def emit_when_not_route(&block)
+        @emit_when_route = Pacer::Route.block_branch(self, block)
+        @reverse_emit_route = true
         self
       end
 
       protected
 
       def attach_pipe(end_pipe)
-        if @deepest
-          control_block = deepest_control_block
+        if @loop_when_route or @emit_when_route
+          control_block = route_control_block
         elsif @control_block
           control_block = @control_block
         else
@@ -181,19 +209,37 @@ HELP
         pipe
       end
 
-      def deepest_control_block
+      def expandable(route = nil)
         expando = Pacer::Pipes::ExpandablePipe.new
         empty = java.util.ArrayList.new
         expando.setStarts empty.iterator
-        control_pipe = looping_pipe
+        if route
+          control_pipe = Pacer::Route.pipeline route
+        else
+          control_pipe = Pacer::Pipes::IdentityPipe.new
+        end
         control_pipe.setStarts expando
+        [expando, control_pipe]
+      end
+
+      def route_control_block
+        loop_expando, loop_pipe = expandable @loop_when_route
+        emit_expando, emit_pipe = expandable @emit_when_route
         proc do |el, depth|
-          control_pipe.reset
-          expando.add el.element
-          if control_pipe.hasNext
-            :loop
+          loop_pipe.reset
+          loop_expando.add el.element
+          emit_pipe.reset
+          emit_expando.add el.element
+          if loop_pipe.hasNext ^ reverse_loop_route
+            if emit_pipe.hasNext ^ reverse_emit_route
+              :loop_and_emit
+            else
+              :loop
+            end
           elsif depth > 0
-            :emit
+            if emit_pipe.hasNext ^ reverse_emit_route
+              :emit
+            end
           end
         end
       end
