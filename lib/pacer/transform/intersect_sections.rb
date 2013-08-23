@@ -1,8 +1,20 @@
 module Pacer
   module Routes
     module RouteOperations
-      def intersect_sections(section = nil)
-        chain_route transform: Pacer::Transform::IntersectSections, section: section
+      def intersect_sections(section)
+        chain_route transform: Pacer::Transform::IntersectSections, section: section, operation: :intersection
+      end
+
+      def difference_sections(section)
+        chain_route transform: Pacer::Transform::IntersectSections, section: section, operation: :difference
+      end
+
+      def left_difference_sections(section)
+        chain_route transform: Pacer::Transform::IntersectSections, section: section, operation: :left_difference
+      end
+
+      def right_difference_sections(section)
+        chain_route transform: Pacer::Transform::IntersectSections, section: section, operation: :right_difference
       end
     end
   end
@@ -15,21 +27,33 @@ module Pacer
       #  section_visitor
       include Pacer::Visitors::VisitsSection
 
+      attr_accessor :operation
+
       protected
 
       def attach_pipe(end_pipe)
-        pipe = IntersectSectionPipe.new(section_visitor)
+        pipe = IntersectSectionPipe.new(section_visitor, operation)
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
 
       class IntersectSectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :section
+        attr_reader :section, :reduce_block
         attr_accessor :to_emit, :current_set, :all_sets
 
-        def initialize(section)
+        def initialize(section, operation)
           super()
           @section = section
+          case operation
+          when :difference
+            @reduce_block = proc { |a, b| (a - b) + (b - a) }
+          when :left_difference
+            @reduce_block = proc { |a, b| a - b }
+          when :right_difference
+            @reduce_block = proc { |a, b| b - a }
+          when :intersection
+            @reduce_block = proc { |a, b| a.intersection b }
+          end
           self.all_sets = []
           if section
             section.visitor = self
@@ -43,7 +67,7 @@ module Pacer
             while starts.hasNext
               current_set << starts.next
             end
-            self.to_emit = all_sets.reduce { |a, b| a.intersection b }.to_a
+            self.to_emit = all_sets.reduce(&reduce_block).to_a
           end
           raise EmptyPipe.instance if to_emit.empty?
           to_emit.shift

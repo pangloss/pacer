@@ -4,6 +4,10 @@ module Pacer
       def join(&block)
         chain_route transform: Pacer::Transform::Join, block: block
       end
+
+      def unjoin
+        map { |g| g[:components] }.scatter extensions: extensions, graph: graph, element_type: element_type
+      end
     end
   end
 
@@ -17,10 +21,6 @@ module Pacer
 
       def uniq
         @unique = true
-      end
-
-      def unjoin
-        map { |g| g[:components] }.scatter extensions: extensions, graph: graph, element_type: element_type
       end
 
       def attach_pipe(end_pipe)
