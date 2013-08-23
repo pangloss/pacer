@@ -98,6 +98,7 @@ require 'pacer/transform/wrapped_path'
 require 'pacer/transform/scatter'
 require 'pacer/transform/has_count_cap'
 require 'pacer/transform/sort_section'
+require 'pacer/transform/intersect_sections'
 require 'pacer/transform/payload'
 require 'pacer/transform/lookup_ids'
 
