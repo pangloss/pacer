@@ -49,8 +49,7 @@ require 'pacer/function_resolver'
 require 'pacer/route'
 
 require 'pacer/blueprints/tg'
-require 'pacer/blueprints/ruby_graph'
-require 'pacer/blueprints/multi_graph'
+require 'pacer/blueprints/group_vertex'
 
 require 'pacer/blueprints/payload_elements'
 

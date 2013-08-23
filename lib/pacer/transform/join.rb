@@ -21,7 +21,10 @@ module Pacer
 
       def uniq
         @unique = true
+        self
       end
+
+      protected
 
       def attach_pipe(end_pipe)
         pipe = JoinPipe.new(self, key_block, unique)
