@@ -42,6 +42,7 @@ module Pacer
     end
 
     def type_def(source, args)
+      source = args.fetch(:based_on, source)
       [
         type_modules(source, args),
         function_modules(source, args),
@@ -51,6 +52,7 @@ module Pacer
     end
 
     def configuration(source, args)
+      source = args.fetch(:based_on, source)
       {
         element_type: element_type(source, args),
         graph: graph(source, args),
@@ -62,7 +64,7 @@ module Pacer
 
     def arguments(source, args)
       args.reject do |key, val|
-        Set[:element_type, :wrapper, :extensions, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor].include? key
+        Set[:element_type, :wrapper, :extensions, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor, :based_on].include? key
       end
     end
 
