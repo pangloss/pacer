@@ -13,9 +13,21 @@ module Pacer
     end
   end
 
+  class Wrappers::VertexWrapper
+    def branch(&block)
+      v.branch &block
+    end
+  end
+
+  class Wrappers::EdgeWrapper
+    def branch(&block)
+      e.branch &block
+    end
+  end
+
   module Transform
     module Branch
-      import com.tinkerpop.pipes.branch.CopySplitPipe;
+      import com.tinkerpop.pipes.branch.CopySplitPipe
       import com.tinkerpop.pipes.branch.ExhaustMergePipe
       import com.tinkerpop.pipes.branch.FairMergePipe
 
@@ -32,7 +44,7 @@ module Pacer
       def clone(conf = {})
         back.chain_route({transform: Branch,
                           branches: branches.clone,
-                          element_type: element_type,
+                          element_type: back.element_type,
                           conds: conds.clone,
                           extensions: extensions.clone,
                           split_pipe_class: split_pipe_class,
