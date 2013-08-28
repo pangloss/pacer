@@ -111,10 +111,14 @@ module Pacer
       def attach_pipe(end_pipe)
         branch_pipes = branches.map { |b| Pacer::Route.pipeline(b) }
         split = split_pipe_class.new branch_pipes
-        split.setStarts end_pipe if end_pipe
         merge = merge_pipe_class.new branch_pipes
         merge.setStarts split
-        merge
+        if end_pipe
+          split.setStarts end_pipe
+          merge
+        else
+          Pacer::Pipes::BlackboxPipeline.new split, merge
+        end
       end
     end
 
