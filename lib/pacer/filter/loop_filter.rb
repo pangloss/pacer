@@ -215,10 +215,10 @@ HELP
         expando.setStarts empty.iterator
         if route
           control_pipe = Pacer::Route.pipeline route
+          control_pipe.setStarts expando
         else
-          control_pipe = Pacer::Pipes::IdentityPipe.new
+          control_pipe = expando
         end
-        control_pipe.setStarts expando
         [expando, control_pipe]
       end
 
