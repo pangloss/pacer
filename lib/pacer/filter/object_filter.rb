@@ -86,8 +86,8 @@ module Pacer
           value
         end
 
-        def on_element(x)
-          self.other = x.element
+        def on_raw_element(x)
+          self.other = x
         end
 
         def reset
