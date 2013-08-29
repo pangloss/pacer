@@ -4,6 +4,11 @@ module Pacer
       def section(section_name = nil, visitor_target = nil)
         chain_route visitor: :section, section_name: section_name, visitor_target: visitor_target
       end
+
+      # see #as_var for the old as implementation
+      def as(section_name = nil)
+        section section_name
+      end
     end
   end
 

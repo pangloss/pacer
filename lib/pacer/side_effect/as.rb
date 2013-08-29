@@ -3,14 +3,16 @@ module Pacer
     # Store the current intermediate element in the route's vars hash by the
     # given name so that it is accessible subsequently in the processing of the
     # route.
-    def as(name)
-      as = ::Pacer::SideEffect::As
+    #
+    # Deprecated.
+    def as_var(name)
+      as = ::Pacer::SideEffect::AsVar
       section(name, as::SingleElementSet).chain_route :side_effect => as, :variable_name => name
     end
   end
 
   module SideEffect
-    module As
+    module AsVar
       class AsPipe < Pacer::Pipes::RubyPipe
         attr_accessor :vars
 
