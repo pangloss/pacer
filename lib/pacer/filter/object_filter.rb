@@ -3,17 +3,17 @@ module Pacer
     module RouteOperations
       def is(value)
         if value.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[value] == v }
+          chain_route filter: Pacer::Filter::SectionFilter, section: value
         else
-          chain_route({ :filter => :object, :value => value })
+          chain_route filter: Pacer::Filter::ObjectFilter, value: value
         end
       end
 
       def is_not(value)
         if value.is_a? Symbol
-          chain_route :filter => :property, :block => proc { |v| v.vars[value] != v }
+          chain_route filter: Pacer::Filter::SectionFilter, section: value, negate: true
         else
-          chain_route({ :filter => :object, :value => value, :negate => true })
+          chain_route filter: Pacer::Filter::ObjectFilter, value: value, negate: true
         end
       end
 
@@ -43,6 +43,55 @@ module Pacer
           "is_not(#{ value.inspect })"
         else
           "is(#{ value.inspect })"
+        end
+      end
+    end
+
+    module SectionFilter
+      # VisitsSection module provides:
+      #  section=
+      #  section_visitor
+      include Pacer::Visitors::VisitsSection
+
+      attr_accessor :negate
+
+      def attach_pipe(end_pipe)
+        pipe = FilterSectionPipe.new(section_visitor, negate)
+        pipe.setStarts end_pipe if end_pipe
+        pipe
+      end
+
+      class FilterSectionPipe < Pacer::Pipes::RubyPipe
+        attr_reader :section, :negate
+        attr_accessor :other
+
+        def initialize(section, negate)
+          super()
+          @section = section
+          @negate = negate
+          section.visitor = self if section
+        end
+
+        def processNextStart
+          value = starts.next
+          if negate
+            while value == other
+              value = starts.next
+            end
+          else
+            while value != other
+              value = starts.next
+            end
+          end
+          value
+        end
+
+        def on_element(x)
+          self.other = x.element
+        end
+
+        def reset
+          self.other = nil
         end
       end
     end
