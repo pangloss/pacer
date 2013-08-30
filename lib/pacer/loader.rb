@@ -102,7 +102,7 @@ require 'pacer/transform/payload'
 require 'pacer/transform/lookup_ids'
 
 require 'pacer/side_effect/aggregate'
-require 'pacer/side_effect/as'
+require 'pacer/side_effect/as_var'
 require 'pacer/side_effect/group_count'
 require 'pacer/side_effect/is_unique'
 require 'pacer/side_effect/counted'
