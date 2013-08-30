@@ -3,7 +3,7 @@ module Pacer
     class SimpleVisitorPipe < Pacer::Pipes::RubyPipe
       attr_reader :visitor, :in_section, :wrapper, :graph
 
-      attr_accessor :use_on_raw_element, :use_on_element, :use_after_element, :use_reset
+      attr_accessor :use_on_raw_element, :use_on_element, :use_after_element, :use_visitor_reset
 
       def initialize(wrapper, graph)
         super()
@@ -14,10 +14,10 @@ module Pacer
 
       def visitor=(visitor)
         @visitor = visitor
-        @use_on_raw_element      = visitor.respond_to? :on_raw_element
+        @use_on_raw_element  = visitor.respond_to? :on_raw_element
         @use_on_element      = visitor.respond_to? :on_element
         @use_after_element   = visitor.respond_to? :after_element
-        @use_reset           = visitor.respond_to? :reset
+        @use_visitor_reset   = visitor.respond_to? :visitor_reset
       end
 
       def processNextStart
@@ -36,7 +36,7 @@ module Pacer
       end
 
       def reset
-        visitor.reset if use_reset
+        visitor.visitor_reset if use_visitor_reset
         @in_section = false
         super
       end

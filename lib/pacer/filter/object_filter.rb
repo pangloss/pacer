@@ -92,6 +92,7 @@ module Pacer
 
         def reset
           self.other = nil
+          super
         end
       end
     end
