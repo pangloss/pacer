@@ -172,6 +172,22 @@ module Pacer
           result
         end
 
+        # Check #lookup in extensions, in preerence to #route_conditions
+        # for filters to apply.
+        #
+        # Designed to allow filters to be defined in extensions that
+        # will not be used on every appearance of the extension (too
+        # many property filters in a traversal can impose a serious
+        # performance penalty. It is expected that lookup filters will
+        # only be used for index lookups.
+        def use_lookup!
+          extensions.each do |ext|
+            if ext.respond_to? :lookup
+              add_filters ext.lookup, ext
+            end
+          end
+        end
+
       protected
 
         attr_accessor :non_ext_props
@@ -191,9 +207,7 @@ module Pacer
             else
               self.extensions << filter
             end
-            if filter.respond_to? :route_conditions
-              add_filters filter.route_conditions, filter
-            end
+            extract_conditions(filter)
             if filter.respond_to? :route
               self.route_modules << filter
             end
@@ -203,17 +217,19 @@ module Pacer
           else
             if filter.respond_to? :wrapper
               self.wrapper = filter.wrapper
-              if filter.respond_to? :route_conditions
-                add_filters filter.route_conditions, filter
-              end
+              extract_conditions(filter)
             elsif filter.respond_to? :parts
               self.extensions.concat filter.parts.to_a
-              if filter.respond_to? :route_conditions
-                add_filters filter.route_conditions, filter
-              end
+              extract_conditions(filter)
             else
               raise "Unknown filter: #{ filter.class }: #{ filter.inspect }"
             end
+          end
+        end
+
+        def extract_conditions(filter)
+          if filter.respond_to? :route_conditions
+            add_filters filter.route_conditions, filter
           end
         end
 

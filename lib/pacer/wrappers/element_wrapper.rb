@@ -47,6 +47,18 @@ module Pacer::Wrappers
         @route_conditions
       end
 
+      def lookup
+        return @lookup if defined? @lookup
+        @lookup = extensions.inject({}) do |h, ext|
+          if ext.respond_to? :lookup
+            h.merge! ext.lookup
+          else
+            h
+          end
+        end
+        @lookup
+      end
+
       protected
 
       def build_extension_wrapper(exts, mod_names, superclass)

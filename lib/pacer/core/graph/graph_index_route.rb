@@ -36,6 +36,7 @@ module Pacer::Core::Graph
 
     def indexed_route(element_type, filters, block)
       filters.graph = self
+      filters.use_lookup!
       filters.indices = graph.indices
       filters.choose_best_index = choose_best_index != false
       filters.search_manual_indices = search_manual_indices
