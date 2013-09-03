@@ -59,7 +59,8 @@ module Pacer
         # @attr [Boolean] search_manual_indices
         attr_accessor :search_manual_indices
 
-        def initialize(filters)
+        def initialize(graph, filters)
+          @graph = graph
           @properties = []
           @blocks = []
           @extensions = []
