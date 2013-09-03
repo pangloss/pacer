@@ -186,6 +186,9 @@ module Pacer
               add_filters ext.lookup, ext
             end
           end
+          if wrapper and wrapper.respond_to? :lookup
+            add_filters wrapper.lookup, nil
+          end
         end
 
       protected
