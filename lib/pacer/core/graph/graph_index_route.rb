@@ -3,6 +3,13 @@ module Pacer::Core::Graph
   # This module adds indexed route methods to the basic graph classes returned from the
   # blueprints library.
   module GraphIndexRoute
+    # If never_scan is true, raise an exception if a graph route does not
+    # start with an indexed property. Large databases could spend hours
+    # scanning!
+    attr_accessor :never_scan
+    attr_accessor :choose_best_index
+    attr_accessor :search_manual_indices
+
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*args, &block)
       filters = Pacer::Route.filters(self, args)
@@ -11,6 +18,8 @@ module Pacer::Core::Graph
       end
       if route
         route
+      elsif never_scan
+        fail Pacer::ClientError, "No indexed properties found among: #{ filters.property_keys.join ', ' }"
       else
         super(filters, &block)
       end
@@ -24,13 +33,12 @@ module Pacer::Core::Graph
       end
       if route
         route
+      elsif never_scan
+        fail Pacer::ClientError, "No indexed properties found among: #{ filters.property_keys.join ', ' }"
       else
         super(filters, &block)
       end
     end
-
-    attr_accessor :choose_best_index
-    attr_accessor :search_manual_indices
 
     private
 

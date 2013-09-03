@@ -91,6 +91,10 @@ module Pacer
           non_ext_props.delete_if { |a| keys.include? a.first }
         end
 
+        def property_keys
+          properties.map(&:first).uniq
+        end
+
         # Set which indices are available to be used to determine the
         # best_index.
         #
