@@ -183,11 +183,11 @@ module Pacer
         def use_lookup!
           extensions.each do |ext|
             if ext.respond_to? :lookup
-              add_filters ext.lookup, ext
+              add_filters ext.lookup(graph), ext
             end
           end
           if wrapper and wrapper.respond_to? :lookup
-            add_filters wrapper.lookup, nil
+            add_filters wrapper.lookup(graph), nil
           end
         end
 

@@ -47,11 +47,11 @@ module Pacer::Wrappers
         @route_conditions
       end
 
-      def lookup
+      def lookup(graph)
         return @lookup if defined? @lookup
         @lookup = extensions.inject({}) do |h, ext|
           if ext.respond_to? :lookup
-            h.merge! ext.lookup
+            h.merge! ext.lookup(graph)
           else
             h
           end
