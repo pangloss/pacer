@@ -1,6 +1,6 @@
 module GD
   module Artist
-    def self.route_conditions
+    def self.route_conditions(graph)
       { type: 'artist' }
     end
 
@@ -24,7 +24,7 @@ module GD
   end
 
   module Song
-    def self.route_conditions
+    def self.route_conditions(graph)
       { type: 'song' }
     end
 

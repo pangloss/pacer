@@ -79,7 +79,7 @@ module Pacer
       end
 
       module Vertices
-        def self.route_conditions
+        def self.route_conditions(graph)
           { :element_type => 'vertex' }
         end
 
@@ -105,7 +105,7 @@ module Pacer
       end
 
       module Edges
-        def self.route_conditions
+        def self.route_conditions(graph)
           { :element_type => 'edge' }
         end
 
@@ -117,7 +117,7 @@ module Pacer
       end
 
       module Properties
-        def self.route_conditions
+        def self.route_conditions(graph)
           { :element_type => 'property keys' }
         end
       end

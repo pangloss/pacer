@@ -2,13 +2,13 @@ require 'spec_helper'
 
 module NeoSpec
   class Person < Pacer::Wrappers::VertexWrapper
-    def self.route_conditions
+    def self.route_conditions(graph)
       { type: 'person' }
     end
   end
 
   class Frog < Pacer::Wrappers::VertexWrapper
-    def self.route_conditions
+    def self.route_conditions(graph)
       { frog: 'yes' }
     end
   end

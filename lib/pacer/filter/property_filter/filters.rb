@@ -232,7 +232,7 @@ module Pacer
 
         def extract_conditions(filter)
           if filter.respond_to? :route_conditions
-            add_filters filter.route_conditions, filter
+            add_filters filter.route_conditions(graph), filter
           end
         end
 

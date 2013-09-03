@@ -35,11 +35,11 @@ module Pacer::Wrappers
         caches.each { |c| c.clear_cache } if caches
       end
 
-      def route_conditions
+      def route_conditions(graph)
         return @route_conditions if defined? @route_conditions
         @route_conditions = extensions.inject({}) do |h, ext|
           if ext.respond_to? :route_conditions
-            h.merge! ext.route_conditions
+            h.merge! ext.route_conditions(graph)
           else
             h
           end

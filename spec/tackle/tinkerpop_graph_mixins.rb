@@ -1,6 +1,6 @@
 module TP
   module Person
-    def self.route_conditions
+    def self.route_conditions(graph)
       { :type => 'person' }
     end
 
@@ -13,7 +13,7 @@ module TP
 
 
   class Project
-    def self.route_conditions
+    def self.route_conditions(graph)
       { :type => 'project' }
     end
 
@@ -47,7 +47,7 @@ module TP
   end
 
   module Wrote
-    def self.route_conditions
+    def self.route_conditions(graph)
       { label: 'wrote' }
     end
 

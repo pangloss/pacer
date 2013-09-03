@@ -10,7 +10,7 @@ module Pacer::Utils
         end
       end
 
-      def route_conditions
+      def route_conditions(graph)
         { :type => 'Trie' }
       end
     end
