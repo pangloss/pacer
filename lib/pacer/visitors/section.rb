@@ -42,6 +42,10 @@ module Pacer
         end
         pipe
       end
+
+      def inspect_class_name
+        "#{super}(#{section_name.inspect})"
+      end
     end
   end
 end

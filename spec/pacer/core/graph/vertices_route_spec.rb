@@ -22,7 +22,9 @@ Run.all(:read_write) do
       graph.v.property?(:name).count.should == 7
       graph.v.property?(:zero).count.should == 1
 
-      graph.v.property?(:falsy).count.should == 1
+      unless graph_name == 'mcfly'
+        graph.v.property?(:falsy).count.should == 1
+      end
     end
   end
 end
