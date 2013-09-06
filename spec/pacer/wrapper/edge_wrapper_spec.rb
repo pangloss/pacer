@@ -135,6 +135,7 @@ describe Pacer::Wrappers::EdgeWrapper do
     end
 
     it 'should reuse the element id' do
+      return if graph_name == 'mcfly'
       unless graph.features.ignoresSuppliedIds
         e0
         c = example.metadata[:graph_commit]

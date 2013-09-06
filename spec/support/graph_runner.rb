@@ -38,6 +38,7 @@ class RSpec::GraphRunner
     def tg(usage_style = :read_write, indices = true, &block)
       return unless use_graph? 'tg'
       describe 'tg' do
+        let(:graph_name) { 'tg' }
         let(:graph) { Pacer.tg }
         let(:graph2) { Pacer.tg }
         instance_eval(&block)
@@ -78,6 +79,7 @@ protected
     return unless use_graph? name
     clear_graph ||= proc { |g| clear g }
     describe name do
+      let(:graph_name) { name }
       let(:graph) do
         if indices
           source_graph_1

@@ -61,6 +61,15 @@ module Pacer
         pipe
       end
 
+      def inspect_class_name
+        if negate
+          "is_not(#{section.inspect})"
+        else
+          "is(#{section.inspect})"
+        end
+      end
+
+
       class FilterSectionPipe < Pacer::Pipes::RubyPipe
         attr_reader :section, :negate
         attr_accessor :other
