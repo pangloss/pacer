@@ -140,8 +140,10 @@ module Pacer::Core::Graph
     # Delete all matching vertices and all edges which link to this
     # vertex.
     def delete!
-      uniq.both_e.uniq.bulk_job { |e| e.delete! }
-      uniq.bulk_job { |e| e.delete! }
+      count = 0
+      uniq.both_e.uniq.bulk_job { |e| count += 1; e.delete! }
+      uniq.bulk_job { |e| count += 1; e.delete! }
+      count
     end
 
     # Create associations with the given label from all vertices

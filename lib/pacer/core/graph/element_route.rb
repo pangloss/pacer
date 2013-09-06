@@ -43,7 +43,9 @@ module Pacer::Core::Graph
 
     # Delete all matching elements.
     def delete!
-      uniq.bulk_job { |e| e.delete! }
+      count = 0
+      uniq.bulk_job { |e| count += 1; e.delete! }
+      count
     end
 
     # Stores the result of the current route in a new route so it will not need
