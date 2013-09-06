@@ -30,17 +30,19 @@ module Pacer
       end
 
       # Export the given graph to the given path in an extended .graphml format.
-      def export(graph, path)
-        x = xml(graph)
+      def export(route, path)
+        x = xml(route)
+        puts "\n\nWriting XML"
         File.open(File.expand_path(path), 'w') do |f|
           f.puts x.to_xml
         end
       end
 
       # Returns the xml builder used to construct the xml for the given graph.
-      def xml(graph)
+      def xml(route)
         node_keys = Set[]
         edge_keys = Set[]
+        n = 0
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.graphml('xmlns' => "http://graphml.graphdrawing.org/xmlns",
                       'xmlns:xsi' => "http://www.w3.org/2001/XMLSchema-instance",
@@ -49,7 +51,11 @@ module Pacer
             xml.key 'for' => "node", 'id' => "y.nodegraphics", 'yfiles.type' => "nodegraphics"
             xml.key 'attr.name' => "description", 'attr.type' => "string", 'for' => "node", 'id' => "d2"
             xml.key 'for' => "edge", 'id' => "y.edgegraphics", 'yfiles.type' => "edgegraphics"
-            graph.v.each do |v|
+            puts "Building XML data structure"
+            puts "Vertices"
+            route.paths.vertices.scatter(element_type: :vertex).uniq.each do |v|
+              n += 1
+              print '.' if n % 100 == 0
               xml.node :id => v.element_id do
                 xml.data :key => 'y.nodegraphics' do
                   xml['y'].ShapeNode do
@@ -81,7 +87,10 @@ module Pacer
                 end
               end
             end
-            graph.e.each do |e|
+            puts "\n\nEdges"
+            route.paths.edges.scatter(element_type: :edge).uniq.each do |e|
+              n += 1
+              print '.' if n % 100 == 0
               xml.edge :id => e.element_id, :source => e.out_vertex.element_id, :target => e.in_vertex.element_id, :label => e.label do
                 xml.data :key => 'y.edgegraphics' do
                   xml['y'].PolyLineEdge do

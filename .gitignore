@@ -31,3 +31,4 @@ bin
 coverage/*
 dex.log
 vendor/
+private/
