@@ -7,13 +7,13 @@ module Pacer::Filter::PropertyFilter
       subject { filters }
 
       context 'no properties' do
-        let(:filters) { Pacer::Route.send filter_method, [] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [] }
 
         its(:any?) { should be_false }
       end
 
       context 'no properties' do
-        let(:filters) { Pacer::Route.send filter_method, [Tackle::SimpleMixin] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [Tackle::SimpleMixin] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_true }
@@ -25,7 +25,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'simple properties' do
-        let(:filters) { Pacer::Route.send filter_method, [name: 'Darrick', nickname: 'pangloss'] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [name: 'Darrick', nickname: 'pangloss'] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_false }
@@ -37,7 +37,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'With a Set of properties' do
-        let(:filters) { Pacer::Route.send filter_method, [nickname: Set['pangloss', 'someone']] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [nickname: Set['pangloss', 'someone']] }
 
         before { subject.graph = graph }
 
@@ -58,7 +58,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'with extensions' do
-        let(:filters) { Pacer::Route.send filter_method, [TP::Person, name: 'Darrick', nickname: 'pangloss'] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [TP::Person, name: 'Darrick', nickname: 'pangloss'] }
 
         its(:any?) { should be_true }
         its(:extensions) { should == [TP::Person] }
@@ -134,7 +134,7 @@ module Pacer::Filter::PropertyFilter
 
       context 'with route module' do
         # TODO: should this feature be removed?
-        let(:filters) { Pacer::Route.send filter_method, [TP::Pangloss] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [TP::Pangloss] }
 
         its(:any?) { should be_true }
         its(:extensions_only?) { should be_false }
@@ -146,7 +146,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'with manual index' do
-        let(:filters) { Pacer::Route.send filter_method, [tokens: { short: '555555' }, name: 'Darrick'] }
+        let(:filters) { Pacer::Route.send filter_method, graph, [tokens: { short: '555555' }, name: 'Darrick'] }
 
         its(:any?) { should be_true }
         its(:extensions) { should be_empty }
