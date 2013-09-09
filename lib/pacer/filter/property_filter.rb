@@ -4,23 +4,23 @@ require 'pacer/filter/property_filter/edge_filters'
 module Pacer
   class Route
     class << self
-      def filters(filters)
+      def filters(graph, filters)
         if filters? filters
           filters
         elsif filters? filters.first
           filters.first
         else
-          Pacer::Filter::PropertyFilter::Filters.new(filters)
+          Pacer::Filter::PropertyFilter::Filters.new(graph, filters)
         end
       end
 
-      def edge_filters(filters)
+      def edge_filters(graph, filters)
         if filters? filters
           filters
         elsif filters? filters.first
           filters.first
         else
-          Pacer::Filter::PropertyFilter::EdgeFilters.new(filters)
+          Pacer::Filter::PropertyFilter::EdgeFilters.new(graph, filters)
         end
       end
 
@@ -29,7 +29,7 @@ module Pacer
       end
 
       def property_filter_before(base, args, block)
-        filters = Pacer::Route.edge_filters(args)
+        filters = Pacer::Route.edge_filters(base.graph, args)
         filters.blocks = [block] if block
         args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
@@ -42,7 +42,7 @@ module Pacer
       end
 
       def property_filter(base, args, block)
-        filters = Pacer::Route.edge_filters(args)
+        filters = Pacer::Route.edge_filters(base.graph, args)
         filters.blocks = [block] if block
         args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route
@@ -75,13 +75,13 @@ module Pacer
         if f.is_a? Filters
           @filters = f
         else
-          @filters = EdgeFilters.new(f)
+          @filters = EdgeFilters.new(graph, f)
         end
       end
 
       # Return an array of filter options for the current route.
       def filters
-        @filters ||= EdgeFilters.new(nil)
+        @filters ||= EdgeFilters.new(graph, nil)
       end
 
       def block=(block)

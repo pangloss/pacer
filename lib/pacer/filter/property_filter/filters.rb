@@ -59,7 +59,8 @@ module Pacer
         # @attr [Boolean] search_manual_indices
         attr_accessor :search_manual_indices
 
-        def initialize(filters)
+        def initialize(graph, filters)
+          @graph = graph
           @properties = []
           @blocks = []
           @extensions = []
@@ -88,6 +89,10 @@ module Pacer
         def remove_property_keys(keys)
           properties.delete_if { |a| keys.include? a.first }
           non_ext_props.delete_if { |a| keys.include? a.first }
+        end
+
+        def property_keys
+          properties.map(&:first).uniq
         end
 
         # Set which indices are available to be used to determine the
@@ -183,8 +188,11 @@ module Pacer
         def use_lookup!
           extensions.each do |ext|
             if ext.respond_to? :lookup
-              add_filters ext.lookup, ext
+              add_filters ext.lookup(graph), ext
             end
+          end
+          if wrapper and wrapper.respond_to? :lookup
+            add_filters wrapper.lookup(graph), nil
           end
         end
 
@@ -229,7 +237,7 @@ module Pacer
 
         def extract_conditions(filter)
           if filter.respond_to? :route_conditions
-            add_filters filter.route_conditions, filter
+            add_filters filter.route_conditions(graph), filter
           end
         end
 

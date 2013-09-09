@@ -10,7 +10,7 @@ Run.all :read_only do
     subject { e_wrapper_class }
 
     it { should_not be_nil }
-    its(:route_conditions) { should == { label: 'wrote' } }
+    it { subject.route_conditions(graph).should == { label: 'wrote' } }
     its(:extensions) { should == e_exts }
 
     describe 'instance' do

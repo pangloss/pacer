@@ -485,6 +485,7 @@ HELP
       # Return an iterator for this route loading data from all previous routes
       # in the chain.
       def iterator
+        Pacer.executing_route self
         start, end_pipe = build_pipeline
         if start
           src = source_iterator
