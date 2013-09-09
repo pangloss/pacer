@@ -7,7 +7,7 @@ module Pacer::Filter::PropertyFilter
       subject { filters }
 
       context 'symbol label' do
-        let(:filters) { Pacer::Route.edge_filters [:label] }
+        let(:filters) { Pacer::Route.edge_filters graph, [:label] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label'] }
@@ -20,21 +20,21 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'symbol labels' do
-        let(:filters) { Pacer::Route.edge_filters [:label, :label2] }
+        let(:filters) { Pacer::Route.edge_filters graph, [:label, :label2] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label', 'label2'] }
       end
 
       context 'labels arrays' do
-        let(:filters) { Pacer::Route.edge_filters ["label", [:label2]] }
+        let(:filters) { Pacer::Route.edge_filters graph, ["label", [:label2]] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label', 'label2'] }
       end
 
       context 'labels and properties' do
-        let(:filters) { Pacer::Route.edge_filters [:label, { prop: 'value' }] }
+        let(:filters) { Pacer::Route.edge_filters graph, [:label, { prop: 'value' }] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label'] }
@@ -42,7 +42,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'labels and extension' do
-        let(:filters) { Pacer::Route.edge_filters [:label, TP::Person] }
+        let(:filters) { Pacer::Route.edge_filters graph, [:label, TP::Person] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label'] }
@@ -51,7 +51,7 @@ module Pacer::Filter::PropertyFilter
       end
 
       context 'labels and simple extension' do
-        let(:filters) { Pacer::Route.edge_filters [:label, Tackle::SimpleMixin] }
+        let(:filters) { Pacer::Route.edge_filters graph, [:label, Tackle::SimpleMixin] }
 
         its(:any?) { should be_true }
         its(:labels) { should == ['label'] }

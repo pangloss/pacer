@@ -11,7 +11,7 @@ Run.all :read_only do
     subject { v_wrapper_class }
 
     it { should_not be_nil }
-    its(:route_conditions) { should == { type: 'project' } }
+    it { subject.route_conditions(graph).should == { type: 'project' } }
     its(:extensions) { should == v_exts }
 
     describe 'instance' do
@@ -36,7 +36,7 @@ end
 
 module VertexWrapperSpec
   module Project
-    def self.route_conditions
+    def self.route_conditions(graph)
       { :type => 'project' }
     end
 
@@ -45,7 +45,7 @@ module VertexWrapperSpec
   end
 
   module IsRuby
-    def self.route_conditions
+    def self.route_conditions(graph)
       { :language => 'ruby' }
     end
 

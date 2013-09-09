@@ -160,6 +160,10 @@ module Pacer
     end
     alias verbose verbose?
 
+    def executing_route(route)
+      # override this if you want to know when a pipeline is about to be built.
+    end
+
     # Clear all cached data that may become invalid when {#reload!} is
     # called.
     #

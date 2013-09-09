@@ -10,7 +10,7 @@ module Pacer
 
         public
 
-        def initialize(filters)
+        def initialize(graph, filters)
           @best_index = nil
           self.labels = []
           self.non_ext_labels = []

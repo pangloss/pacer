@@ -5,7 +5,7 @@ module Pacer::Core::Graph
   module GraphRoute
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
-      filters = Pacer::Route.filters(filters)
+      filters = Pacer::Route.filters(self, filters)
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::VerticesPipe,
         :route_name => 'GraphV'
@@ -14,7 +14,7 @@ module Pacer::Core::Graph
 
     # Returns a new route to all graph edges. Standard filter options.
     def e(*filters, &block)
-      filters = Pacer::Route.edge_filters(filters)
+      filters = Pacer::Route.edge_filters(self, filters)
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::EdgesPipe,
         :route_name => 'GraphE'

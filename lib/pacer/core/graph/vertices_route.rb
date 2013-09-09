@@ -211,7 +211,7 @@ module Pacer::Core::Graph
     end
 
     def extract_labels(filters)
-      filters = Pacer::Route.edge_filters(filters)
+      filters = Pacer::Route.edge_filters(self, filters)
       @route_labels = filters.labels
       filters.labels = []
       filters
