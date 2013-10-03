@@ -227,6 +227,12 @@ module Pacer
           build_comparison(a, b, '==')
         end
 
+        def visitConstDeclNode(node)
+          a = Pipe.new PropertyPipe, node.name
+          b = node.value_node.accept(self)
+          build_comparison(a, b, '==')
+        end
+
         def visitLocalVarNode(node)
           Pipe.new PropertyPipe, node.name
         end
@@ -282,6 +288,10 @@ module Pacer
         end
 
         def visitVCallNode(node)
+          Pipe.new PropertyPipe, node.name
+        end
+
+        def visitConstNode(node)
           Pipe.new PropertyPipe, node.name
         end
 
