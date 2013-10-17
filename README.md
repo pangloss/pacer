@@ -125,9 +125,11 @@ To get started, you need to know just a few methods. First, open up a graph (if 
 
 ```ruby
     dex = Pacer.dex '/tmp/dex_demo'
-    pangloss = dex.create_vertex :name => 'pangloss', :type => 'user'
-    okram = dex.create_vertex :name => 'okram', :type => 'user'
-    group = dex.create_vertex :name => 'Tinkerpop', :type => 'group'
+    dex.transaction do
+      pangloss = dex.create_vertex :name => 'pangloss', :type => 'user'
+      okram = dex.create_vertex :name => 'okram', :type => 'user'
+      group = dex.create_vertex :name => 'Tinkerpop', :type => 'group'
+    end
 ```
 
 Now, let's see what we've got:
@@ -158,14 +160,18 @@ There are our vertices. Let's look their properties:
 Now let's put an edge between them:
 
 ```ruby
-    dex.create_edge okram, pangloss, :inspired
+    dex.transaction do
+      dex.create_edge okram, pangloss, :inspired
+    end
     => #<E[2048]:1025-inspired-1024>
 ```
 
 That's great for creating an edge but what if I've got lots to create? Try this method instead which can add edges to the cross product of all vertices in one route with all vertices in the other:
 
 ```ruby
-    group.add_edges_to :member, dex.v(:type => 'user')
+    dex.transaction do
+      group.add_edges_to :member, dex.v(:type => 'user')
+    end
 
     #<E[4097]:1026-member-1024> #<E[4098]:1026-member-1025>
     Total: 2
