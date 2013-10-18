@@ -17,7 +17,7 @@ module Pacer::Routes
     # Iterates over each element in the route, controlling
     # transactions so that they are only committed once every
     # +size+ records.
-    def bulk_job(size = nil, target_graph = nil)
+    def bulk_job(size = nil, target_graph = nil, pre_commit = nil)
       target_graph ||= graph
       if target_graph and not target_graph.in_bulk_job?
         begin
@@ -32,6 +32,7 @@ module Pacer::Routes
               slice.each do |element|
                 yield element
               end
+              pre_commit.call if pre_commit
               commit.call
             end
           end
