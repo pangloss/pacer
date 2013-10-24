@@ -81,7 +81,7 @@ module Pacer
 
       def add_block!(&block)
         will_clone = false
-        branch = block.call(Pacer::Route.empty(self))
+        branch = block.call(Pacer::Route.empty(back))
         branches.push branch
         conf = {}
 
