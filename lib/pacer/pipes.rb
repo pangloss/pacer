@@ -8,7 +8,6 @@ module Pacer
     import com.tinkerpop.pipes.util.PipeHelper
 
     import com.tinkerpop.pipes.filter.RandomFilterPipe
-    import com.tinkerpop.pipes.filter.DuplicateFilterPipe
     import com.tinkerpop.pipes.filter.RangeFilterPipe
     import com.tinkerpop.pipes.filter.FilterPipe
 
