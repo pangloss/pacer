@@ -16,8 +16,8 @@ module Pacer
 
   module Transform
     module LookupIds
-      import com.tinkerpop.gremlin.pipes.transform.IdVertexPipe
-      import com.tinkerpop.gremlin.pipes.transform.IdEdgePipe
+      import com.tinkerpop.pipes.transform.IdVertexPipe
+      import com.tinkerpop.pipes.transform.IdEdgePipe
 
       def attach_pipe(end_pipe)
         fail ClientError, 'Can not look up elements without the graph' unless graph

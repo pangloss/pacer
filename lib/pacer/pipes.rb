@@ -11,16 +11,21 @@ module Pacer
     import com.tinkerpop.pipes.filter.RangeFilterPipe
     import com.tinkerpop.pipes.filter.FilterPipe
 
-    import com.tinkerpop.gremlin.pipes.transform.IdPipe
-    import com.tinkerpop.gremlin.pipes.transform.PropertyPipe
+    import com.tinkerpop.pipes.transform.IdPipe
+    import com.tinkerpop.pipes.transform.PropertyPipe
 
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
     BOTH = com.tinkerpop.blueprints.Direction::BOTH
 
-    EQUAL = FilterPipe::Filter::EQUAL
-    NOT_EQUAL = FilterPipe::Filter::NOT_EQUAL
+    import com.tinkerpop.blueprints.Compare
+    EQUAL = Compare::EQUAL
+    NOT_EQUAL = Compare::NOT_EQUAL
     #GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL
+
+    import com.tinkerpop.blueprints.Contains
+    CONTAINED_IN = Contains::IN
+    NOT_CONTAINED_IN = Contains::NOT_IN
   end
 
   import java.util.Iterator
