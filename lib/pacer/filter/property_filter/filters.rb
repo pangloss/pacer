@@ -125,7 +125,7 @@ module Pacer
             when NodeVisitor::Value
               # no op
             else
-              new_pipe = PropertyFilterPipe.new(key, value, Pacer::Pipes::EQUAL)
+              new_pipe = PropertyFilterPipe.new(key, Pacer::Pipes::EQUAL, value)
             end
             if new_pipe
               new_pipe.set_starts pipe if pipe
