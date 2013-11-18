@@ -3,7 +3,6 @@ require 'bundler'
 Bundler::GemHelper.install_tasks
 
 require 'rspec/core/rake_task'
-require 'yard'
 
 RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.rspec_path = 'bin/rspec'
@@ -11,12 +10,6 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
 end
 
 task :default => :spec
-
-desc 'Generate documentation'
-YARD::Rake::YardocTask.new do |t|
-  t.files   = ['lib/**/*.rb', '-', 'LICENSE.txt']
-  t.options = ['--no-private']
-end
 
 desc 'update pom.xml with current versions from lib/pacer/version.rb'
 file 'pom.xml' => 'lib/pacer/version.rb' do

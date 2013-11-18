@@ -7,7 +7,6 @@ group :development do
   gem 'rspec', '~> 2.10.0'
   gem 'rr', '~> 1.0'
   gem 'simplecov'
-  gem 'yard'
   gem 'rake'
 
   # pacer-* gems are required for testing pacer.
