@@ -236,6 +236,16 @@ module Pacer
       @open_graphs
     end
 
+    def close_all_open_graphs
+      open_graphs.each do |path, graph|
+        begin
+          graph.shutdown
+        rescue Exception, StandardError => e
+          puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
+        end
+      end
+    end
+
     # Used internally to collect debug information while using
     # {#debug_pipe}
     attr_accessor :debug_source
@@ -246,12 +256,5 @@ module Pacer
 end
 
 at_exit do
-  # Close all open graphs
-  Pacer.open_graphs.each do |path, graph|
-    begin
-      graph.shutdown
-    rescue Exception, StandardError => e
-      puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
-    end
-  end
+  Pacer.close_all_open_graphs
 end
