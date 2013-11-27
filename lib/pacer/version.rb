@@ -1,6 +1,6 @@
 module Pacer
   unless const_defined? :VERSION
-    VERSION = "1.4.1"
+    VERSION = "1.4.2"
 
     JAR = "pacer-#{ VERSION }-standalone.jar"
     JAR_PATH = "lib/#{ JAR }"
