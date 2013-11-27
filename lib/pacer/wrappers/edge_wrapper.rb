@@ -46,27 +46,13 @@ module Pacer::Wrappers
     # The incoming vertex for this edge.
     # @return [Pacer::Wrappers::VertexWrapper]
     def in_vertex(extensions = nil)
-      v = element.getVertex Pacer::Pipes::IN
-      if extensions.is_a? Enumerable
-        self.class.base_vertex_wrapper.wrapper_for(extensions).new graph, v
-      elsif extensions
-        self.class.base_vertex_wrapper.wrapper_for([extensions]).new graph, v
-      else
-        self.class.base_vertex_wrapper.new graph, v
-      end
+      wrap_vertex element.getVertex(Pacer::Pipes::IN), extensions
     end
 
     # The outgoing vertex for this edge.
     # @return [Pacer::Wrappers::VertexWrapper]
     def out_vertex(extensions = nil)
-      v = element.getVertex Pacer::Pipes::OUT
-      if extensions.is_a? Enumerable
-        self.class.base_vertex_wrapper.wrapper_for(extensions).new graph, v
-      elsif extensions
-        self.class.base_vertex_wrapper.wrapper_for([extensions]).new graph, v
-      else
-        self.class.base_vertex_wrapper.new graph, v
-      end
+      wrap_vertex element.getVertex(Pacer::Pipes::OUT), extensions
     end
 
     # This method must be defined here rather than in the superclass in order
@@ -219,6 +205,22 @@ module Pacer::Wrappers
         element.payload = data
       else
         @element = Pacer::Payload::Edge.new element, data
+      end
+    end
+
+    private
+
+    def wrap_vertex(v, extensions)
+      if extensions.is_a? Enumerable
+        if extensions.empty?
+          self.class.base_vertex_wrapper.new graph, v
+        else
+          self.class.base_vertex_wrapper.wrapper_for(extensions).new graph, v
+        end
+      elsif extensions
+        self.class.base_vertex_wrapper.wrapper_for([extensions]).new graph, v
+      else
+        self.class.base_vertex_wrapper.new graph, v
       end
     end
   end
