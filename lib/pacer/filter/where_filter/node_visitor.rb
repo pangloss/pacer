@@ -9,7 +9,7 @@ module Pacer
         import com.tinkerpop.pipes.filter.AndFilterPipe
         import com.tinkerpop.pipes.filter.OrFilterPipe
         import com.tinkerpop.pipes.filter.ObjectFilterPipe
-        import com.tinkerpop.gremlin.pipes.transform.PropertyPipe
+        import com.tinkerpop.pipes.transform.PropertyPipe
         import com.tinkerpop.pipes.transform.HasCountPipe
         NeverPipe = Pacer::Pipes::NeverPipe
         IdentityPipe = Pacer::Pipes::IdentityPipe
@@ -19,21 +19,22 @@ module Pacer
         UnaryTransformPipe = Pacer::Pipes::UnaryTransformPipe
         BlockFilterPipe = Pacer::Pipes::BlockFilterPipe
 
+        import com.tinkerpop.blueprints.Compare
         Filters = {
-          '==' => FilterPipe::Filter::EQUAL,
-          '='  => FilterPipe::Filter::EQUAL,
-          '!=' => FilterPipe::Filter::NOT_EQUAL,
-          '>'  => FilterPipe::Filter::GREATER_THAN,
-          '<'  => FilterPipe::Filter::LESS_THAN,
-          '>=' => FilterPipe::Filter::GREATER_THAN_EQUAL,
-          '<=' => FilterPipe::Filter::LESS_THAN_EQUAL
+          '==' => Compare::EQUAL,
+          '='  => Compare::EQUAL,
+          '!=' => Compare::NOT_EQUAL,
+          '>'  => Compare::GREATER_THAN,
+          '<'  => Compare::LESS_THAN,
+          '>=' => Compare::GREATER_THAN_EQUAL,
+          '<=' => Compare::LESS_THAN_EQUAL
         }
 
         ReverseFilters = Filters.merge(
-          '<'  => FilterPipe::Filter::GREATER_THAN,
-          '>'  => FilterPipe::Filter::LESS_THAN,
-          '<=' => FilterPipe::Filter::GREATER_THAN_EQUAL,
-          '>=' => FilterPipe::Filter::LESS_THAN_EQUAL
+          '<'  => Compare::GREATER_THAN,
+          '>'  => Compare::LESS_THAN,
+          '<=' => Compare::GREATER_THAN_EQUAL,
+          '>=' => Compare::LESS_THAN_EQUAL
         )
 
         COMPARATORS = %w[ == != > < >= <= ]

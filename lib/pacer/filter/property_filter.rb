@@ -69,7 +69,7 @@ module Pacer
   module Filter
     module PropertyFilter
       #import com.tinkerpop.pipes.filter.LabelCollectionFilterPipe
-      import com.tinkerpop.gremlin.pipes.filter.PropertyFilterPipe
+      import com.tinkerpop.pipes.filter.PropertyFilterPipe
 
       def filters=(f)
         if f.is_a? Filters

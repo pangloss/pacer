@@ -2,12 +2,12 @@ module Pacer::Core::Graph
 
   # Basic methods for routes that contain only vertices.
   module VerticesRoute
-    import com.tinkerpop.gremlin.pipes.transform.OutEdgesPipe
-    import com.tinkerpop.gremlin.pipes.transform.OutPipe
-    import com.tinkerpop.gremlin.pipes.transform.InEdgesPipe
-    import com.tinkerpop.gremlin.pipes.transform.InPipe
-    import com.tinkerpop.gremlin.pipes.transform.BothEdgesPipe
-    import com.tinkerpop.gremlin.pipes.transform.BothPipe
+    import com.tinkerpop.pipes.transform.OutEdgesPipe
+    import com.tinkerpop.pipes.transform.OutPipe
+    import com.tinkerpop.pipes.transform.InEdgesPipe
+    import com.tinkerpop.pipes.transform.InPipe
+    import com.tinkerpop.pipes.transform.BothEdgesPipe
+    import com.tinkerpop.pipes.transform.BothPipe
 
     # Extends the route with out edges from this route's matching vertices.
     #
@@ -219,7 +219,7 @@ module Pacer::Core::Graph
 
     # TODO: move id_pipe_class into the element_type object
     def id_pipe_class
-      com.tinkerpop.gremlin.pipes.transform.IdVertexPipe
+      com.tinkerpop.pipes.transform.IdVertexPipe
     end
   end
 end
