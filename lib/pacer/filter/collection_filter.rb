@@ -26,6 +26,7 @@ module Pacer
   module Filter
     module CollectionFilter
       import java.util.HashSet
+      import com.tinkerpop.blueprints.Contains
 
       include Pacer::Visitors::VisitsSection
 
@@ -33,24 +34,24 @@ module Pacer
 
       def except=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::NOT_CONTAINED_IN
+        @comparison = Contains::NOT_IN
       end
 
       def except_var=(var)
         @var = var
         self.section = var
-        @comparison = Pacer::Pipes::NOT_CONTAINED_IN
+        @comparison = Contains::NOT_IN
       end
 
       def only=(collection)
         self.collection = collection
-        @comparison = Pacer::Pipes::CONTAINED_IN
+        @comparison = Contains::IN
       end
 
       def only_var=(var)
         @var = var
         self.section = var
-        @comparison = Pacer::Pipes::CONTAINED_IN
+        @comparison = Contains::IN
       end
 
       protected
@@ -96,7 +97,7 @@ module Pacer
       end
 
       def inspect_class_name
-        if @comparison == Pacer::Pipes::NOT_CONTAINED_IN
+        if @comparison == Contains::NOT_IN
           'Except'
         else
           'Only'

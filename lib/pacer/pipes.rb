@@ -22,10 +22,6 @@ module Pacer
     EQUAL = Compare::EQUAL
     NOT_EQUAL = Compare::NOT_EQUAL
     #GREATER_THAN, LESS_THAN, GREATER_THAN_EQUAL, LESS_THAN_EQUAL
-
-    import com.tinkerpop.blueprints.Contains
-    CONTAINED_IN = Contains::IN
-    NOT_CONTAINED_IN = Contains::NOT_IN
   end
 
   import java.util.Iterator
