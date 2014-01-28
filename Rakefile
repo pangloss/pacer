@@ -20,7 +20,6 @@ file 'pom.xml' => 'lib/pacer/version.rb' do
         line.sub!(%r{<gem.version>.*</gem.version>}, "<gem.version>#{ Pacer::VERSION }</gem.version>")
         line.sub!(%r{<blueprints.version>.*</blueprints.version>}, "<blueprints.version>#{ Pacer::BLUEPRINTS_VERSION }</blueprints.version>")
         line.sub!(%r{<pipes.version>.*</pipes.version>}, "<pipes.version>#{ Pacer::PIPES_VERSION }</pipes.version>")
-        line.sub!(%r{<gremlin.version>.*</gremlin.version>}, "<gremlin.version>#{ Pacer::GREMLIN_VERSION }</gremlin.version>")
         f << line
       end
     end

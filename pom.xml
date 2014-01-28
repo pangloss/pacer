@@ -7,10 +7,9 @@
     <artifactId>pacer</artifactId>
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
     <properties>
-      <blueprints.version>2.4.0</blueprints.version>
+      <blueprints.version>2.5.0-SNAPSHOT</blueprints.version>
       <gem.version>1.5.0.pre</gem.version>
-      <pipes.version>2.4.0</pipes.version>
-      <gremlin.version>2.4.0</gremlin.version>
+      <pipes.version>2.5.0-SNAPSHOT</pipes.version>
     </properties>
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
     <version>${gem.version}</version>
@@ -40,12 +39,6 @@
             <groupId>com.tinkerpop</groupId>
             <artifactId>pipes</artifactId>
             <version>${pipes.version}</version>
-        </dependency>
-        <!-- MOAR GRAPH TRAVERSAL SUPPORT -->
-        <dependency>
-            <groupId>com.tinkerpop.gremlin</groupId>
-            <artifactId>gremlin-java</artifactId>
-            <version>${gremlin.version}</version>
         </dependency>
     </dependencies>
 
