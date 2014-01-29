@@ -113,7 +113,9 @@ module Pacer::Wrappers
     # standard ruby console representation of an instantiated object.
     # @return [String]
     def inspect
-      "#<#{ ["V[#{element_id}]", display_name].compact.join(' ') }>"
+      graph.read_transaction do
+        "#<#{ ["V[#{element_id}]", display_name].compact.join(' ') }>"
+      end
     end
 
     # Returns the display name of the vertex.

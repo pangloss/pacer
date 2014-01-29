@@ -308,32 +308,37 @@ HELP
         if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
           description
         else
-          Pacer.hide_route_elements do
-            count = 0
-            limit ||= Pacer.inspect_limit
-            results = collect do |v|
-              count += 1
-              return route.inspect if count > limit
-              v.inspect
-            end
-            if count > 0
-              lens = results.collect { |r| r.length }
-              max = lens.max
-              cols = (Pacer.columns / (max + 1).to_f).floor
-              cols = 1 if cols < 1
-              if cols == 1
-                template_part = ['%s']
-              else
-                template_part = ["%-#{max}s"]
+          graph.read_transaction do
+            Pacer.hide_route_elements do
+              count = 0
+              limit ||= Pacer.inspect_limit
+              results = collect do |v|
+                count += 1
+                if count > limit
+                  puts "Total: > #{ limit } (Pacer.inspect_limit)"
+                  return route.inspect
+                end
+                v.inspect
               end
-              template = (template_part * cols).join(' ')
-              results.each_slice(cols) do |row|
-                template = (template_part * row.count).join(' ') if row.count < cols
-                puts template % row
+              if count > 0
+                lens = results.collect { |r| r.length }
+                max = lens.max
+                cols = (Pacer.columns / (max + 1).to_f).floor
+                cols = 1 if cols < 1
+                if cols == 1
+                  template_part = ['%s']
+                else
+                  template_part = ["%-#{max}s"]
+                end
+                template = (template_part * cols).join(' ')
+                results.each_slice(cols) do |row|
+                  template = (template_part * row.count).join(' ') if row.count < cols
+                  puts template % row
+                end
               end
+              puts "Total: #{ count }"
+              description
             end
-            puts "Total: #{ count }"
-            description
           end
         end
       end

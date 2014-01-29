@@ -87,7 +87,9 @@ module Pacer::Wrappers
     # standard ruby console representation of an instantiated object.
     # @return [String]
     def inspect
-      "#<E[#{element_id}]:#{display_name}>"
+      graph.read_transaction do
+        "#<E[#{element_id}]:#{display_name}>"
+      end
     end
 
     # Returns the display name of the edge.
