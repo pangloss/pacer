@@ -6,6 +6,10 @@ module Pacer
       threadlocal_graph_info.fetch(:tx_depth, 0) > 0
     end
 
+    def in_read_transaction?
+      threadlocal_graph_info.fetch(:read_tx_depth, 0) > 0
+    end
+
     # Basic usage:
     #
     # graph.transaction do |commit, rollback|
@@ -44,6 +48,20 @@ module Pacer
         raise
       ensure
         finish_transaction!
+      end
+    end
+
+    def read_transaction
+      tgi = threadlocal_graph_info
+      read_tx_depth = tgi[:read_tx_depth] ||= 0
+      tgi[:read_tx_depth] += 1
+      # Blueprints auto-starts the transaction
+      yield
+    ensure
+      rtd = tgi[:read_tx_depth] -= 1
+      if rtd == 0 and tgi[:tx_depth] == 0 and blueprints_graph.is_a? TransactionalGraph
+        # rollback after the bottom read transaction (no changes outside a real transaction block should have been possible)
+        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
       end
     end
 
