@@ -89,6 +89,8 @@ module Pacer
         commit_implicit_transaction
       when :rollback
         rollback_implicit_transaction
+      else
+        fail Pacer::ClientError, "invalid value for #implicit_transaction: #{ implicit_transaction.inspect }"
       end
     end
 
