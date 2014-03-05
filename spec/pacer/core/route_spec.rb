@@ -68,7 +68,7 @@ describe Pacer::Core::Route do
       end
       specify '2 item limit' do
         Pacer.inspect_limit = 2
-        dont_allow(base_route).puts(anything)
+        mock(base_route).puts("Total: > 2 (Pacer.inspect_limit)")
         base_route.inspect.should == '#<Obj>'
       end
     end

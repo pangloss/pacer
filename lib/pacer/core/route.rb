@@ -308,7 +308,7 @@ HELP
         if Pacer.hide_route_elements or hide_elements or source_iterator.nil?
           description
         else
-          graph.read_transaction do
+          read_transaction do
             Pacer.hide_route_elements do
               count = 0
               limit ||= Pacer.inspect_limit
@@ -606,6 +606,15 @@ HELP
         s = "#{s} #{ info }" if info
         s
       end
+
+      def read_transaction(&block)
+        if graph
+          graph.read_transaction &block
+        else
+          yield
+        end
+      end
+
     end
   end
 end
