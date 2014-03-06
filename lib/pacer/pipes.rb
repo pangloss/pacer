@@ -32,6 +32,9 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
+require 'pacer/pipe/vertices_pipe'
+require 'pacer/pipe/edges_pipe'
+
 require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'

@@ -3,15 +3,11 @@ module Pacer::Core::Graph
   # This module adds route methods to the basic graph classes returned from the
   # blueprints library.
   module GraphRoute
-    import com.tinkerpop.pipes.transform.GraphQueryPipe
-
     # Returns a new route to all graph vertices. Standard filter options.
     def v(*filters, &block)
       filters = Pacer::Route.filters(self, filters)
       route = chain_route :element_type => :vertex,
-        # TODO - change to GraphQueryPipe
-        :pipe_class => GraphQueryPipe,
-        :pipe_args => [Pacer::Vertex.java_class],
+        :pipe_class => Pacer::Pipes::VerticesPipe,
         :route_name => 'GraphV'
       Pacer::Route.property_filter(route, filters, block)
     end
@@ -20,8 +16,7 @@ module Pacer::Core::Graph
     def e(*filters, &block)
       filters = Pacer::Route.edge_filters(self, filters)
       route = chain_route :element_type => :edge,
-        :pipe_class => GraphQueryPipe,
-        :pipe_args => [Pacer::Edge.java_class],
+        :pipe_class => Pacer::Pipes::EdgesPipe,
         :route_name => 'GraphE'
       Pacer::Route.property_filter(route, filters, block)
     end
