@@ -130,6 +130,12 @@ protected
               end
             end
           end
+        elsif graph and transactions and spec.use_read_transaction?
+          graph.read_transaction do
+            graph2.read_transaction do
+              spec.run
+            end
+          end
         else
           spec.run
         end

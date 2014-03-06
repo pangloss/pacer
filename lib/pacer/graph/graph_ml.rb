@@ -17,8 +17,10 @@ module Pacer
       rescue java.net.MalformedURLException
         stream = java.io.FileInputStream.new path
       end
-      graph.send :creating_elements do
-        com.tinkerpop.blueprints.util.io.graphml.GraphMLReader.input_graph graph.blueprints_graph, stream
+      graph.transaction(nesting: true) do
+        graph.send :creating_elements do
+          com.tinkerpop.blueprints.util.io.graphml.GraphMLReader.input_graph graph.blueprints_graph, stream
+        end
       end
       true
     ensure

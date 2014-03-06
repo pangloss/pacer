@@ -6,6 +6,10 @@ module RSpec
           find_metadata(metadata, :transactions) != false
         end
 
+        def use_read_transaction?
+          find_metadata(metadata, :read_transaction) != false
+        end
+
         def find_metadata(hash, key)
           return unless hash.is_a? Hash
           if hash.key? key

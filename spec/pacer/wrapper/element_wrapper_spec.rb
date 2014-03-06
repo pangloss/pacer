@@ -91,7 +91,7 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
     it { should be_a(Pacer::Wrappers::EdgeWrapper) }
     it { should_not be_a(Pacer::Wrappers::VertexWrapper) }
 
-    describe '#e', :transactions => false do
+    describe '#e', :transactions => false, read_transaction: true do
       context '()' do
         subject { e0.e }
         its(:to_a) { should == [e0] }
@@ -124,7 +124,7 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
       end
     end
 
-    describe '#eql?', :transactions => false do
+    describe '#eql?', :transactions => false, read_transaction: true do
       subject { Hash.new(0) }
       before do
         subject[e0] += 1
@@ -223,7 +223,7 @@ shared_examples_for Pacer::Wrappers::ElementWrapper do
       end
     end
 
-    describe '#result', :transactions => false do
+    describe '#result', :transactions => false, read_transaction: true do
       subject { element.result }
       it { should equal(element) }
     end
@@ -287,22 +287,22 @@ end
 
 Run.all do
   it_uses Pacer::Wrappers::ElementWrapper do
-    let(:v0) { graph.create_vertex :name => 'eliza' }
-    let(:v1) { graph.create_vertex :name => 'darrick' }
-    let(:e0) { graph.create_edge nil, v0, v1, :links }
-    let(:e1) { graph.create_edge nil, v0, v1, :relinks }
+    let(:v0) { graph.transaction(nesting: true) { graph.create_vertex :name => 'eliza' } }
+    let(:v1) { graph.transaction(nesting: true) { graph.create_vertex :name => 'darrick' } }
+    let(:e0) { graph.transaction(nesting: true) { graph.create_edge nil, v0, v1, :links } }
+    let(:e1) { graph.transaction(nesting: true) { graph.create_edge nil, v0, v1, :relinks } }
   end
 
   context 'vertex' do
-    let(:v0) { graph.create_vertex :name => 'eliza' }
+    let(:v0) { graph.transaction(nesting: true) { graph.create_vertex :name => 'eliza' } }
     subject { v0 }
     its(:class) { should == graph.base_vertex_wrapper  }
   end
 
   context 'edge' do
-    let(:v0) { graph.create_vertex :name => 'eliza' }
-    let(:v1) { graph.create_vertex :name => 'darrick' }
-    let(:e0) { graph.create_edge nil, v0, v1, :links }
+    let(:v0) { graph.transaction(nesting: true) { graph.create_vertex :name => 'eliza' } }
+    let(:v1) { graph.transaction(nesting: true) { graph.create_vertex :name => 'darrick' } }
+    let(:e0) { graph.transaction(nesting: true) { graph.create_edge nil, v0, v1, :links } }
     subject { e0 }
     its(:class) { should == graph.base_edge_wrapper }
   end
@@ -312,10 +312,10 @@ Run.all do
   # that wrappers act the same as native elements
   describe 'wrapped elements' do
     it_uses Pacer::Wrappers::ElementWrapper do
-      let(:v0) { graph.create_vertex(Tackle::SimpleMixin, :name => 'eliza') }
-      let(:v1) { graph.create_vertex(Tackle::SimpleMixin, :name => 'darrick') }
-      let(:e0) { graph.create_edge nil, v0, v1, :links, Tackle::SimpleMixin }
-      let(:e1) { graph.create_edge nil, v0, v1, :relinks, Tackle::SimpleMixin }
+      let(:v0) { graph.transaction(nesting: true) { graph.create_vertex(Tackle::SimpleMixin, :name => 'eliza') } }
+      let(:v1) { graph.transaction(nesting: true) { graph.create_vertex(Tackle::SimpleMixin, :name => 'darrick') } }
+      let(:e0) { graph.transaction(nesting: true) { graph.create_edge nil, v0, v1, :links, Tackle::SimpleMixin } }
+      let(:e1) { graph.transaction(nesting: true) { graph.create_edge nil, v0, v1, :relinks, Tackle::SimpleMixin } }
     end
   end
 end
