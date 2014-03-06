@@ -178,14 +178,14 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
     before { pending 'support temporary hash indices for clone/copy' unless graph.features.supportsIndices }
     let(:dest) { graph2 }
   }) do
-    describe '#clone_into', :transactions => false do
-      subject { v0.clone_into(dest) }
+    describe '#clone_into', :transactions => false, read_transaction: true do
+      subject { dest.transaction { v0.clone_into(dest) } }
       its(:properties) { should == { 'name' => 'eliza' } }
       its(:graph) { should equal(dest) }
       its('element_id.to_s') { should == v0.element_id.to_s unless graph.features.ignoresSuppliedIds }
     end
 
-    describe '#copy_into', :transaction => false do
+    describe '#copy_into', :transaction => false, read_transaction: true do
       subject { v1.copy_into(dest) }
       its(:properties) { should == { 'name' => 'darrick' } }
       its(:graph) { should equal(dest) }
@@ -205,7 +205,7 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
   end
   it { should_not == v1 }
   it { should == v0 }
-  context 'edge with same element id', :transactions => false do
+  context 'edge with same element id', :transactions => false, read_transaction: true do
     it { should_not == e0 }
   end
 
