@@ -47,10 +47,10 @@ module Pacer::Pipes
         if has_next
           element = looping_pipe.next
           depth = (expando.metadata || 0) + 1
-          set_next_path! looping_pipe if pathEnabled
+          self.next_path = looping_pipe.getCurrentPath if pathEnabled
         else
           element = starts.next
-          set_next_path! starts if pathEnabled
+          self.next_path = starts.getCurrentPath if pathEnabled
           depth = 0
         end
         wrapped = wrapper.new(graph, element)
@@ -75,15 +75,6 @@ module Pacer::Pipes
           expando.add element, depth, next_path
           return element
         end
-      end
-    end
-
-    def set_next_path!(source)
-      path = source.getCurrentPath
-      if path.first.is_a? BlueprintsGraph
-        self.next_path = ArrayList.new path.subList(1, path.length)
-      else
-        self.next_path = path
       end
     end
 
