@@ -30,12 +30,14 @@ module NeoSpec
 
     describe 'indexed' do
       before do
-        graph.create_key_index :type, :vertex
-        graph.create_key_index :name, :vertex
+        # TODO FIXME: why do the presence of these key indices break lots of
+        # subsequent tests if they are on graph rather than graph2?
+        graph2.create_key_index :type, :vertex
+        graph2.create_key_index :name, :vertex
       end
 
       describe Person do
-        subject { graph.v(Person) }
+        subject { graph2.v(Person) }
 
         # sanity checks
         it { should be_a Pacer::Filter::LuceneFilter }
@@ -47,7 +49,7 @@ module NeoSpec
       end
 
       describe Frog do
-        subject { graph.v(Frog) }
+        subject { graph2.v(Frog) }
 
         # sanity checks
         it { should_not be_a Pacer::Filter::LuceneFilter }
