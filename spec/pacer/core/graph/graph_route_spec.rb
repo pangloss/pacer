@@ -31,15 +31,19 @@ Run.all(:read_only, false) do
 
     context 'with vertex name indexed' do
       before :all do
-        graph.transaction do
-          graph.v.build_index :name if graph
+        if graph
+          graph.transaction do
+            graph.v.build_index :name
+          end
+          graph.search_manual_indices = true
         end
-        graph.search_manual_indices = true if graph
       end
 
       after :all do
-        graph.transaction do
-          graph.drop_index :name if graph
+        if graph
+          graph.transaction do
+            graph.drop_index :name
+          end
         end
       end
 
