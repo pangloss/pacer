@@ -65,6 +65,10 @@ module Pacer
       end
     end
 
+    def reopen_read_transaction
+      # override this implementation-specific hook if needed (see pacer-neo4j)
+    end
+
     # Set this to true if you don't want to use transactions.
     #
     # By default, transactions are enabled.
@@ -155,11 +159,13 @@ module Pacer
         end
         puts "transaction committed" if Pacer.verbose == :very
         blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+        reopen_read_transaction
         on_commit_block.call if on_commit_block
       end
       rollback = ->(message = nil) do
         puts ["transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
         blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+        reopen_read_transaction
       end
       [commit, rollback]
     end

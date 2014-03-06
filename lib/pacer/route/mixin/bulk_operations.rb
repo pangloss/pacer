@@ -19,33 +19,34 @@ module Pacer::Routes
     # +size+ records.
     def bulk_job(size = nil, target_graph = nil, pre_commit = nil)
       target_graph ||= graph
-      if target_graph and not target_graph.in_bulk_job?
-        begin
-          target_graph.in_bulk_job = true
-          size ||= target_graph.bulk_job_size
-          counter = 0
-          target_graph.transaction(nesting: true) do |commit, rollback|
+      graph.read_transaction do
+        if target_graph and not target_graph.in_bulk_job?
+          begin
+            target_graph.in_bulk_job = true
+            size ||= target_graph.bulk_job_size
+            counter = 0
             print "Bulk job ->" if Pacer.verbose?
             each_slice(size) do |slice|
-              print " #{counter}" if Pacer.verbose?
-              counter += size
-              slice.each do |element|
-                yield element
+              target_graph.transaction(nesting: true) do
+                print " #{counter}" if Pacer.verbose?
+                counter += size
+                slice.each do |element|
+                  yield element
+                end
+                pre_commit.call if pre_commit
               end
-              pre_commit.call if pre_commit
-              commit.call
             end
+          ensure
+            puts '!' if Pacer.verbose?
+            target_graph.in_bulk_job = false
           end
-        ensure
-          puts '!' if Pacer.verbose?
-          target_graph.in_bulk_job = false
+        elsif target_graph
+          each do |element|
+            yield element
+          end
+        else
+          raise 'No graph in route for bulk job'
         end
-      elsif target_graph
-        each do |element|
-          yield element
-        end
-      else
-        raise 'No graph in route for bulk job'
       end
     end
   end
