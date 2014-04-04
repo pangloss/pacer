@@ -80,6 +80,7 @@ require 'pacer/filter/object_filter'
 require 'pacer/filter/random_filter'
 require 'pacer/filter/limit_section_filter'
 
+require 'pacer/transform/identity'
 require 'pacer/transform/branch'
 require 'pacer/transform/cap'
 require 'pacer/transform/stream_sort'

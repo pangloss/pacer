@@ -25,9 +25,10 @@ module Pacer
       # a pattern may be nested to varying depths.
       def repeat(arg, &block)
         case arg
+        when 0
+          identity
         when Fixnum
-          range = arg..arg
-          arg.to_enum(:times).inject(self) do |route_end, count|
+          (0...arg).inject(self) do |route_end, count|
             yield route_end
           end
         when Range
@@ -52,6 +53,16 @@ module Pacer
         else
           fail ArgumentError, "Invalid repeat range"
         end
+      end
+
+      def breadth_first(opts = {}, &block)
+        min_depth = opts.fetch :min_depth, 0
+        max_depth = opts.fetch :max_depth, 10
+        (min_depth..max_depth).reduce(self) do |route, depth|
+          route.branch do |b|
+            b.repeat depth, &block
+          end
+        end.merge_exhaustive
       end
     end
   end
