@@ -37,8 +37,6 @@ module Pacer
     Enumerator = Enumerable::Enumerator
   end
 
-  require JAR
-
   require 'pacer/loader'
 
   class << self

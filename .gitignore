@@ -11,6 +11,8 @@ doc
 # bundler
 .bundle
 Gemfile.lock
+.jbundler
+bin...
 
 # jeweler generated
 pkg
