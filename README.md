@@ -57,20 +57,31 @@ compatible with Pacer, but I have not yet implemented the simple
 adapters Pacer needs to use them yet. Here is the list of what's
 supported so far:
 
- * TinkerGraph - In-memory graph db, built in and ready to use without
-   additional dependencies.
- * [Neo4J](http://neo4j.org) - The industry-leading graph db. `gem
-   install pacer-neo4j`
-   [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j)
- * [Dex](http://sparsity-technologies.com) - A very fast, relatively new graph db. `gem
-   install pacer-dex`
-   [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)
+| Graph                                          | Info                                     | Gem Required              | Gem address                                                     |
+|------------------------------------------------|------------------------------------------|---------------------------|-----------------------------------------------------------------|
+| TinkerGraph                                    | In-memory graph db. Included with Pacer. |                           |                                                                 |
+| [Neo4J](http://neo4j.org)                      | The industry-leading graph db.           | `gem install pacer-neo4j` | [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j) |
+| [Dex](http://sparsity-technologies.com)        | A very fast, relatively new graph db.    | `gem install pacer-dex`   | [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)     |
+| [Titan](http://thinkaurelius.github.io/titan/) | Built on top of a pluggable nosql backend store | `gem install pacer-titan` | [pacer-titan](https://github.com/mrbotch/pacer-titan)           |
+
+
 
 You can run any or all of the above graph databases. Pacer supports
 running them simultaneuosly and even supports having many of any given
 type open at once.
 
-### Interoperation with the neo4j gem
+### Using Pacer with Neo4j
+
+All you need is the [pacer-neo4j](https://github.com/pangloss/pacer-neo4j) gem.
+
+```ruby
+    require 'pacer-neo4j'
+    graph = Pacer.neo4j("path/to/graph")
+```
+
+See the gem repository for more details on Neo4j-specific features and functionality.
+
+#### (optional) Interoperation with the neo4j gem
 
 Pacer can work together with other Ruby GraphDB libraries, too. The
 first functioning example is with theo neo4j gem. Hopefully more will
@@ -82,6 +93,7 @@ as follows:
 ```ruby
     require 'neo4j'
     require 'pacer-neo4j'
+    # start neo4j via the external gem rather than using pacer-neo4j
     Neo4j.db.start
     graph = Pacer.neo4j(Neo4j.db.graph)
 ```
