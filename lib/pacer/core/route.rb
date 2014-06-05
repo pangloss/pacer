@@ -430,6 +430,8 @@ HELP
           self
         elsif @back
           @back.get_section_route(name)
+        elsif @empty_back
+          @empty_back.get_section_route(name)
         else
           raise ArgumentError, "Section #{ name } not found"
         end

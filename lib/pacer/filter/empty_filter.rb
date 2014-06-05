@@ -52,6 +52,7 @@ module Pacer
       protected
 
       def after_initialize
+        @empty_back = @back
         @back = @source = nil
         super
       end
