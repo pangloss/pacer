@@ -75,7 +75,11 @@ module Pacer::Wrappers
     # @yield [v] Optional block yields the vertex with the extensions added.
     # @return nil or the result of the block or the extended vertex
     def as(*exts)
-      if as?(*exts)
+      if exts.length == 1 and not exts.first.is_a?(Module) and not exts.first.is_a?(Class) and exts.first
+        # NB: oops, I defined route#as to be the same as route#section. If the signature is
+        #     matching the section method, then defer to it.
+        section *exts
+      elsif as?(*exts)
         exts_to_add = extensions_missing(exts)
         extended = exts_to_add.empty? ? self : add_extensions(exts_to_add)
         if block_given?
