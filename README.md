@@ -2,8 +2,8 @@
 
 Pacer is a JRuby library that enables very expressive graph traversals.
 
-It currently supports 2 major graph database: [Neo4j](http://neo4j.org)
-and [Dex](http://www.sparsity-technologies.com/dex) using the
+It currently supports all of the major graph databases including [Neo4j](http://neo4j.org)
+and [Dex](http://www.sparsity-technologies.com/dex) thanks to the
 [Tinkerpop](http://tinkerpop.com) graphdb stack. Plus there's a very
 convenient in-memory graph called TinkerGraph which is part of
 [Blueprints](http://blueprints.tinkerpop.com).
@@ -17,19 +17,21 @@ it's very fast!
 
 ## Mailing List
 
-With the release of 0.8.1, I just set up a brand new [pacer google
-group](http://groups.google.com/group/pacer-users?lnk=gcimv). Join and
-let's get the conversation going!
+Pacer has a [google group](http://groups.google.com/group/pacer-users?lnk=gcimv)! Join and feel free to ask questions and discuss about Pacer or graphs in general.
 
 ## Documentation
 
-Pacer is documented with a comprehensive RSpec test suite and with a
+Check out the [wiki](https://github.com/pangloss/pacer/wiki) for detailed explanations of many of Pacer's features. Please contribute to it or open issues against it if there is anything missing that you want to see.
+
+Pacer is also documented with a comprehensive RSpec test suite and with a
 thorough YARD documentation. [Dig in!](http://rubydoc.info/github/pangloss/pacer/develop/frames)
 
 If you like, you can also use the documentation locally via
 
+```
   gem install yard
   yard server
+```
 
 ## JRuby 1.7 Required
 
