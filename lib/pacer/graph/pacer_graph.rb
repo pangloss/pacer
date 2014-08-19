@@ -204,7 +204,7 @@ module Pacer
     end
 
     def features
-      blueprints_graph.features
+      blueprints_graph.getFeatures
     end
 
     def inspect
