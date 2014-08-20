@@ -122,15 +122,17 @@ module Pacer::Wrappers
     # @param [#to_s] key the property name
     # @param [Object] value the value to set the property to
     def []=(key, value)
-      value = graph.encode_property(value)
+      begin
+        value = graph.encode_property(value)
+      rescue Exception => e
+        throw Pacer::ClientError.new "Unable to serialize #{ key }: #{ value.class }"
+      end
       key = key.to_s
       if value
         element.setProperty(key, value)
       else
         element.removeProperty(key)
       end
-    rescue Exception => e
-      throw Pacer::ClientError.new "Unable to serialize #{ key }: #{ value.class }"
     end
 
     # Specialize result to return self for elements.
