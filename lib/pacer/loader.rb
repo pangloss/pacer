@@ -53,7 +53,6 @@ require 'pacer/blueprints/group_vertex'
 
 require 'pacer/blueprints/payload_elements'
 
-require 'pacer/support/array'
 require 'pacer/support/array_list'
 require 'pacer/support/enumerable'
 require 'pacer/support/proc'
