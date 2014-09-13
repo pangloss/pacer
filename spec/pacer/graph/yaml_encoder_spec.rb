@@ -39,7 +39,7 @@ describe Pacer::YamlEncoder do
     end
 
     specify 'dates are custom to enable range queries' do
-      subject[:time].should =~ /^ time \d/
+      subject[:time].should =~ /^ utcT \d/
     end
 
     specify 'everything else should be yaml' do
