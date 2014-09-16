@@ -21,8 +21,17 @@ module Pacer
         end
       when true, false
         value.to_java
-      when DateTime, Time, Date
-        value.strftime ' time %Y-%m-%d %H:%M:%S.%L %z'
+      when DateTime
+        # rfc3339 drops the millisecond
+        value.new_offset(0).strftime ' utcT %Y-%m-%d %H:%M:%S.%L'
+      when Time
+        if value.utc?
+          value.getutc.strftime ' utcT %Y-%m-%d %H:%M:%S.%L'
+        else
+          value.strftime ' time %Y-%m-%d %H:%M:%S.%L %z'
+        end
+      when Date
+        value.strftime ' date %Y-%m-%d'
       when Array
         if value.length == 0
           value_type = Fixnum
@@ -55,9 +64,14 @@ module Pacer
 
     def self.decode_property(value)
       if value.is_a? String and value[0, 1] == ' '
-        if value[1, 4] == 'time'
+        marker = value[1, 4]
+        if marker == 'utcT'
           # FIXME: we lose the milliseconds here...
-          Time.parse value[6..-1]
+          DateTime.parse(value[6..-1]).to_time.utc
+        elsif marker == 'time'
+          DateTime.parse(value[6..-1]).to_time
+        elsif marker == 'date'
+          Date.parse(value[6..-1])
         else
           YAML.load(value[1..-1])
         end
