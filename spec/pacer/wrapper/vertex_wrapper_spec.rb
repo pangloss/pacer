@@ -178,6 +178,9 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
     before { pending 'support temporary hash indices for clone/copy' unless graph.features.supportsIndices }
     let(:dest) { graph2 }
   }) do
+    before do
+      graph.transaction(nesting: true) { setup_data }
+    end
     describe '#clone_into', :transactions => false, read_transaction: true do
       subject { dest.transaction { v0.clone_into(dest) } }
       its(:properties) { should == { 'name' => 'eliza' } }
@@ -192,7 +195,7 @@ shared_examples_for Pacer::Wrappers::VertexWrapper do
     end
   end
 
-  subject { v0 }
+  subject { graph.transaction(nesting: true) { setup_data; v0 } }
   its(:graph) { should equal(graph) }
   its(:display_name) { should be_nil }
   its(:inspect) { should =~ /#<[VM]\[#{Regexp.quote v0.element_id.to_s }\]>/ }
