@@ -275,8 +275,6 @@ Run.all :read_write do
         c.call if c
       end
       it 'should only find valid edges' do
-        # FIXME: It can't find the tempids. Don't know why I'm not getting the actual ID for e0 even after commit.
-        return if graph_name == 'orient'
         graph.load_edges([e0.element_id.to_s, nil, e0.element_id, 'missing']).should == [e0, e0]
       end
     end
