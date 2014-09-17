@@ -61,7 +61,7 @@ module Pacer
       rtd = tgi[:read_tx_depth] -= 1
       if rtd == 0 and tgi[:tx_depth] == 0 and blueprints_graph.is_a? TransactionalGraph
         # rollback after the bottom read transaction (no changes outside a real transaction block should have been possible)
-        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+        blueprints_graph.rollback
       end
     end
 
@@ -99,11 +99,11 @@ module Pacer
     end
 
     def rollback_implicit_transaction
-      blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+      blueprints_graph.rollback
     end
 
     def commit_implicit_transaction
-      blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+      blueprints_graph.commit
     end
 
     attr_reader :on_commit_block
@@ -158,13 +158,13 @@ module Pacer
           fail InternalError, 'Can not commit transaction outside its original block'
         end
         puts "transaction committed" if Pacer.verbose == :very
-        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::SUCCESS
+        blueprints_graph.commit
         reopen_read_transaction
         on_commit_block.call if on_commit_block
       end
       rollback = ->(message = nil) do
         puts ["transaction rolled back", message].compact.join(': ') if Pacer.verbose == :very
-        blueprints_graph.stopTransaction TransactionalGraph::Conclusion::FAILURE
+        blueprints_graph.rollback
         reopen_read_transaction
       end
       [commit, rollback]
