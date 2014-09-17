@@ -130,8 +130,8 @@ describe Pacer::Wrappers::EdgeWrapper do
     end
 
     it 'should change the label' do
-      new_e = e0.reverse! label: 'hello!!'
-      new_e.label.should == 'hello!!'
+      new_e = e0.reverse! label: 'hello_there'
+      new_e.label.should == 'hello_there'
     end
 
     it 'should reuse the element id' do

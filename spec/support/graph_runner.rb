@@ -130,7 +130,7 @@ protected
                 end
                 begin
                   g2_rollback.call #rescue nil
-                rescue Pacer::NestedTransactionRollback, Pacer::NestedMockTransactionRollback
+                rescue Pacer::MockTransactionRollback, Pacer::NestedTransactionRollback, Pacer::NestedMockTransactionRollback
                 end
               end
             end

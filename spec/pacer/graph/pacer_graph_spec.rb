@@ -170,12 +170,16 @@ Run.all :read_write do
 
     describe '#create_edge' do
       let(:use_id) { rand 1000000 }
-      let(:from) { graph.vertex v0.element_id }
-      let(:to) { graph.vertex v1.element_id }
+      let(:from) { v0 }
+      let(:to) { v1 }
 
       before do
         c = example.metadata[:graph_commit]
         c.call if c
+      end
+
+      it 'should find the vertex' do
+        graph.vertex(v0.element_id).should == v0
       end
 
       context 'existing' do

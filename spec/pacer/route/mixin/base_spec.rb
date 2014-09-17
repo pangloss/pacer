@@ -16,10 +16,10 @@ Run.all do
         it { should be_nil }
       end
 
-      describe '#iterator' do
+      describe '#pipe' do
         use_simple_graph_data
         before { setup_data }
-        subject { graph.v.send(:iterator) }
+        subject { graph.v.pipe }
         its(:next) { should_not be_nil }
       end
     end
