@@ -51,6 +51,8 @@ module Pacer
       end
     end
 
+    alias tx transaction
+
     def read_transaction
       tgi = threadlocal_graph_info
       read_tx_depth = tgi[:read_tx_depth] ||= 0
