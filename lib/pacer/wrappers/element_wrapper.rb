@@ -128,10 +128,10 @@ module Pacer::Wrappers
         throw Pacer::ClientError.new "Unable to serialize #{ key }: #{ value.class }"
       end
       key = key.to_s
-      if value
-        element.setProperty(key, value)
-      else
+      if value.nil?
         element.removeProperty(key)
+      else
+        element.setProperty(key, value)
       end
     end
 
