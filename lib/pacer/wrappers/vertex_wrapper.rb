@@ -239,7 +239,9 @@ module Pacer::Wrappers
       labels = Set[]
       exts = []
       mixed.each do |obj|
-        if obj.is_a? Symbol or obj.is_a? String
+        if obj.is_a? Symbol
+          labels << obj.to_s
+        elsif obj.is_a? String
           labels << obj
         else
           exts << obj
