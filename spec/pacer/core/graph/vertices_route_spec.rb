@@ -6,9 +6,11 @@ Run.all(:read_write) do
   describe '#property?' do
     before do
       setup_data
-      graph.create_vertex other: 'hi'
-      graph.create_vertex falsy: false
-      graph.create_vertex zero: 0
+      graph.transaction do
+        graph.create_vertex other: 'hi'
+        graph.create_vertex falsy: false
+        graph.create_vertex zero: 0
+      end
     end
 
     it 'should filter vertices that do not have the given property' do

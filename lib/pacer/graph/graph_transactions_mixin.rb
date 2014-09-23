@@ -41,7 +41,7 @@ module Pacer
       commit, rollback = start_transaction! opts
       begin
         r = yield commit, rollback
-        commit.call
+        commit.call(false)
         r
       rescue Exception => e
         rollback.call e.message
@@ -122,6 +122,7 @@ module Pacer
       graphs[blueprints_graph.object_id] ||= {}
     end
 
+    # NOTE pacer-orient reimplements this
     def start_transaction!(opts)
       tgi = threadlocal_graph_info
       tx_depth = tgi[:tx_depth] ||= 0
@@ -149,18 +150,21 @@ module Pacer
       end
     end
 
+    # NOTE pacer-orient reimplements this
     def finish_transaction!
       threadlocal_graph_info[:tx_depth] -= 1 rescue nil
     end
 
+    # NOTE pacer-orient reimplements this
     def base_tx_finalizers
       tx_id = threadlocal_graph_info[:tx_id] = rand
-      commit = -> do
+      commit = ->(reopen = true) do
         if tx_id != threadlocal_graph_info[:tx_id]
           fail InternalError, 'Can not commit transaction outside its original block'
         end
         puts "transaction committed" if Pacer.verbose == :very
         blueprints_graph.commit
+        # reopen arg is ignored for graphs that automatically open their tx.
         reopen_read_transaction
         on_commit_block.call if on_commit_block
       end
@@ -173,7 +177,7 @@ module Pacer
     end
 
     def nested_tx_finalizers
-      commit = -> do
+      commit = ->(reopen = true) do
         puts "nested transaction committed (noop)" if Pacer.verbose == :very
       end
       rollback = ->(message = 'Transaction Rolled Back') do
@@ -187,7 +191,7 @@ module Pacer
     end
 
     def mock_base_tx_finalizers
-      commit = -> do
+      commit = ->(reopen = true) do
         puts "mock transaction committed" if Pacer.verbose == :very
         on_commit_block.call if on_commit_block
       end
@@ -202,7 +206,7 @@ module Pacer
     end
 
     def mock_nested_tx_finalizers
-      commit = -> do
+      commit = ->(reopen = true) do
         puts "nested transaction committed (noop)" if Pacer.verbose == :very
       end
       rollback = ->(message = nil) do
