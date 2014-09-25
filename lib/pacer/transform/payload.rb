@@ -41,7 +41,8 @@ module Pacer::Transform
 
       def getPathToHere
         path = super
-        path.remove path.size - 1
+        i = path.size - 1
+        path.remove path.size - 1 if i >= 0
         path.add currentEnd
         path
       end
