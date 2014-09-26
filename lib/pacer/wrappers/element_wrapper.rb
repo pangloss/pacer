@@ -189,6 +189,13 @@ module Pacer::Wrappers
       element.payload if element.is_a? Pacer::Payload::Element
     end
 
+    def reload
+      if element.respond_to? :reload
+        element.reload
+      end
+      self
+    end
+
     protected
 
     def after_initialize
