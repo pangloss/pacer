@@ -367,6 +367,7 @@ module Pacer
 
     module KeyIndices
       def create_key_index(name, type = :vertex, opts = {})
+        return if key_indices(type).include? name.to_s
         params = build_key_index_parameters_from opts
         if features.supportsKeyIndices
           if element_type(type) == :vertex and features.supportsVertexKeyIndex
