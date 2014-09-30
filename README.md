@@ -62,6 +62,7 @@ supported so far:
 | Graph                                          | Info                                     | Gem Required              | Gem address                                                     |
 |------------------------------------------------|------------------------------------------|---------------------------|-----------------------------------------------------------------|
 | TinkerGraph                                    | In-memory graph db. Included with Pacer. |                           |                                                                 |
+| [OrientDB](http://orientdb.com)                | A powerful and feature rich graph / document hybrid database.           | `gem install --pre pacer-orient` | [pangloss/pacer-orient](https://github.com/pangloss/pacer-orient) |
 | [Neo4J](http://neo4j.org)                      | The industry-leading graph db.           | `gem install pacer-neo4j` | [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j) |
 | [Dex](http://sparsity-technologies.com)        | A very fast, relatively new graph db.    | `gem install pacer-dex`   | [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)     |
 | [Titan](http://thinkaurelius.github.io/titan/) | Built on top of a pluggable nosql backend store | `gem install pacer-titan` | [pacer-titan](https://github.com/mrbotch/pacer-titan)           |
