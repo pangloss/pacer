@@ -6,7 +6,7 @@ Run.all(:read_write) do
   describe '#property?' do
     before do
       setup_data
-      graph.transaction do
+      graph.transaction(nesting: true) do
         graph.create_vertex other: 'hi'
         graph.create_vertex falsy: false
         graph.create_vertex zero: 0
