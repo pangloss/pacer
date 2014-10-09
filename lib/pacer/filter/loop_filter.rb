@@ -6,8 +6,9 @@ module Pacer
       end
 
       def all(opts = {}, &block)
+        include_self = opts[:include_self]
         loop(opts, &block).while do |e, depth|
-          if depth == 0
+          if depth == 0 and not include_self
             :loop
           else
             :loop_and_recur
