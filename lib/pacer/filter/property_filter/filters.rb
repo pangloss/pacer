@@ -69,6 +69,27 @@ module Pacer
           @non_ext_props = []
           @best_index_value = nil
           add_filters filters, nil
+          combine_sets
+        end
+
+        def combine_sets
+          is_set = properties.group_by { |p| p[1].is_a? Set }
+          sets = is_set[true] # [["x", Set[]] ...]
+          if sets
+            is_multi = sets.group_by { |a| a.count > 1 }
+            multi = is_multi[true]
+            if multi
+              multi = multi.group_by { |m| m.first } # {"x": [["x", Set[]], ...]}
+              result = multi.map do |multi_set|
+                multi_set[1].reduce do |result, pair|
+                  [result[0], result[1].intersection(pair[1])]
+                end
+              end
+              result = result.concat(is_multi[false]) if is_multi[false]
+              result = result.concat(is_set[false]) if is_set[false]
+              @properties = result
+            end
+          end
         end
 
         # Set which graph this filter is currently operating on
@@ -205,7 +226,6 @@ module Pacer
           when Hash
             reset_properties
             filter.each do |k, v|
-              v = v.first if v.is_a? Set and v.length == 1
               self.non_ext_props << [k.to_s, v] unless extension
               self.properties << [k.to_s, v]
             end
