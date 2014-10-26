@@ -60,7 +60,12 @@ module Pacer
         attr_accessor :search_manual_indices
 
         def initialize(graph, filters)
-          @graph = graph
+          if graph.is_a? Pacer::Wrappers::ElementWrapper
+            # this can happen if the starting route is actually a single element.
+            @graph = graph.graph
+          else
+            @graph = graph
+          end
           @properties = []
           @blocks = []
           @extensions = []
