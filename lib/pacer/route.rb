@@ -100,7 +100,7 @@ module Pacer
     #
     # @param [Hash] args
     # @option args [Graph] :graph the graph this route is based on
-    # @option args [Route] :bace the previous route in the chain
+    # @option args [Route] :back the previous route in the chain
     # @option args [element type] :element_type
     # @option args [Module] :modules additional modules to mix in
     # @option args [Symbol, Module] :filter the filter to use as this
