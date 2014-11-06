@@ -8,7 +8,7 @@
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
     <properties>
       <blueprints.version>2.6.0</blueprints.version>
-      <gem.version>1.6.0</gem.version>
+      <gem.version>1.6.1</gem.version>
       <pipes.version>2.5.0</pipes.version>
     </properties>
     <!-- NOTE: the following properties are automatically updated based on the values in lib/pacer-neo4j/version.rb -->
