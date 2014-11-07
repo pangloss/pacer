@@ -33,3 +33,4 @@ dex.log
 vendor/
 private/
 Gemfile.custom
+Jarfile.lock
