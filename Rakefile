@@ -17,9 +17,3 @@ task :check_18_mode do
     raise 'Nooooooo!'
   end
 end
-
-task :gemfile_devel do
-  File.delete 'Gemfile' if File.exists? 'Gemfile'
-  File.symlink 'Gemfile-dev', 'Gemfile'
-end
-
