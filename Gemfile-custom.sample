@@ -19,11 +19,19 @@ group :development do
   #   bundle
   #   rspec
   #
-  if File.directory? "../pacer-neo4j" and (ENV['neo'] == '1' or not File.directory? "../pacer-neo4j2")
-    gem 'pacer-neo4j', :path => "../pacer-neo4j"
-  end
 
-  if File.directory? "../pacer-neo4j2" and ENV['neo'] != '1' 
+  neo_test_ver = ENV.fetch('neo') do
+    if File.directory?("../pacer-neo4j2")
+      '2'
+    elsif File.directory?("../pacer-neo4j")
+      '1'
+    else
+      '0'
+    end
+  end
+  if neo_test_ver == '1'
+    gem 'pacer-neo4j', :path => "../pacer-neo4j"
+  elsif neo_test_ver == '2'
     gem 'pacer-neo4j2', :path => "../pacer-neo4j2"
   end
 
@@ -31,4 +39,3 @@ group :development do
     gem 'pacer-mcfly', :path => "../mcfly" 
   end
 end
-

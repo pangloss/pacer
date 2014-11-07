@@ -32,5 +32,5 @@ coverage/*
 dex.log
 vendor/
 private/
-Gemfile.custom
+Gemfile-custom
 Jarfile.lock
