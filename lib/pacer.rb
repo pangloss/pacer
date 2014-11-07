@@ -22,6 +22,10 @@ require 'java'
 require 'pp'
 require 'rubygems'
 
+require 'lock_jar'
+LockJar.lock(File.join(File.dirname(__FILE__), "..", "Jarfile"))
+LockJar.load
+
 module Pacer
   unless const_defined? :PATH
     PATH = File.expand_path(File.join(File.dirname(__FILE__), '..'))
@@ -37,7 +41,6 @@ module Pacer
     Enumerator = Enumerable::Enumerator
   end
 
-  require JAR
 
   require 'pacer/loader'
 

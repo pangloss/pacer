@@ -1,13 +1,7 @@
 module Pacer
   unless const_defined? :VERSION
-    VERSION = "1.6.1"
-
-    JAR = "pacer-#{ VERSION }-standalone.jar"
-    JAR_PATH = "lib/#{ JAR }"
+    VERSION = "2.0.0"
 
     START_TIME = Time.now
-
-    BLUEPRINTS_VERSION = "2.6.0"
-    PIPES_VERSION = "2.5.0"
   end
 end
