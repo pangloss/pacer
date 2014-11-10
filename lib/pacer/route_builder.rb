@@ -1,5 +1,9 @@
 module Pacer
   class RouteBuilder
+    REJECT_KEYS = Set[:element_type, :wrapper, :extensions, :modules, :graph,
+                      :back, :filter, :side_effect, :transform, :visitor,
+                      :based_on]
+
     class << self
       attr_writer :current
 
@@ -64,7 +68,7 @@ module Pacer
 
     def arguments(source, args)
       args.reject do |key, val|
-        Set[:element_type, :wrapper, :extensions, :modules, :graph, :back, :filter, :side_effect, :transform, :visitor, :based_on].include? key
+        REJECT_KEYS.include? key
       end
     end
 
