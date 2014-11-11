@@ -79,10 +79,12 @@ end
 
 task :prepare_release_push => [:is_clean, :is_on_master, :is_up_to_date, :stable]
 
-task :only_push_release => :prepare_release_push do
+task :_only_push_release do
   load VERSION_FILE
   sh "git add #{VERSION_FILE} && git commit -m 'Version #{ Pacer::VERSION }' && git push"
 end
+
+task :only_push_release => [:prepare_release_push, :_only_push_release]
 
 task :next_dev_cycle => [:pre, :is_clean] do
   load VERSION_FILE
