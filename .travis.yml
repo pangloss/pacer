@@ -1,5 +1,6 @@
 ---
 
+# Uses Travis' jruby standard, bundle installs and runs rspec tests
 language: ruby
 rvm:
   - jruby-1.7.11
