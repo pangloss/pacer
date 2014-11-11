@@ -4,4 +4,4 @@
 language: ruby
 rvm:
   - jruby-1.7.11
-script: bundle exec rspec
+script: bundle exec rspec && bundle exec rake release

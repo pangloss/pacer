@@ -70,6 +70,13 @@ task :is_up_to_date do
   sh "git pull | grep 'Already up-to-date.'"
 end
 
+task :is_stable_version do
+  load VERSION_FILE
+  unless Pacer::VERSION =~ /^\d+\.\d+\.\d+$/
+    fail "Not on a stable version: #{ Pacer::VERSION }"
+  end
+end
+
 task :prepare_release_push => [:is_clean, :is_on_master, :is_up_to_date, :stable]
 
 task :only_push_release => :prepare_release_push do
@@ -77,7 +84,11 @@ task :only_push_release => :prepare_release_push do
   sh "git add #{VERSION_FILE} && git commit -m 'Version #{ Pacer::VERSION }' && git push"
 end
 
-task :push_release => [:only_push_release, :pre] do
+task :next_dev_cycle => [:pre, :is_clean] do
   load VERSION_FILE
   sh "git add #{VERSION_FILE} && git commit -m 'New development cycle with version #{ Pacer::VERSION }'"
 end
+
+task :push_release => [:only_push_release, :next_dev_cycle]
+
+task :release => [:is_clean, :is_on_master, :is_stable_version] 
