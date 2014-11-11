@@ -81,14 +81,15 @@ task :prepare_release_push => [:is_clean, :is_on_master, :is_up_to_date, :stable
 
 task :_only_push_release do
   load VERSION_FILE
-  sh "git add #{VERSION_FILE} && git commit -m 'Version #{ Pacer::VERSION }' && git push"
+  skip_ci = '[skip ci] ' if ENV['TRAVIS_SECURE_ENV_VARS']
+  sh "git add #{VERSION_FILE} && git commit -m '#{skip_ci}Version #{ Pacer::VERSION }' && git push"
 end
 
 task :only_push_release => [:prepare_release_push, :_only_push_release]
 
 task :next_dev_cycle => [:is_clean, :pre] do
   load VERSION_FILE
-  sh "git add #{VERSION_FILE} && git commit -m 'New development cycle with version #{ Pacer::VERSION }'"
+  sh "git add #{VERSION_FILE} && git commit -m '[skip ci] New development cycle with version #{ Pacer::VERSION }'"
 end
 
 task :push_release => [:only_push_release, :next_dev_cycle]
