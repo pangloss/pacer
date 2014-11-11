@@ -66,6 +66,10 @@ task :is_on_master do
   sh "git status | grep 'On branch master'"
 end
 
+task :is_on_origin_master do
+  sh "git log --pretty='%d' -n 1 | grep 'origin/master'"
+end
+
 task :is_up_to_date do
   sh "git pull | grep 'Already up-to-date.'"
 end
@@ -94,4 +98,4 @@ end
 
 task :push_release => [:only_push_release, :next_dev_cycle]
 
-task :release => [:is_clean, :is_on_master, :is_stable_version] 
+task :release => [:is_clean, :is_on_origin_master, :is_stable_version] 
