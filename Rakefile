@@ -86,7 +86,7 @@ end
 
 task :only_push_release => [:prepare_release_push, :_only_push_release]
 
-task :next_dev_cycle => [:pre, :is_clean] do
+task :next_dev_cycle => [:is_clean, :pre] do
   load VERSION_FILE
   sh "git add #{VERSION_FILE} && git commit -m 'New development cycle with version #{ Pacer::VERSION }'"
 end
