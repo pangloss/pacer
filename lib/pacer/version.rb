@@ -1,7 +1,6 @@
 module Pacer
-  unless const_defined? :VERSION
-    VERSION = "2.0.1"
-
+  VERSION = "2.0.1"
+  unless const_defined? :START_TIME
     START_TIME = Time.now
   end
 end
