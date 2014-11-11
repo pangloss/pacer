@@ -175,10 +175,12 @@ module Pacer
       edge
     end
 
+    # This method accepts only an unwrapped Blueprints Vertex
     def remove_vertex(vertex)
       blueprints_graph.removeVertex vertex
     end
 
+    # This method accepts only an unwrapped Blueprints Edge
     def remove_edge(edge)
       blueprints_graph.removeEdge edge
     end
