@@ -10,6 +10,8 @@ Bundler.setup(:default, :development)
 require 'rspec'
 require 'pacer'
 require 'set'
+require 'coveralls'
+Coveralls.wear!
 
 require 'simplecov'
 SimpleCov.start if ENV['COVERAGE']

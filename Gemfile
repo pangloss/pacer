@@ -12,6 +12,7 @@ group :development do
   gem 'autotest-growl'
   gem 'pry'
   gem 'awesome_print', '0.4.0'
+  gem 'coveralls', require: false
 end
 
 
