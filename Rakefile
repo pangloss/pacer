@@ -17,3 +17,67 @@ task :check_18_mode do
     raise 'Nooooooo!'
   end
 end
+
+#==================================================
+
+V = /(?<before>\s*VERSION\s*=\s*")(?<major>\d+)\.(?<minor>\d+)\.(?<point>\d+)(?:\.(?<pre>\w+))?(?<after>".*)/
+VERSION_FILE = 'lib/pacer/version.rb'
+
+def change_version(file = VERSION_FILE)
+  f = File.read(file)
+  lines = f.each_line.map do |line|
+    match = V.match line
+    if match
+      yield line, match[:before], match[:major], match[:minor], match[:point], match[:pre], match[:after]
+    else
+      line
+    end
+  end
+  File.open(file, 'w') do |f|
+    f.puts lines.join
+  end
+end
+
+task :stable do
+  change_version do |line, before, major, minor, point, pre, after|
+    if pre
+      "#{before}#{major}.#{minor}.#{point}#{after}\n"
+    else
+      "#{before}#{major}.#{minor}.#{point.next}#{after}\n"
+    end
+  end
+end
+
+task :pre do
+  change_version do |line, before, major, minor, point, pre, after|
+    if pre
+      line
+    else
+      "#{before}#{major}.#{minor}.#{point.next}.pre#{after}\n"
+    end
+  end
+end
+
+task :is_clean do
+  sh "git status | grep 'working directory clean'"
+end
+
+task :is_on_master do
+  sh "git status | grep 'On branch master'"
+end
+
+task :is_up_to_date do
+  sh "git pull | grep 'Already up-to-date.'"
+end
+
+task :prepare_release_push => [:is_clean, :is_on_master, :is_up_to_date, :stable]
+
+task :only_push_release => :prepare_release_push do
+  load VERSION_FILE
+  sh "git add #{VERSION_FILE} && git commit -m 'Version #{ Pacer::VERSION }' && git push"
+end
+
+task :push_release => [:only_push_release, :pre] do
+  load VERSION_FILE
+  sh "git add #{VERSION_FILE} && git commit -m 'New development cycle with version #{ Pacer::VERSION }'"
+end
