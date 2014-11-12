@@ -17,5 +17,6 @@ Gem::Specification.new do |s|
   s.test_files = `git ls-files -- spec/*`.split("\n")
   s.require_paths = ['lib']
   s.add_dependency "lock_jar", "~> 0.10.0"
+  s.add_development_dependency 'xn_gem_release_tasks'
 end
 
