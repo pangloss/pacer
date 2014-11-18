@@ -21,6 +21,8 @@ end
 require 'java'
 require 'pp'
 require 'rubygems'
+require 'lock_jar'
+require 'pacer/support/lock_jar'
 
 module Pacer
   def self.load_dependencies!
@@ -38,7 +40,6 @@ module Pacer
   end
 end
 
-require 'lock_jar'
 LockJar.register_jarfile(File.join(File.dirname(__FILE__), "..", "Jarfile"))
 Pacer.load_dependencies!
 
