@@ -22,9 +22,25 @@ require 'java'
 require 'pp'
 require 'rubygems'
 
+module Pacer
+  def self.load_dependencies!
+    Pacer::JARFILES.each do |jarfile|
+      LockJar.register_jarfile(jarfile)
+    end
+    if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
+      if defined? Pacer::LOCKJAR_OPTS
+        LockJar.lock_registered_jarfiles LOCKJAR_OPTS
+      else
+        LockJar.lock_registered_jarfiles
+      end
+      LockJar.load
+    end
+  end
+end
+
 require 'lock_jar'
-LockJar.lock(File.join(File.dirname(__FILE__), "..", "Jarfile"))
-LockJar.load
+LockJar.register_jarfile(File.join(File.dirname(__FILE__), "..", "Jarfile"))
+Pacer.load_dependencies!
 
 module Pacer
   unless const_defined? :PATH
@@ -40,7 +56,6 @@ module Pacer
   else
     Enumerator = Enumerable::Enumerator
   end
-
 
   require 'pacer/loader'
 
