@@ -32,10 +32,11 @@ module Pacer
     if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
       if defined? Pacer::LOCKJAR_OPTS
         LockJar.lock_registered_jarfiles LOCKJAR_OPTS
+        LockJar.load LOCKJAR_OPTS
       else
         LockJar.lock_registered_jarfiles
+        LockJar.load
       end
-      LockJar.load
     end
   end
 end
