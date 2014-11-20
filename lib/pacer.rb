@@ -24,25 +24,16 @@ require 'rubygems'
 require 'lock_jar'
 require 'pacer/support/lock_jar'
 
-module Pacer
-  def self.load_dependencies!
-    Pacer::JARFILES.each do |jarfile|
-      LockJar.register_jarfile(jarfile)
-    end
-    if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
-      if defined? Pacer::LOCKJAR_OPTS
-        LockJar.lock_registered_jarfiles LOCKJAR_OPTS
-        LockJar.load LOCKJAR_OPTS
-      else
-        LockJar.lock_registered_jarfiles
-        LockJar.load
-      end
-    end
+if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
+  LockJar.register_bundled_jarfiles # defined in pacer/support/lock_jar.rb
+  if defined? Pacer::LOCKJAR_OPTS
+    LockJar.lock_registered_jarfiles LOCKJAR_OPTS
+    LockJar.load LOCKJAR_OPTS
+  else
+    LockJar.lock_registered_jarfiles lockfile: 'Jarfile.pacer.lock'
+    LockJar.load 'Jarfile.pacer.lock'
   end
 end
-
-LockJar.register_jarfile(File.join(File.dirname(__FILE__), "..", "Jarfile"))
-Pacer.load_dependencies!
 
 module Pacer
   unless const_defined? :PATH
