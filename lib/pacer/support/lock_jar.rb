@@ -7,8 +7,7 @@ module LockJar
         map { |s| File.join(s.full_gem_path, 'Jarfile') }.
         select { |f| File.exists? f }.
         each { |f| LockJar.register_jarfile f }
-
-      require 'pacer/support/lock_jar_disabler'
+      true
     end
   end
 end
