@@ -2,18 +2,7 @@ module Pacer
   module Routes
     module RouteOperations
       def loop(opts = {}, &block)
-        chain_route(opts.merge :filter => :loop, :looping_route => block)
-      end
-
-      def all(opts = {}, &block)
-        include_self = opts[:include_self]
-        loop(opts, &block).while do |e, depth|
-          if depth == 0 and not include_self
-            :loop
-          else
-            :loop_and_recur
-          end
-        end
+        chain_route(opts.merge :filter => Pacer::Filter::LoopFilter, :looping_route => block)
       end
 
       def deepest(&block)
