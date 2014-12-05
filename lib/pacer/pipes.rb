@@ -13,6 +13,7 @@ module Pacer
 
     import com.tinkerpop.pipes.transform.IdPipe
     import com.tinkerpop.pipes.transform.PropertyPipe
+    import com.tinkerpop.pipes.transform.PropertyMapPipe
 
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
