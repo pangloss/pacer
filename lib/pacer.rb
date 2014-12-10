@@ -33,8 +33,13 @@ if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
     LockJar.lock_registered_jarfiles LOCKJAR_OPTS
     LockJar.load LOCKJAR_OPTS
   else
-    LockJar.lock_registered_jarfiles lockfile: 'Jarfile.pacer.lock'
-    LockJar.load 'Jarfile.pacer.lock'
+    if bundle_jarfiles
+      LockJar.lock_registered_jarfiles lockfile: 'Jarfile.lock'
+      LockJar.load 'Jarfile.lock'
+    else
+      LockJar.lock_registered_jarfiles lockfile: 'Jarfile.pacer.lock'
+      LockJar.load 'Jarfile.pacer.lock'
+    end
   end
   if bundle_jarfiles
     require 'pacer/support/lock_jar_disabler'

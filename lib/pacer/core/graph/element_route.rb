@@ -33,6 +33,11 @@ module Pacer::Core::Graph
       map(element_type: :hash) { |v| v.properties }
     end
 
+    def raw_property_maps
+      chain_route(:element_type => :object,
+                  :pipe_class => Pacer::Pipes::PropertyMapPipe)
+    end
+
     # Create a new TinkerGraph based on the paths of all matching elements.
     #
     # @return [TinkerGraph] the subgraph
