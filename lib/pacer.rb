@@ -54,13 +54,6 @@ module Pacer
   end
 
   require 'pacer/version'
-
-  if RUBY_VERSION =~ /^1.9/
-    Enumerator = ::Enumerator
-  else
-    Enumerator = Enumerable::Enumerator
-  end
-
   require 'pacer/loader'
 
   class << self
