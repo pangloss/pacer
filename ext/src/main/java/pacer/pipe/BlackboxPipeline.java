@@ -1,30 +1,32 @@
 package com.xnlogic.pacer.pipes;
 
 import com.tinkerpop.pipes.Pipe;
+import com.tinkerpop.pipes.util.iterators.HistoryIterator;
 import java.util.Iterator;
 import java.lang.Iterable;
 import java.util.List;
 
-public class BlackboxPipeline implements Pipe<Pipe, Pipe> {
-    private Pipe startPipe;
-    private Pipe endPipe;
+public class BlackboxPipeline<S, E> implements Pipe<S, E> {
+    private Pipe<S, ?> startPipe;
+    private Pipe<?, E> endPipe;
     private boolean pathEnabled;
+    private Iterator<S> starts;
 
     public BlackboxPipeline(Pipe startPipe, Pipe endPipe) {
         this.startPipe = startPipe;
         this.endPipe = endPipe;
     }
 
-    public void setStarts(Iterator<Pipe> pipe) {
-        this.startPipe.setStarts(pipe);   
+    public void setStarts(Iterator<S> pipe) {
+        this.startPipe.setStarts(pipe);
     }
 
-    public void setStarts(Iterable<Pipe> pipe) {
-        this.startPipe.setStarts(pipe);   
+    public void setStarts(final Iterable<S> pipe) {
+        this.setStarts(pipe.iterator());
     }
   
-    public Pipe next() {
-        return (Pipe)this.endPipe.next();
+    public E next() {
+        return this.endPipe.next();
     }
 
     public boolean hasNext() {
@@ -49,7 +51,7 @@ public class BlackboxPipeline implements Pipe<Pipe, Pipe> {
     }
 
     public void remove() {
-        return;
+        throw new UnsupportedOperationException();
     }
     
     public String toString() {
