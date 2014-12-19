@@ -1,4 +1,6 @@
 module Pacer::Pipes
+
+  # This exists because the Blueprints GraphEdgesPipe includes the graph itself in the path
   class EdgesPipe < AbstractPipe
     attr_reader :starts
 

@@ -31,7 +31,7 @@ module Pacer
         def build_pipeline(route, start_pipe = nil, pipe = nil)
           pipe ||= start_pipe
           if labels.any?
-            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels
+            label_pipe = Pacer::Pipes::LabelCollectionFilterPipe.new labels.map(&:to_s)
             label_pipe.set_starts pipe if pipe
             Pacer.debug_pipes << { :name => labels.inspect, :start => pipe, :end => block_pipe } if Pacer.debug_pipes
             pipe = label_pipe

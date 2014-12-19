@@ -1,4 +1,6 @@
 module Pacer::Pipes
+
+  # This exists because the Blueprints GraphVerticesPipe includes the graph itself in the path
   class VerticesPipe < AbstractPipe
     attr_reader :starts
 

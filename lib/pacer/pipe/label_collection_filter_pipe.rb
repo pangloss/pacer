@@ -2,7 +2,7 @@ module Pacer::Pipes
   class LabelCollectionFilterPipe < RubyPipe
     def initialize(labels)
       super()
-      @labels = Set[*labels.map(&:to_s)]
+      @labels = Set[*labels]
     end
 
     def processNextStart
