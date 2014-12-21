@@ -27,7 +27,6 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
         return value;
     }
 
-
     public void reset() {
         super.reset();
         this.prepareState();
