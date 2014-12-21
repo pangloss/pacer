@@ -17,7 +17,7 @@ public class BlackboxPipeline<S, E> implements Pipe<S, E> {
         this.endPipe = endPipe;
     }
 
-    public void setStarts(Iterator<S> pipe) {
+    public void setStarts(final Iterator<S> pipe) {
         this.startPipe.setStarts(pipe);
     }
 

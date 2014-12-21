@@ -17,10 +17,6 @@ public class EdgesPipe extends AbstractPipe<Vertex, Edge> {
         this.iter = this.starts.getEdges(Direction.BOTH).iterator();
     }
 
-    public void setStarts(Iterable<Vertex> starts) {
-        this.setStarts(starts.iterator());
-    }
-
     protected Edge processNextStart() {
         return this.iter.next();
     }
