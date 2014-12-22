@@ -5,6 +5,7 @@ import org.junit.Test;
 import org.junit.Before;
 import org.junit.After;
 import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
+import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
 import com.tinkerpop.blueprints.Edge;
 import java.util.Collection;
@@ -14,16 +15,16 @@ import com.xnlogic.pacer.pipes.EdgesPipe;
 
 public class EdgesPipeTest {
     private TinkerGraph graph = null;
-    private Collection<Vertex> vertices;
+    private Collection<Graph> graphs;
     private Collection<Edge> edgesThatCount;
 
     @Before
     public void setup() throws Exception {
         this.graph = new TinkerGraph();
-        
+        this.graphs = Arrays.asList((Graph)this.graph);
     }
 
-    private void createGraphWithFirstVertexEdges() {
+    private void createEdges() {
         Vertex v1 = this.graph.addVertex(1);
         Vertex v2 = this.graph.addVertex(2);
         Vertex v3 = this.graph.addVertex(3);
@@ -34,22 +35,8 @@ public class EdgesPipeTest {
         Edge e4 = this.graph.addEdge("E4", v2, v3, "edge_label4");
 
         this.edgesThatCount = Arrays.asList(e1, e2, e3);
-        this.vertices = Arrays.asList(v1, v2, v3);
     }
   
-    private void createGraphWithNoFirstVertexEdges() {
-        Vertex v1 = this.graph.addVertex(1);
-        Vertex v2 = this.graph.addVertex(2);
-        Vertex v3 = this.graph.addVertex(3);
-
-        Edge e1 = this.graph.addEdge("E1", v2, v3, "edge_label");
-        Edge e2 = this.graph.addEdge("E2", v2, v3, "edge_label2");
-        Edge e3 = this.graph.addEdge("E3", v2, v3, "edge_label3");
-        Edge e4 = this.graph.addEdge("E4", v2, v3, "edge_label4");
-
-        this.vertices = Arrays.asList(v1, v2, v3);
-    }
-    
     @After
     public void teardown() throws Exception {
         this.graph.shutdown();
@@ -57,11 +44,11 @@ public class EdgesPipeTest {
     }
 
     @Test
-    public void getEdgesFromVertexTest() {
-        this.createGraphWithFirstVertexEdges();
+    public void getEdgesFromGraphTest() {
+        this.createEdges();
 
         EdgesPipe edgesPipe = new EdgesPipe();
-        edgesPipe.setStarts(this.vertices);
+        edgesPipe.setStarts(this.graphs);
         
         Collection<Edge> edges = new ArrayList<Edge>();
 
@@ -69,16 +56,16 @@ public class EdgesPipeTest {
             edges.add(edgesPipe.next());
         }
 
-        assertEquals(3, edges.size());
+        assertEquals(4, edges.size());
         assertTrue(edges.containsAll(this.edgesThatCount));
     }
 
     @Test
-    public void getEdgesFromVertexAfterResetTest() {
-        this.createGraphWithFirstVertexEdges();
+    public void getEdgesFromGraphAfterResetTest() {
+        this.createEdges();
         
         EdgesPipe edgesPipe = new EdgesPipe();
-        edgesPipe.setStarts(this.vertices);
+        edgesPipe.setStarts(this.graphs);
         
         Collection<Edge> edges = new ArrayList<Edge>();
 
@@ -86,7 +73,7 @@ public class EdgesPipeTest {
             edges.add(edgesPipe.next());
         }
 
-        assertEquals(3, edges.size());
+        assertEquals(4, edges.size());
         assertTrue(edges.containsAll(this.edgesThatCount));
         
         edgesPipe.reset();
@@ -96,16 +83,14 @@ public class EdgesPipeTest {
             edges.add(edgesPipe.next());
         }
 
-        assertEquals(3, edges.size());
+        assertEquals(4, edges.size());
         assertTrue(edges.containsAll(this.edgesThatCount));
     }
     
     @Test
-    public void getNoEdgesFromVertexTest() {
-        this.createGraphWithNoFirstVertexEdges();
-
+    public void getNoEdgesFromGraphTest() {
         EdgesPipe edgesPipe = new EdgesPipe();
-        edgesPipe.setStarts(this.vertices);
+        edgesPipe.setStarts(this.graphs);
         
         Collection<Edge> edges = new ArrayList<Edge>();
 
