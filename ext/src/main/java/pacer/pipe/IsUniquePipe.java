@@ -36,7 +36,6 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
         return this.unique;
     }
 
-    // TODO: Double check this with dw.
     public boolean getSideEffect() {
         return this.unique;
     }
@@ -47,6 +46,8 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
             this.uniquePipe.next();
         } catch (NoSuchElementException nsee) {
             this.unique = false;
+            this.uniquePipe = null;
+            this.expando = null;
         }
     }
 
