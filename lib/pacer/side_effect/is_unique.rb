@@ -30,7 +30,7 @@ module Pacer
 
       def attach_pipe(end_pipe)
         checked = Pacer::Pipes::IsUniquePipe.new
-        checked.setStarts end_pipe
+        checked.setStarts end_pipe if end_pipe
         on_build_pipe.call checked if on_build_pipe
         checked
       end

@@ -86,7 +86,7 @@ HELP
       def attach_pipe(end_pipe)
         if @enter and @reduce and @leave
           pipe = ReducerPipe.new self, @enter, @reduce, @leave
-          pipe.setStarts end_pipe
+          pipe.setStarts end_pipe if end_pipe
           pipe
         else
           fail Pacer::ClientError, 'enter, reduce, and leave must all be specified for reducers'

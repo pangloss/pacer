@@ -44,7 +44,7 @@ module Pacer
       def attach_pipe(pipe)
         if element_type == :vertex or element_type == :edge or element_type == :mixed
           wrapped = Pacer::Pipes::WrappingPipe.new graph, element_type, extensions
-          wrapped.setStarts pipe
+          wrapped.setStarts pipe if pipe
           as_pipe = AsPipe.new(wrapped, vars, variable_name)
           unwrapped = Pacer::Pipes::UnwrappingPipe.new
           unwrapped.setStarts as_pipe

@@ -8,8 +8,7 @@ import com.tinkerpop.pipes.util.FastNoSuchElementException;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
 
-// TODO: Discuss "Boolean" choice for pipe here with dw.  Especially as it speaks directly to the use case and unit tests.
-public class IsEmptyPipe extends AbstractPipe<Boolean, Boolean> {
+public class IsEmptyPipe<T> extends AbstractPipe<T, Boolean> {
     private boolean raise;  
   
     public IsEmptyPipe() {
