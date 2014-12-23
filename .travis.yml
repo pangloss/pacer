@@ -1,6 +1,7 @@
 language: ruby
 rvm:
 - jruby-1.7.11
+- jruby-1.7.18
 script: bundle exec rspec && (bundle exec rake release || echo "Not released")
 before_deploy:
 
