@@ -25,7 +25,7 @@ public class IdCollectionFilterPipeTest {
         this.graph = null;
     }
     
-    @Test(expected=NoSuchElementException.class)
+    @Test
     public void containsInTest() {
         IdCollectionFilterPipe<Vertex> idCollectionFilterPipe = new IdCollectionFilterPipe(Contains.IN, "1", "2", "3", "4");
 
@@ -41,10 +41,18 @@ public class IdCollectionFilterPipeTest {
         v = idCollectionFilterPipe.next();
         assertTrue(v.getId().equals("2"));
 
-        v = idCollectionFilterPipe.next();
+        boolean hasEx = false;
+        
+        try {
+            v = idCollectionFilterPipe.next();
+        } catch (NoSuchElementException nsee) {
+            hasEx = true;
+        }
+
+        assertTrue(hasEx);
     }
 
-    @Test(expected=NoSuchElementException.class)
+    @Test
     public void containsNotInTest() {
         IdCollectionFilterPipe<Vertex> idCollectionFilterPipe = new IdCollectionFilterPipe(Contains.NOT_IN, "1", "2", "3", "4");
 
@@ -60,7 +68,15 @@ public class IdCollectionFilterPipeTest {
         v = idCollectionFilterPipe.next();
         assertTrue(v.getId().equals("8"));
 
-        v = idCollectionFilterPipe.next();
+        boolean hasEx = false;
+
+        try {
+            v = idCollectionFilterPipe.next();
+        } catch (NoSuchElementException nsee) {
+            hasEx = true;
+        }
+        
+        assertTrue(hasEx);
     }
 
     // TODO: Lookup "Contains" and see if there are more than just the two values in the enum.
