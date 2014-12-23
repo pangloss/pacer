@@ -27,7 +27,8 @@ public class IdCollectionFilterPipeTest {
     
     @Test(expected=NoSuchElementException.class)
     public void containsInTest() {
-        IdCollectionFilterPipe<Vertex> idCollectionFilterPipe = new IdCollectionFilterPipe(Contains.IN, "1", "2", "3", "4");
+        IdCollectionFilterPipe<Vertex> idCollectionFilterPipe =
+          new IdCollectionFilterPipe(Arrays.asList("1", "2", "3", "4"), Contains.IN);
 
         Vertex v1 = this.graph.addVertex("1");
         Vertex v2 = this.graph.addVertex("2");
@@ -46,7 +47,8 @@ public class IdCollectionFilterPipeTest {
 
     @Test(expected=NoSuchElementException.class)
     public void containsNotInTest() {
-        IdCollectionFilterPipe<Vertex> idCollectionFilterPipe = new IdCollectionFilterPipe(Contains.NOT_IN, "1", "2", "3", "4");
+        IdCollectionFilterPipe<Vertex> idCollectionFilterPipe =
+          new IdCollectionFilterPipe(Arrays.asList("1", "2", "3", "4"), Contains.NOT_IN);
 
         Vertex v1 = this.graph.addVertex("7");
         Vertex v2 = this.graph.addVertex("8");
