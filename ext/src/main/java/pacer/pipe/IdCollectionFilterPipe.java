@@ -6,7 +6,7 @@ import com.tinkerpop.pipes.AbstractPipe;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Collection;
 
 public class IdCollectionFilterPipe<E extends Element> extends AbstractPipe<E, E> {
     private Set ids;
@@ -14,7 +14,7 @@ public class IdCollectionFilterPipe<E extends Element> extends AbstractPipe<E, E
     
     // TODO: Consider making this a derived exception.  Also, this constructor is the reverse of the Ruby one. Is this ok?
     // Also also, is an Object array the way to go?  Can we nail down the type further?
-    public IdCollectionFilterPipe(final List ids, final Contains comparison) throws RuntimeException {
+    public IdCollectionFilterPipe(final Collection ids, final Contains comparison) throws RuntimeException {
         super();
         if (ids instanceof Set) {
             this.ids = (Set)ids;

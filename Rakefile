@@ -10,6 +10,7 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
 end
 
 task :default => :spec
+task :spec => :compile
 
 task :check_18_mode do
   if RUBY_VERSION !~ /1\.8/
