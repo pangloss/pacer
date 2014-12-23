@@ -15,6 +15,10 @@ module Pacer
     import com.tinkerpop.pipes.transform.PropertyPipe
     import com.tinkerpop.pipes.transform.PropertyMapPipe
 
+    import com.xnlogic.pacer.pipes.BlackboxPipeline
+    import com.xnlogic.pacer.pipes.EdgesPipe
+    import com.xnlogic.pacer.pipes.CollectionFilterPipe
+
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
     BOTH = com.tinkerpop.blueprints.Direction::BOTH
@@ -34,12 +38,10 @@ end
 require 'pacer/pipe/ruby_pipe'
 
 require 'pacer/pipe/vertices_pipe'
-require 'pacer/pipe/edges_pipe'
 
 require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'
-require 'pacer/pipe/collection_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
 require 'pacer/pipe/expandable_pipe'
 require 'pacer/pipe/loop_pipe'
@@ -56,8 +58,6 @@ require 'pacer/pipe/id_collection_filter_pipe'
 require 'pacer/pipe/label_prefix_pipe'
 
 require 'pacer/pipe/property_comparison_pipe'
-
-require 'pacer/pipe/blackbox_pipeline'
 
 require 'pacer/pipe/unary_transform_pipe'
 require 'pacer/pipe/cross_product_transform_pipe'

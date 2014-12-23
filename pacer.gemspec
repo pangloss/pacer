@@ -13,10 +13,11 @@ Gem::Specification.new do |s|
   s.summary = %Q{A very efficient and easy to use graph traversal engine.}
   s.description = %Q{Pacer defines composeable routes through a graph and then traverses them very quickly.}
 
-  s.files = `git ls-files`.split("\n")
+  s.files = `git ls-files`.split("\n") + ['lib/pacer-ext.jar']
   s.test_files = `git ls-files -- spec/*`.split("\n")
   s.require_paths = ['lib']
   s.add_dependency "lock_jar", "~> 0.10.2"
   s.add_development_dependency 'xn_gem_release_tasks'
+  s.add_development_dependency "rake-compiler",  "~> 0.9.2"
 end
 

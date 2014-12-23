@@ -1,7 +1,3 @@
-require 'autotest/growl'
-
-Autotest::Growl::clear_terminal = false
-
 Autotest.add_hook(:initialize) {|at|
   at.add_exception %r{\.git}  # ignore Version Control System
   at.add_exception %r{/\.}  # ignore any file that starts with a . (dot)
