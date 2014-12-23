@@ -14,7 +14,7 @@ module Pacer
       def unique?
         check = nil
         is_unique { |pipe| check = pipe }.each do
-          return false unless check.unique?
+          return false unless check.isUnique
         end
         true
       end
