@@ -18,6 +18,7 @@ module Pacer
     import com.xnlogic.pacer.pipes.BlackboxPipeline
     import com.xnlogic.pacer.pipes.EdgesPipe
     import com.xnlogic.pacer.pipes.CollectionFilterPipe
+    import com.xnlogic.pacer.pipes.ExpandablePipe
 
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
@@ -43,7 +44,6 @@ require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
-require 'pacer/pipe/expandable_pipe'
 require 'pacer/pipe/loop_pipe'
 require 'pacer/pipe/process_pipe'
 require 'pacer/pipe/visitor_pipe'
