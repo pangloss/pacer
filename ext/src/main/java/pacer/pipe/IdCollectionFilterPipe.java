@@ -18,11 +18,11 @@ public class IdCollectionFilterPipe<E extends Element> extends AbstractPipe<E, E
         super();
         if (ids instanceof Set) {
             this.ids = (Set)ids;
-        } else if (ids != null) {
+        } else if (ids == null) {
             this.ids = new HashSet();
-            this.ids.addAll(Arrays.asList(ids));
         } else {
             this.ids = new HashSet();
+            this.ids.addAll(ids);
         }
         if (comparison == Contains.IN)
             this.containsIn = true;
