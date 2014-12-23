@@ -13,5 +13,4 @@ deploy:
   on:
     Release from master branch
     branch: master
-    tags: true
     repo: pangloss/pacer
