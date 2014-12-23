@@ -20,6 +20,7 @@ module Pacer
     import com.xnlogic.pacer.pipes.CollectionFilterPipe
     import com.xnlogic.pacer.pipes.ExpandablePipe
     import com.xnlogic.pacer.pipes.IdCollectionFilterPipe
+    import com.xnlogic.pacer.pipes.IsEmptyPipe
 
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
@@ -50,7 +51,6 @@ require 'pacer/pipe/process_pipe'
 require 'pacer/pipe/visitor_pipe'
 require 'pacer/pipe/simple_visitor_pipe'
 require 'pacer/pipe/is_unique_pipe'
-require 'pacer/pipe/is_empty_pipe'
 require 'pacer/pipe/stream_sort_pipe'
 require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
