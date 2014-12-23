@@ -10,6 +10,7 @@ deploy:
     secure: I9uNSIU6Ob+UlxXzSdUnzg9YVT8tsZULQwYDd0ENLrTE1CdCDiShw7oXP3AYAr/SOQg8yrURkNIW0QV5h4nKoZb+rGpZBMyY9wTtFpek4daYNRJKxUsrFX/Jv84zjqEO/AFEwTtlVKhpUOcCOp26bdCVaBaFgJMZPcObmm7z2bc=
   gem: pacer
   on:
-    branch: release
+    Release from master branch
+    branch: master
     tags: true
     repo: pangloss/pacer
