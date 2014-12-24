@@ -1,6 +1,9 @@
 language: ruby
+jdk:
+- oraclejdk7
+- oraclejdk8
 rvm:
-- jruby-1.7.11
+- jruby-1.7.18
 script: bundle exec rake spec && (bundle exec rake release || echo "Not released")
 before_deploy:
 
@@ -10,6 +13,6 @@ deploy:
     secure: I9uNSIU6Ob+UlxXzSdUnzg9YVT8tsZULQwYDd0ENLrTE1CdCDiShw7oXP3AYAr/SOQg8yrURkNIW0QV5h4nKoZb+rGpZBMyY9wTtFpek4daYNRJKxUsrFX/Jv84zjqEO/AFEwTtlVKhpUOcCOp26bdCVaBaFgJMZPcObmm7z2bc=
   gem: pacer
   on:
-    branch: release
-    tags: true
+    Release from master branch
+    branch: master
     repo: pangloss/pacer
