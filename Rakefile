@@ -9,6 +9,12 @@ RSpec::Core::RakeTask.new(:spec) do |spec|
   spec.pattern = FileList['spec/**/*_spec.rb']
 end
 
+task :mvn_tests do
+  cd 'ext' do
+    sh 'mvn test'
+  end
+end
+
 task :default => :spec
 task :spec => :compile
 
@@ -38,3 +44,4 @@ Rake::JavaExtensionTask.new('pacer-ext') do |ext|
   ext.classpath = locked_jars.map {|x| File.expand_path x}.join ':'
 end
 
+task :compile => :mvn_tests
