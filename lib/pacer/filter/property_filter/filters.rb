@@ -139,12 +139,11 @@ module Pacer
         #
         # Returns a proc that can be called with an element to test and returns
         # true if the element matches the conditions.
-        def element_tester
+        def to_predicate
           expando, pipe = build_pipeline(nil, com.tinkerpop.pipes.util.iterators.ExpandableIterator.new)
           proc do |e|
-            pipe.reset
             expando.add e
-            pipe.hasNext
+            pipe.next if pipe.hasNext
           end
         end
 
