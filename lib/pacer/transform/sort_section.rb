@@ -1,10 +1,18 @@
 module Pacer
   module Routes
     module RouteOperations
+      # Arity 2 uses custom sort logic. Arity 1 uses sort_by logic.
       def sort_section(section = nil, &block)
-        chain_route transform: :sort_section, sort_by_block: block, section: section
+        if not block
+          chain_route transform: :sort_section, section: section
+        elsif block.arity == 2
+          chain_route transform: :sort_section, custom_sort_block: block, section: section
+        else
+          chain_route transform: :sort_section, sort_by_block: block, section: section
+        end
       end
 
+      # Deprecated: use sort_section
       def custom_sort_section(section = nil, &block)
         chain_route transform: :sort_section, custom_sort_block: block, section: section
       end
