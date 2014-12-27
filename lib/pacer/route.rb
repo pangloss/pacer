@@ -18,6 +18,7 @@ module Pacer
       # @return [Pacer::Pipes::BlackboxPipeline] an instantiated pipeline
       def pipeline(route)
         s, e = route.send(:build_pipeline)
+        e = yield e if block_given?
         if s.equal?(e)
           s
         else

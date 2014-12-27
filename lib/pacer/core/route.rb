@@ -382,15 +382,17 @@ HELP
 
       def detached_pipe
         route = yield Pacer::Route.empty(self)
-        pipe = Pacer::Route.pipeline route
-        route.send :configure_iterator, pipe
+        pipe = Pacer::Route.pipeline route do |e|
+          route.send :configure_iterator, e
+        end
       end
 
       def detach(gather = true, &block)
         pipe = detached_pipe(&block)
         expando = Pacer::Pipes::ExpandablePipe.new
+        expando.enablePath true
         expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
-        pipe.setStarts expando.iterator
+        pipe.setStarts expando
         if gather
           gather = Pacer::Pipes::GatherPipe.new
           gather.setStarts pipe
