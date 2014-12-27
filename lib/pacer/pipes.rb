@@ -23,6 +23,8 @@ module Pacer
     import com.xnlogic.pacer.pipes.IsEmptyPipe
     import com.xnlogic.pacer.pipes.LabelCollectionFilterPipe
     import com.xnlogic.pacer.pipes.IsUniquePipe
+    import com.tinkerpop.pipes.util.iterators.EmptyIterator
+    import com.tinkerpop.pipes.transform.GatherPipe
 
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT

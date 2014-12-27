@@ -380,6 +380,39 @@ HELP
         chain_route(:extensions => [], :wrapper => nil)
       end
 
+      def detached_pipe
+        route = yield Pacer::Route.empty(self)
+        pipe = Pacer::Route.pipeline route
+        route.send :configure_iterator, pipe
+      end
+
+      def detach(gather = true, &block)
+        pipe = detached_pipe(&block)
+        expando = Pacer::Pipes::ExpandablePipe.new
+        expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
+        pipe.setStarts expando.iterator
+        if gather
+          gather = Pacer::Pipes::GatherPipe.new
+          gather.setStarts pipe
+          proc do |e|
+            gather.reset
+            expando.add e
+            if gather.hasNext
+              gather.next
+            else
+              []
+            end
+          end
+        else
+          proc do |e|
+            pipe.reset
+            expando.add e
+            pipe.next if pipe.hasNext
+          end
+        end
+      end
+
+
       # Change the source of this route.
       #
       # @note all routes derived from any route in the chain will be
