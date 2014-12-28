@@ -18,7 +18,7 @@ module Pacer
       def instance(pipe, g)
         g ||= graph
         p = PathWrappingPipe.new [g, vertex_wrapper, edge_wrapper]
-        p.setSterts pipe
+        p.setStarts pipe
         p
       end
 
