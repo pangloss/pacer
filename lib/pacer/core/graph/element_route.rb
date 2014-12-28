@@ -166,7 +166,7 @@ module Pacer::Core::Graph
 
     protected
 
-    def configure_iterator(iter, g = nil)
+    def configure_iterator(iter = nil, g = nil)
       pipe = Pacer::Pipes::WrappingPipe.new((g || graph), element_type, extensions)
       pipe.wrapper = wrapper if wrapper
       pipe.setStarts iter

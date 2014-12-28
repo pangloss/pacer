@@ -395,13 +395,19 @@ HELP
       # nothing was produced.
       def detach(gather = true)
         route = yield Pacer::Route.empty(self)
+        wrapper_pipe = route.send(:configure_iterator)
+        wrapper_pipe = nil unless wrapper_pipe.respond_to? :instance
         proc do |g = nil|
           pipe = Pacer::Route.pipeline route
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.enablePath true
           expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
           pipe.setStarts expando
-          pipe = route.send(:configure_iterator, pipe, g)
+          if wrapper_pipe
+            pipe = wrapper_pipe.instance pipe, g
+          else
+            pipe = route.send(:configure_iterator, pipe, g)
+          end
           if gather
             gather = Pacer::Pipes::GatherPipe.new
             gather.setStarts pipe
@@ -466,7 +472,7 @@ HELP
 
       # Overridden to extend the iterator to apply mixins
       # or wrap elements
-      def configure_iterator(iter, g = nil)
+      def configure_iterator(iter = nil, g = nil)
         iter
       end
 
