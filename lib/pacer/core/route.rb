@@ -380,36 +380,46 @@ HELP
         chain_route(:extensions => [], :wrapper => nil)
       end
 
-      def detached_pipe
+      # Returns an outer proc that returns an inner proc that will execute the given route for a given input data or element.
+      #
+      # The outer proc contains the already-compiled route (the most expensive part of the process). When you call it, it returns
+      # the inner proc. If you call it with no arguments, it will prepare the proc in the context of the original route used to create
+      # it. In a multi-tenant or multi-graph system, call the outer proc with the current graph to prepare so that it correctly wraps
+      # returned elements.
+      #
+      # The inner proc contains a non-thread-safe data pipeline compiled from the route. Call it with an item of input data for the detached
+      # pipe and it will execute the pipeline for that piece of data and return the result or results.
+      #
+      # A detached route can be configured with or without gather enabled. If enabled (default), the result will be an ArrayList of
+      # all result data produced by the detached route. If not, the result will be either the first thing produced by the route or null if
+      # nothing was produced.
+      def detach(gather = true)
         route = yield Pacer::Route.empty(self)
-        pipe = Pacer::Route.pipeline route do |e|
-          route.send :configure_iterator, e
-        end
-      end
-
-      def detach(gather = true, &block)
-        pipe = detached_pipe(&block)
-        expando = Pacer::Pipes::ExpandablePipe.new
-        expando.enablePath true
-        expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
-        pipe.setStarts expando
-        if gather
-          gather = Pacer::Pipes::GatherPipe.new
-          gather.setStarts pipe
-          proc do |e|
-            gather.reset
-            expando.add e
-            if gather.hasNext
-              gather.next
-            else
-              []
+        proc do |g = nil|
+          pipe = Pacer::Route.pipeline route
+          expando = Pacer::Pipes::ExpandablePipe.new
+          expando.enablePath true
+          expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
+          pipe.setStarts expando
+          pipe = route.send(:configure_iterator, pipe, g)
+          if gather
+            gather = Pacer::Pipes::GatherPipe.new
+            gather.setStarts pipe
+            proc do |e|
+              gather.reset
+              expando.add e
+              if gather.hasNext
+                gather.next
+              else
+                []
+              end
             end
-          end
-        else
-          proc do |e|
-            pipe.reset
-            expando.add e
-            pipe.next if pipe.hasNext
+          else
+            proc do |e|
+              pipe.reset
+              expando.add e
+              pipe.next if pipe.hasNext
+            end
           end
         end
       end
@@ -456,7 +466,7 @@ HELP
 
       # Overridden to extend the iterator to apply mixins
       # or wrap elements
-      def configure_iterator(iter)
+      def configure_iterator(iter, g = nil)
         iter
       end
 
