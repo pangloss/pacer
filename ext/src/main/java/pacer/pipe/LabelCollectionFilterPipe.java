@@ -10,7 +10,7 @@ import java.util.Arrays;
 public class LabelCollectionFilterPipe extends AbstractPipe<Edge, Edge> {
     private Set<String> labels;
 
-    public LabelCollectionFilterPipe(Collection<String> labels) {
+    public LabelCollectionFilterPipe(final Collection<String> labels) {
         if (labels instanceof Set) {
             this.labels = (Set)labels;
         } else if (labels == null) {

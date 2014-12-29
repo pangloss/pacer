@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class LabelPrefixPipe extends AbstractPipe<Edge, Edge> {
     private Pattern pattern;
   
-    public LabelPrefixPipe(String pattern) {
+    public LabelPrefixPipe(final String pattern) {
         super();
         this.pattern = Pattern.compile("^" + pattern);
     }
