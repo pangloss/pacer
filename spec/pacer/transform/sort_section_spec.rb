@@ -10,6 +10,13 @@ Run.tg :read_only do
       graph.v.section(:x).out.out.sort_section(:x) { |a, b| a[:name] <=> b[:name] }
     end
 
+    it 'should be sorted' do
+      sorted = graph.v.flat_map do |v|
+        v.out.out[:name].to_a.sort
+      end.to_a
+      by_custom[:name].to_a.should == sorted
+    end
+
     it 'should have the same elements' do
       by_custom.group_count.should == unsorted.group_count
     end
@@ -22,7 +29,7 @@ Run.tg :read_only do
 
     it 'should put groups into the correct order' do
       # depends on the order of graph.v(type: 'project') ...
-      route = graph.v(type: 'project').section(:proj).out[:name].custom_sort_section(:proj) { |a, b| a <=> b }
+      route = graph.v(type: 'project').section(:proj).out[:name].sort_section(:proj) { |a, b| a <=> b }
       route.to_a.should == %w[
         blueprints
         blueprints

@@ -96,9 +96,9 @@ HELP
     end
     protected
 
-    def configure_iterator(iter)
+    def configure_iterator(iter = nil, g = nil)
       if respond_to? :graph
-        pipe = Pacer::Pipes::PathWrappingPipe.new(graph)
+        pipe = Pacer::Pipes::PathWrappingPipe.new(g || graph)
         pipe.setStarts iter
         pipe
       else

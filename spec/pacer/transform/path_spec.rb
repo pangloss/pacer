@@ -15,6 +15,16 @@ describe Pacer::Transform::Path do
             [@g.vertex(5), @g.edge(12), @g.vertex(3)]]
     end
 
+    it 'should be the same as above with a detached route' do
+      p = @g.v.detach { |v| v.filter(:type => 'person').out_e.in_v(:type => 'project').paths }
+      p = p.call
+      Set[*@g.v.to_a.flat_map(&p).map(&:to_a)].should ==
+        Set[[@g.vertex(0), @g.edge(0), @g.vertex(1)],
+            [@g.vertex(5), @g.edge(1), @g.vertex(4)],
+            [@g.vertex(5), @g.edge(13), @g.vertex(2)],
+            [@g.vertex(5), @g.edge(12), @g.vertex(3)]]
+    end
+
     it 'should include all elements traversed' do
       @g.v.out_e.in_v.paths.each do |path|
         path[0].should be_a(Pacer::Wrappers::VertexWrapper)

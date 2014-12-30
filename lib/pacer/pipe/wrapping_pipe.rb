@@ -5,10 +5,21 @@ module Pacer
 
       def initialize(graph, element_type = nil, extensions = [])
         super()
-        @graph = graph
-        @element_type = element_type
-        @extensions = extensions || []
-        @wrapper = Pacer::Wrappers::WrapperSelector.build graph, element_type, @extensions
+        if graph.is_a? Array
+          @graph, @wrapper = graph
+        else
+          @graph = graph
+          @element_type = element_type
+          @extensions = extensions || []
+          @wrapper = Pacer::Wrappers::WrapperSelector.build graph, element_type, @extensions
+        end
+      end
+
+      def instance(pipe, g)
+        g ||= graph
+        p = WrappingPipe.new [g, wrapper]
+        p.setStarts pipe
+        p
       end
 
       def getSideEffect

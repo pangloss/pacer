@@ -53,7 +53,7 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
 
     protected void prepareState() {
         this.unique = true;
-        this.expando = new ExpandableIterator<T>((new ArrayList()).iterator());
+        this.expando = new ExpandableIterator<T>();
         this.uniquePipe = new DuplicateFilterPipe<T>();
         this.uniquePipe.setStarts(this.expando);
     }
