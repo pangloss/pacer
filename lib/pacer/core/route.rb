@@ -395,16 +395,16 @@ HELP
       # nothing was produced.
       def detach(gather = true)
         route = yield Pacer::Route.empty(self)
-        wrapper_pipe = route.send(:configure_iterator)
-        wrapper_pipe = nil unless wrapper_pipe.respond_to? :instance
+        w = route.send(:configure_iterator)
+        w = nil unless w.respond_to? :instance
         proc do |g = nil|
           pipe = Pacer::Route.pipeline route
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.enablePath true
           expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
           pipe.setStarts expando
-          if wrapper_pipe
-            pipe = wrapper_pipe.instance pipe, g
+          if w
+            pipe = w.instance pipe, g
           else
             pipe = route.send(:configure_iterator, pipe, g)
           end
