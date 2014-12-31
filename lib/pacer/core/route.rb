@@ -393,41 +393,9 @@ HELP
       # A detached route can be configured with or without gather enabled. If enabled (default), the result will be an ArrayList of
       # all result data produced by the detached route. If not, the result will be either the first thing produced by the route or null if
       # nothing was produced.
-      def detach(gather = true)
+      def detach
         route = yield Pacer::Route.empty(self)
-        w = route.send(:configure_iterator)
-        w = nil unless w.respond_to? :instance
-        proc do |g = nil|
-          pipe = Pacer::Route.pipeline route
-          expando = Pacer::Pipes::ExpandablePipe.new
-          expando.enablePath true
-          expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
-          pipe.setStarts expando
-          if w
-            pipe = w.instance pipe, g
-          else
-            pipe = route.send(:configure_iterator, pipe, g)
-          end
-          if gather
-            gather = Pacer::Pipes::GatherPipe.new
-            gather.setStarts pipe
-            proc do |e|
-              gather.reset
-              expando.add e
-              if gather.hasNext
-                gather.next
-              else
-                []
-              end
-            end
-          else
-            proc do |e|
-              pipe.reset
-              expando.add e
-              pipe.next if pipe.hasNext
-            end
-          end
-        end
+        DetachedRoute.new route
       end
 
 
@@ -668,6 +636,58 @@ HELP
         end
       end
 
+
+      class DetachedRoute
+        attr_reader :route, :preconfig
+
+        def initialize(route)
+          @route = route
+          w = route.send(:configure_iterator)
+          if w.respond_to? :instance
+            @preconfig = w
+          end
+        end
+
+        def build(graph, gather = true)
+          pipe = Pacer::Route.pipeline route
+          expando = Pacer::Pipes::ExpandablePipe.new
+          expando.enablePath true
+          expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
+          pipe.setStarts expando
+          if preconfig
+            pipe = preconfig.instance pipe, graph
+          else
+            pipe = route.send(:configure_iterator, pipe, graph)
+          end
+          if gather
+            g = Pacer::Pipes::GatherPipe.new
+            g.setStarts pipe
+            DetachedPipe.new(expando, g, true)
+          else
+            DetachedPipe.new(expando, pipe, false)
+          end
+        end
+      end
+
+      class DetachedPipe
+        attr_reader :expando, :pipe, :collection
+
+        def initialize(expando, pipe, collection)
+          @expando = expando
+          @pipe = pipe
+          @collection = collection
+        end
+
+        def read(element)
+          pipe.reset unless collection
+          expando.add element
+          if pipe.hasNext
+            pipe.next
+          elsif collection
+            []
+          end
+        end
+      end
     end
   end
 end

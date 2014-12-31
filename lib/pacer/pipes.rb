@@ -19,6 +19,7 @@ module Pacer
     import com.xnlogic.pacer.pipes.EdgesPipe
     import com.xnlogic.pacer.pipes.CollectionFilterPipe
     import com.xnlogic.pacer.pipes.ExpandablePipe
+    SimpleExpandablePipe = com.tinkerpop.pipes.util.ExpandablePipe
     import com.xnlogic.pacer.pipes.IdCollectionFilterPipe
     import com.xnlogic.pacer.pipes.IsEmptyPipe
     import com.xnlogic.pacer.pipes.LabelCollectionFilterPipe
