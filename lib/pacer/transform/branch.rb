@@ -44,7 +44,7 @@ module Pacer
       def clone(conf = {})
         back.chain_route({transform: Branch,
                           branches: branches.clone,
-                          element_type: back.element_type,
+                          element_type: element_type,
                           conds: conds.clone,
                           extensions: extensions.clone,
                           split_pipe_class: split_pipe_class,
