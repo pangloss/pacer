@@ -1,3 +1,6 @@
+before_install:
+- rvm uninstall jruby
+- rvm use jruby-1.7.18 --install
 language: ruby
 jdk:
 - oraclejdk7
