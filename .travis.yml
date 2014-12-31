@@ -4,7 +4,6 @@ before_install:
 language: ruby
 jdk:
 - oraclejdk7
-- oraclejdk8
 rvm:
 - jruby-1.7.18
 script: bundle exec rspec && (bundle exec rake release || echo "Not released")
