@@ -659,6 +659,7 @@ HELP
           else
             pipe = route.send(:configure_iterator, pipe, graph)
           end
+          pipe = yield pipe if block_given?
           if gather
             g = Pacer::Pipes::GatherPipe.new
             g.setStarts pipe
