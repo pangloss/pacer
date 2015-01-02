@@ -1,35 +1,37 @@
 package com.xnlogic.pacer.pipes;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.tinkerpop.pipes.AbstractPipe;
-import java.util.LinkedList;
 
 public class StreamUniqPipe<T> extends AbstractPipe<T, T> {
-    private LinkedList list;
-    private int buffer;
+	
+	public static final int DEFAULT_BUFFER_CAPACITY = 1000;
+	
+    private Set<T> buffer;
+    private int bufferCapacity;
     
-    public StreamUniqPipe(final int buffer) {
+    public StreamUniqPipe(final int bufferCapacity) {
         super();
-        this.list = new LinkedList();
-        this.buffer = buffer;
+        this.buffer = new HashSet<T>();
+        this.bufferCapacity = bufferCapacity;
     }
 
     public StreamUniqPipe() {
-        this(1000);
+        this(DEFAULT_BUFFER_CAPACITY);
     }
 
     protected T processNextStart() {
         while (true) {
             T obj = this.starts.next();
-            boolean duplicate = this.list.removeLastOccurrence(obj);
-            this.list.addLast(obj);
-
-            if (!duplicate) {
-                if (this.buffer == 0)
-                    this.list.removeFirst();
-                else
-                    this.buffer--;
-
-                return obj;
+            
+            if(! buffer.contains(obj)){
+            	if(buffer.size() < bufferCapacity){
+            		buffer.add(obj);
+            	}
+            	
+            	return obj;
             }
         }
     }
