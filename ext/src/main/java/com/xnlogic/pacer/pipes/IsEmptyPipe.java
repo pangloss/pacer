@@ -1,12 +1,9 @@
 package com.xnlogic.pacer.pipes;
 
-import com.tinkerpop.pipes.AbstractPipe;
-import com.tinkerpop.pipes.sideeffect.SideEffectPipe;
-import com.tinkerpop.pipes.util.iterators.ExpandableIterator;
-import com.tinkerpop.pipes.filter.DuplicateFilterPipe;
-import com.tinkerpop.pipes.util.FastNoSuchElementException;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import com.tinkerpop.pipes.AbstractPipe;
+import com.tinkerpop.pipes.util.FastNoSuchElementException;
 
 public class IsEmptyPipe<T> extends AbstractPipe<T, Boolean> {
     private boolean raise;  
