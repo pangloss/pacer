@@ -1,12 +1,12 @@
 package com.xnlogic.pacer.pipes;
 
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
+
 import com.tinkerpop.blueprints.Contains;
 import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.pipes.AbstractPipe;
-import java.util.Set;
-import java.util.HashSet;
-import java.util.Arrays;
-import java.util.Collection;
 
 public class IdCollectionFilterPipe<E extends Element> extends AbstractPipe<E, E> {
     private Set ids;
