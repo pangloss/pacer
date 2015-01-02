@@ -1,10 +1,9 @@
 package com.xnlogic.pacer.pipes;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import com.xnlogic.pacer.pipes.NeverPipe;
 import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import org.junit.Test;
 
 public class NeverPipeTest {
     @Test(expected=NoSuchElementException.class)
