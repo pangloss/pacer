@@ -42,7 +42,7 @@ public class LabelCollectionFilterPipeTest {
         this.edges = Arrays.asList(e1, e2, e3, e4);
     }
     
-    @Test
+    @Test(expected=NoSuchElementException.class)
     public void hasSomeMatchingEdgesTest() {
         this.createEdges();
         Collection<String> edgeLabels = Arrays.asList("edge2", "edge3");
@@ -55,18 +55,11 @@ public class LabelCollectionFilterPipeTest {
         e = labelCollectionFilterPipe.next();
         assertEquals("E3", e.getId());
 
-        boolean hasEx = false;
-
-        try {
-            e = labelCollectionFilterPipe.next();
-        } catch (NoSuchElementException nsee) {
-            hasEx = true;
-        }
-        
-        assertTrue(hasEx);
+        labelCollectionFilterPipe.next();
     }
     
-    @Test
+    
+    @Test(expected=NoSuchElementException.class)
     public void hasSomeMatchingEdgesWithSetTest() {
         this.createEdges();
         HashSet<String> edgeLabels = new HashSet<String>(Arrays.asList("edge2", "edge3"));
@@ -79,51 +72,26 @@ public class LabelCollectionFilterPipeTest {
         e = labelCollectionFilterPipe.next();
         assertEquals("E3", e.getId());
 
-        boolean hasEx = false;
-
-        try {
-            e = labelCollectionFilterPipe.next();
-        } catch (NoSuchElementException nsee) {
-            hasEx = true;
-        }
-        
-        assertTrue(hasEx);
+        labelCollectionFilterPipe.next();
     }
 
-    @Test
+    @Test(expected=NoSuchElementException.class)
     public void hasNoMatchingEdgesTest() {
         this.createEdges();
         Collection<String> edgeLabels = Arrays.asList("edge5", "edge6");
         LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(edgeLabels);
         
         labelCollectionFilterPipe.setStarts(this.edges);
-
-        boolean hasEx = false;
-
-        try {
-            Edge e = labelCollectionFilterPipe.next();
-        } catch (NoSuchElementException nsee) {
-            hasEx = true;
-        }
-        
-        assertTrue(hasEx);
+        labelCollectionFilterPipe.next();
     }
     
-    @Test
+    
+    @Test(expected=NoSuchElementException.class)
     public void noEdgesToMatchTest() {
         this.createEdges();
         LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(null);
         
         labelCollectionFilterPipe.setStarts(this.edges);
-
-        boolean hasEx = false;
-
-        try {
-            Edge e = labelCollectionFilterPipe.next();
-        } catch (NoSuchElementException nsee) {
-            hasEx = true;
-        }
-        
-        assertTrue(hasEx);
+        labelCollectionFilterPipe.next();
     }
 }
