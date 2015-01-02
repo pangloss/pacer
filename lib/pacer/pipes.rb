@@ -24,6 +24,9 @@ module Pacer
     import com.xnlogic.pacer.pipes.IsEmptyPipe
     import com.xnlogic.pacer.pipes.LabelCollectionFilterPipe
     import com.xnlogic.pacer.pipes.IsUniquePipe
+    import com.xnlogic.pacer.pipes.VerticesPipe
+    import com.xnlogic.pacer.pipes.LabelPrefixPipe
+    import com.xnlogic.pacer.pipes.NeverPipe
     import com.tinkerpop.pipes.util.iterators.EmptyIterator
     import com.tinkerpop.pipes.transform.GatherPipe
 
@@ -45,9 +48,6 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
-require 'pacer/pipe/vertices_pipe'
-
-require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
@@ -58,7 +58,6 @@ require 'pacer/pipe/simple_visitor_pipe'
 require 'pacer/pipe/stream_sort_pipe'
 require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
-require 'pacer/pipe/label_prefix_pipe'
 
 require 'pacer/pipe/property_comparison_pipe'
 
