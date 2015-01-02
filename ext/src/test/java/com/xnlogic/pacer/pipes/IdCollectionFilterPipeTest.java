@@ -28,7 +28,7 @@ public class IdCollectionFilterPipeTest {
     @Test
     public void containsInTest() {
         IdCollectionFilterPipe<Vertex> idCollectionFilterPipe =
-          new IdCollectionFilterPipe(Arrays.asList("1", "2", "3", "4"), Contains.IN);
+          new IdCollectionFilterPipe<Vertex>(Arrays.asList("1", "2", "3", "4"), Contains.IN);
 
         Vertex v1 = this.graph.addVertex("1");
         Vertex v2 = this.graph.addVertex("2");
@@ -56,7 +56,7 @@ public class IdCollectionFilterPipeTest {
     @Test
     public void containsNotInTest() {
         IdCollectionFilterPipe<Vertex> idCollectionFilterPipe =
-          new IdCollectionFilterPipe(Arrays.asList("1", "2", "3", "4"), Contains.NOT_IN);
+          new IdCollectionFilterPipe<Vertex>(Arrays.asList("1", "2", "3", "4"), Contains.NOT_IN);
 
         Vertex v1 = this.graph.addVertex("7");
         Vertex v2 = this.graph.addVertex("8");
