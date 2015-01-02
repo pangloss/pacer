@@ -1,5 +1,6 @@
 module Pacer
   module Routes::RouteOperations
+    # Deprecated: use uniq_section instead.
     def stream_uniq(buffer = 1000)
       chain_route :transform => :stream_uniq, :buffer => buffer
     end
