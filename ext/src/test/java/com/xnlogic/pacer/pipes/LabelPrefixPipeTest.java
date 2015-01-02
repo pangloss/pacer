@@ -1,17 +1,19 @@
 package com.xnlogic.pacer.pipes;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import org.junit.Before;
-import org.junit.After;
-import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
-import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.Edge;
-import java.util.Collection;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.Collection;
 import java.util.NoSuchElementException;
-import com.xnlogic.pacer.pipes.LabelPrefixPipe;
+
+import org.junit.After;
+import org.junit.Before;
+import org.junit.Test;
+
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.blueprints.Vertex;
+import com.tinkerpop.blueprints.impls.tg.TinkerGraph;
 
 public class LabelPrefixPipeTest {
     private TinkerGraph graph;
