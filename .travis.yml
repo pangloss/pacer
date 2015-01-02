@@ -1,12 +1,13 @@
 before_install:
 - rvm uninstall jruby
 - rvm use jruby-1.7.18 --install
+- export JRUBY_OPTS=--dev
 language: ruby
 jdk:
 - oraclejdk7
 rvm:
 - jruby-1.7.18
-script: bundle exec rspec && (bundle exec rake release || echo "Not released")
+script: bundle exec rake spec && (bundle exec rake release || echo "Not released")
 deploy:
   provider: rubygems
   api_key:
