@@ -1,11 +1,10 @@
 package com.xnlogic.pacer.pipes;
 
-import com.tinkerpop.pipes.AbstractPipe;
+import java.util.Iterator;
+
 import com.tinkerpop.blueprints.Graph;
 import com.tinkerpop.blueprints.Vertex;
-import com.tinkerpop.blueprints.Direction;
-import java.lang.Iterable;
-import java.util.Iterator;
+import com.tinkerpop.pipes.AbstractPipe;
 
 public class VerticesPipe extends AbstractPipe<Graph, Vertex> {
     private Iterator<Vertex> iter;
