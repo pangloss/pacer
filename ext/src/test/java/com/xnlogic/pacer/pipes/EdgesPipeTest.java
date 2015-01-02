@@ -27,12 +27,10 @@ public class EdgesPipeTest {
     private void createEdges() {
         Vertex v1 = this.graph.addVertex(1);
         Vertex v2 = this.graph.addVertex(2);
-        Vertex v3 = this.graph.addVertex(3);
-
+        
         Edge e1 = this.graph.addEdge("E1", v1, v2, "edge_label");
         Edge e2 = this.graph.addEdge("E2", v2, v1, "edge_label2");
         Edge e3 = this.graph.addEdge("E3", v1, v2, "edge_label3");
-        Edge e4 = this.graph.addEdge("E4", v2, v3, "edge_label4");
 
         this.edgesThatCount = Arrays.asList(e1, e2, e3);
     }
