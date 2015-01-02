@@ -1,23 +1,23 @@
 package com.xnlogic.pacer.pipes;
 
-import com.tinkerpop.pipes.AbstractPipe;
-import com.tinkerpop.blueprints.Edge;
-import java.util.Set;
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Arrays;
+import java.util.Set;
+
+import com.tinkerpop.blueprints.Edge;
+import com.tinkerpop.pipes.AbstractPipe;
 
 public class LabelCollectionFilterPipe extends AbstractPipe<Edge, Edge> {
     private Set<String> labels;
 
     public LabelCollectionFilterPipe(final Collection<String> labels) {
         if (labels instanceof Set) {
-            this.labels = (Set)labels;
-        } else if (labels == null) {
-            this.labels = new HashSet();
+            this.labels = (Set<String>)labels;
         } else {
-            this.labels = new HashSet();
-            this.labels.addAll(labels);
+        	this.labels = new HashSet<String>();
+        	if(labels != null){
+        		this.labels.addAll(labels);
+        	}
         }
     }
 
