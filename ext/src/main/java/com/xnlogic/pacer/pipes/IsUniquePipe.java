@@ -1,12 +1,10 @@
 package com.xnlogic.pacer.pipes;
 
-import com.tinkerpop.pipes.AbstractPipe;
-import com.tinkerpop.pipes.sideeffect.SideEffectPipe;
-import com.tinkerpop.pipes.util.iterators.ExpandableIterator;
-import com.tinkerpop.pipes.filter.DuplicateFilterPipe;
-import com.tinkerpop.pipes.util.FastNoSuchElementException;
-import java.util.ArrayList;
 import java.util.NoSuchElementException;
+
+import com.tinkerpop.pipes.AbstractPipe;
+import com.tinkerpop.pipes.filter.DuplicateFilterPipe;
+import com.tinkerpop.pipes.util.iterators.ExpandableIterator;
 
 public class IsUniquePipe<T> extends AbstractPipe<T, T> {
     private boolean unique;
