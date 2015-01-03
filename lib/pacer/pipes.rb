@@ -15,6 +15,21 @@ module Pacer
     import com.tinkerpop.pipes.transform.PropertyPipe
     import com.tinkerpop.pipes.transform.PropertyMapPipe
 
+    import com.xnlogic.pacer.pipes.BlackboxPipeline
+    import com.xnlogic.pacer.pipes.EdgesPipe
+    import com.xnlogic.pacer.pipes.CollectionFilterPipe
+    import com.xnlogic.pacer.pipes.ExpandablePipe
+    SimpleExpandablePipe = com.tinkerpop.pipes.util.ExpandablePipe
+    import com.xnlogic.pacer.pipes.IdCollectionFilterPipe
+    import com.xnlogic.pacer.pipes.IsEmptyPipe
+    import com.xnlogic.pacer.pipes.LabelCollectionFilterPipe
+    import com.xnlogic.pacer.pipes.IsUniquePipe
+    import com.xnlogic.pacer.pipes.VerticesPipe
+    import com.xnlogic.pacer.pipes.LabelPrefixPipe
+    import com.xnlogic.pacer.pipes.NeverPipe
+    import com.tinkerpop.pipes.util.iterators.EmptyIterator
+    import com.tinkerpop.pipes.transform.GatherPipe
+
     IN = com.tinkerpop.blueprints.Direction::IN
     OUT = com.tinkerpop.blueprints.Direction::OUT
     BOTH = com.tinkerpop.blueprints.Direction::BOTH
@@ -33,31 +48,18 @@ end
 
 require 'pacer/pipe/ruby_pipe'
 
-require 'pacer/pipe/vertices_pipe'
-require 'pacer/pipe/edges_pipe'
-
-require 'pacer/pipe/never_pipe'
 require 'pacer/pipe/multi_pipe'
 require 'pacer/pipe/block_filter_pipe'
-require 'pacer/pipe/collection_filter_pipe'
 require 'pacer/pipe/enumerable_pipe'
-require 'pacer/pipe/expandable_pipe'
 require 'pacer/pipe/loop_pipe'
 require 'pacer/pipe/process_pipe'
 require 'pacer/pipe/visitor_pipe'
 require 'pacer/pipe/simple_visitor_pipe'
-require 'pacer/pipe/is_unique_pipe'
-require 'pacer/pipe/is_empty_pipe'
 require 'pacer/pipe/stream_sort_pipe'
 require 'pacer/pipe/stream_uniq_pipe'
 require 'pacer/pipe/type_filter_pipe'
-require 'pacer/pipe/label_collection_filter_pipe'
-require 'pacer/pipe/id_collection_filter_pipe'
-require 'pacer/pipe/label_prefix_pipe'
 
 require 'pacer/pipe/property_comparison_pipe'
-
-require 'pacer/pipe/blackbox_pipeline'
 
 require 'pacer/pipe/unary_transform_pipe'
 require 'pacer/pipe/cross_product_transform_pipe'

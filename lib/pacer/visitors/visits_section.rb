@@ -2,7 +2,7 @@ module Pacer
   module Visitors
     # This module is mixed in to the route that actually refers to this section.
     module VisitsSection
-      attr_reader :section, :section_route
+      attr_reader :section, :section_route, :visitor_num
 
       def section=(section)
         if section.is_a? Symbol
@@ -14,14 +14,14 @@ module Pacer
         else
           raise ArgumentError, "Unknown section #{ section }. Provide either a name or a route created with the #section methed."
         end
-        @section_route.will_visit!
-        @section_route
+        @visitor_num = section_route.will_visit!
+        section_route
       end
 
       protected
 
       def section_visitor
-        section_route.section_visitor if section_route
+        section_route.section_visitor!(visitor_num) if visitor_num
       end
 
       def section_visitor_target

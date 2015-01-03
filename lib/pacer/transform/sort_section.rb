@@ -1,10 +1,18 @@
 module Pacer
   module Routes
     module RouteOperations
+      # Arity 2 uses custom sort logic. Arity 1 uses sort_by logic.
       def sort_section(section = nil, &block)
-        chain_route transform: :sort_section, sort_by_block: block, section: section
+        if not block
+          chain_route transform: :sort_section, section: section
+        elsif block.arity == 2
+          chain_route transform: :sort_section, custom_sort_block: block, section: section
+        else
+          chain_route transform: :sort_section, sort_by_block: block, section: section
+        end
       end
 
+      # Deprecated: use sort_section
       def custom_sort_section(section = nil, &block)
         chain_route transform: :sort_section, custom_sort_block: block, section: section
       end
@@ -40,27 +48,27 @@ module Pacer
         attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section, :route
         attr_reader :getPathToHere
 
-        def initialize(route, section, pipe_function)
+        def initialize(route, visitor_pipe, pipe_function)
           super()
           @to_emit = []
-          @section = section
+          @visitor_pipe = visitor_pipe
           @route = route
           @to_sort = []
           @paths = []
-          if section
-            section.visitor = self
+          if visitor_pipe
+            visitor_pipe.visitor = self
           else
             on_element nil
           end
           if pipe_function
             if pipe_function.arity == 1
               @pf_1 = pipe_function
-              section.use_on_element = false
+              visitor_pipe.use_on_element = false
             else
               @pf_2 = pipe_function
             end
           else
-            section.use_on_element = false
+            visitor_pipe.use_on_element = false
           end
         end
 
@@ -119,8 +127,8 @@ module Pacer
       class CustomSortPipe < SortBySectionPipe
         attr_reader :sort_block
 
-        def initialize(route, section, sort_block, graph, wrapper)
-          super route, section, nil
+        def initialize(route, visitor_pipe, sort_block, graph, wrapper)
+          super route, visitor_pipe, nil
           @sort_block = sort_block
           @graph = graph
           @wrapper = wrapper

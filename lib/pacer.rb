@@ -23,6 +23,7 @@ require 'pp'
 require 'rubygems'
 require 'lock_jar'
 require 'pacer/support/lock_jar'
+require 'pacer-ext.jar'
 
 if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
   bundle_jarfiles = LockJar.register_bundled_jarfiles # defined in pacer/support/lock_jar.rb

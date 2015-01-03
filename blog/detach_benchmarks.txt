@@ -1,0 +1,56 @@
+sp  = g.v.detach { |v| v.out_e.in_v(name: 'Joe').element_ids }
+spp = sp.call
+Benchmark.bmbm { |x|
+  x.report('a') { 50000.times { g.v.detach { |v| v.out_e.in_v(name: 'Joe').element_ids } } }
+  x.report('b') { 50000.times { sp.call } }
+  x.report('c') { 50000.times { sp.call.call(v) } }
+  x.report('d') { 50000.times { spp.call(v) } }
+  x.report('e') { 50000.times { v.out_e.in_v(name: 'Joe').element_ids.to_a } }
+  x.report('f') { 50000.times { v.out_edges.map { |e| e.in_vertex }.select { |z| z[:name] == 'Joe' }.map { |z| z.element_id }.first } }
+}
+
+Rehearsal -------------------------------------
+a   7.080000   0.070000   7.150000 (  6.729000)
+b   0.890000   0.010000   0.900000 (  0.668000)
+c   3.530000   0.080000   3.610000 (  1.760000)
+d   0.080000   0.000000   0.080000 (  0.083000)
+e   7.500000   0.020000   7.520000 (  6.873000)
+f  15.830000   0.030000  15.860000 ( 15.594000)
+--------------------------- total: 35.120000sec
+
+        user     system      total        real
+a   6.660000   0.010000   6.670000 (  6.449000)
+b   0.660000   0.000000   0.660000 (  0.587000)
+c   3.840000   0.040000   3.880000 (  1.883000)
+d   0.090000   0.000000   0.090000 (  0.083000)
+e   7.450000   0.030000   7.480000 (  6.951000)
+f  14.720000   0.020000  14.740000 ( 14.519000)
+
+
+
+sp  = g.v.detach { |v| v.out_e.in_v(name: 'Joe') }
+spp = sp.call g
+Benchmark.bmbm { |x|
+  x.report('a') { 50000.times { g.v.detach { |v| v.out_e.in_v(name: 'Joe') } } }
+  x.report('b') { 50000.times { sp.call } }
+  x.report('c') { 50000.times { sp.call.call(v) } }
+  x.report('d') { 50000.times { spp.call(v) } }
+  x.report('e') { 50000.times { v.out_e.in_v(name: 'Joe').to_a } }
+  x.report('f') { 50000.times { v.out_edges.map { |e| e.in_vertex }.select { |z| z[:name] == 'Joe' }.first } }
+}
+Rehearsal -------------------------------------
+a   6.500000   0.060000   6.560000 (  6.427000)
+b   0.920000   0.020000   0.940000 (  0.636000)
+c   2.790000   0.070000   2.860000 (  2.444000)
+d   1.190000   0.010000   1.200000 (  1.089000)
+e   8.160000   0.020000   8.180000 (  7.638000)
+f  15.970000   0.030000  16.000000 ( 15.868000)
+--------------------------- total: 35.740000sec
+
+        user     system      total        real
+a   6.250000   0.010000   6.260000 (  6.079000)
+b   1.710000   0.030000   1.740000 (  0.931000)
+c   2.770000   0.010000   2.780000 (  2.301000)
+d   1.170000   0.010000   1.180000 (  1.032000)
+e   7.950000   0.010000   7.960000 (  7.528000)
+f  14.820000   0.030000  14.850000 ( 14.777000)

@@ -6,9 +6,20 @@ module Pacer
 
       def initialize(graph, vertex_extensions = [], edge_extensions = [])
         super()
-        @graph = graph
-        @vertex_wrapper = Pacer::Wrappers::WrapperSelector.build graph, :vertex, vertex_extensions || Set[]
-        @edge_wrapper = Pacer::Wrappers::WrapperSelector.build graph, :edge, edge_extensions || Set[]
+        if graph.is_a? Array
+          @graph, @vertex_wrapper, @edge_wrapper = graph
+        else
+          @graph = graph
+          @vertex_wrapper = Pacer::Wrappers::WrapperSelector.build graph, :vertex, vertex_extensions || Set[]
+          @edge_wrapper = Pacer::Wrappers::WrapperSelector.build graph, :edge, edge_extensions || Set[]
+        end
+      end
+
+      def instance(pipe, g)
+        g ||= graph
+        p = PathWrappingPipe.new [g, vertex_wrapper, edge_wrapper]
+        p.setStarts pipe
+        p
       end
 
       def getCurrentPath

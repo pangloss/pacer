@@ -79,11 +79,20 @@ Run.tg(:read_only) do
       subject { graph.v(Tackle::SimpleMixin, :name => 'pangloss') }
       its(:count) { should == 1 }
       its(:extensions) { should == [Tackle::SimpleMixin] }
+      it 'should produce an equivalent predecate' do
+        p = subject.filters.to_predicate
+        graph.v.to_a.select(&p).should == subject.to_a
+      end
     end
 
     context 'reversed params' do
       subject { graph.v.v(TP::Pangloss, Tackle::SimpleMixin) }
       its(:count) { should == 1 }
+      it 'should produce an equivalent predecate' do
+        pending 'does not work for self.route style.'
+        #p = subject.filters.to_predicate
+        #graph.v.to_a.select(&p).should == subject.to_a
+      end
     end
 
     context 'reversed params' do
@@ -109,6 +118,10 @@ Run.tg(:read_only) do
         it { should_not be_empty }
         its('first.class') { should_not == wrapper_class }
         its('first.class.extensions') { should == exts + [Pacer::Utils::TSort] }
+        it 'should produce an equivalent predecate' do
+          p = subject.filters.to_predicate
+          graph.v.to_a.select(&p).should == subject.to_a
+        end
       end
 
       describe 'v(wrapper_class, :name => "pacer")' do
@@ -119,6 +132,10 @@ Run.tg(:read_only) do
         its(:first) { should be_a wrapper_class }
         its(:filters) { should_not be_nil }
         its('filters.wrapper') { should == wrapper_class }
+        it 'should produce an equivalent predecate' do
+          p = subject.filters.to_predicate
+          graph.v.to_a.select(&p).should == subject.to_a
+        end
       end
     end
   end

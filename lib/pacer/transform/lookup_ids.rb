@@ -28,7 +28,7 @@ module Pacer
         else
           fail ClientError, 'Can not look up elements without the element_type'
         end
-        pipe.setStarts end_pipe
+        pipe.setStarts end_pipe if end_pipe
         pipe
       end
     end

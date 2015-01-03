@@ -134,15 +134,30 @@ module Pacer
           end
         end
 
+        # Not used for regular filtering, but useful to test an element against
+        # a complex set of conditions without having to build a route.
+        #
+        # Returns a proc that can be called with an element to test and returns
+        # true if the element matches the conditions.
+        def to_predicate
+          expando, pipe = build_pipeline(nil, com.tinkerpop.pipes.util.iterators.ExpandableIterator.new)
+          proc do |e|
+            expando.add e
+            pipe.next if pipe.hasNext
+          end
+        end
+
         def build_pipeline(route, start_pipe, pipe = nil)
-          self.graph = route.graph
           pipe ||= start_pipe
-          route_modules.each do |mod|
-            extension_route = mod.route(Pacer::Route.empty(route))
-            s, e = extension_route.send :build_pipeline
-            s.setStarts(pipe) if pipe
-            start_pipe ||= s
-            pipe = e
+          if route
+            self.graph = route.graph
+            route_modules.each do |mod|
+              extension_route = mod.route(Pacer::Route.empty(route))
+              s, e = extension_route.send :build_pipeline
+              s.setStarts(pipe) if pipe
+              start_pipe ||= s
+              pipe = e
+            end
           end
           encoded_properties.each do |key, value|
             case value
@@ -161,6 +176,7 @@ module Pacer
             end
           end
           blocks.each do |block|
+            # Will work if route is nil.
             block_pipe = Pacer::Pipes::BlockFilterPipe.new(route, block)
             block_pipe.set_starts pipe if pipe
             Pacer.debug_pipes << { :name => 'block', :start => pipe, :end => block_pipe } if Pacer.debug_pipes
