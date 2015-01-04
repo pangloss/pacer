@@ -44,6 +44,10 @@ module Pacer
           labels.any? or super
         end
 
+        def extensions_only?
+          labels.empty? and super
+        end
+
         def to_s
           if labels.any?
             [labels.map { |l| l.to_sym.inspect }.join(', '), super].reject { |s| s == '' }.join ', '
