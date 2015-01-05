@@ -649,7 +649,11 @@ HELP
         end
 
         def build(graph, gather = true)
-          pipe = Pacer::Route.pipeline route
+          if route.is_a? Pacer::Filter::EmptyFilter
+            pipe = Pacer::Pipes::IdentityPipe.new
+          else
+            pipe = Pacer::Route.pipeline route
+          end
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.enablePath true
           expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)

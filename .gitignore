@@ -34,3 +34,4 @@ vendor/
 private/
 Gemfile-custom
 Jarfile.lock
+Jarfile.*.lock
