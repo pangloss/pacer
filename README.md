@@ -3,7 +3,7 @@
 
 Pacer is a JRuby library that enables very expressive graph traversals.
 
-It currently supports all of the major graph databases including [OrientDB][http://orientdb.com], [Neo4j](http://neo4j.org)
+It currently supports all of the major graph databases including [OrientDB](http://orientdb.com), [Neo4j](http://neo4j.org)
 and [Dex](http://www.sparsity-technologies.com/dex) thanks to the
 [Tinkerpop](http://tinkerpop.com) graphdb stack. Plus there's a very
 convenient in-memory graph called TinkerGraph which is part of
