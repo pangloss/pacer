@@ -156,21 +156,6 @@ module Pacer
           end
         end
 
-        def visitAndNode(node)
-          a = comparable_pipe node.first_node.accept(self)
-          b = comparable_pipe node.second_node.accept(self)
-
-          if a.pipe == AndFilterPipe and b.pipe == AndFilterPipe
-            Pipe.new AndFilterPipe, *a.args, *b.args
-          elsif a.pipe == AndFilterPipe
-            Pipe.new AndFilterPipe, *a.args, b
-          elsif b.pipe == AndFilterPipe
-            Pipe.new AndFilterPipe, a, *b.args
-          else
-            Pipe.new AndFilterPipe, a, b
-          end
-        end
-
         def visitArrayNode(node)
           Value.new Value.new(node.child_nodes.map { |n| n.accept self }).values!
         end
@@ -246,19 +231,12 @@ module Pacer
           Value.new nil
         end
 
-        def visitOrNode(node)
-          a = comparable_pipe node.first_node.accept(self)
-          b = comparable_pipe node.second_node.accept(self)
+        def visitAndNode(node)
+          visit_and_or(AndFilterPipe, node)
+        end
 
-          if a.pipe == OrFilterPipe and b.pipe == OrFilterPipe
-            Pipe.new OrFilterPipe, *a.args, *b.args
-          elsif a.pipe == OrFilterPipe
-            Pipe.new OrFilterPipe, *a.args, b
-          elsif b.pipe == OrFilterPipe
-            Pipe.new OrFilterPipe, a, *b.args
-          else
-            Pipe.new OrFilterPipe, a, b
-          end
+        def visitOrNode(node)
+          visit_and_or(OrFilterPipe, node)
         end
 
         def visitRootNode(node)
@@ -307,6 +285,22 @@ module Pacer
 
         def visitZArrayNode(node)
           Value.new []
+        end
+
+        private
+
+        def visit_and_or(pipe_class, node)
+          a = comparable_pipe node.first_node.accept(self)
+          b = comparable_pipe node.second_node.accept(self)
+          if a.pipe == pipe_class and b.pipe == pipe_class
+            Pipe.new pipe_class, *a.args, *b.args
+          elsif a.pipe == pipe_class
+            Pipe.new pipe_class, *a.args, b
+          elsif b.pipe == pipe_class
+            Pipe.new pipe_class, a, *b.args
+          else
+            Pipe.new pipe_class, a, b
+          end
         end
       end
     end
