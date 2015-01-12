@@ -1,5 +1,5 @@
 # Pacer
-[![Coverage Status](https://img.shields.io/coveralls/pangloss/pacer.svg)](https://coveralls.io/r/pangloss/pacer) [![Build Status](https://travis-ci.org/pangloss/pacer.svg)](https://travis-ci.org/pangloss/pacer)  
+[![Coverage Status](https://img.shields.io/coveralls/pangloss/pacer.svg)](https://coveralls.io/r/pangloss/pacer) [![Build Status](https://travis-ci.org/pangloss/pacer.svg)](https://travis-ci.org/pangloss/pacer)  [![Code Climate](https://codeclimate.com/github/pangloss/pacer/badges/gpa.svg)](https://codeclimate.com/github/pangloss/pacer)
 
 Pacer is a JRuby library that enables very expressive graph traversals.
 
