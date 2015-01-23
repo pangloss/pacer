@@ -8,7 +8,7 @@ module Pacer
       def all(opts = {}, &block)
         if opts[:include_self]
           branch do |this|
-            this
+            this.identity
           end.branch do |this|
             this.java_loop(opts, &block)
           end.merge_exhaustive
@@ -24,6 +24,7 @@ module Pacer
       import com.tinkerpop.pipes.branch.LoopPipe
 
       attr_reader :looping_route
+      attr_accessor :include_self
 
       def looping_route=(route)
         if route.is_a? Proc
