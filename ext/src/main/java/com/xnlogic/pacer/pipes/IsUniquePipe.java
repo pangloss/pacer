@@ -1,15 +1,14 @@
 package com.xnlogic.pacer.pipes;
 
 import java.util.NoSuchElementException;
+import java.util.LinkedHashSet;
+import java.util.Set;
 
 import com.tinkerpop.pipes.AbstractPipe;
-import com.tinkerpop.pipes.filter.DuplicateFilterPipe;
-import com.tinkerpop.pipes.util.iterators.ExpandableIterator;
 
 public class IsUniquePipe<T> extends AbstractPipe<T, T> {
     private boolean unique;
-    private ExpandableIterator<T> expando;
-    private DuplicateFilterPipe<T> uniquePipe;
+    private Set historySet;
   
     public IsUniquePipe() {
         super();
@@ -18,10 +17,8 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
 
     protected T processNextStart() {
         T value = this.starts.next();
-
         if (this.unique)
             this.checkUniqueness(value);
-        
         return value;
     }
 
@@ -39,20 +36,14 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
     }
     
     protected void checkUniqueness(T value) {
-        try {
-            this.expando.add(value);
-            this.uniquePipe.next();
-        } catch (NoSuchElementException nsee) {
+        if (!this.historySet.add(value)) {
             this.unique = false;
-            this.uniquePipe = null;
-            this.expando = null;
+            this.historySet = null;
         }
     }
 
     protected void prepareState() {
+        this.historySet = new LinkedHashSet();
         this.unique = true;
-        this.expando = new ExpandableIterator<T>();
-        this.uniquePipe = new DuplicateFilterPipe<T>();
-        this.uniquePipe.setStarts(this.expando);
     }
 }
