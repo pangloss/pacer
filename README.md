@@ -25,7 +25,7 @@ Pacer has a [google group](http://groups.google.com/group/pacer-users?lnk=gcimv)
 Check out the [wiki](https://github.com/pangloss/pacer/wiki) for detailed explanations of many of Pacer's features. Please contribute to it or open issues against it if there is anything missing that you want to see.
 
 Pacer is also documented with a comprehensive RSpec test suite and with a
-thorough YARD documentation. [Dig in!](http://rubydoc.info/github/pangloss/pacer/develop/frames)
+thorough YARD documentation. [Dig in!](http://www.rubydoc.info/github/pangloss/pacer/master)
 
 If you like, you can also use the documentation locally via
 
