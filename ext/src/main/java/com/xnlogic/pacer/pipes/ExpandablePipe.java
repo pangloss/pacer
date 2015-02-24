@@ -15,8 +15,8 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
     private Object metadata;
     private Object nextMetadata;
 
-    private List path;
-    private List nextPath;
+    private List<Object> path;
+    private List<Object> nextPath;
     
     public ExpandablePipe() {
         this.queue = new LinkedList<EPTriple>();
@@ -29,7 +29,7 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
 		});
     }
 
-    public void add(T element, Object metadata, List path) {
+    public void add(T element, Object metadata, List<Object> path) {
         this.queue.add(new EPTriple(element, metadata, path));
     }
 
@@ -58,15 +58,16 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
         return toReturn;
     }
 
-    protected T processNextStart() {
+    @SuppressWarnings("unchecked")
+	protected T processNextStart() {
         if (this.queue.isEmpty()) {
             this.nextMetadata = null;
             T r = this.starts.next();
 
             if (this.pathEnabled && this.starts instanceof Pipe) {
-                this.nextPath = ((Pipe)this.starts).getCurrentPath();
+                this.nextPath = ((Pipe<T, T>)this.starts).getCurrentPath();
             } else {
-                this.nextPath = new ArrayList();
+                this.nextPath = new ArrayList<Object>();
             }
             return r;
         } else {
@@ -77,8 +78,8 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
         }
     }
 
-    public List getPathToHere() {
-        List path = new ArrayList();
+    public List<Object> getPathToHere() {
+        List<Object> path = new ArrayList<Object>();
 
         if (this.path != null) {
             for (Object p : this.path) {
@@ -92,9 +93,9 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
     private class EPTriple {
         public T element;
         public Object metadata;
-        public List path;
+        public List<Object> path;
 
-        public EPTriple(T element, Object metadata, List path) {
+        public EPTriple(T element, Object metadata, List<Object> path) {
             this.element = element;
             this.metadata = metadata;
             this.path = path;

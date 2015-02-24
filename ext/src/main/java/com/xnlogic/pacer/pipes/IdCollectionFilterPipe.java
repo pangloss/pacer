@@ -9,19 +9,20 @@ import com.tinkerpop.blueprints.Element;
 import com.tinkerpop.pipes.AbstractPipe;
 
 public class IdCollectionFilterPipe<E extends Element> extends AbstractPipe<E, E> {
-    private Set ids;
+    private Set<Object> ids;
     private boolean containsIn;
     
     // TODO: Consider making this a derived exception.  Also, this constructor is the reverse of the Ruby one. Is this ok?
     // Also also, is an Object array the way to go?  Can we nail down the type further?
-    public IdCollectionFilterPipe(final Collection ids, final Contains comparison) throws RuntimeException {
+    @SuppressWarnings("unchecked")
+	public IdCollectionFilterPipe(final Collection<?> ids, final Contains comparison) throws RuntimeException {
         super();
         if (ids instanceof Set) {
-            this.ids = (Set)ids;
+            this.ids = (Set<Object>)ids;
         } else if (ids == null) {
-            this.ids = new HashSet();
+            this.ids = new HashSet<Object>();
         } else {
-            this.ids = new HashSet();
+            this.ids = new HashSet<Object>();
             this.ids.addAll(ids);
         }
         if (comparison == Contains.IN)

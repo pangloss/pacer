@@ -1,6 +1,5 @@
 package com.xnlogic.pacer.pipes;
 
-import java.util.NoSuchElementException;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
@@ -8,7 +7,7 @@ import com.tinkerpop.pipes.AbstractPipe;
 
 public class IsUniquePipe<T> extends AbstractPipe<T, T> {
     private boolean unique;
-    private Set historySet;
+    private Set<T> historySet;
   
     public IsUniquePipe() {
         super();
@@ -43,7 +42,7 @@ public class IsUniquePipe<T> extends AbstractPipe<T, T> {
     }
 
     protected void prepareState() {
-        this.historySet = new LinkedHashSet();
+        this.historySet = new LinkedHashSet<T>();
         this.unique = true;
     }
 }

@@ -1,29 +1,26 @@
 package com.xnlogic.pacer.pipes;
 
-import static org.junit.Assert.*;
-import org.junit.Test;
-import java.util.Arrays;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.util.ArrayList;
-import com.tinkerpop.pipes.Pipe;
-import com.tinkerpop.pipes.IdentityPipe;
-import com.tinkerpop.pipes.AbstractPipe;
-import java.util.Iterator;
-import com.xnlogic.pacer.pipes.ExpandablePipe;
+
+import org.junit.Test;
 
 public class ExpandablePipeTest {
 
     @Test
     public void queueWithElementsTest() {
-        ExpandablePipe expandablePipe = new ExpandablePipe();
+        ExpandablePipe<String> expandablePipe = new ExpandablePipe<String>();
 
-        ArrayList input = new ArrayList();
+        ArrayList<String> input = new ArrayList<String>();
         input.add("X");
 
         expandablePipe.setStarts(input.iterator());
 
-        expandablePipe.add("a", 1, new ArrayList());
-        expandablePipe.add("b", 2, new ArrayList());
-        expandablePipe.add("c", 3, new ArrayList());
+        expandablePipe.add("a", 1, new ArrayList<Object>());
+        expandablePipe.add("b", 2, new ArrayList<Object>());
+        expandablePipe.add("c", 3, new ArrayList<Object>());
       
         Object result = expandablePipe.next();
         assertTrue(result.equals("a"));
