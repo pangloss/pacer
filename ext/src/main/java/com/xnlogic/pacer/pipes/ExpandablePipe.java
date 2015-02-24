@@ -2,6 +2,9 @@ package com.xnlogic.pacer.pipes;
 
 import com.tinkerpop.pipes.AbstractPipe;
 import com.tinkerpop.pipes.Pipe;
+
+import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.Queue;
 import java.util.LinkedList;
 import java.util.List;
@@ -17,6 +20,13 @@ public class ExpandablePipe<T> extends AbstractPipe<T, T> {
     
     public ExpandablePipe() {
         this.queue = new LinkedList<EPTriple>();
+        
+        // By default, initialize this pipe with an empty iterator
+        setStarts(new Iterator<T>() {
+			public boolean hasNext() {return false;}
+			public T next() {throw new NoSuchElementException();}
+			public void remove() {}
+		});
     }
 
     public void add(T element, Object metadata, List path) {
