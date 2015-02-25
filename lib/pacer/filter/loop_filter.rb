@@ -212,8 +212,6 @@ HELP
 
       def expandable(route = nil)
         expando = Pacer::Pipes::ExpandablePipe.new
-        empty = java.util.ArrayList.new
-        expando.setStarts empty.iterator
         if route
           control_pipe = Pacer::Route.pipeline route
           control_pipe.setStarts expando

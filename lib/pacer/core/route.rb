@@ -656,7 +656,6 @@ HELP
           end
           expando = Pacer::Pipes::ExpandablePipe.new
           expando.enablePath true
-          expando.setStarts(Pacer::Pipes::EmptyIterator::INSTANCE)
           pipe.setStarts expando
           if preconfig
             pipe = preconfig.instance pipe, graph
