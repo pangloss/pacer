@@ -43,8 +43,7 @@ module Pacer::Pipes
 
     def processNextStart
       while true
-        has_next = looping_pipe.hasNext
-        if has_next
+        if looping_pipe.hasNext
           element = looping_pipe.next
           depth = (expando.metadata || 0) + 1
           self.next_path = looping_pipe.getCurrentPath if pathEnabled
