@@ -20,6 +20,7 @@ public class LabelCollectionFilterPipeTest {
     @Before
     public void setup() throws Exception {
         this.graph = new TinkerGraph();
+        createEdges();
     }
 
     @After
@@ -42,53 +43,67 @@ public class LabelCollectionFilterPipeTest {
         this.edges = Arrays.asList(e1, e2, e3, e4);
     }
     
-    @Test(expected=NoSuchElementException.class)
-    public void hasSomeMatchingEdgesTest() {
-        this.createEdges();
-        Collection<String> edgeLabels = Arrays.asList("edge2", "edge3");
+    
+    
+    private LabelCollectionFilterPipe initPipeAndConsumeSomeItems(Collection<String> edgeLabels, int itemsToConsume) {
         LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(edgeLabels);
-        
         labelCollectionFilterPipe.setStarts(this.edges);
-        Edge e = labelCollectionFilterPipe.next();
-        assertEquals("E2", e.getId());
         
-        e = labelCollectionFilterPipe.next();
-        assertEquals("E3", e.getId());
-
-        labelCollectionFilterPipe.next();
+        for (int i = 0; i < itemsToConsume; i++) {
+        	labelCollectionFilterPipe.next();
+		}
+        
+        return labelCollectionFilterPipe;
     }
     
     
+    
+    @Test
+    public void hasSomeMatchingEdgesTest() {
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(Arrays.asList("edge2", "edge3"), 0);
+        assertEquals("E2", pipe.next().getId());
+    }
+    
+    @Test
+    public void hasSomeMatchingEdgesTest2() {
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(Arrays.asList("edge2", "edge3"), 1);
+        assertEquals("E3", pipe.next().getId());
+    }
+    
     @Test(expected=NoSuchElementException.class)
+    public void hasSomeMatchingEdgesTest3() {
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(Arrays.asList("edge2", "edge3"), 2);
+        pipe.next();
+    }
+    
+    
+    @Test
     public void hasSomeMatchingEdgesWithSetTest() {
-        this.createEdges();
-        HashSet<String> edgeLabels = new HashSet<String>(Arrays.asList("edge2", "edge3"));
-        LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(edgeLabels);
-        
-        labelCollectionFilterPipe.setStarts(this.edges);
-        Edge e = labelCollectionFilterPipe.next();
-        assertEquals("E2", e.getId());
-        
-        e = labelCollectionFilterPipe.next();
-        assertEquals("E3", e.getId());
-
-        labelCollectionFilterPipe.next();
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(new HashSet<String>(Arrays.asList("edge2", "edge3")), 0);
+        assertEquals("E2", pipe.next().getId());
+    }
+    
+    @Test
+    public void hasSomeMatchingEdgesWithSetTest2() {
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(new HashSet<String>(Arrays.asList("edge2", "edge3")), 1);
+        assertEquals("E3", pipe.next().getId());
+    }
+    
+    @Test(expected=NoSuchElementException.class)
+    public void hasSomeMatchingEdgesWithSetTest3() {
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(new HashSet<String>(Arrays.asList("edge2", "edge3")), 2);
+    	pipe.next();
     }
 
     @Test(expected=NoSuchElementException.class)
     public void hasNoMatchingEdgesTest() {
-        this.createEdges();
-        Collection<String> edgeLabels = Arrays.asList("edge5", "edge6");
-        LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(edgeLabels);
-        
-        labelCollectionFilterPipe.setStarts(this.edges);
-        labelCollectionFilterPipe.next();
+    	LabelCollectionFilterPipe pipe = initPipeAndConsumeSomeItems(new HashSet<String>(Arrays.asList("edge5", "edge6")), 0);
+    	pipe.next();
     }
     
     
     @Test(expected=NoSuchElementException.class)
     public void noEdgesToMatchTest() {
-        this.createEdges();
         LabelCollectionFilterPipe labelCollectionFilterPipe = new LabelCollectionFilterPipe(null);
         
         labelCollectionFilterPipe.setStarts(this.edges);
