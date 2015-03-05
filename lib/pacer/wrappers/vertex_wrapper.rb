@@ -102,7 +102,7 @@ module Pacer::Wrappers
     end
 
     def as?(*exts)
-      has_exts = extensions_missing(exts).all? do |ext|
+      extensions_missing(exts).all? do |ext|
         rc = if ext.respond_to? :route_conditions
                ext.route_conditions(graph)
              elsif ext.respond_to? :lookup
