@@ -39,7 +39,13 @@ module Pacer
     #   nesting: false -- (default) raise an exception instead of starting a nested transaction
     def transaction(opts = {})
       commit, rollback = start_transaction! opts
+      tx_depth = nil
       begin
+        if Pacer.verbose == :very
+          tx_depth = threadlocal_graph_info[:dx_depth]
+          puts "--#{self.class.name} transaction #{ tx_depth } --> "
+          puts caller[0,3]
+        end
         r = yield commit, rollback
         commit.call(false)
         r
@@ -47,6 +53,7 @@ module Pacer
         rollback.call e.message
         raise
       ensure
+        puts "--#{self.class.name} #{ tx_depth } <-- " if Pacer.verbose == :very
         finish_transaction!
       end
     end
@@ -156,6 +163,8 @@ module Pacer
     end
 
     # NOTE pacer-orient reimplements this
+    # A better name for this would be "create_real_transaction", vs. the other finalizers which are all mock transactions in the default
+    # implementation.
     def base_tx_finalizers
       tx_id = threadlocal_graph_info[:tx_id] = rand
       commit = ->(reopen = true) do
