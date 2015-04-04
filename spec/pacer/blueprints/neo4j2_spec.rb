@@ -7,6 +7,12 @@ module Neo2Spec
     end
   end
 
+  class FastPerson < Pacer::Wrappers::VertexWrapper
+    def self.route_conditions(graph)
+      { type: 'person' }
+    end
+  end
+
   class Frog < Pacer::Wrappers::VertexWrapper
     def self.route_conditions(graph)
       { frog: 'yes' }
@@ -46,6 +52,18 @@ module Neo2Spec
         #its(:count) { should == 2 }
 
         its(:wrapper) { should == Person }
+      end
+
+      describe FastPerson do
+        subject { graph2.v(FastPerson) }
+
+        # sanity checks
+        it { should be_a Pacer::Filter::LuceneFilter }
+        its(:query) { should == 'type:"person"' }
+        # This doesn't work because neo indices are out of sync before the transaction finalizes
+        #its(:count) { should == 2 }
+
+        its(:wrapper) { should == FastPerson }
       end
 
       describe Frog do

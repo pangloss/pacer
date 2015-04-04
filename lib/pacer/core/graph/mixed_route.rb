@@ -10,7 +10,7 @@ module Pacer::Core::Graph
         :pipe_args => Pacer::Vertex,
         :wrapper => wrapper,
         :extensions => extensions
-      Pacer::Route.property_filter(route, args, block)
+      Pacer::Route.property_filter(route, args, block, true)
     end
 
     # Pass through only edges.
@@ -20,7 +20,7 @@ module Pacer::Core::Graph
         :pipe_args => Pacer::Edge,
         :wrapper => wrapper,
         :extensions => extensions
-      Pacer::Route.property_filter(route, args, block)
+      Pacer::Route.property_filter(route, args, block, true)
     end
 
     def filter(*args, &block)
@@ -29,7 +29,7 @@ module Pacer::Core::Graph
 
     def mixed(*args, &block)
       route = chain_route :pipe_class => Pacer::Pipes::IdentityPipe
-      Pacer::Route.property_filter(route, args, block)
+      Pacer::Route.property_filter(route, args, block, true)
     end
 
     # Out edges from matching vertices.

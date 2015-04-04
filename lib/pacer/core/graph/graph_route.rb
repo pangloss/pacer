@@ -9,7 +9,7 @@ module Pacer::Core::Graph
       route = chain_route :element_type => :vertex,
         :pipe_class => Pacer::Pipes::VerticesPipe,
         :route_name => 'GraphV'
-      Pacer::Route.property_filter(route, filters, block)
+      Pacer::Route.property_filter(route, filters, block, true)
     end
 
     # Returns a new route to all graph edges. Standard filter options.
@@ -18,7 +18,7 @@ module Pacer::Core::Graph
       route = chain_route :element_type => :edge,
         :pipe_class => Pacer::Pipes::EdgesPipe,
         :route_name => 'GraphE'
-      Pacer::Route.property_filter(route, filters, block)
+      Pacer::Route.property_filter(route, filters, block, true)
     end
 
     def filter(*args)

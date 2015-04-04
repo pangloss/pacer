@@ -41,8 +41,9 @@ module Pacer
         end
       end
 
-      def property_filter(base, args, block)
+      def property_filter(base, args, block, strict = false)
         filters = Pacer::Route.edge_filters(base.graph, args)
+        filters.use_lookup! if strict
         filters.blocks = [block] if block
         args = chain_args(filters)
         if filters.extensions_only? and base.is_a? Route

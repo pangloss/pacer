@@ -9,7 +9,7 @@ module Pacer::Core::Graph
     # @yield [ElementWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [ElementRoute] the same type and extensions as the source route.
     def filter(*filters, &block)
-      Pacer::Route.property_filter(self, filters, block)
+      Pacer::Route.property_filter(self, filters, block, true)
     end
 
     # v is undefined for edge routes.
