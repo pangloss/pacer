@@ -54,7 +54,7 @@ module VertexWrapperSpec
   end
 
   Run.all :read_only do
-    describe 'type filtering', :focus do
+    describe 'type filtering' do
       before :all do
         graph.tx do
           graph.create_vertex type: 'project'
