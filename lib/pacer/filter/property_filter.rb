@@ -28,19 +28,6 @@ module Pacer
         filters.is_a? Pacer::Filter::PropertyFilter::Filters
       end
 
-      def property_filter_before(base, args, block)
-        filters = Pacer::Route.edge_filters(base.graph, args)
-        filters.blocks = [block] if block
-        args = chain_args(filters)
-        if filters.extensions_only? and base.is_a? Route
-          yield base.chain_route(args)
-        elsif filters and filters.any?
-          yield base.chain_route(args.merge!(filter: :property, filters: filters))
-        else
-          yield base
-        end
-      end
-
       def property_filter(base, args, block, strict = false)
         filters = Pacer::Route.edge_filters(base.graph, args)
         filters.use_lookup! if strict
