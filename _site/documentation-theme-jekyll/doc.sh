@@ -1,0 +1,1 @@
+jekyll serve --config configurations/config_documentation-theme-jekyll.yml --destination _site/documentation-theme-jekyll

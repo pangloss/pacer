@@ -1,0 +1,16 @@
+.test {color: red; font-size:40px;}
+
+/* change color of top nav bar*/
+
+
+.navbar-inverse {
+	background-color: #3f3f3f;
+	border-color: #dedede;
+}
+
+
+/* change sidebar nav parent sections */
+
+.nav > li.active > a {
+background-color: #3f3f3f;
+}

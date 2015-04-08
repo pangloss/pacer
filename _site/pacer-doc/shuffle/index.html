@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link href='//fonts.googleapis.com/css?family=Montserrat:700,400' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic' rel='stylesheet' type='text/css'> -->
+     <link rel="stylesheet" href="/pacer-doc/css/syntax.css"  type='text/css'>
+     <link rel="stylesheet" href="/pacer-doc/css/font-awesome.min.css">
+     <link rel="stylesheet" href="/pacer-doc/css/bootstrap.min.css">
+     <link rel="stylesheet" href="/pacer-doc/css/modern-business.css">
+    <link rel="stylesheet" href="/pacer-doc/css/lavish-bootstrap.css"  type='text/css'>
+    <link rel="canonical" href="https://github.com/tomjohnson1492/pacer-doc/shuffle/">
+    <link rel="stylesheet" href="/pacer-doc/css/customstyles.css"  type='text/css'>
+     <link rel="stylesheet" href="/pacer-doc/css/projectstyles.css"  type='text/css'>
+    <link rel="canonical" href="https://github.com/tomjohnson1492/pacer-doc/shuffle/">
+  <link rel="alternate" type="application/rss+xml" title="Pacer Docs" href="https://github.com/tomjohnson1492/pacer-doc/feed.xml" />
+    <script src="/pacer-doc/js/jquery.min.js"></script>
+    <script src="/pacer-doc/js/jquery.cookie.min.js"></script>
+    <script src="/pacer-doc/js/jquery.navgoco.min.js"></script>
+    <script src="/pacer-doc/js/bootstrap.min.js"></script>
+    <script src="/pacer-doc/js/toc.js"></script>
+    <script src="/pacer-doc/js/customscripts.js"></script>
+    <script src="/pacer-doc/js/projectscripts.js"></script>
+       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <title>Shuffle | Pacer Docs</title>
+     <meta name="description" content="A theme based on Jekyll designed for technical writers creating help systems. Feel free to clone, fork, and otherwise use. It's all open source and free to implement.  Please consider contributing back any innovations you make so that others can benefit.
+">
+ 
+
+ 
+
+  </head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                  <a class="navbar-brand homeLink fa fa-home" href="/pacer-doc/"><span class="projectHome"> &nbsp;Pacer Docs</span></a>
+
+                 
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+
+<!-- entries without drop-downs appear here -->
+  
+  
+
+  
+  <li><a href="https://github.com/pangloss/pacer/" target="_blank">Github Repo</a></li>
+  
+     
+    
+
+
+<!-- entries with drop-downs appear here -->
+
+
+<li>
+<!-- start search -->
+   <div id="search-demo-container">
+      <input type="text" id="search-input" placeholder="search...">
+      <ul id="results-container"></ul>
+    </div>
+
+    
+    <script src="/pacer-doc/js/jekyll-search.js" type="text/javascript"></script>
+    
+    
+    <script type="text/javascript">
+      SimpleJekyllSearch.init({
+        searchInput: document.getElementById('search-input'),
+        resultsContainer: document.getElementById('results-container'),
+        dataSource: '/pacer-doc/search.json',        
+        searchResultTemplate: '<li><a href="{url}" title="Shuffle">{title}</a></li>',
+        noResultsText: 'No results found.',
+        limit: 10,
+        fuzzy: true,
+      })
+    </script>
+    <!-- end search -->
+ </li>
+
+
+
+        </div>
+
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Page Content -->
+    <div class="container">
+    <div class="col-lg-12">&nbsp;</div>
+
+
+
+
+
+ <!-- Content Row -->
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-md-3">
+
+<script>
+$(document).ready(function() {
+    // Initialize navgoco with default options
+    $("#mysidebar").navgoco({
+        caretHtml: '',
+        accordion: true,
+        openClass: 'active', // open
+        save: true,
+        cookie: {
+            name: 'navgoco',
+            expires: false,
+            path: '/'
+        },
+        slide: {
+            duration: 400,
+            easing: 'swing'
+        }
+    });
+
+    $("#collapseAll").click(function(e) {
+        e.preventDefault();
+        $("#mysidebar").navgoco('toggle', false);
+    });
+
+    $("#expandAll").click(function(e) {
+        e.preventDefault();
+        $("#mysidebar").navgoco('toggle', true);
+    });
+});
+
+</script>
+  
+<!-- note that the data file for your project needs to be specified in the code below. Instead of site.data.jekyll, use the data file corresponding to your project (create one if it doesn't already exist). -->
+
+<ul id="mysidebar" class="nav">
+
+
+  
+  
+    <li><a href="#">Introduction</a>
+    <ul>
+    
+    
+      
+      <li><a href="/pacer-doc/intro/">What is Pacer?</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/install/">Installation</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/quick_start/">Quick Start</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/suppoted_graph_databases/">Supported Databases</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/contributing/">Contributing to Pacer</a></li>
+    
+     
+    
+    </ul>
+    </li>
+  
+    <li><a href="#">Fundamentals</a>
+    <ul>
+    
+    
+      
+      <li><a href="/pacer-doc/pacer-extensions/">Extensions</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/routes/">Routes</a></li>
+    
+     
+    
+    </ul>
+    </li>
+  
+
+
+
+</div>
+
+
+
+
+            <!-- Content Column -->
+            <div class="col-md-9">
+
+                <div class="post-header">
+  <h1 class="post-title-main">Shuffle</h1>
+</div>
+<div class="post-content">
+
+<script>
+$( document ).ready(function() {
+  // Handler for .ready() called.
+
+$('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+
+/* this offset helps account for the space taken up by the floating toolbar. */
+$('#toc').on('click', 'a', function() {
+  var target = $(this.getAttribute('href'))
+    , scroll_target = target.offset().top
+
+  $(window).scrollTop(scroll_target - 10);
+  return false
+})
+  
+});
+</script>
+
+
+<div id="toc"></div>
+
+
+<script src="/pacer-doc/js/jquery.shuffle.min.js"></script>
+<script src="/pacer-doc/js/jquery.ba-throttle-debounce.min.js"></script>
+
+      <div class="filter-options">
+      <button class="btn btn-default" data-group="gettingStarted">Getting Started</button>
+      <button class="btn btn-default" data-group="formatting">Formatting</button>
+      <button class="btn btn-default" data-group="layout">Layout</button>
+      <button class="btn btn-default" data-group="reuse">Content re-use</button>
+      <button class="btn btn-default" data-group="conditional_filtering">Conditional filtering</button>
+      <button class="btn btn-default" data-group="news">News</button>
+       <button class="btn btn-default" data-group="other">Other</button>
+    </div>      
+
+<div id="grid" class="row">
+
+
+    <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["gettingStarted"]'>
+
+               <div class="panel panel-danger">
+               <div class="panel-heading">Getting started</div>
+               <div class="panel-body">
+                  If you're getting started with Jekyll, see the links in this section. It will take you from the beginning level to comfortable. 
+                  <ul>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 
+                  </ul>
+               </div>
+            </div>
+    
+    </div>
+   
+
+    <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["news"]'>
+             
+             <div class="panel panel-info">
+               <div class="panel-heading">Latest news</div>
+               <div class="panel-body">Here's the latest news about this theme. Lots more detail here... [These are posts from the original theme I forked this template from (Shiori).]
+               <ul>
+                  
+                  
+                  
+                  
+                  
+                  <li><a class="post-link" href="/pacer-doc/updates-for-theme">Theme updates</a> (Feb 5, 2015)</li>
+                  <div class="summary"></div>
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+                  
+               </ul>
+            </div>
+         </div>
+
+    </div>
+
+
+
+    <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["layout"]'>
+
+                <div class="panel panel-danger">
+               <div class="panel-heading">Layout test</div>
+               <div class="panel-body">
+                  These topics get into layout techniques and strategies. 
+                  <ul>
+                    <ul>
+  
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 
+                    
+                  </ul>
+               </div>
+            </div>
+
+    </div>
+
+    <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["formatting"]'>
+         
+      <div class="panel panel-default">
+               <div class="panel-heading">Formatting test</div>
+               <div class="panel-body">These topics cover basic formatting as you're creating content on a page.
+               <ul>
+              
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 
+               </ul>
+            </div>
+         </div>
+
+    </div>
+
+       <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["reuse"]'>
+         
+<div class="panel panel-primary">
+               <div class="panel-heading">Loop limit test</div>
+               <div class="panel-body">
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 
+               </div>
+            </div>
+
+    </div>
+
+        <div class="col-xs-6 col-sm-4 col-md-4" data-groups='["conditional_filtering"]'>
+
+             <div class="panel panel-warning">
+               <div class="panel-heading">Conditional filtering</div>
+               <div class="panel-body">
+                  You can conditionally filter content, reuse content stored in other places, set up variables, and use other advanced logic from the Liquid markup. 
+                  <ul>
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                
+                 
+                  </ul>
+               </div>
+            </div>
+
+    </div>
+          <!-- sizer -->
+      <div class="col-xs-6 col-sm-4 col-md-1 shuffle_sizer"></div>          
+
+
+    </div><!-- /#grid -->
+
+<script type="text/javascript">
+$(document).ready(function() {
+    $('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+});
+
+</script>
+<!-- shuffle -->
+<script>
+var shuffleme = (function( $ ) {
+  'use strict';
+
+  var $grid = $('#grid'),
+      $filterOptions = $('.filter-options'),
+      $sizer = $grid.find('.shuffle_sizer'),
+
+  init = function() {
+
+    // None of these need to be executed synchronously
+    setTimeout(function() {
+      listen();
+      setupFilters();
+    }, 100);
+
+    // instantiate the plugin
+    $grid.shuffle({
+      itemSelector: '[class*="col-"]',
+      sizer: $sizer    
+    });
+  },
+
+  // Set up button clicks
+  setupFilters = function() {
+    var $btns = $filterOptions.children();
+    $btns.on('click', function() {
+      var $this = $(this),
+          isActive = $this.hasClass( 'active' ),
+          group = isActive ? 'all' : $this.data('group');
+
+      // Hide current label, show current label in title
+      if ( !isActive ) {
+        $('.filter-options .active').removeClass('active');
+      }
+
+      $this.toggleClass('active');
+
+      // Filter elements
+      $grid.shuffle( 'shuffle', group );
+    });
+
+    $btns = null;
+  },
+
+  // Re layout shuffle when images load. This is only needed
+  // below 768 pixels because the .picture-item height is auto and therefore
+  // the height of the picture-item is dependent on the image
+  // I recommend using imagesloaded to determine when an image is loaded
+  // but that doesn't support IE7
+  listen = function() {
+    var debouncedLayout = $.throttle( 300, function() {
+      $grid.shuffle('update');
+    });
+
+    // Get all images inside shuffle
+    $grid.find('img').each(function() {
+      var proxyImage;
+
+      // Image already loaded
+      if ( this.complete && this.naturalWidth !== undefined ) {
+        return;
+      }
+
+      // If none of the checks above matched, simulate loading on detached element.
+      proxyImage = new Image();
+      $( proxyImage ).on('load', function() {
+        $(this).off('load');
+        debouncedLayout();
+      });
+
+      proxyImage.src = this.src;
+    });
+
+    // Because this method doesn't seem to be perfect.
+    setTimeout(function() {
+      debouncedLayout();
+    }, 500);
+  };      
+
+  return {
+    init: init
+  };
+}( jQuery ));
+
+
+
+$(document).ready(function() {
+  shuffleme.init();
+});
+
+    </script>
+
+    <!-- new attempt-->
+
+    <script>
+    $(document).ready(function() {
+     
+    /* initialize shuffle plugin */
+    var $grid = $('#grid');
+         
+    $grid.shuffle({
+        itemSelector: '.item' // the selector for the items in the grid
+    });
+ 
+});</script>
+
+<script>
+$('#filter a').click(function (e) {
+    e.preventDefault();
+         
+    // set active class
+    $('#filter a').removeClass('active');
+    $(this).addClass('active');
+         
+    // get group name from clicked item
+    var groupName = $(this).attr('data-group');
+         
+    // reshuffle grid
+    $grid.shuffle('shuffle', groupName );
+});</script>
+
+
+
+
+
+
+<h2>Another section</h2>
+Some content ...
+<div class="row">
+   <div class="col-md-4"><img src="//placehold.it/300x300" class="img-responsive"></div>
+   <div class="col-md-4"><img src="//placehold.it/300x300" class="img-responsive"></div>
+   <div class="col-md-4"><img src="//placehold.it/300x300" class="img-responsive"></div>
+</div>
+Some more content...
+
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12 footer">
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+                </div>
+            </div>
+        </footer>
+
+    </div>    <!-- /.container -->
+
+
+
+ 
+</body>
+
+
+
+
+</html>
+

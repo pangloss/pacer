@@ -1,0 +1,75 @@
+# duplicated from _config.yml. You only need to use this strategy if you have multiple configuration files.
+
+# Site settings
+title: Documentation theme for Jekyll # your project's title. This appears on the homepage.
+contact_email: tomjohnson1492@gmail.com # a contact email for the project
+description: > # a description of your project. the ">" means to ignore newlines until "baseurl:"  
+  A theme based on Jekyll designed for technical writers creating help systems. Feel free to clone, fork, and otherwise use. It's all open source and free to implement. 
+  Please consider contributing back any innovations you make so that others can benefit.
+#baseurl: "/documentation-theme-jekyll" # the subpath of your site. If you're publishing to the root directory, just type "". Usually set this as your project name.
+baseurl: ""
+#url: "https://github.com/tomjohnson1492" # the base hostname & protocol for your site
+url: "http://documentation-theme-jekyll.com"
+host: 127.0.0.1 # specified here because 0.0.0 gets defaulted to search in Chrome. this is how you will preview the site.
+port: 4000 # specified here in case you have multiple sites and want to view them simultaneously (you'll need different ports)
+
+
+project: documentation-theme-jekyll # add your project name here
+destination: _site/documentation-theme-jekyll #this is where the builds are stored
+homepage_id: homepage # the theme will include the page with id: homepage in the frontmatter on the index.html page.
+footer_id: footer # the theme will include the page with id: footer in the frontmatter.
+
+disqus_shortname: idrbwjekyll # if you leave this blank, then disqus is not run. if you want to run it, add your code here, such as idrbwjekyll
+# for basicproject, the shortname is basicproject
+google_analytics:  #example: UA-908430-5. if you leave this field blank, google analytics is not run.
+project_css: projectstyles.css # each config file can specify a different css file. Add the file inside the css folder. Specify the name here.
+project_js: projectscripts.js # each config file can specify a different js file. Add the file inside the js folder. Specify the name here.
+
+
+
+## build settings -- leave as is
+
+markdown: redcarpet
+
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+highlighter: pygments
+
+exclude: # put all files or directories that you want to exclude from your project here.
+  - "Gemfile"
+  - "Gemfile.lock"
+  - _drafts
+  - _site/documentation-theme-jekyll
+  - bower_components
+
+
+# these are defaults that get applied to each page or post. you don't have to set these settings in the frontmatter if you put them here. But frontmatter settings will override the configs here.
+permalink: :title
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      comments: true
+      search: include
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      comments: true
+      search: include
+
+sass:
+    sass_dir: _sass
+
+# placed here for translation purposes
+search_placeholder_text: search...
+search_no_results_text: No results found.
+
+collections:
+  tooltips:
+    output: true
