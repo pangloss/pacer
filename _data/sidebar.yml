@@ -18,10 +18,17 @@ entries:
           url: /suppoted_graph_databases/
         - title: Contributing to Pacer
           url: /contributing/
-    - title: Fundamentals
+    - title: Routes
       items:
-        - title: Extensions
+        - title: The Basics
+          url: /routes-basics/
+        - title: Traversals
+          url: /routes-traversals/
+        - title: Filters
+          url: /routes-filters/
+    - title: Extensions
+      items:
+        - title: The Basics
           url: /pacer-extensions/
-        - title: Routes
-          url: /routes/
+
 
