@@ -53,14 +53,14 @@ g.v.first
 g.vertex(some_vertex_id)
 ```
 
-```
+```ruby
 # Single edge
 g.e.first
 # Single edge by id
 g.edge(some_edge_id)
 ```
 
-```
+```ruby
 # A route vertices
 g.v.limit(100)
 # A route edges

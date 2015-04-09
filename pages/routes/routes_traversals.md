@@ -7,7 +7,7 @@ We have already seen the most basic traversal methods: `out_e`, `in_e`, `both_e`
 Let's see what else we can do:
  
 
-## Limit & Offset 
+## Limit, Offset & Range 
 
 ```ruby
 # Get at most 99 items
@@ -35,4 +35,11 @@ loop do
 end 
 ``` 
 
-TODO: `range`
+You can also use the `range` method, as an alternative to `limit` and `offset`: 
+
+```ruby
+# Get the range of items from index 10 to 100 (including both).
+g.v.range(10, 100)
+# The route above is equivalent to
+g.v.limit(91).offset(10)
+```

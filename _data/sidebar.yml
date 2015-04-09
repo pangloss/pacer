@@ -26,6 +26,8 @@ entries:
           url: /routes-traversals/
         - title: Filters
           url: /routes-filters/
+        - title: Indices
+          url: /routes-indices/
     - title: Extensions
       items:
         - title: The Basics

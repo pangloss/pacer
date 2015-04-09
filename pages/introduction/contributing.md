@@ -1,7 +1,6 @@
 ---
 title: Contributing to Pacer
 permalink: /contributing/
-toc: false
 ---
 
 
@@ -15,7 +14,7 @@ Pacer.
 
 ## Developing Locally
 
-After forking a local copy of the [Pacer repo]((https://github.com/pangloss/pacer), you can easily start hacking at Pacer.
+After forking a local copy of the [Pacer repo](https://github.com/pangloss/pacer), you can easily start hacking at Pacer.
 
  * Make your changes.
  * `cd` to the root of the local repo.
