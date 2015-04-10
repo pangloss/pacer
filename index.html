@@ -3,11 +3,12 @@ permalink: "/"
 related_pages: none
 layout: default
 ---
-<h1>{{site.title}}</h1>
+
+
 {% for page in site.pages %}
 {% for id in page.id %}
 {% if page.id == site.homepage_id %}
-{{page.content}}
+  {{page.content}}
 {% endif %}
 {% endfor %}
 {% endfor %} 

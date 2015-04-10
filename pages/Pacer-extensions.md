@@ -123,6 +123,7 @@ What if our graph contains vertices that do not represent airports?
 When we ask for vertices wrapped in the `Example::Airport` extension, we want to get only vertices that actually represent airports.
 
 We can achieve that by defining the `route_conditions` method in the `Example::Airport` module, as follows:
+
 ```ruby
 def self.route_conditions(graph)
     {type: 'airport'}
@@ -158,6 +159,7 @@ Total: 5
 
 Similarly to the way we extend vertices, we can also extend edges.     
 Let's update `example.rb` to contain the following code:
+
 ```ruby
 module Example
 
@@ -250,6 +252,7 @@ We have only defined the `from` method for individual edges, not for routes of e
 Therefore, the first command above resulted in an error.
 
 Let's change that and add the following code to the `Example::Flight` module:
+
 ```ruby
 module Route
 
@@ -323,6 +326,7 @@ Instead, we use a vocabulary that is specific to our domain, and ask for reachab
 
 We can wrap a graph element with multiple extensions.     
 To see an example, let's create the following extension in our `Example` module:
+
 ```ruby
 module A
 
@@ -340,6 +344,7 @@ end
 ```
 
 Now, let's use our extension, `A`, in the IRB:
+
 ```ruby
 irb(main):100:0> g.v(Example::A,Example::Airport)
 #<V[1] LGA, New York>    #<V[0] LAX, Los Angeles>

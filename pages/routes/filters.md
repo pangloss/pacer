@@ -154,7 +154,7 @@ g.v.random(0)  # Exclude all items
 _Note:_ If our collection is large, we can expect `random(0.2)` to emit 20% of the items in the collection (aka [Law of large numbers](http://en.wikipedia.org/wiki/Law_of_large_numbers) ).
 
 
-## Lookahead
+## `lookahead`
 
 The `lookahead` filter is extremely useful - It allows us to filter items based on a walk through the graph.
 
@@ -187,7 +187,7 @@ g.v(type: user).lookahead(min: 1000) {|u| u.in_e(:follows)}
 
 Lookaheads are efficient, they do as much work as needed, but no more than that. That is, the side-chain traversals of `lookahead(min:10)` will stop as soon as 10 items are found. Similarly, the side-chain traversal of `lookahead(max: 3)` will stop as soon as it finds 4 items.
 
-### Negative lookaheads
+### `neg_lookahead`
 
 The `neg_lookahead` filter (negative lookahead) excludes items whose side-chain traversal contains at least one item. Negative lookaheads work just like regular lookaheads (i.e. they accept a `min` and `max` argument), but, in terms of coding style, we recommend to only use them when you need to "reverse" a filter.
 

@@ -8,8 +8,8 @@ entries:
   subcategories:
     - title: Introduction
       items:
-        - title: What is Pacer?
-          url: /intro/
+        - title: Pacer In 60 Seconds
+          url: /pacer-in-60-sec/
         - title: Installation
           url: /install/
         - title: Quick Start
