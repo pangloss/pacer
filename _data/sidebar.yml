@@ -36,7 +36,11 @@ entries:
           url: /routes-filters/
     - title: Extensions
       items:
-        - title: The Basics
+        - title: Extensions 101
+          url: /extensions-101/
+        - title: Vertex Extensions
+          url: /vertex-extensions/
+        - title: Tmp
           url: /pacer-extensions/
 
 

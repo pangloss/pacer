@@ -4,7 +4,7 @@ permalink: /graph/
 ---
 
 
-Pacer provides a graph object that abstracts the [underlying graph database]({{site.baseurl/suppoted_graph_databases/}}).
+Pacer provides a graph object that abstracts the [underlying graph database]({{site.baseurl}}/suppoted_graph_databases/).
 Let's see the common methods you will use on such a graph object, `g`.
 
 
@@ -35,8 +35,9 @@ Get all edges.
  > For now, all you need to know is that a route is a collection of items. 
 
 
+## Creating elements
 
-## `create_vertex`
+### `create_vertex`
 
 Create and return a vertex object. 
 The `properties` (hash) argument is optional.     
@@ -47,6 +48,9 @@ g.create_vertex(properties)
 
  > _Note:_ In most graph databases, you must call `create_vertex` inside a transaction.
 
+### Edges
+
+Edges are created by [calling the `add_edges_to` method on a vertex object]({{site.baseurl}}/vertex/#add_edges_to).
 
 
 ## Transactions
