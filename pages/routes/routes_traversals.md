@@ -89,6 +89,19 @@ jruby-1.7.19 :272 > g.v.count
  => 4 
 ```
 
+## `frequencies`
+
+Return a hash, mapping each item to the number of times it occurs in the route.     
+For example:
+
+```ruby
+jruby-1.7.19 :321 > g.e[:airline]
+"Delta"  "Air Canada"  "Delta"  "American Airlines"  "WestJet"          
+Total: 5
+
+jruby-1.7.19 :322 > g.e[:airline].frequencies
+ => {"Delta"=>2, "Air Canada"=>1, "American Airlines"=>1, "WestJet"=>1} 
+```
 
 
 ## `paths`

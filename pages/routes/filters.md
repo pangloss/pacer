@@ -138,10 +138,8 @@ methods.
 
 Usage:
 
-- `r.only(collection)` 
-- `r.only(route)` 
-- `r.except(collection)`
-- `r.except(route)`
+- `r.only(collection_or_route)` 
+- `r.except(collection_or_route)`
 
   > _Note:_ If you pass a route to these methods, it will be evaluated immediately into a Set of elements.
 
