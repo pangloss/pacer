@@ -127,7 +127,7 @@ graph.v.filter { |v| v[:name] == v[:name].reverse } # find palindromic names.
 negligible, however.
 
 
-## Filter items `random`ly
+## `random`
 
 `random` filters out items randomly. It is useful for random sampling, as well as generating random walks through the graph.
 

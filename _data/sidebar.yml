@@ -18,16 +18,22 @@ entries:
           url: /suppoted_graph_databases/
         - title: Contributing to Pacer
           url: /contributing/
+    - title: The Basics
+      items:
+        - title: Graph
+          url: /graph/
+        - title: Vertex
+          url: /vertex/
+        - title: Edge
+          url: /edge/
     - title: Routes
       items:
-        - title: The Basics
-          url: /routes-basics/
+        - title: Routes 101
+          url: /routes-101/
         - title: Traversals
           url: /routes-traversals/
         - title: Filters
           url: /routes-filters/
-        - title: Indices
-          url: /routes-indices/
     - title: Extensions
       items:
         - title: The Basics

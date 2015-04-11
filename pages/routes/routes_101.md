@@ -1,6 +1,6 @@
 ---
-title: Routes - The Basics
-permalink: /routes-basics/
+title: Routes 101
+permalink: /routes-101/
 ---
 
 Pacer is all about graph traversals. To traverse the graph with Pacer, you create a __Route__.
