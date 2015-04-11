@@ -3,8 +3,9 @@ title: Filters
 permalink: /routes-filters/
 ---
 
-
 ## Basics Filtering
+
+### Filtering vertex and edge routes
 
 Vertex and edge routes can be filtered based on properties value(s).
 
@@ -42,16 +43,16 @@ For example, we can define the following routes in a social network graph.
 graph.v(type: 'user', name: 'Bob').out_e(:follows).in_v(type: 'user').in_e(:follows).out_v(type: 'user')
 ```
 
-### Using `filter`
 
-The following traversal will result in every vertex that have `gender` and `age` properties whose values are `female` and `30`, respectively.
+### `filter`
+
+Consider the following filter
 
 ```ruby
 g.v(gender: 'female', age: 30)
 ```
 
-What if we don't want all the vertices in the graph? What if we want to apply the filter to an arbitrary collection of vertices?     
-In such cases, we can use the `filter` method:
+If we want to apply the filter to an arbitrary collection of vertices (instead of all vertices in the graph), we can use the `filter` method.
 
 ```ruby
 def thirty_years_old_females(people)
@@ -68,7 +69,7 @@ The `filter` method works just as you'd expect:
 
  
 
-### Using `where`
+### `where`
 
 With `where` you can produce more sophisticated conditions against an individual element. The where method uses JRuby's own parser for fast and
 robust parsing, but reinterprets the expressions in the where clause to build graph traversals instead of Ruby code. The where method only uses a
@@ -101,7 +102,7 @@ true false nil [] {}  # boolean, nil, array, or hash constants
 ```
 
 
-### Using `filter` with a block of code
+### `filter` with a block of code
 
 So far, we have seen two types of filtering:
 
@@ -125,6 +126,90 @@ graph.v.filter { |v| v[:name] == v[:name].reverse } # find palindromic names.
 > Filtering with a block of code is noticeably slower than the previous two methods, because it has to go through Pacer's element wrapping process. Unlike the other two methods, which are executed in pure Java.     
 >   filtering large collections could be several times slower. For smaller collections the impact is
 negligible, however.
+
+
+## Filtering specific elements
+
+
+### `only` and `except`
+
+If you have a collection of elements or a route to some elements that you want to include or exclude from a traversal, you can do that with these
+methods.
+
+Usage:
+
+- `r.only(collection)` 
+- `r.only(route)` 
+- `r.except(collection)`
+- `r.except(route)`
+
+  > _Note:_ If you pass a route to these methods, it will be evaluated immediately into a Set of elements.
+
+
+### `is` and `is_not`
+
+These methods are similar to `only` and `except`. The difference is that they filter based on a single elements, instead of a collection.
+
+Usage:
+
+- `is(element)`
+- `is_not(element)`
+
+
+### `as` together with `is` or `is_not`
+
+Consider the following traversal, defined in a hypothetical social network application. 
+
+```ruby
+# Return only the 2nd-degree friends of a given user
+def friends_of_friends(user)
+	user.out_e(:friend).in_v.out_e(:friend).in_v.is_not(user)
+end
+```
+
+There is one obvious problem - We forgot to filter out 1st degree friends.      
+Let's fix this problem ...
+
+```ruby
+def friends_of_friends(user)
+	friends = user.out_e(:friend).in_v
+	friends.out_e(:friend).in_v.is_not(user).except(friends)
+end
+```
+
+Now, there is a less obvious problem - When our method runs, it will evaluate the `friends` route twice:
+
+  1. In `except(friends)`, when the route is built.    
+    The `friends` route needs to be converted to a regular collection, in order for the `except` route to be properly defined.
+  2. When the route is evaluated.
+
+This inefficiency can be avoided using the `as` method.      
+The `as` method allows you to name an intermediate route, and refer to it later with `is` or `is_not`.
+Pacer will avoid evaluating the route unnecessarily, during build time.
+
+
+Usage:
+
+- `as(:a_name)`, traverse, then `is(:a_name)`
+- `as(:a_name)`, traverse, then `is_not(:a_name)`
+
+Example: 
+
+
+```ruby
+def friends_of_friends(user)
+	user.as(:u)                         
+	  .out_e(:friend).in_v.as(:f) 
+	  .out_e(:friend).in_v
+	  .is_not(:u).is_not(:f)
+end
+```
+
+  > _Note:_ We can use `as` to name to a single item, as well as a route.
+  > In both cases, when we refer to the named item/route, we use `is` and `is_not` (but not `only` and `except`).      
+  > In the example above, we named our starting point, `user`. 
+  > This allows our method to work efficiently whether the argument is a single user, or a route of users.     
+
 
 
 ## `random`
