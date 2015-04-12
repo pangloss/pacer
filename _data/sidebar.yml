@@ -40,6 +40,12 @@ entries:
           url: /extensions-101/
         - title: Vertex Extensions
           url: /vertex-extensions/
+        - title: Edge Extensions
+          url: /edge-extensions/
+        - title: Filtering
+          url: /filter-by-extension/
+        - title: More on extensions
+          url: /more-on-extensions/  
         - title: Tmp
           url: /pacer-extensions/
 
