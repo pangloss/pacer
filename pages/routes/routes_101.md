@@ -111,24 +111,24 @@ e.both_v
 <br />
 
 #### `v.out_e`
-Get the outgoing edges of a vertex (or a vertex route).
+Get the outgoing edges of a vertex (or a vertex route) `v`.
 
 #### `v.in_e`
-Get the incoming edges of a vertex (or a vertex route).
+Get the incoming edges of a vertex (or a vertex route) `v`.
 
 #### `v.both_e`
-Get both, outgoing and incoming, edges of a vertex (or a vertex route).
+Get both, outgoing and incoming, edges of a vertex (or a vertex route) `v`.
 
 <br />
 
 #### `e.out_v`
-Get the source vertex of an edge (or an edge route).
+Get the source vertex of an edge (or an edge route) `e`.
 
 #### `e.in_v`
-Get the destination vertex of an edge (or an edge route).
+Get the destination vertex of an edge (or an edge route) `e`.
 
 #### `e.both_v`
-Get both vertices of an edge (or an edge route).
+Get both vertices of an edge (or an edge route) `e`.
 
 <br />
 

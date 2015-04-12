@@ -131,7 +131,8 @@ Total: 1
 
 ## The `extensions` method
 
-Pacer routes have an `extensions` method, which returns their extensions (as a list of module objects). For example:
+Routes, vertices and edges have an `extensions` method, which returns their extensions as a list of module objects.     
+For example:
 
 ```ruby
 jruby-1.7.19 :188 > g.v(Phone).extensions
@@ -154,3 +155,10 @@ def some_method(route)
     end
 end
 ```
+
+  > _Note:_ An extension that doesn't contain any of the `Route`, `Vertex` or `Edge` sub-modules, is considered _irrelevant_ by Pacer.      
+  > When calling `extensions` on a single items, irrelevant extensions are dropped from the list. On the other hand, when calling it on a route, they are kept.      
+
+  > This is an edge case, as most extensions define useful methods.
+  > That being said, there are cases where as extension do not define any methods, and are used for filtering purposes only.
+

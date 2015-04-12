@@ -23,7 +23,7 @@ Get a specific property (of each item in the route). This method returns a route
 > _Note:_ Setting properties is done on an individual vertex, _not_ on a route.
 
 
-## `limit`, `offset` and `range` 
+## `limit`, `offset`
 
 
 ```ruby
@@ -52,6 +52,8 @@ loop do
 end 
 ``` 
 
+## `range`
+
 The `range` method is an alternative to combining `limit` and `offset`: 
 
 ```ruby
@@ -60,6 +62,9 @@ g.v.range(10, 100)
 # The route above is equivalent to
 g.v.limit(91).offset(10)
 ```
+
+ > _Note:_ You can also get a range using Ruby's `..` range syntax.     
+ > For example, `g.v[10..100]`.
 
 
 ## `uniq`
