@@ -53,6 +53,7 @@ module Pacer
         end
         self
       end
+      alias drop offset
 
       def offset=(n)
         offset n
