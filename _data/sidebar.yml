@@ -30,6 +30,8 @@ entries:
       items:
         - title: Routes 101
           url: /routes-101/
+        - title: Route Methods
+          url: /route-methods/
         - title: Traversals
           url: /routes-traversals/
         - title: Filters
@@ -46,7 +48,5 @@ entries:
           url: /filter-by-extension/
         - title: More on extensions
           url: /more-on-extensions/  
-        - title: Tmp
-          url: /pacer-extensions/
 
 

@@ -39,51 +39,67 @@ g.v(city: 'NYC').out_e.in_v.out_e.in_v(city: 'LA').paths
 
 In the rest of this section, we will go through the different ways you can use routes.
 
-## Starting A Traversal
+## How to use it?
+
+### Starting point
 
 Every traversal needs to start somewhere in the graph. 
 This starting point can be a vertex, edge, or a collection (i.e. a route) of such elements.
 
-Here is how you would get a starting point, using a reference to a graph, `g`.
 
 ```ruby
-# Single vertex
-g.v.first
-# Single vertex by id
-g.vertex(some_vertex_id)
-```
-
-```ruby
-# Single edge
-g.e.first
-# Single edge by id
-g.edge(some_edge_id)
-```
-
-```ruby
-# A route vertices
+# All vertices
+g.v
+# Some vertices
 g.v.limit(100)
-# A route edges
+# Some vertex
+g.v.first
+# A specific vertex
+g.vertex(42)
+
+# All edges
+g.e
+# Some edges
 g.e.limit(100)
+# Some edge
+g.e.first
+# A specific edge
+g.edge(42)
 ```
 
+#### `g.v`
 
-## Basics Traversal
+Get a route of all vertices in the graph `g`.
 
-Starting from a vertex (or a vertex route), `v`, we can get adjacent edges:
+#### `g.e`
+
+Get a route of all edges in the graph `g`.
+
+#### `g.vertex(id)`
+
+Get a specific vertex from the graph `g`.
+
+#### `g.edge(id)`
+
+Get a specific edge from the graph `g`.
+
+### Basics Traversal
+
+Our basic traversals involve moving between vertices and edges that are connected to each other.
 
 ```ruby
+# v is a vertex object ...
+
 # Outgoing edges
 v.out_e
 # Incoming edges
 v.in_e
 # Both, incoming and outgoing, edges
 v.both_e
-```
 
-Similarly, starting from an edge (or an edge route), `e`, we can get adjacent vertices:
+# e is an edge object ...
+# Terminology:  out_v --e--> in_v
 
-```ruby
 # The "source" vertex
 e.out_v
 # The "destination" vertex
@@ -92,13 +108,40 @@ e.in_v
 e.both_v
 ```
 
-<span class="label label-info">Terminology:</span> We say that an edge goes from its _out vertex_ to its _in vertex_ (or, in ascii, `out_v --e--> in_v`).
+<br />
 
-Combining the basic traversals above, we can follow edges and get the neighbours of a vertex (or a route of vertices).
+#### `v.out_e`
+Get the outgoing edges of a vertex (or a vertex route).
+
+#### `v.in_e`
+Get the incoming edges of a vertex (or a vertex route).
+
+#### `v.both_e`
+Get both, outgoing and incoming, edges of a vertex (or a vertex route).
+
+<br />
+
+#### `e.out_v`
+Get the source vertex of an edge (or an edge route).
+
+#### `e.in_v`
+Get the destination vertex of an edge (or an edge route).
+
+#### `e.both_v`
+Get both vertices of an edge (or an edge route).
+
+<br />
+
+All of the basic traversal methods return route objects. 
+These methods are available for single elements as well as routes, and we can combine them into more interesting traversals.
 
 ```ruby
-# Follow outgoing edges
+# Follow outgoing edges to neighbouring vertices
 v.out_e.in_v
-# Follow incoming edges
+
+# Follow incoming edges to neighbouring vertices
 v.in_e.out_v
+
+# Follow two outgoing edges and then one incoming edge
+v.out_e.in_v.out_e.in_v.in_e.out_v
 ```

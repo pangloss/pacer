@@ -51,9 +51,12 @@ Just as before, we can extend routes and edges:
 
 ```ruby
 jruby-1.7.19 :227 > flights = g.e(Flight)
-#<E[7]:Delta flight from Los Angeles to Toronto.>     #<E[6]:Air Canada flight from Toronto to New York.>                
-#<E[5]:Air Canada flight from New York to Toronto.>   #<E[8]:WestJet flight from Los Angeles to San Francisco.>
-#<E[4]:Delta flight from New York to Los Angeles.>    #<E[9]:American Airlines flight from Los Angeles to San Francisco.>             
+#<E[7]:Delta flight from Los Angeles to Toronto.>     
+#<E[6]:Air Canada flight from Toronto to New York.>                
+#<E[5]:Air Canada flight from New York to Toronto.>   
+#<E[8]:WestJet flight from Los Angeles to San Francisco.>
+#<E[4]:Delta flight from New York to Los Angeles.>    
+#<E[9]:American Airlines flight from Los Angeles to San Francisco.>             
 Total: 6
 
 jruby-1.7.19 :228 > flight = flights.first

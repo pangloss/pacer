@@ -128,7 +128,7 @@ graph.v.filter { |v| v[:name] == v[:name].reverse } # find palindromic names.
 negligible, however.
 
 
-## Filtering specific elements
+## Filtering based on a collection of items
 
 
 ### `only` and `except`
@@ -286,4 +286,3 @@ def not_popular(users)
     users.neg_lookahead {|u| u.popular}
 end
 ```
-
