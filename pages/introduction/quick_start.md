@@ -21,17 +21,17 @@ g = Pacer.tg()
 
 g.transaction do # optional with TinkerGraph
 
-  lax = g.create_vertex({airport: 'LAX', city: 'Los Angeles'})
-  lga = g.create_vertex({airport: 'LGA', city: 'New York'})
-  sfo = g.create_vertex({airport: 'SFO', city: 'San Francisco'})
-  yyz = g.create_vertex({airport: 'YYZ', city: 'Toronto'})
+  lax = g.create_vertex(airport: 'LAX', city: 'Los Angeles')
+  lga = g.create_vertex(airport: 'LGA', city: 'New York')
+  sfo = g.create_vertex(airport: 'SFO', city: 'San Francisco')
+  yyz = g.create_vertex(airport: 'YYZ', city: 'Toronto')
   
-  lga.add_edges_to(:flight, lax, {airline: 'Delta'})
-  lga.add_edges_to(:flight, yyz, {airline: 'Air Canada'})
-  yyz.add_edges_to(:flight, lga, {airline: 'Air Canada'})
-  lax.add_edges_to(:flight, yyz, {airline: 'Delta'})
-  lax.add_edges_to(:flight, sfo, {airline: 'WestJet'})
-  lax.add_edges_to(:flight, sfo, {airline: 'American Airlines'})
+  lga.add_edges_to(:flight, lax, airline: 'Delta')
+  lga.add_edges_to(:flight, yyz, airline: 'Air Canada')
+  yyz.add_edges_to(:flight, lga, airline: 'Air Canada')
+  lax.add_edges_to(:flight, yyz, airline: 'Delta')
+  lax.add_edges_to(:flight, sfo, airline: 'WestJet')
+  lax.add_edges_to(:flight, sfo, airline: 'American Airlines')
 
 end
 ```
@@ -42,7 +42,7 @@ In our case, vertices represent airports, and we created each vertex with two pr
 For example:
 
 ```ruby
-lax = g.create_vertex({airport: 'LAX', city: 'Los Angeles'})
+lax = g.create_vertex(airport: 'LAX', city: 'Los Angeles')
 ```
 
 
@@ -52,7 +52,7 @@ In addition to that, just like vertices, they can contain an arbitrary hash of p
 For example, the following line creates an edge from the vertex `lga` to `lax`, with the label `:flight`, and a single property `airline`, whose value is `'Delta'`.
 
 ```ruby
-lga.add_edges_to(:flight, lax, {airline: 'Delta'})
+lga.add_edges_to(:flight, lax, airline: 'Delta')
 ```
 
 ## Traverse The Graph
@@ -66,30 +66,30 @@ g.v()
 Filter vertices by property (get all vertices whose `airport` is `LGA`)
 
 ```ruby
-g.v({airport: 'LGA'})
+g.v(airport: 'LGA')
 ```
 
 Access properties
 
 ```ruby
-g.v({airport: 'LGA'})['city']
+g.v(airport: 'LGA')['city']
 ```
 
 Get edges based on vertices.
 
 ```ruby
 # Outgoing edges
-g.v({airport: 'LGA'}).out_e()
+g.v(airport: 'LGA').out_e()
 # Incoming edges
-g.v({airport: 'LGA'}).in_e()
+g.v(airport: 'LGA').in_e()
 # Both
-g.v({airport: 'LGA'}).both_e()
+g.v(airport: 'LGA').both_e()
 ```
 
 __Example:__ Get all airlines flying in or out of LaGuardia airport
 
 ```ruby
-g.v({airport: 'LGA'}).both_e()['airline'].uniq
+g.v(airport: 'LGA').both_e()['airline'].uniq
 ```
 
 If you run the command above on the irb, you should see the output:
@@ -109,7 +109,7 @@ g.e()
 And filter by property
 
 ```ruby
-g.e({airline: 'Delta'})
+g.e(airline: 'Delta')
 ```
 
 Get vertices based on edges
@@ -118,17 +118,17 @@ Get vertices based on edges
 # In an edge from x to y, we call x the _out-vertex_, and y the _in-vertex_.
 
 # In-vertices
-g.e({airline: 'Delta'}).in_v
+g.e(airline: 'Delta').in_v
 # Out-vertices
-g.e({airline: 'Delta'}).out_v
+g.e(airline: 'Delta').out_v
 # Both
-g.e({airline: 'Delta'}).both_v
+g.e(airline: 'Delta').both_v
 ```
 
 __Example:__ Get all cities that Delta flies from/to.
 
 ```ruby
-g.e({airline: 'Delta'}).both_v['city'].uniq
+g.e(airline: 'Delta').both_v['city'].uniq
 ```
 
 If you run the command above on the irb, you should see the output:
