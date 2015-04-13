@@ -16,15 +16,11 @@ all processing is done in pure Java, so when it comes the usual Ruby
 expressiveness vs. speed problem, you can have your cake and eat it too,
 it's very fast!
 
-## Mailing List
-
-Pacer has a [google group](http://groups.google.com/group/pacer-users?lnk=gcimv)! Join and feel free to ask questions and discuss about Pacer or graphs in general.
-
 ## Documentation
 
 Check out the [Pacer docs](http://pangloss.github.io/pacer/) for detailed explanations of many of Pacer's features. 
 
-if there is anything missing, that you want to see, please contribute it to the `gh-pages` branch of this repo, or open issues against it .
+Feel free to contribute to it, by submitting a pull-request to the `gh-pages` branch of this repo, or by opening issues.
 
 Pacer is also documented with a comprehensive RSpec test suite and with a
 thorough YARD documentation. [Dig in!](http://www.rubydoc.info/github/pangloss/pacer/master)
@@ -35,14 +31,6 @@ If you like, you can also use the documentation locally via
   gem install yard
   yard server
 ```
-
-## JRuby 1.7 Required
-
-As of Pacer 1.0.0, [JRuby](http://jruby.org/) 1.7 is required because it is both faster and
-fixes some problems that I previously had to work around in Pacer.
-
-The easiest way (ie. the way I do it) to get the most recent version of
-JRuby is to use [RVM](https://rvm.io/)
 
 ## Installation
 
