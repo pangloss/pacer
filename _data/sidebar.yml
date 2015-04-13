@@ -1,0 +1,52 @@
+# This is your sidebar TOC. The sidebar code loops through sections here and provides the appropriate formatting.
+
+sidebar_accordion: true
+
+# Sidebar
+entries:
+- title: Sidebar
+  subcategories:
+    - title: Introduction
+      items:
+        - title: Pacer In 60 Seconds
+          url: /pacer-in-60-sec/
+        - title: Installation
+          url: /install/
+        - title: Quick Start
+          url: /quick_start/
+        - title: Supported Databases
+          url: /suppoted_graph_databases/
+        - title: Contributing to Pacer
+          url: /contributing/
+    - title: The Basics
+      items:
+        - title: Graph
+          url: /graph/
+        - title: Vertex
+          url: /vertex/
+        - title: Edge
+          url: /edge/
+    - title: Routes
+      items:
+        - title: Routes 101
+          url: /routes-101/
+        - title: Route Methods
+          url: /route-methods/
+        - title: Traversals
+          url: /routes-traversals/
+        - title: Filters
+          url: /routes-filters/
+    - title: Extensions
+      items:
+        - title: Extensions 101
+          url: /extensions-101/
+        - title: Vertex Extensions
+          url: /vertex-extensions/
+        - title: Edge Extensions
+          url: /edge-extensions/
+        - title: Filtering
+          url: /filter-by-extension/
+        - title: More on extensions
+          url: /more-on-extensions/  
+
+

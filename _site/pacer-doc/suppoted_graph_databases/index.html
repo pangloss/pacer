@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- <link href='//fonts.googleapis.com/css?family=Montserrat:700,400' rel='stylesheet' type='text/css'>
+    <link href='//fonts.googleapis.com/css?family=Merriweather:400,400italic,700,700italic' rel='stylesheet' type='text/css'> -->
+     <link rel="stylesheet" href="/pacer-doc/css/syntax.css"  type='text/css'>
+     <link rel="stylesheet" href="/pacer-doc/css/font-awesome.min.css">
+     <link rel="stylesheet" href="/pacer-doc/css/bootstrap.min.css">
+     <link rel="stylesheet" href="/pacer-doc/css/modern-business.css">
+    <link rel="stylesheet" href="/pacer-doc/css/lavish-bootstrap.css"  type='text/css'>
+    <link rel="canonical" href="/pacer-doc/suppoted_graph_databases/">
+    <link rel="stylesheet" href="/pacer-doc/css/customstyles.css"  type='text/css'>
+     <link rel="stylesheet" href="/pacer-doc/css/projectstyles.css"  type='text/css'>
+    <link rel="canonical" href="/pacer-doc/suppoted_graph_databases/">
+  <link rel="alternate" type="application/rss+xml" title="Pacer Docs" href="/pacer-doc/feed.xml" />
+    <script src="/pacer-doc/js/jquery.min.js"></script>
+    <script src="/pacer-doc/js/jquery.cookie.min.js"></script>
+    <script src="/pacer-doc/js/jquery.navgoco.min.js"></script>
+    <script src="/pacer-doc/js/bootstrap.min.js"></script>
+    <script src="/pacer-doc/js/toc.js"></script>
+    <script src="/pacer-doc/js/customscripts.js"></script>
+    <script src="/pacer-doc/js/projectscripts.js"></script>
+       <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
+    <!--[if lt IE 9]>
+        <script src="https://oss.maxcdn.com/libs/html5shiv/3.7.0/html5shiv.js"></script>
+        <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
+    <![endif]-->
+    
+    <title>Supported Graph Databases | Pacer Docs</title>
+     <meta name="description" content="A theme based on Jekyll designed for technical writers creating help systems. Feel free to clone, fork, and otherwise use. It's all open source and free to implement.  Please consider contributing back any innovations you make so that others can benefit.
+">
+ 
+
+ 
+
+  </head>
+
+<body>
+
+    <!-- Navigation -->
+    <nav class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                  <a class="navbar-brand homeLink fa fa-home" href="/pacer-doc/"><span class="projectHome"> &nbsp;Pacer Docs</span></a>
+
+                 
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+
+<!-- entries without drop-downs appear here -->
+  
+  
+
+  
+  <li><a href="https://github.com/pangloss/pacer/" target="_blank">Github Repo</a></li>
+  
+     
+    
+
+
+<!-- entries with drop-downs appear here -->
+
+
+<li>
+<!-- start search -->
+   <div id="search-demo-container">
+      <input type="text" id="search-input" placeholder="search...">
+      <ul id="results-container"></ul>
+    </div>
+
+    
+    <script src="/pacer-doc/js/jekyll-search.js" type="text/javascript"></script>
+    
+    
+    <script type="text/javascript">
+      SimpleJekyllSearch.init({
+        searchInput: document.getElementById('search-input'),
+        resultsContainer: document.getElementById('results-container'),
+        dataSource: '/pacer-doc/search.json',        
+        searchResultTemplate: '<li><a href="{url}" title="Supported Graph Databases">{title}</a></li>',
+        noResultsText: 'No results found.',
+        limit: 10,
+        fuzzy: true,
+      })
+    </script>
+    <!-- end search -->
+ </li>
+
+
+
+        </div>
+
+        <!-- /.container -->
+    </nav>
+
+
+    <!-- Page Content -->
+    <div class="container">
+    <div class="col-lg-12">&nbsp;</div>
+
+
+
+
+
+ <!-- Content Row -->
+        <div class="row">
+            <!-- Sidebar Column -->
+            <div class="col-md-3">
+
+<script>
+$(document).ready(function() {
+    // Initialize navgoco with default options
+    $("#mysidebar").navgoco({
+        caretHtml: '',
+        accordion: true,
+        openClass: 'active', // open
+        save: true,
+        cookie: {
+            name: 'navgoco',
+            expires: false,
+            path: '/'
+        },
+        slide: {
+            duration: 400,
+            easing: 'swing'
+        }
+    });
+
+    $("#collapseAll").click(function(e) {
+        e.preventDefault();
+        $("#mysidebar").navgoco('toggle', false);
+    });
+
+    $("#expandAll").click(function(e) {
+        e.preventDefault();
+        $("#mysidebar").navgoco('toggle', true);
+    });
+});
+
+</script>
+  
+<!-- note that the data file for your project needs to be specified in the code below. Instead of site.data.jekyll, use the data file corresponding to your project (create one if it doesn't already exist). -->
+
+<ul id="mysidebar" class="nav">
+
+
+  
+  
+    <li><a href="#">Introduction</a>
+    <ul>
+    
+    
+      
+      <li><a href="/pacer-doc/intro/">What is Pacer?</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/install/">Installation</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/quick_start/">Quick Start</a></li>
+    
+     
+    
+    
+      
+      <li class="active"><a href="/pacer-doc/suppoted_graph_databases/" class="active">Supported Databases</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/contributing/">Contributing to Pacer</a></li>
+    
+     
+    
+    </ul>
+    </li>
+  
+    <li><a href="#">Fundamentals</a>
+    <ul>
+    
+    
+      
+      <li><a href="/pacer-doc/pacer-extensions/">Extensions</a></li>
+    
+     
+    
+    
+      
+      <li><a href="/pacer-doc/routes/">Routes</a></li>
+    
+     
+    
+    </ul>
+    </li>
+  
+
+
+
+</div>
+
+
+
+
+            <!-- Content Column -->
+            <div class="col-md-9">
+
+                <div class="post-header">
+  <h1 class="post-title-main">Supported Graph Databases</h1>
+</div>
+<div class="post-content">
+
+<script>
+$( document ).ready(function() {
+  // Handler for .ready() called.
+
+$('#toc').toc({ minimumHeaders: 0, listType: 'ul', showSpeed: 0, headers: 'h2,h3,h4' });
+
+/* this offset helps account for the space taken up by the floating toolbar. */
+$('#toc').on('click', 'a', function() {
+  var target = $(this.getAttribute('href'))
+    , scroll_target = target.offset().top
+
+  $(window).scrollTop(scroll_target - 10);
+  return false
+})
+  
+});
+</script>
+
+
+
+<p>The Tinkerpop suite supports a number of graph data stores. They are all
+compatible with Pacer, but I have not yet implemented the simple
+adapters Pacer needs to use them yet. Here is the list of what&#39;s
+supported so far:</p>
+
+<table><thead>
+<tr>
+<th>Graph</th>
+<th>Info</th>
+<th>Gem Required</th>
+<th>Gem address</th>
+</tr>
+</thead><tbody>
+<tr>
+<td>TinkerGraph</td>
+<td>In-memory graph db. Included with Pacer.</td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td><a href="http://orientdb.com">OrientDB</a></td>
+<td>A powerful and feature rich graph / document hybrid database.</td>
+<td><code>gem install --pre pacer-orient</code></td>
+<td><a href="https://github.com/pangloss/pacer-orient">pangloss/pacer-orient</a></td>
+</tr>
+<tr>
+<td><a href="http://neo4j.org">Neo4J</a></td>
+<td>The industry-leading graph db.</td>
+<td><code>gem install pacer-neo4j</code></td>
+<td><a href="https://github.com/pangloss/pacer-neo4j">pangloss/pacer-neo4j</a></td>
+</tr>
+<tr>
+<td><a href="http://sparsity-technologies.com">Dex</a></td>
+<td>A very fast, relatively new graph db.</td>
+<td><code>gem install pacer-dex</code></td>
+<td><a href="https://github.com/pangloss/pacer-dex">pangloss/pacer-dex</a></td>
+</tr>
+<tr>
+<td><a href="http://thinkaurelius.github.io/titan/">Titan</a></td>
+<td>Built on top of a pluggable nosql backend store</td>
+<td><code>gem install pacer-titan</code></td>
+<td><a href="https://github.com/mrbotch/pacer-titan">pacer-titan</a></td>
+</tr>
+</tbody></table>
+
+<p>You can run any or all of the above graph databases. Pacer supports
+running them simultaneously and even supports having many of any given
+type open at once.</p>
+
+<h4 id="tinkergraph">TinkerGraph</h4>
+
+<p>Out of the box, Pacer comes with only the simple in-memory <strong>TinkerGraph</strong>, an excellent graph for
+testing and for temporary in-memory data. Start a TinkerGraph with:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="n">tinkergraph</span> <span class="o">=</span> <span class="no">Pacer</span><span class="o">.</span><span class="n">tg</span>
+</code></pre></div>
+<h4 id="neo4j">Neo4j</h4>
+
+<p><a href="http://www.neotechnologies.com">Neo4j</a> is the primary database used by <a href="http://xnlogic.com">XN Logic</a>, the team behind Pacer. It&#39;s an excellent, reliable and performant graph database that works well
+for a variety of use cases, and scales to easily support the largest data sets our customers have hit us with. Once the <a href="https://github.com/pangloss/pacer-neo4j">pacer-neo4j</a> gem is
+installed, you can start a Neo graph with:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;pacer-neo4j&#39;</span>
+<span class="n">neograph</span> <span class="o">=</span> <span class="no">Pacer</span><span class="o">.</span><span class="n">neo4j</span> <span class="s1">&#39;/path/to/graph_dir&#39;</span>
+</code></pre></div>
+<p>As of August 2014, Pacer supports Neo4j v1.9 and v2.0. v2.1 support is in development.</p>
+
+<h4 id="(optional)-inter-operation-with-the-neo4j-gem">(optional) Inter-operation with the neo4j gem</h4>
+
+<p>Pacer can work together with other Ruby GraphDB libraries, too. The
+first functioning example is with theo neo4j gem. Hopefully more will
+follow soon as I find out about them or get requests to support them.</p>
+
+<p>To use Pacer together with the neo4j gem, get your Pacer graph instance
+as follows:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby">    <span class="nb">require</span> <span class="s1">&#39;neo4j&#39;</span>
+    <span class="nb">require</span> <span class="s1">&#39;pacer-neo4j&#39;</span>
+    <span class="c1"># start neo4j via the external gem rather than using pacer-neo4j</span>
+    <span class="no">Neo4j</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">start</span>
+    <span class="n">graph</span> <span class="o">=</span> <span class="no">Pacer</span><span class="o">.</span><span class="n">neo4j</span><span class="p">(</span><span class="no">Neo4j</span><span class="o">.</span><span class="n">db</span><span class="o">.</span><span class="n">graph</span><span class="p">)</span>
+</code></pre></div>
+<p>After that, you can continue to use the graph as normal with <em>both</em>
+gems. Any update that&#39;s committed with one gem will be visible
+immediately to the other because they are now both pointing to the same
+Java graphdb instance.</p>
+
+<h4 id="titan">Titan</h4>
+
+<p>Pacer has <a href="http://thinkaurelius.github.io/titan/">Titan</a> support via the <code>pacer-titan</code> community contributed gem. Titan is a distributed graph database focussed on supporting extremely
+large graphs. Once you&#39;ve configured your project as required by the <a href="https://github.com/mrbotch/pacer-titan">pacer-titan</a> library, you can start a Titan graph like this:</p>
+<div class="highlight"><pre><code class="language-ruby" data-lang="ruby"><span class="nb">require</span> <span class="s1">&#39;pacer-titan&#39;</span>
+<span class="n">titangraph</span> <span class="o">=</span> <span class="no">Pacer</span><span class="o">.</span><span class="n">titan</span> <span class="s1">&#39;path/to/titan_config.properties&#39;</span>
+</code></pre></div>
+<h4 id="other-graphs">Other graphs</h4>
+
+<p>Pacer can support <a href="http://www.orientechnologies.com/orientdb/">OrientDB</a> and <a href="formerly%20known%20as%20Dex">Sparksee</a> graph databases in addition to RDF graphs and others that I may not be aware of.
+The only requirement is that the graph have a <a href="https://github.com/tinkerpop/blueprints/wiki/">Blueprints</a> adapter. The <code>pacer-neo4j</code> and <code>pacer-titan</code> gems add graph-specific functionality on top
+of Pacer&#39;s built-in capabilities, but any blueprints compatibile graph can easily be used with Pacer with minimal effort.</p>
+
+<h3 id="a-note-on-safely-exiting">A note on safely exiting</h3>
+
+<p>Some databases need to be shutdown cleanly when the program exits. You
+can shut a database down anytime by calling <code>graph.shutdown</code>, but you
+don&#39;t need to worry about it much. Pacer uses Ruby&#39;s <code>at_exit</code> hook to
+automatically shut down all open databases!</p>
+
+
+</div>
+
+
+
+
+
+
+
+
+            </div>
+        </div>
+        <!-- /.row -->
+
+        <hr>
+
+        <!-- Footer -->
+        <footer>
+            <div class="row">
+                <div class="col-lg-12 footer">
+                    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+                </div>
+            </div>
+        </footer>
+
+    </div>    <!-- /.container -->
+
+
+
+ 
+</body>
+
+
+
+
+</html>
+

@@ -1,0 +1,72 @@
+# duplicated from _config.yml. You only need to use this strategy if you have multiple configuration files.
+
+# Site settings
+title: Pacer Docs
+contact_email: us@xnlogic.com # a contact email for the project
+description: > # a description of your project. the ">" means to ignore newlines until "baseurl:"  
+  Pacer - A graph traversal and stream processing library, writen in JRuby.
+baseurl: "/pacer" # the subpath of your site. If you're publishing to the root directory, just type "". Usually set this as your project name.
+#url: "https://github.com/tomjohnson1492" # the base hostname & protocol for your site
+host: 127.0.0.1 # specified here because 0.0.0 gets defaulted to search in Chrome. this is how you will preview the site.
+port: 4000 # specified here in case you have multiple sites and want to view them simultaneously (you'll need different ports)
+
+
+project: pacer # add your project name here
+destination: _site/pacer #this is where the builds are stored
+homepage_id: homepage # the theme will include the page with id: homepage in the frontmatter on the index.html page.
+footer_id: footer # the theme will include the page with id: footer in the frontmatter.
+
+disqus_shortname: # idrbwjekyll # if you leave this blank, then disqus is not run. if you want to run it, add your code here, such as idrbwjekyll
+# for basicproject, the shortname is basicproject
+google_analytics:  #example: UA-908430-5. if you leave this field blank, google analytics is not run.
+project_css: projectstyles.css # each config file can specify a different css file. Add the file inside the css folder. Specify the name here.
+project_js: projectscripts.js # each config file can specify a different js file. Add the file inside the js folder. Specify the name here.
+
+
+
+## build settings -- leave as is
+
+markdown: redcarpet
+
+redcarpet:
+  extensions: ["no_intra_emphasis", "fenced_code_blocks", "autolink", "tables", "with_toc_data"]
+highlighter: pygments
+
+exclude: # put all files or directories that you want to exclude from your project here.
+  - "Gemfile"
+  - "Gemfile.lock"
+  - _drafts
+  - _site/pacer
+  - bower_components
+
+
+# these are defaults that get applied to each page or post. you don't have to set these settings in the frontmatter if you put them here. But frontmatter settings will override the configs here.
+permalink: :title
+defaults:
+  -
+    scope:
+      path: ""
+      type: "pages"
+    values:
+      layout: "page"
+      comments: true
+      search: include
+  -
+    scope:
+      path: ""
+      type: "posts"
+    values:
+      layout: "post"
+      comments: true
+      search: include
+
+sass:
+    sass_dir: _sass
+
+# placed here for translation purposes
+search_placeholder_text: search...
+search_no_results_text: No results found.
+
+collections:
+  tooltips:
+    output: true

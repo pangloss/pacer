@@ -1,0 +1,31 @@
+.test {color: red; font-size:40px;}
+
+/* change color of top nav bar*/
+
+
+.navbar-inverse {
+	background-color: #3f3f3f;
+	border-color: #dedede;
+}
+
+
+/* change sidebar nav parent sections */
+
+.nav > li.active > a {
+background-color: #3f3f3f;
+}
+
+body {
+  font-family: "Source Sans Pro", "Calibri", "Helvetica", sans-serif important!;
+  font-size: 1.6em;
+  font-weight: 300;
+}
+
+h1, h2, h3, h4, h5, h6 {
+	margin-bottom: 0.8em;
+}
+
+p {
+	margin-top: 0.8em;
+	margin-bottom: 0.8em;
+}

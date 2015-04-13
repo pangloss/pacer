@@ -1,59 +1,16 @@
-<!doctype html>
-<html>
-  <head>
-    <meta charset="utf-8">
-    <meta http-equiv="X-UA-Compatible" content="chrome=1">
-    <title>Pacer by pangloss</title>
-    
-    <link rel="stylesheet" href="stylesheets/styles.css">
-    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
-    <script src="javascripts/scale.fix.js"></script>
-    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
-    <!--[if lt IE 9]>
-    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
-  <body>
-    <div class="wrapper">
-      <header>
-        <h1>Pacer</h1>
-        <p>Speed through your graph.</p>
-        <p class="view"><a href="https://github.com/pangloss/pacer">View the Project on GitHub <small>pangloss/pacer</small></a></p>
-        <ul>
-          <li><a href="https://github.com/pangloss/pacer">Fork On <strong>GitHub</strong></a></li>
-          <li><a href="https://github.com/pangloss/pacer-neo4j"><strong>pacer-neo4j</strong> plugin</a></li>
-          <li><a href="https://github.com/pangloss/pacer-rexster"><strong>pacer-rexster</strong> rest server</a></li>
-        </ul>
-      </header>
-      <section>
-        <h1>Pacer is the easiest</h1>
+---
+permalink: "/"
+related_pages: none
+layout: default
+---
 
-<p>Defining graph traversals using various query languages or traversal APIs is not easy. When I first started out playing with Neo4j and other graph DBs, I could see the insane power but there was a huge disconnect between what I wanted to do and what the existing tools forced me to do. I wanted to think about my queries as moving through the graph, not as an abstract pattern or as a system of gathering and pruning!</p>
 
-<p>Fortunately I wasn't the only one feeling the pain. Together with the smart guys at Tinkerpop, I've built Pacer. Pacer is 100% focussed on doing things the Ruby way, which means it's easy to use and does what you expect.</p>
+{% for page in site.pages %}
+{% for id in page.id %}
+{% if page.id == site.homepage_id %}
+  {{page.content}}
+{% endif %}
+{% endfor %}
+{% endfor %} 
 
-<p>Pacer is designed to be friendly to play with in IRB (or any other terminal). Its commands are concise and its output is designed for humans. I highly recommend getting to know Pacer by playing with it in the console!</p>
-
-<h1>Pacer is the most powerful</h1>
-
-<p>Anything you can do with any other graph query framework can also be done with Pacer. In addition, Pacer's flexibility means that if you want to use features from other libraries, they are easy to fold into Pacer's super simple modular structure. For instance, Neo4j includes some handy graph algorithms which I've wrapped up a simple plugin gem at <a href="https://github.com/pangloss/pacer-neo4j-algo">https://github.com/pangloss/pacer-neo4j-algo</a> . Most of the time you won't need those (in my experience) but they're there in a pinch!</p>
-
-<h1>Pacer is fast</h1>
-
-<p>Pacer runs on JRuby, generally the fastest Ruby. In addition, most graph traversal logic runs in pure Java internally, only spitting out your results in the form of nice Ruby objects. That means that when you're trying to get shit done pronto, Pacer's on your side.</p>
-
-<h1>Getting started</h1>
-
-<p>The easiest way to get Pacer is to simply <code>gem install pacer</code>. Pacer comes with the in-memory TinkerGraph but for serious applications you're likely going to want to use Neo4j. In that case a quick <code>gem install pacer-neo4j</code> has you covered.</p>
-<blockquote>
-<p>BUNDLER PROBLEM: Earlier versions of Pacer were released with an invalid gemspec that is causing trouble with Bundler &gt;= 1.1.0. I'm working on the best way to address this. Until it get it fixed, projects using Pacer will need to use Bundler '&lt; 1.1'. Sorry!</p>
-</blockquote>
-      </section>
-      <footer>
-        <p>This project is maintained by <a href="https://github.com/pangloss">pangloss</a></p>
-        <p><small>Hosted on GitHub Pages &mdash; Theme by <a href="https://github.com/orderedlist">orderedlist</a></small></p>
-      </footer>
-    </div>
-    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
-  </body>
-</html>
+{% include {{site.includes_directory}}/disqus.html %}
