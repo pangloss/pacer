@@ -22,7 +22,9 @@ Pacer has a [google group](http://groups.google.com/group/pacer-users?lnk=gcimv)
 
 ## Documentation
 
-Check out the [wiki](https://github.com/pangloss/pacer/wiki) for detailed explanations of many of Pacer's features. Please contribute to it or open issues against it if there is anything missing that you want to see.
+Check out the [Pacer docs](http://pangloss.github.io/pacer/) for detailed explanations of many of Pacer's features. 
+
+if there is anything missing, that you want to see, please contribute it to the `gh-pages` branch of this repo, or open issues against it .
 
 Pacer is also documented with a comprehensive RSpec test suite and with a
 thorough YARD documentation. [Dig in!](http://www.rubydoc.info/github/pangloss/pacer/master)
@@ -44,75 +46,22 @@ JRuby is to use [RVM](https://rvm.io/)
 
 ## Installation
 
-The easiest way to get Pacer is `gem install pacer`.
+Install the dependencies:
 
-If you want to hack on Pacer, you'll need to have
-[maven](http://maven.apache.org/) installed (I recommend `brew install
-maven`), then use `rake jar` to set up maven's pom.xml file and run the
-maven build script. Then `rake gemfile_devel` to set up a default
-Gemfile that you can customize as needed to include dependencies
-to the various pacer-... graphs you want the test suite to run against.
+ * [JRuby 1.7.x](http://jruby.org/)
+   __Recommended:__ Use [RVM](https://rvm.io/) to install and manage all Ruby (and JRuby) versions on your machine.
+ * [RubyGems](https://rubygems.org/)
+
+Install Pacer:
+
+`gem install pacer`.
 
 ## Graph Database Support
 
-The Tinkerpop suite supports a number of graph data stores. They are all
-compatible with Pacer, but I have not yet implemented the simple
-adapters Pacer needs to use them yet. Here is the list of what's
-supported so far:
+Pacer can work with any Blueprints-enabled graph, such as Neo4j, OrientDB, TinkerGraph and more.
 
-| Graph                                          | Info                                     | Gem Required              | Gem address                                                     |
-|------------------------------------------------|------------------------------------------|---------------------------|-----------------------------------------------------------------|
-| TinkerGraph                                    | In-memory graph db. Included with Pacer. |                           |                                                                 |
-| [OrientDB](http://orientdb.com)                | A powerful and feature rich graph / document hybrid database.           | `gem install --pre pacer-orient` | [pangloss/pacer-orient](https://github.com/pangloss/pacer-orient) |
-| [Neo4J](http://neo4j.org)                      | The industry-leading graph db.           | `gem install pacer-neo4j` | [pangloss/pacer-neo4j](https://github.com/pangloss/pacer-neo4j) |
-| [Dex](http://sparsity-technologies.com)        | A very fast, relatively new graph db.    | `gem install pacer-dex`   | [pangloss/pacer-dex](https://github.com/pangloss/pacer-dex)     |
-| [Titan](http://thinkaurelius.github.io/titan/) | Built on top of a pluggable nosql backend store | `gem install pacer-titan` | [pacer-titan](https://github.com/mrbotch/pacer-titan)           |
+[See the docs](http://pangloss.github.io/pacer/suppoted_graph_databases/) for more details.
 
-
-
-You can run any or all of the above graph databases. Pacer supports
-running them simultaneuosly and even supports having many of any given
-type open at once.
-
-### Using Pacer with Neo4j
-
-All you need is the [pacer-neo4j](https://github.com/pangloss/pacer-neo4j) gem.
-
-```ruby
-    require 'pacer-neo4j'
-    graph = Pacer.neo4j("path/to/graph")
-```
-
-See the gem repository for more details on Neo4j-specific features and functionality.
-
-#### (optional) Interoperation with the neo4j gem
-
-Pacer can work together with other Ruby GraphDB libraries, too. The
-first functioning example is with theo neo4j gem. Hopefully more will
-follow soon as I find out about them or get requests to support them.
-
-To use Pacer together with the neo4j gem, get your Pacer graph instance
-as follows:
-
-```ruby
-    require 'neo4j'
-    require 'pacer-neo4j'
-    # start neo4j via the external gem rather than using pacer-neo4j
-    Neo4j.db.start
-    graph = Pacer.neo4j(Neo4j.db.graph)
-```
-
-After that, you can continue to use the graph as normal with *both*
-gems. Any update that's committed with one gem will be visible
-immediately to the other because they are now both pointing to the same
-Java graphdb instance.
-
-### A note on safely exiting
-
-Some databases need to be shutdown cleanly when the program exits. You
-can shut a database down anytime by calling `graph.shutdown`, but you
-don't need to worry about it much. Pacer uses Ruby's `at_exit` hook to
-automatically shut down all open databases!
 
 ## Example traversals
 
@@ -135,66 +84,7 @@ or to take it one step further:
     person.recommended_friends
 ```
 
-## Create and populate a graph
-
-To get started, you need to know just a few methods. First, open up a graph (if one doesn't exist it will be automatically created) and add some vertices to it:
-
-```ruby
-    dex = Pacer.dex '/tmp/dex_demo'
-    dex.transaction do
-      pangloss = dex.create_vertex :name => 'pangloss', :type => 'user'
-      okram = dex.create_vertex :name => 'okram', :type => 'user'
-      group = dex.create_vertex :name => 'Tinkerpop', :type => 'group'
-    end
-```
-
-Now, let's see what we've got:
-
-```ruby
-    dex.v
-```
-
-produces:
-
-```ruby
-    #<V[1024]> #<V[1025]> #<V[1026]>
-    Total: 3
-    => #<GraphV>
-```
-
-There are our vertices. Let's look their properties:
-
-```ruby
-    dex.v.properties
-
-    {"name"=>"pangloss", "type"=>"user"} {"name"=>"okram", "type"=>"user"}
-    {"name"=>"Tinkerpop", "type"=>"group"}
-    Total: 3
-    => #<GraphV -> Obj-Map>
-```
-
-Now let's put an edge between them:
-
-```ruby
-    dex.transaction do
-      dex.create_edge okram, pangloss, :inspired
-    end
-    => #<E[2048]:1025-inspired-1024>
-```
-
-That's great for creating an edge but what if I've got lots to create? Try this method instead which can add edges to the cross product of all vertices in one route with all vertices in the other:
-
-```ruby
-    dex.transaction do
-      group.add_edges_to :member, dex.v(:type => 'user')
-    end
-
-    #<E[4097]:1026-member-1024> #<E[4098]:1026-member-1025>
-    Total: 2
-    => #<Obj 2 ids -> lookup>
-```
-
-There is plenty more to see as well! Please dig into the code and the spec suite to find loads of examples and edge cases. And if you think of a case that I've missed, I'll greatly appreciate your contributions!
+You can use the [Quick Start guide](http://pangloss.github.io/pacer/quick_start/) to get a feel for how Pacer queries (aka traversals) work.
 
 ## Design Philosophy
 
