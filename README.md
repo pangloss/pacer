@@ -34,15 +34,17 @@ If you like, you can also use the documentation locally via
 
 ## Installation
 
-Install the dependencies:
+Install dependencies:
 
- * [JRuby 1.7.x](http://jruby.org/)
+ * [JRuby 1.7.x](http://jruby.org/)     
    __Recommended:__ Use [RVM](https://rvm.io/) to install and manage all Ruby (and JRuby) versions on your machine.
  * [RubyGems](https://rubygems.org/)
 
 Install Pacer:
 
-`gem install pacer`.
+```
+gem install pacer
+```
 
 ## Graph Database Support
 
