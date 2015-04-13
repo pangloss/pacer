@@ -161,3 +161,99 @@ def reachable_via_at_most_n_flights(airport, n)
 end
 ```
 
+
+Pacer has a few convenience methods that wrap around its `loop` traversal.
+
+### `all`
+
+Repeat a certain traversal pattern, and return all elements you encounter.
+This method is equivalent to calling `loop`, with the while block `{ :emit_and_loop }`.
+
+Usage:
+
+ - `all { |route| arbitrary_steps(route) }`
+
+
+### `deepest`
+
+Repeat a certain traversal pattern, but return only the deepest elements in the full traversal.
+
+Usage:
+
+ - `deepest { |route| arbitrary_steps(route) }`
+
+
+### `breadth_first`
+
+Traversals typically work through the graph in depth-first order. Pacer implements simple hack to allow efficient breadth-first searches with repeating traversals. 
+This resulting route will have the same items as `all`, but the order will be different.
+
+Usage:
+
+ - `breadth_first { |route| arbitrary_steps(route) }`
+
+
+
+
+## `section`
+
+Consider the following traversal, in a hypothetical social network application:
+
+```ruby
+def suggest_bands(user_vertex)
+	# Recommend all the bands that your friends like
+	user_vertex.out_e(:friend).in_v.out_e(:likes_band).in_v
+end
+```
+
+Now, let's make things interesting, and try to get __at most two bands from each friend__.
+
+### `limit_section`
+
+First of all, let's see the solution:
+
+
+```ruby
+user_vertex.out_e(:friend).in_v.section(:foo)
+ 	.out_e(:likes_band).in_v
+ 	.limit_section(:foo, 2)
+```
+
+What happened here?
+
+ - The call to `section(:foo)` marks the route `user_vertex.out_e(:friend).in_v` as a section called `foo`.       
+   - Later in the traversal, we can use the name `foo` to group items.
+   - The items we traverse from each vertex in `user_vertex.out_e(:friend).in_v` are groups together.
+ - The call to `.limit_section(:foo, 2)` means two things:
+   - For each friend (in the `foo` section), treat the bands that they like as one group.
+   - Limit the size of each group to 2 bands.
+
+
+Usage:
+
+ - `limit_section(:section_name, the_limit)`
+
+### `sort_section`
+
+Similarly to `limit_section`, we can sort the items in a section. This can be extremely useful when traversing very large data set.
+
+Usage:
+
+ - `sort_section(:section_name)`
+ - `sort_section(:section_name) { |element| value_to_sort_by(element) }`
+
+Example:
+
+```ruby
+level2 = level1.as(:level1).out.out.sort_section(:level1) { |v| v[:key] }
+result = level2.as(:level2).out.out.sort_section(:level2) { |v| v[:key] }
+```
+
+### `uniq_in_section`
+
+The same way we can sort or limit the items in each section, we can also ask to remove duplicate items.
+
+Usage:
+
+ - `uniq_in_section(:section_name)`
+

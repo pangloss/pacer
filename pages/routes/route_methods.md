@@ -189,3 +189,30 @@ The table below summarizes these methods.
 | `select` | X | X |
 | `take` | X | |
 | `to_a` |  | |
+
+
+## Convenience methods - `in`, `out` and `both`
+
+Vertices and vertex routes support the following three convenience methods
+
+ - `out`, get outgoing neighbours of a vertex (or a vertex route).     
+    This method is (almost) equivalent to `out_e.in_v`.
+ - `in`, get incoming neighbours of a vertex (or a vertex route).     
+    This method is (almost) equivalent to `in_e.out_v`.
+ - `both`, get all neghbours (i.e. the union of `out` and `in`).
+
+> While useful for exploration in the console, they are often not a good idea in production. They don't preserve information about which edge was
+> followed in the traversal, making it impossible to use certain useful tools like `subgraph` or the graph export tool rely on that information.
+
+Usage:
+
+- `v.in(:edge_label)` only with the given edge label.
+- `v.in(:edge_label, :alternate_edge_label)` only with one of the given edge labels.
+- `v.in(vertex_property: "matching value")` only with the exact matching properties.
+- `v.in { |vertex| }` only when the block returns a [truthy] value.
+- `v.in(Extension)` Extend results with the given extension.
+- `v.in(:edge_label, Extension, vertex_property: "matching value") { |vertex| }` combined
+
+
+
+[truthy]: https://gist.github.com/jfarmer/2647362

@@ -237,6 +237,26 @@ g.v.random(0)  # Exclude all items
 _Note:_ If our collection is large, we can expect `random(0.2)` to emit 20% of the items in the collection (aka [Law of large numbers](http://en.wikipedia.org/wiki/Law_of_large_numbers) ).
 
 
+## `most_frequent` 
+
+Return the items that occurs most frequently in a route.
+
+Usage
+
+ - `most_frequent`, return a most frequent item.
+ - `most_frequent(num)`, return (a route containing) the `num` most frequent items.
+ - `most_frequent(a..b)`, return (a route containing) items `a` to `b` (inclusive) in the most-frequent list.
+
+Example
+
+```ruby
+def recommend_books(user)
+    # Recommend book that are liked by my friends.
+    user.out_e(:friend).in_v.out_e(:likes_book).in_v.most_frequent(5)
+end
+```
+
+
 ## `lookahead`
 
 The `lookahead` filter is extremely useful - It allows us to filter items based on a walk through the graph.
