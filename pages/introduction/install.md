@@ -22,25 +22,30 @@ $ gpg --keyserver hkp://keys.gnupg.net --recv-keys 409B6B1796C275462A1703113804B
 $ \curl -sSL https://get.rvm.io | bash -s stable
 ```
 
+If you already have RVM installed, you may want to update it to the latest version:
+
+```
+$ rvm get stable
+```
+
 _Note:_ After the installation completes, you will need to `source ~/.rvm/scripts/rvm` before you can use RVM from your console.
 
 
- Use RVM to install JRuby:
-
- ```
- $ rvm install jruby-1.7.19
- ```
- 
-Install RubyGems (in case it isn't already installed):
+Use RVM to install JRuby:
 
 ```
-$ sudo apt-get install rubygems
+$ rvm install jruby
+```
+
+Switch RVM to use JRuby (optionally setting it to be default):
+```
+$ rvm use --default jruby
 ```
 
 Install Pacer
 
 ```
-$ jruby -S gem install pacer
+$ gem install pacer
 ```
 
 
