@@ -17,7 +17,7 @@ Paste the following code in the IRB:
 require 'pacer'
 
 # Create an in-memory TinkerGraph
-g = Pacer.tg()
+g = Pacer.tg
 
 g.transaction do # optional with TinkerGraph
 
@@ -60,7 +60,7 @@ lga.add_edges_to(:flight, lax, airline: 'Delta')
 Get all vertices
 
 ```ruby
-g.v()
+g.v
 ```
 
 Filter vertices by property (get all vertices whose `airport` is `LGA`)
@@ -79,17 +79,17 @@ Get edges based on vertices.
 
 ```ruby
 # Outgoing edges
-g.v(airport: 'LGA').out_e()
+g.v(airport: 'LGA').out_e
 # Incoming edges
-g.v(airport: 'LGA').in_e()
+g.v(airport: 'LGA').in_e
 # Both
-g.v(airport: 'LGA').both_e()
+g.v(airport: 'LGA').both_e
 ```
 
 __Example:__ Get all airlines flying in or out of LaGuardia airport
 
 ```ruby
-g.v(airport: 'LGA').both_e()['airline'].uniq
+g.v(airport: 'LGA').both_e['airline'].uniq
 ```
 
 If you run the command above on the irb, you should see the output:
@@ -103,7 +103,7 @@ Total: 3
 We can also get edges from the graph.
 
 ```ruby
-g.e()
+g.e
 ```
 
 And filter by property
