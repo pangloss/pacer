@@ -28,7 +28,7 @@ _Note:_ After the installation completes, you will need to `source ~/.rvm/script
  Use RVM to install JRuby:
 
  ```
- $ rvm install 1.7.19
+ $ rvm install jruby-1.7.19
  ```
  
 Install RubyGems (in case it isn't already installed):
