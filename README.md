@@ -18,7 +18,7 @@ it's very fast!
 
 ## Documentation
 
-Check out the [Pacer docs](http://pangloss.github.io/pacer/) for detailed explanations of many of Pacer's features. 
+Check out the [Pacer docs](http://xnlogic.github.io/pacer/) for detailed explanations of many of Pacer's features. 
 
 Feel free to contribute to it, by submitting a pull-request to the `gh-pages` branch of this repo, or by opening issues.
 
