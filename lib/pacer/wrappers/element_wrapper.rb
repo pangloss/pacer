@@ -37,29 +37,36 @@ module Pacer::Wrappers
 
       def route_conditions(graph)
         return @route_conditions if defined? @route_conditions
-        @route_conditions = extensions.inject({}) do |h, ext|
-          if ext.respond_to? :route_conditions
-            h.merge! ext.route_conditions(graph)
-          else
-            h
-          end
-        end
-        @route_conditions
+        @route_conditions = extensions.inject({}, &reduce_extensions(graph, :route_conditions))
       end
 
       def lookup(graph)
         return @lookup if defined? @lookup
-        @lookup = extensions.inject({}) do |h, ext|
-          if ext.respond_to? :lookup
-            h.merge! ext.lookup(graph)
+        @lookup = extensions.inject({}, &reduce_extensions(graph, :lookup))
+      end
+
+      protected
+
+      def reduce_extensions(graph, method)
+        proc do |h, ext|
+          if ext.respond_to? method
+            conds = ext.send(method, graph)
+            if conds.is_a? Hash
+              h.merge! conds
+            elsif conds.is_a? Array
+              if h.is_a? Array
+                conds + h
+              else
+                conds + [h]
+              end
+            else
+              h
+            end
           else
             h
           end
         end
-        @lookup
       end
-
-      protected
 
       def build_extension_wrapper(exts, mod_names, superclass)
         sc_name = superclass.to_s.split(/::/).last
