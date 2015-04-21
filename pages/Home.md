@@ -20,7 +20,8 @@ and [Dex](http://www.sparsity-technologies.com/dex), thanks to the
 
 ## Powerful
 
-Anything you can do with any other graph query framework can also be done with Pacer. In addition, Pacer's flexibility means that if you want to use features from other libraries, they are easy to fold into Pacer's super simple modular structure. For instance, Neo4j includes some handy graph algorithms which I've wrapped up a simple plugin gem at https://github.com/pangloss/pacer-neo4j-algo . Most of the time you won't need those (in my experience) but they're there in a pinch!
+Anything you can do with any other graph query framework can also be done with Pacer. In addition, Pacer's flexibility means that if you want to use features from other libraries, they are easy to fold into Pacer's super simple modular structure. For instance, Neo4j includes some handy graph algorithms which you can see here: https://github.com/xnlogic/pacer-neo4j/blob/master/lib/pacer-neo4j/algo.rb
+Most of the time you won't need those but they're there in a pinch!
 
 
 ## Fast
