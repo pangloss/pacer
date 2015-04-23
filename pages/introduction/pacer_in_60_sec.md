@@ -5,13 +5,13 @@ toc: false
 ---
 
 
-In order to provide efficient graph traversal, Pacer chains [Pipes](http://pipes.tinkerpop.com) together and wraps them in [Pacer Routes](Routes).
+In order to provide efficient graph traversal, Pacer chains [Pipes] together and wraps them in [Pacer Routes][routes101].
 
 ![Diagram 2]({{site.baseurl}}/images/PacerHome_img2.png)
 
 <br />
 
-In order to provide developer-friendly API, [Pacer Extensions](Pacer-extensions) allow you to extend graph elements with arbitrary functionality.
+In order to provide developer-friendly API, [Pacer Extensions][extensions101] allow you to extend graph elements with arbitrary functionality.
 
 ![Diagram 3]({{site.baseurl}}/images/PacerHome_img3.png)
 
@@ -30,3 +30,8 @@ data_center.region('A').hard_drives.faulty
 # Number of traffic lights on your drive to the office
 home.directions_to('Queen & Spadina').traffic_lights.count
 ```
+
+
+[Pipes]: http://pipes.tinkerpop.com
+[routes101]: {{site.baseurl}}/routes-101/
+[extensions101]: {{site.baseurl}}/extensions-101/

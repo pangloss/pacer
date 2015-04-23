@@ -7,13 +7,11 @@ id: homepage
 
 # Pacer
 
-Pacer is graph traversal library, written in [JRuby](http://jruby.org/).
+Pacer is graph traversal library, written in [JRuby].
 
  * Enables very expressive graph traversals.
- * Supports all of the major graph databases, including [OrientDB](http://orientdb.com), [Neo4j](http://neo4j.org)
-and [Dex](http://www.sparsity-technologies.com/dex), thanks to the
-[Tinkerpop](http://tinkerpop.com) graphdb stack. 
- * Comes with a very convenient in-memory graph called [TinkerGraph](https://github.com/tinkerpop/blueprints/wiki/TinkerGraph).
+ * Supports all of the major graph databases, including [OrientDB], [Neo4j] and [Dex], thanks to the [Tinkerpop] graphdb stack. 
+ * Comes with a very convenient in-memory graph called [TinkerGraph].
  * Traverses the graphs using very fast and memory efficient stream processing. 
  * All processing is done in pure Java, so when it comes the usual Ruby expressiveness vs. speed problem, you can have your cake and eat it too. It's very fast!
 
@@ -59,8 +57,14 @@ and other American cities.
 
 
 [xnlogic]: http://xnlogic.com
-[neo4j]: http://www.neotechnology.com
+
 [JRuby]: http://jruby.org
+[Neo4j]: http://www.neotechnology.com
+[OrientDB]: http://orientdb.com
+[Dex]: http://www.sparsity-technologies.com/dex
+[Tinkerpop]: http://tinkerpop.com
+[TinkerGraph]: https://github.com/tinkerpop/blueprints/wiki/TinkerGraph
+
 [ml]: https://groups.google.com/forum/#!forum/pacer-users
 
 
