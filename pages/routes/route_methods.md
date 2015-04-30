@@ -94,10 +94,23 @@ jruby-1.7.19 :272 > g.v.count
  => 4 
 ```
 
+## `first`
+
+Return the first items in a route (or `nil`, if the route is empty).
+
+Example:
+
+```ruby
+jruby-1.7.19 :272 > g.v.first
+ => #<V[0]> 
+```
+
+
 ## `frequencies`
 
 Return a hash, mapping each item to the number of times it occurs in the route.     
-For example:
+
+Example:
 
 ```ruby
 jruby-1.7.19 :321 > g.e[:airline]
