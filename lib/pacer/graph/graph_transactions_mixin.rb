@@ -65,6 +65,7 @@ module Pacer
       read_tx_depth = tgi[:read_tx_depth] ||= 0
       tgi[:read_tx_depth] += 1
       # Blueprints auto-starts the transaction
+      reopen_read_transaction
       yield
     ensure
       rtd = tgi[:read_tx_depth] -= 1
