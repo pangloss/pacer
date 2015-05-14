@@ -149,7 +149,7 @@ HELP
 
       def reject_in(&block)
         map element_type: element_type do |e|
-          e.select(&block)
+          e.reject(&block)
         end
       end
     end
