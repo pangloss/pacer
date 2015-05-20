@@ -5,89 +5,69 @@ module Pacer
   # Neo4j could and for everything else it uses (slow (but easy))
   # human-readable YAML encoding.
   class YamlEncoder
+
+import com.xnlogic.pacer.encoder.SimplePropertyEncoder
+
     def self.encode_property(value)
       case value
-      when nil
-        nil
+      when Fixnum, Float
+        value
       when String
         value = value.strip
-        value = nil if value == ''
+          value == '' ? nil : value
+      when true, false, nil
         value
-      when Numeric
-        if value.is_a? Bignum
-          dump value
-        else
-          value.to_java
-        end
-      when true, false
-        value.to_java
       when DateTime
-        # rfc3339 drops the millisecond
-        value.new_offset(0).strftime ' utcT %Y-%m-%d %H:%M:%S.%L'
-      when Time
-        if value.utc?
-          value.getutc.strftime ' utcT %Y-%m-%d %H:%M:%S.%L'
-        else
-          value.strftime ' time %Y-%m-%d %H:%M:%S.%L %z'
-        end
+        value.new_offset(0).strftime ' utcT %Y-%m-%d %H:%M:%S.%L' 
       when Date
         value.strftime ' date %Y-%m-%d'
-      when Array
-        if value.length == 0
-          value_type = Fixnum
         else
-          value_type = value.first.class
-          value_type = TrueClass if value_type == FalseClass
-          value.each do |v|
-            if value_type != v.class or (value == true or value == false and value_type == TrueClass)
-              value_type = nil
-              break
-            end
+          begin     
+              SimplePropertyEncoder.encodeProperty(value)
+          rescue Exception => ex
+              dump(value)
           end
         end
-        case value_type
-        when Fixnum
-          value.to_java :long
-        when Float
-          value.to_java :double
-        when TrueClass
-          value.to_java :boolean
-        when String
-          value.to_java :string
+    end
+
+
+    def self.decode_property(value)
+      begin
+        decoded_value = SimplePropertyEncoder.decodeProperty(value)
+        if decoded_value.nil?
+          return nil
+        elsif decoded_value.class == Java::JavaUtil::Date
+          Time.at(decoded_value.getTime/1000.0)
         else
-          dump value
+          convert_to_ruby_array_if_necessary(decoded_value)
         end
-      else
-        dump value
+      rescue Exception => ex
+        if value.start_with? " utcT "
+          # FIXME: we lose the milliseconds here...
+          return DateTime.parse(value[6..-1]).to_time.utc
+        elsif value.start_with? " date "
+          return Date.parse(value[6..-1])
+        else
+          return YAML.load(value[1..-1]) 
+        end
       end
     end
 
-    def self.decode_property(value)
-      if value.is_a? String and value[0, 1] == ' '
-        marker = value[1, 4]
-        if marker == 'utcT'
-          # FIXME: we lose the milliseconds here...
-          DateTime.parse(value[6..-1]).to_time.utc
-        elsif marker == 'time'
-          DateTime.parse(value[6..-1]).to_time
-        elsif marker == 'date'
-          Date.parse(value[6..-1])
-        else
-          YAML.load(value[1..-1])
-        end
-      elsif value.is_a? ArrayJavaProxy
-        value.to_a
-      else
-        value
-      end
-    rescue Psych::SyntaxError
-      value
-    end
 
     private
 
     def self.dump(value)
       " #{ YAML.dump value }"
     end
+
+
+    def self.convert_to_ruby_array_if_necessary(value)
+      if value.respond_to? :to_a
+        value = value.to_a
+        value.each_index {|i| value[i] = convert_to_ruby_array_if_necessary(value[i])}
+      end
+      value
+    end
+
   end
 end
