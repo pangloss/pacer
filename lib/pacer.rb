@@ -25,7 +25,9 @@ require 'lock_jar'
 require 'pacer/support/lock_jar'
 require 'pacer-ext.jar'
 
-if (not defined? Pacer::LOAD_JARS) or Pacer::LOAD_JARS == true
+if ENV['PACER_MANUAL_JARS']
+  require 'pacer/support/lock_jar_disabler'
+else
   bundle_jarfiles = LockJar.register_bundled_jarfiles # defined in pacer/support/lock_jar.rb
   unless bundle_jarfiles
     LockJar.register_jarfile(File.join(File.dirname(__FILE__), "..", "Jarfile"))
