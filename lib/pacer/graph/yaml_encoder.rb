@@ -43,8 +43,7 @@ import com.xnlogic.pacer.encoder.SimplePropertyEncoder
         end
       rescue Exception => ex
         if value.start_with? " utcT "
-          # FIXME: we lose the milliseconds here...
-          return DateTime.parse(value[6..-1]).to_time.utc
+          return DateTime.parse(value[6..-1])
         elsif value.start_with? " date "
           return Date.parse(value[6..-1])
         else

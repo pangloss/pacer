@@ -17,8 +17,8 @@ import org.yaml.snakeyaml.Yaml;
 public class SimplePropertyEncoder {
 
 	private static final String PREFIX_YAML     = " jaml ";
-	private static final String PREFIX_TIME     = " utcT ";
-	private static final String PREFIX_TIME_UTC = " time ";
+	private static final String PREFIX_TIME     = " jate ";
+	private static final String PREFIX_TIME_UTC = " jutc ";
 
 	private enum ArrayType {LONG, DOUBLE, STRING, BOOLEAN, MIXED_LONG_AND_DOUBLE, OBJECT};
 
