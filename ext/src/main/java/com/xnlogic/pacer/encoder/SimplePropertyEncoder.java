@@ -8,7 +8,6 @@ import java.util.Date;
 import org.jruby.RubyArray;
 import org.yaml.snakeyaml.Yaml;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 
 
 /**
@@ -35,7 +34,7 @@ public class SimplePropertyEncoder {
 	// Least specific implementations - Argument and return type are both of type Object.
 	// These methods are a "fall-back option".
 	
-	public static Object encodeProperty(Object value) throws JsonProcessingException{
+	public static Object encodeProperty(Object value){
 		if(value == null){
 			return null;
 		}
@@ -156,7 +155,7 @@ public class SimplePropertyEncoder {
 	// By encoding arrays using Java (instead of Ruby), we get a huge performance boost.
 
 
-	public static Object encodeProperty(RubyArray value) throws JsonProcessingException{
+	public static Object encodeProperty(RubyArray value){
 		if(value == null){
 			return null;
 		}
