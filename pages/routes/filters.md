@@ -245,7 +245,7 @@ Usage
 
  - `most_frequent`, return a most frequent item.
  - `most_frequent(num)`, return the `num` most frequent item.      
-    That is, `most_frequent(0)` will return the most frequent item, `most_frequent(1)` the second most frequent item, `most_frequent(2)` the third, and so on.
+    That is, `most_frequent(0)` returns the most frequent item, `most_frequent(1)` the second most frequent, `most_frequent(2)` the third and so on.
  - `most_frequent(a..b)`, return (a route containing) items `a` to `b` (inclusive) in the most-frequent list.     
     For example, `most_frequent(1..2)` will return (a route containing) the second and third most frequent items.
  - `most_frequent(num, truthy_value)`, same as `most_frequent(num)`, but also includes the count (not just the item). 
