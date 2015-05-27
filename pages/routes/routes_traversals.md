@@ -245,9 +245,26 @@ Usage:
 Example:
 
 ```ruby
-level2 = level1.as(:level1).out.out.sort_section(:level1) { |v| v[:key] }
-result = level2.as(:level2).out.out.sort_section(:level2) { |v| v[:key] }
+level2 = level1.section(:level1).out.out.sort_section(:level1) { |v| v[:key] }
+result = level2.section(:level2).out.out.sort_section(:level2) { |v| v[:key] }
 ```
+
+### `count_section`
+
+Count the number of items in each section.
+
+Usage:
+
+ - `count_section(:section_name)`
+
+Example:
+
+```ruby
+# How many bands does each of your friends like?
+user_vertex.out_e(:friend).in_v.section(:foo)
+ 	.out_e(:likes_band).count_section(:foo)
+```
+
 
 ### `uniq_in_section`
 
