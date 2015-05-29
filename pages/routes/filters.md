@@ -114,8 +114,8 @@ So far, we have seen two types of filtering:
  Usage:
 
 - `filter { |element| }` same as select
-- `select { |element| }` keep elements when the block result is [truthy].
-- `reject { |element| }` eliminate elements when the block result is [truthy].
+- `select { |element| }` keep elements when the block result is [truthy](https://gist.github.com/jfarmer/2647362).
+- `reject { |element| }` eliminate elements when the block result is [truthy](https://gist.github.com/jfarmer/2647362).
 
 Example:
 
@@ -205,7 +205,7 @@ end
 
   > _Note:_ We can call `as` on a single item, as well as a route.
   > In both cases, when we refer to the named item/route, we use `is`/`is_not` (instead of `only`/`except`).      
-  
+
   > In the example above, we named our starting point, `user`. 
   > This allows our method to work efficiently whether the argument is a single user, or a route of users.     
 
