@@ -203,8 +203,9 @@ def friends_of_friends(user)
 end
 ```
 
-  > _Note:_ We can use `as` to name to a single item, as well as a route.
-  > In both cases, when we refer to the named item/route, we use `is` and `is_not` (but not `only` and `except`).      
+  > _Note:_ We can call `as` on a single item, as well as a route.
+  > In both cases, when we refer to the named item/route, we use `is`/`is_not` (instead of `only`/`except`).      
+  
   > In the example above, we named our starting point, `user`. 
   > This allows our method to work efficiently whether the argument is a single user, or a route of users.     
 
