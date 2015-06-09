@@ -78,7 +78,7 @@ module Pacer
 
     # The soure of data for the entire chain. Routes that have a source
     # generally should not have a {#back}
-    attr_reader :source
+    attr_reader :pacer_source
 
     # Create a new route. It should be very rare that you would need to
     # directly create a Route object.
@@ -134,7 +134,7 @@ module Pacer
       if source.is_a? Route
         @back = source
       else
-        @source = source
+        @pacer_source = source
       end
       @config = config
       @args = args

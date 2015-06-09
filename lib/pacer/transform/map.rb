@@ -63,7 +63,7 @@ HELP
         if back and back.element_type == :path
           pf = Pacer::Wrappers::PathWrappingPipeFunction.new back, block
         else
-          pf = Pacer::Wrappers::WrappingPipeFunction.new back || source, block
+          pf = Pacer::Wrappers::WrappingPipeFunction.new back || pacer_source, block
           pf = Pacer::Wrappers::UnwrappingPipeFunction.new pf
         end
         pipe = com.tinkerpop.pipes.transform.TransformFunctionPipe.new pf

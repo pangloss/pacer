@@ -53,7 +53,7 @@ module Pacer
 
       def after_initialize
         @empty_back = @back
-        @back = @source = nil
+        @back = @pacer_source = nil
         super
       end
 

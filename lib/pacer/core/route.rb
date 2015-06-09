@@ -47,7 +47,7 @@ module Pacer
       # @return [PacerGraph]
       def graph
         config.fetch :graph do
-          src = @back || @source
+          src = @back || @pacer_source
           src.graph if src.respond_to? :graph
         end
       end
@@ -82,7 +82,7 @@ module Pacer
 
       # Return true if this route is at the beginning of the route definition.
       def root?
-        !@source.nil? or @back.nil?
+        !@pacer_source.nil? or @back.nil?
       end
 
       # Prevents the route from being evaluated when it is inspected. Useful
@@ -353,7 +353,7 @@ HELP
           other.function == function and
           other.element_type == element_type and
           other.back == back and
-          other.source == source
+          other.pacer_source == pacer_source
       end
 
       # Returns true if this route currently has no elements.
@@ -409,7 +409,7 @@ HELP
         if @back
           @back.set_pipe_source src
         else
-          self.source = src
+          self.pacer_source = src
         end
       end
 
@@ -421,7 +421,7 @@ HELP
           @back = back
         else
           @back = nil
-          @source = back
+          @pacer_source = back
         end
       end
 
@@ -461,17 +461,17 @@ HELP
 
       # This should not normally need to be set. It can be used to inject a route
       # into another route during iterator generation.
-      def source=(source)
+      def pacer_source=(pacer_source)
         @back = nil
-        @source = source
+        @pacer_source = pacer_source
       end
 
       # Get the actual source of data for this route.
       #
       # @return [java.util.Iterator]
       def source_iterator
-        if @source
-          iter = iterator_from_source(@source)
+        if @pacer_source
+          iter = iterator_from_source(@pacer_source)
           iter.enablePath(true) if iter.respond_to? :enablePath
           iter
         elsif @back
@@ -484,7 +484,7 @@ HELP
       # @see #build_pipeline
       # @return [[com.tinkerpop.pipes.Pipe, com.tinkerpop.pipes.Pipe], nil]
       def pipe_source
-        if @source
+        if @pacer_source
           nil
         elsif @back
           @back.send(:build_pipeline)
