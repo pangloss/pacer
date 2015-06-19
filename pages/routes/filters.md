@@ -67,7 +67,7 @@ The `filter` method works just as you'd expect:
  * `filter(foo: Set['a', 'b'])` - Include items whose `foo` property is either `a` _or_ `b`.
  * `filter(foo: Set['a', 'b'], bar: 'c')` - Include items whose `foo` property is either `a` _or_ `b`, _and_ `bar` property is `c`.
 
- 
+
 
 ### `where`
 
@@ -123,7 +123,7 @@ Example:
 graph.v.filter { |v| v[:name] == v[:name].reverse } # find palindromic names.
 ```
 
-> Filtering with a block of code is noticeably slower than the previous two methods, because it has to go through Pacer's element wrapping process. Unlike the other two methods, which are executed in pure Java.     
+> Filtering with a block of code is noticeably slower than the previous two methods, because it has to go through Pacer's element wrapping process. Unlike the other two methods, which are executed in pure Java.
 >   filtering large collections could be several times slower. For smaller collections the impact is
 negligible, however.
 
@@ -138,7 +138,7 @@ methods.
 
 Usage:
 
-- `r.only(collection_or_route)` 
+- `r.only(collection_or_route)`
 - `r.except(collection_or_route)`
 
   > _Note:_ If you pass a route to these methods, it will be evaluated immediately into a Set of elements.
@@ -156,34 +156,68 @@ Usage:
 
 ### `as` together with `is` or `is_not`
 
-Consider the following traversal, defined in a hypothetical social network application. 
+Consider the following traversal, defined in a hypothetical social network application.
 
 ```ruby
-# Return only the 2nd-degree friends of a given user
-def friends_of_friends(user)
-	user.out_e(:friend).in_v.out_e(:friend).in_v.is_not(user)
+# Return other users who commented on any of the given user's post
+def commenters(user)
+  user.out_e(:posted).in_v
+    .out_e(:comment).in_v
+    .in_e(:posted).out_v
+    .is_not(user)
 end
 ```
 
-There is one obvious problem - We forgot to filter out 1st degree friends.      
-Let's fix this problem ...
+The traversal above works as follows:
+
+ - Get the `user`'s posts.
+ - Then comments to these posts.
+ - Then users who posted these comments.
+ - And exclude `user` from the result.
+
+The traversal above works well when `user` is a single vertex, but what if we want it to be more flexible, and allow `user` to be a route?
+
+At first glance, it seems like a trivial change - Instead of `is_not`, which excludes a single element, use `except`, which does the same for a collection/route.
 
 ```ruby
-def friends_of_friends(user)
-	friends = user.out_e(:friend).in_v
-	friends.out_e(:friend).in_v.is_not(user).except(friends)
+def commenters(users)
+  users.out_e(:posted).in_v
+    .out_e(:comment).in_v
+    .in_e(:posted).out_v
+    .except(users)
 end
 ```
 
-Now, there is a less obvious problem - When our method runs, it will evaluate the `friends` route twice:
+There is a subtle performance issue with the code above - The `users` route is being evaluated twice:
 
-  1. In `except(friends)`, when the route is built.    
-    The `friends` route needs to be converted to a regular collection, in order for the `except` route to be properly defined.
-  2. When the route is evaluated.
+  1. When Pacer builds the route, in `except(users)`.
+  2. When Pacer evaluates.
 
-This inefficiency can be avoided using the `as` method.      
-The `as` method allows you to name an intermediate route, and refer to it later with `is` or `is_not`.
-Pacer will avoid evaluating the route unnecessarily, during build time.
+ > When we say "evaluate a route", we mean "stream the elements out of the
+underlying graph database and into your application.
+ > Depending on the underlying database, this can be a costly operation.
+
+We can avoid this inefficiency using the `as` method.
+The `as` method allows you to name an intermediate route, and refer to it later with `is` or `is_not`:
+
+```ruby
+def commenters(users)
+  users.as(:posters)
+    .out_e(:posted).in_v
+    .out_e(:comment).in_v
+    .in_e(:posted).out_v
+    .is_not(:posters)
+end
+```
+
+The most intuitive way to reason about this code is by thinking of
+a route as a pipeline.
+
+ - During the build stage, Pacer names an intermediate point in the pipeline as `:posters`.
+ - During the evaluation phase, graph elements flow through the pipeline.
+ - The last step in the pipeline, `is_not(:posters)`, checks if the an element
+   passed through the `:posters` part of the pipeline.
+	 If it did, the element is excluded from the result.
 
 
 Usage:
@@ -191,23 +225,10 @@ Usage:
 - `as(:a_name)`, traverse, then `is(:a_name)`
 - `as(:a_name)`, traverse, then `is_not(:a_name)`
 
-Example: 
-
-
-```ruby
-def friends_of_friends(user)
-	user.as(:u)                         
-	  .out_e(:friend).in_v.as(:f) 
-	  .out_e(:friend).in_v
-	  .is_not(:u).is_not(:f)
-end
-```
-
   > _Note:_ We can call `as` on a single item, as well as a route.
-  > In both cases, when we refer to the named item/route, we use `is`/`is_not` (instead of `only`/`except`).      
+  > In both cases, when we refer to the named item/route, we use `is`/`is_not` (instead of `only`/`except`).
 
-  > In the example above, we named our starting point, `user`. 
-  > This allows our method to work efficiently whether the argument is a single user, or a route of users.     
+  > In the example above, `users` can be either a single element or a route.
 
 
 
@@ -215,8 +236,8 @@ end
 
 `random` filters out items randomly. It is useful for random sampling, as well as generating random walks through the graph.
 
-The `random` method takes a single numeric argument. 
-The argument is the probability of an item being emitted (i.e. not filtered). 
+The `random` method takes a single numeric argument.
+The argument is the probability of an item being emitted (i.e. not filtered).
 
 
 ```ruby
@@ -229,27 +250,27 @@ g.v.random(4)
 
 # The following examples are fairly useless:
 g.v.random(1)  # Include all items
-g.v.random(0)  # Exclude all items 
+g.v.random(0)  # Exclude all items
 
-# If the argument is negative, it is treated as 0 (and all items are excluded from the result). 
+# If the argument is negative, it is treated as 0 (and all items are excluded from the result).
 ```
- 
+
 
 _Note:_ If our collection is large, we can expect `random(0.2)` to emit 20% of the items in the collection (aka [Law of large numbers](http://en.wikipedia.org/wiki/Law_of_large_numbers) ).
 
 
-## `most_frequent` 
+## `most_frequent`
 
 Return the items that occurs most frequently in a route.
 
 Usage
 
  - `most_frequent`, return a most frequent item.
- - `most_frequent(num)`, return the `num` most frequent item.      
+ - `most_frequent(num)`, return the `num` most frequent item.
     That is, `most_frequent(0)` returns the most frequent item, `most_frequent(1)` the second most frequent, `most_frequent(2)` the third and so on.
- - `most_frequent(a..b)`, return (a route containing) items `a` to `b` (inclusive) in the most-frequent list.     
+ - `most_frequent(a..b)`, return (a route containing) items `a` to `b` (inclusive) in the most-frequent list.
     For example, `most_frequent(1..2)` will return (a route containing) the second and third most frequent items.
- - `most_frequent(num, truthy_value)`, same as `most_frequent(num)`, but also includes the count (not just the item). 
+ - `most_frequent(num, truthy_value)`, same as `most_frequent(num)`, but also includes the count (not just the item).
  - `most_frequent(range, truthy_value)`, same as `most_frequent(range)`, but also includes a count of each item.
 
 Example
@@ -270,7 +291,7 @@ For example, in a social network, we may want a filter that gets a collection of
 
 The following diagram explains how a lookahead filters each incoming item:
 
-![Lookahead diagram]({{site.baseurl}}/images/lookahead_diagram.png) 
+![Lookahead diagram]({{site.baseurl}}/images/lookahead_diagram.png)
 
 In code, lookaheads can be used as follows:
 
