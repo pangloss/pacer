@@ -132,7 +132,7 @@ Usage:
 
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth| }`
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth, path| }`
-  - _Note:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first pattern.
+  - _Note:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first usage pattern.
 
 Notice that:
 
