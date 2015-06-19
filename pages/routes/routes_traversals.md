@@ -136,16 +136,22 @@ Usage:
 
 > _Important:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first usage pattern.
 
+
 `route` and `arbitrary_steps(route)` must be routes of the same type.    
 E.g. If `route` is a vertex-route, but `arbitrary_steps(route)` results in an edge-route, Pacer will raise an error.
 
+
+
 The `while` block arguments are:
+
  - `element` - An element going into the while-block.
  - `depth` - The number of times Pacer applied the loop block, in order to get to this element.     
     Source elements have a depth of 0
  - `path` - An array of vertices and edges, the full path to this element.     
 
+
 The `while` block controls the loop by returning one of these values:
+
  - `:loop` = do not emit the element into the results of this traversal, but feed it back through the loop.
  - `:emit` = emit the element into the results of this traversal, but do not feed it back through the loop.
  - `:loop_and_emit` = emit the element and feed it back through the loop.
