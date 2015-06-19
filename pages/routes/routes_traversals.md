@@ -132,25 +132,27 @@ Usage:
 
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth| }`
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth, path| }`
-  - _Note:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first usage pattern.
 
-Notice that:
+
+> _Important:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first usage pattern.
 
 - `route` and `arbitrary_steps(route)` must be routes of the same type.    
   E.g. If `route` is a vertex-route, but `arbitrary_steps(route)` results in an edge-route, Pacer will raise an error.
-- The `while` block controls the loop by returning either `:loop`, `:emit`, `:loop_and_emit`, or `nil`.
 - The `while` block arguments are:
   - `element` - An element going into the while-block.
-  - `depth` - The number of times Pacer applied the loop block, in order to get to this element.
-  - `path` - An array of vertices and edges, the full path to this element. 
+  - `depth` - The number of times Pacer applied the loop block, in order to get to this element.     
+    Source elements have a depth of 0
+  - `path` - An array of vertices and edges, the full path to this element.     
+- The `while` block controls the loop by returning one of these values:
+  - `:loop` = do not emit the element into the results of this traversal, but feed it back through the loop.
+  - `:emit` = emit the element into the results of this traversal, but do not feed it back through the loop.
+  - `:loop_and_emit` = emit the element and feed it back through the loop.
+  - `:emit_and_loop` = same as `:loop_and_emit` (because we can never remember which one to use).
+  - `nil` or `false` = don't emit this element and don't feed it back through the loop.
 
-Some elements passed to the while block will be source elements. They have a depth of 0, and have never run through the loop traversal at all.
 
-- `:loop` = do not emit the element into the results of this traversal, but feed it back through the loop.
-- `:emit` = emit the element into the results of this traversal, but do not feed it back through the loop.
-- `:loop_and_emit` = both emit the element and feed it back through the loop.
-- `:emit_and_loop` = same as `:loop_and_emit` (because I could never remember which one to use).
-- `nil` or `false` = don't emit this element and don't feed it back through the loop.
+
+
 
 Example:
 
