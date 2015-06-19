@@ -132,9 +132,17 @@ Usage:
 
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth| }`
 - `loop { |route| arbitrary_steps(route) }.while { |element, depth, path| }`
+  - _Note:_ Keeping track of paths requires more memory. If you do not use `path` in the while-block, you should follow the first usage pattern.
 
+Notice that:
 
-The `while` block controls the loop by returning either `:loop`, `:emit`, `:loop_and_emit`, or `nil`.
+- `route` and `arbitrary_steps(route)` must be routes of the same type.    
+  E.g. If `route` is a vertex-route, but `arbitrary_steps(route)` results in an edge-route, Pacer will raise an error.
+- The `while` block controls the loop by returning either `:loop`, `:emit`, `:loop_and_emit`, or `nil`.
+- The `while` block arguments are:
+  - `element` - An element going into the while-block.
+  - `depth` - The number of times Pacer applied the loop block, in order to get to this element.
+  - `path` - An array of vertices and edges, the full path to this element. 
 
 Some elements passed to the while block will be source elements. They have a depth of 0, and have never run through the loop traversal at all.
 
