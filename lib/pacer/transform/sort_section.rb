@@ -2,13 +2,13 @@ module Pacer
   module Routes
     module RouteOperations
       # Arity 2 uses custom sort logic. Arity 1 uses sort_by logic.
-      def sort_section(section = nil, &block)
+      def sort_section(section = nil, opts = {}, &block)
         if not block
-          chain_route transform: :sort_section, section: section
+          chain_route opts.merge(transform: :sort_section, section: section)
         elsif block.arity == 2
-          chain_route transform: :sort_section, custom_sort_block: block, section: section
+          chain_route opts.merge(transform: :sort_section, custom_sort_block: block, section: section)
         else
-          chain_route transform: :sort_section, sort_by_block: block, section: section
+          chain_route opts.merge(transform: :sort_section, sort_by_block: block, section: section)
         end
       end
 
@@ -29,6 +29,12 @@ module Pacer
 
       attr_accessor :sort_by_block
       attr_accessor :custom_sort_block
+      attr_accessor :nil_value
+
+      def nil_sort_value(value)
+        @nil_value = nil_value
+        self
+      end
 
       protected
 
@@ -38,23 +44,24 @@ module Pacer
           pipe = CustomSortPipe.new(self, section_visitor, custom_sort_block, graph, wrapper)
         else # sort_by_block
           pf = Pacer::Wrappers::WrappingPipeFunction.new self, sort_by_block if sort_by_block
-          pipe = SortBySectionPipe.new(self, section_visitor, pf)
+          pipe = SortBySectionPipe.new(self, section_visitor, pf, nil_value)
         end
         pipe.setStarts end_pipe if end_pipe
         pipe
       end
 
       class SortBySectionPipe < Pacer::Pipes::RubyPipe
-        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section, :route
+        attr_reader :pf_1, :pf_2, :to_sort, :to_emit, :section, :route, :nil_value
         attr_reader :getPathToHere
 
-        def initialize(route, visitor_pipe, pipe_function)
+        def initialize(route, visitor_pipe, pipe_function, nil_value)
           super()
           @to_emit = []
           @visitor_pipe = visitor_pipe
           @route = route
           @to_sort = []
           @paths = []
+          @nil_value = nil_value
           if visitor_pipe
             visitor_pipe.visitor = self
           else
@@ -106,16 +113,42 @@ module Pacer
         def after_element
           if to_sort.any?
             if pf_1
-              sorted = to_sort.sort_by do |element, path|
-                pf_1.call element
+              if nil_value
+                sorted = to_sort.sort_by do |element, path|
+                  v = pf_1.call element
+                  if v.nil?
+                    nil_value
+                  else
+                    v
+                  end
+                end
+              else
+                sorted = to_sort.sort_by do |element, path|
+                  pf_1.call element
+                end
               end
             elsif pf_2
-              sorted = to_sort.sort_by do |element, path|
-                pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
+              if nil_value
+                sorted = to_sort.sort_by do |element, path|
+                  v = pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
+                  if v.nil?
+                    nil_value
+                  else
+                    v
+                  end
+                end
+              else
+                sorted = to_sort.sort_by do |element, path|
+                  pf_2.call_with_args element, @section_element, pf_2.wrap_path(path)
+                end
               end
             else
               sorted = to_sort.sort_by do |element, path|
-                element
+                if element.nil?
+                  nil_value
+                else
+                  element
+                end
               end
             end
             to_emit.concat sorted
@@ -128,7 +161,7 @@ module Pacer
         attr_reader :sort_block
 
         def initialize(route, visitor_pipe, sort_block, graph, wrapper)
-          super route, visitor_pipe, nil
+          super route, visitor_pipe, nil, nil
           @sort_block = sort_block
           @graph = graph
           @wrapper = wrapper

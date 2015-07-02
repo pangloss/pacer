@@ -57,6 +57,22 @@ Run.tg :read_only do
     end
   end
 
+  describe 'sort by with nil' do
+    let(:by_name) do
+      graph.v.section(:x).out.out.sort_section(:x, nil_value: 'x') { |v| nil }
+    end
+
+    it 'should have the same elements' do
+      by_name.group_count.should == unsorted.group_count
+    end
+
+    it 'should have 3 elements in the path' do
+      by_name.paths.each do |path|
+        path.length.should == 3
+      end
+    end
+  end
+
   describe 'sort with more info' do
     let(:unsorted) { graph.v.out.out }
     let(:with_path) do
