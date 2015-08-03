@@ -25,6 +25,9 @@ require 'lock_jar'
 require 'pacer/support/lock_jar'
 require 'pacer-ext.jar'
 
+module Pacer
+end
+
 if ENV['PACER_MANUAL_JARS'] == 'true'
   require 'pacer/support/lock_jar_disabler'
 else
@@ -34,14 +37,14 @@ else
   end
   if defined? Pacer::LOCKJAR_OPTS
     LockJar.lock_registered_jarfiles LOCKJAR_OPTS
-    LockJar.load LOCKJAR_OPTS
+    Pacer::LOCKED_JARS = LockJar.load LOCKJAR_OPTS
   else
     if bundle_jarfiles
       LockJar.lock_registered_jarfiles lockfile: 'Jarfile.lock'
-      LockJar.load 'Jarfile.lock'
+      Pacer::LOCKED_JARS = LockJar.load 'Jarfile.lock'
     else
       LockJar.lock_registered_jarfiles lockfile: 'Jarfile.pacer.lock'
-      LockJar.load 'Jarfile.pacer.lock'
+      Pacer::LOCKED_JARS = LockJar.load 'Jarfile.pacer.lock'
     end
   end
   if bundle_jarfiles
