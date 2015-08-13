@@ -103,6 +103,7 @@ require 'pacer/transform/intersect_sections'
 require 'pacer/transform/payload'
 require 'pacer/transform/lookup_ids'
 require 'pacer/transform/count_section'
+require 'pacer/transform/gather_section'
 
 require 'pacer/side_effect/aggregate'
 require 'pacer/side_effect/as_var'
