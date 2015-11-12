@@ -2,6 +2,7 @@ maybe_require 'pacer-neo4j/rspec'
 maybe_require 'pacer-neo4j2/rspec'
 maybe_require 'pacer-orient/rspec'
 maybe_require 'pacer-dex/rspec'
+maybe_require 'pacer-titan/rspec'
 maybe_require 'pacer-mcfly/rspec'
 
 class RSpec::GraphRunner
@@ -28,6 +29,9 @@ class RSpec::GraphRunner
     end
 
     def orient(*args)
+    end
+
+    def titan(*args)
     end
 
     def mcfly(*args)
@@ -57,6 +61,7 @@ class RSpec::GraphRunner
   include Dex if defined? Dex
   include Orient if defined? Orient
   include McFly if defined? McFly
+  include Titan if defined? Titan
 
   def initialize(*graphs)
     @graphs = graphs.map { |s| s.to_s.downcase.split(/\s*,\s*/) }.flatten.map { |s| s.strip }.reject { |s| s == '' }
