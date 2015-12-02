@@ -19,11 +19,15 @@ module Pacer::Core::Graph
     # @return [EdgesRoute]
     def out_e(*filters, &block)
       filters = extract_labels(filters)
-      Pacer::Route.property_filter(chain_route(:element_type => :edge,
-                                               :pipe_class => OutEdgesPipe,
-                                               :pipe_args => route_labels,
-                                               :route_name => edge_route_name('outE')),
+      Pacer::Route.property_filter(outE(route_labels),
                                   filters, block)
+    end
+
+    def outE(labels)
+      chain_route(:element_type => :edge,
+                  :pipe_class => OutEdgesPipe,
+                  :pipe_args => labels,
+                  :route_name => edge_route_name('outE'))
     end
 
     # Extends the route with vertices via the out edges from this route's matching vertices.
@@ -55,11 +59,15 @@ module Pacer::Core::Graph
     # @return [EdgesRoute]
     def in_e(*filters, &block)
       filters = extract_labels(filters)
-      Pacer::Route.property_filter(chain_route(:element_type => :edge,
-                                               :pipe_class => InEdgesPipe,
-                                               :pipe_args => route_labels,
-                                               :route_name => edge_route_name('inE')),
+      Pacer::Route.property_filter(inE(route_labels),
                                   filters, block)
+    end
+
+    def inE(labels)
+      chain_route(:element_type => :edge,
+                  :pipe_class => InEdgesPipe,
+                  :pipe_args => labels,
+                  :route_name => edge_route_name('inE'))
     end
 
     # Extends the route with vertices via the in edges from this route's matching vertices.

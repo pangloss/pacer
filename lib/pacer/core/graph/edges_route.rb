@@ -12,10 +12,14 @@ module Pacer::Core::Graph
     # @yield [VertexWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def out_v(*filters, &block)
-      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
-                                               :pipe_class => OutVertexPipe,
-                                               :route_name => 'outV'),
+      Pacer::Route.property_filter(outV,
                                   filters, block)
+    end
+
+    def outV
+      chain_route(:element_type => :vertex,
+                  :pipe_class => OutVertexPipe,
+                  :route_name => 'outV')
     end
 
     # Extends the route with in vertices from this route's matching edges.
@@ -24,10 +28,14 @@ module Pacer::Core::Graph
     # @yield [VertexWrapper] filter proc, see {Pacer::Route#property_filter}
     # @return [VerticesRoute]
     def in_v(*filters, &block)
-      Pacer::Route.property_filter(chain_route(:element_type => :vertex,
-                                               :pipe_class => InVertexPipe,
-                                               :route_name => 'inV'),
+      Pacer::Route.property_filter(inV,
                                   filters, block)
+    end
+
+    def inV
+      chain_route(:element_type => :vertex,
+                  :pipe_class => InVertexPipe,
+                  :route_name => 'inV')
     end
 
     # Extends the route with both in and oud vertices from this route's matching edges.
