@@ -26,8 +26,8 @@ module Pacer::Core::Graph
     def outE(labels)
       chain_route(:element_type => :edge,
                   :pipe_class => OutEdgesPipe,
-                  :pipe_args => labels,
-                  :route_name => edge_route_name('outE'))
+                  :pipe_args => (labels || []),
+                  :route_name => edge_route_name('outE', labels))
     end
 
     # Extends the route with vertices via the out edges from this route's matching vertices.
@@ -45,7 +45,7 @@ module Pacer::Core::Graph
                                                :pipe_args => route_labels,
                                                :wrapper => nil,
                                                :extensions => [],
-                                               :route_name => edge_route_name('out')),
+                                               :route_name => edge_route_name('out', route_labels)),
                                   filters, block)
     end
 
@@ -66,8 +66,8 @@ module Pacer::Core::Graph
     def inE(labels)
       chain_route(:element_type => :edge,
                   :pipe_class => InEdgesPipe,
-                  :pipe_args => labels,
-                  :route_name => edge_route_name('inE'))
+                  :pipe_args => (labels || []),
+                  :route_name => edge_route_name('inE', labels))
     end
 
     # Extends the route with vertices via the in edges from this route's matching vertices.
@@ -85,7 +85,7 @@ module Pacer::Core::Graph
                                                :pipe_args => route_labels,
                                                :wrapper => nil,
                                                :extensions => [],
-                                               :route_name => edge_route_name('in')),
+                                               :route_name => edge_route_name('in', route_labels)),
                                   filters, block)
     end
 
@@ -102,7 +102,7 @@ module Pacer::Core::Graph
       Pacer::Route.property_filter(chain_route(:element_type => :edge,
                                                :pipe_class => BothEdgesPipe,
                                                :pipe_args => route_labels,
-                                               :route_name => edge_route_name('bothE')),
+                                               :route_name => edge_route_name('bothE', route_labels)),
                                   filters, block)
     end
 
@@ -121,7 +121,7 @@ module Pacer::Core::Graph
                                                :pipe_args => route_labels,
                                                :wrapper => nil,
                                                :extensions => [],
-                                               :route_name => edge_route_name('both')),
+                                               :route_name => edge_route_name('both', route_labels)),
                                   filters, block)
     end
 
@@ -210,9 +210,9 @@ module Pacer::Core::Graph
 
     protected
 
-    def edge_route_name(prefix)
-      if route_labels.any?
-        "#{prefix}(#{route_labels.map { |l| l.to_sym.inspect }.join ', '})"
+    def edge_route_name(prefix, labels)
+      if labels and labels.any?
+        "#{prefix}(#{labels.map { |l| l.to_sym.inspect }.join ', '})"
       else
         prefix
       end
