@@ -396,7 +396,7 @@ module Pacer
             blueprints_graph.getIndexedKeys(index_class(type)).to_set
           else
             blueprints_graph.getIndexedKeys(index_class(:vertex)).to_set +
-              blueprints_graph.getIndexedKeys(index_class(:vertex))
+              blueprints_graph.getIndexedKeys(index_class(:edge))
           end
         else
           []
