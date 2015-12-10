@@ -390,14 +390,10 @@ module Pacer
         end
       end
 
-      def key_indices(type = nil)
+      def key_indices(type = :vertex)
+        # will raise internal error if not one of :edge or :vertex
         if features.supportsKeyIndices
-          if type
-            blueprints_graph.getIndexedKeys(index_class(type)).to_set
-          else
-            blueprints_graph.getIndexedKeys(index_class(:vertex)).to_set +
-              blueprints_graph.getIndexedKeys(index_class(:vertex))
-          end
+          blueprints_graph.getIndexedKeys(index_class(type)).to_set
         else
           []
         end
