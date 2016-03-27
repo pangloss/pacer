@@ -18,9 +18,9 @@ WARNING
   raise Exception, "Pacer must be run in JRuby 1.9 mode"
 end
 
+require 'rubygems'
 require 'java'
 require 'pp'
-require 'rubygems'
 require 'lock_jar'
 require 'pacer/support/lock_jar'
 require 'pacer-ext.jar'
@@ -257,16 +257,6 @@ module Pacer
       @open_graphs
     end
 
-    def close_all_open_graphs
-      open_graphs.each do |path, graph|
-        begin
-          graph.shutdown
-        rescue Exception, StandardError => e
-          puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
-        end
-      end
-    end
-
     # Used internally to collect debug information while using
     # {#debug_pipe}
     attr_accessor :debug_source
@@ -277,5 +267,12 @@ module Pacer
 end
 
 at_exit do
-  Pacer.close_all_open_graphs
+  # Close all open graphs
+  Pacer.open_graphs.each do |path, graph|
+    begin
+      graph.shutdown
+    rescue Exception, StandardError => e
+      puts "Exception on graph shutdown: #{ e.class } #{ e.message }\n\n#{e.backtrace.join "\n" }"
+    end
+  end
 end

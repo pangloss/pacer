@@ -1,7 +1,9 @@
 def maybe_require(file)
-  require file
-rescue LoadError => e
-  puts "Not using #{ file } because: #{ e.message }"
+  begin
+    require file
+  rescue LoadError => e
+    puts "maybe_require #{ file.inspect } failed: #{ e.message }"
+  end
 end
 
 require "rubygems"
