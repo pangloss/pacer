@@ -12,7 +12,6 @@ group :development do
   gem 'autotest-growl'
   gem 'awesome_print', '0.4.0'
   gem 'coveralls', require: false
-  gem 'travis'
 end
 
 
